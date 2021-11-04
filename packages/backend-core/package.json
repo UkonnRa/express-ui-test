@@ -1,0 +1,13 @@
+{
+  "name": "@white-rabbit/backend",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The backend core package for Wonderland WhiteRabbit",
+  "author": "Ukonn Ra <ukonnra@outlook.com>",
+  "license": "MIT",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && node esbuild.config.js"
+  }
+}

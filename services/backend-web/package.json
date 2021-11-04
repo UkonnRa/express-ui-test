@@ -1,0 +1,28 @@
+{
+  "name": "@white-rabbit/backend-web",
+  "private": true,
+  "version": "0.0.0",
+  "description": "The backend web application for Wonderland WhiteRabbit",
+  "author": "Ukonn Ra <ukonnra@outlook.com>",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "build": "tsc && node esbuild.config.js",
+    "serve": "node dist/index.js"
+  },
+  "dependencies": {
+    "@white-rabbit/backend": "*",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-winston": "^4.1.0",
+    "nodemon": "^2.0.14",
+    "tsconfig-paths": "^3.11.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "ts-node": "^10.4.0"
+  }
+}

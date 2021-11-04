@@ -1,0 +1,81 @@
+name: Github Actions Wonderland WhiteRabbit CI
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+  pull_request:
+    types: [closed]
+
+jobs:
+  build:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: test1234
+          POSTGRES_DB: white-rabbit
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Lint and test
+        run: yarn && yarn lint && yarn test
+        env:
+          WHITERABBIT_DEBUG: true
+          WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
+          WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
+          WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
+          WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
+          WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
+          WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+  parse-tag:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    if: >-
+      ${{ github.ref == 'refs/heads/develop' }}
+      || startsWith(github.ref, 'refs/heads/feature/')
+      || startsWith(github.ref, 'refs/heads/release/')
+      || startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Build project
+        run: yarn build
+      - name: Build Docker image
+        run: >-
+          PROJECT_VERSION=$(./gradlew properties | grep ^version: | awk '{print $2}') &&
+          IMAGE_TAG=$(./scripts/parse-branch.py ${{ github.ref }} $PROJECT_VERSION) &&
+          echo "Image Tag: $IMAGE_TAG" &&
+          docker build services/backend-web -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-web:$IMAGE_TAG &&
+          docker build services/frontend-web -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend-web:$IMAGE_TAG &&
+          echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
+          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-web:$IMAGE_TAG &&
+          docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend-web:$IMAGE_TAG
