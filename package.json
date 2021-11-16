@@ -1,0 +1,75 @@
+{
+  "name": "white-rabbit",
+  "version": "1.0.0",
+  "description": "Wonderland WhiteRabbit root project",
+  "author": "Ukonn Ra<ukonnra@outlook.com>",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">= 16"
+  },
+  "scripts": {
+    "test": "jest --coverage --passWithNoTests",
+    "lint": "prettier --check \"./**/*.{ts,tsx,js,json,md,mdx}\" && eslint packages services --ext .js,.ts,.tsx && npm run lint:markdown",
+    "lint:fix": "prettier --write \"./**/*.{ts,tsx,js,json,md,mdx}\" && eslint packages services --fix --ext .js,.ts,.tsx && npm run lint:markdown --fix",
+    "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/*/README.md services/*/README.md docs/docs/*.{md,mdx}",
+    "clean": "rimraf packages/*/dist/ services/*/dist/",
+    "build": "npm run clean && cross-env NODE_ENV=production npm run build --workspaces --if-present",
+    "prepare": "husky install"
+  },
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^14.1.0",
+    "@commitlint/config-conventional": "^14.1.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "@types/webpack-bundle-analyzer": "^4.4.1",
+    "@types/webpack-env": "^1.16.3",
+    "@types/webpack-node-externals": "^2.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "concurrently": "^6.4.0",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "^19.0.0",
+    "eslint-config-airbnb-typescript": "^15.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-eslint-plugin": "^4.0.2",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.27.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-testing-library": "^5.0.0",
+    "husky": "^7.0.4",
+    "jest": "^27.3.1",
+    "jest-each": "^27.3.1",
+    "markdownlint-cli": "^0.29.0",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "run-script-webpack-plugin": "^0.0.11",
+    "terser-webpack-plugin": "^5.2.5",
+    "ts-jest": "^27.0.7",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "^4.4.4",
+    "webpack": "^5.64.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-hot-middleware": "^2.25.1",
+    "webpack-node-externals": "^3.0.0"
+  }
+}

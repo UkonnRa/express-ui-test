@@ -1,0 +1,11 @@
+.vscode
+.idea
+packages/**/serviceWorker.ts
+dist
+types
+node_modules
+
+.docusaurus
+build
+
+coverage

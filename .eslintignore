@@ -1,0 +1,10 @@
+.vscode
+.idea
+dist
+types
+node_modules
+
+.docusaurus
+build
+
+coverage
