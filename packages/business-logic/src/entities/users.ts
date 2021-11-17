@@ -20,7 +20,7 @@ export class User {
   role!: Role;
 
   constructor(name: string, role: Role) {
-    this.name = `${name} == nice and clean`;
+    this.name = `${name} <== nice> and clean`;
     this.role = role;
   }
 }

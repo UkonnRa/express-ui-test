@@ -1,8 +1,8 @@
 import webpack from 'webpack';
-import base from './webpack.config.base';
 import { RunScriptWebpackPlugin } from 'run-script-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 import path from 'path';
+import base from './webpack.config.base';
 
 const config: webpack.Configuration = {
   ...base,

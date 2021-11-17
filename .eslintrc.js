@@ -4,7 +4,6 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module',
     project: ['./tsconfig.json', './packages/*/tsconfig.json', './services/*/tsconfig.json'],
-    warnOnUnsupportedTypeScriptVersion: false,
   },
   plugins: ['eslint-plugin', '@typescript-eslint', 'jest', 'import', 'eslint-comments', 'simple-import-sort'],
   extends: [
@@ -13,11 +12,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'airbnb',
     'airbnb-typescript',
+    'plugin:react/jsx-runtime',
     'prettier',
   ],
-
   rules: {
     'import/no-cycle': 0,
     'import/no-import-module-exports': 0,
+    'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],
   },
 };

@@ -1,8 +1,8 @@
 import webpack, { IgnorePlugin } from 'webpack';
-import base from './webpack.config.base';
-import { devDependencies } from '../package.json';
 import mikroCore from '@mikro-orm/core/package.json';
 import path from 'path';
+import base from './webpack.config.base';
+import { devDependencies } from '../package.json';
 
 const externals: Record<string, string> = {};
 
