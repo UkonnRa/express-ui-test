@@ -27,13 +27,14 @@
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["webpack-env"],
+    "types": ["webpack-env", "node"],
     "baseUrl": ".",
     "paths": {
       "@white-rabbit/business-logic": ["packages/business-logic/src"],
       "@white-rabbit/components": ["packages/components/src"],
       "@white-rabbit/backend": ["services/backend/src"],
-      "@white-rabbit/frontend": ["services/frontend/src"]
+      "@white-rabbit/frontend": ["services/frontend/src"],
+      "@white-rabbit/desktop": ["services/desktop/src"]
     }
   },
   "exclude": ["node_modules"]

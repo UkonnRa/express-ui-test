@@ -1,14 +1,14 @@
 {
-  "name": "@white-rabbit/frontend",
+  "name": "@white-rabbit/desktop-render",
   "private": true,
   "version": "0.0.1",
-  "description": "The frontend for Wonderland WhiteRabbit",
+  "description": "The desktop render for Wonderland WhiteRabbit",
   "author": "Ukonn Ra <ukonnra@outlook.com>",
   "homepage": "https://github.com/alices-wonderland/white-rabbit",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:desktop": "tsc && vite build",
     "serve": "vite preview"
   },
   "dependencies": {

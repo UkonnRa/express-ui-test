@@ -14,7 +14,7 @@
     "lint:fix": "prettier --write \"./**/*.{ts,tsx,js,json,md,mdx}\" && eslint packages services --fix --ext .js,.ts,.tsx && npm run lint:markdown --fix",
     "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/*/README.md services/*/README.md docs/docs/*.{md,mdx}",
     "clean": "rimraf packages/*/dist/ services/*/dist/",
-    "build": "npm run clean && cross-env NODE_ENV=production npm run build --workspaces --if-present",
+    "build": "npm run clean && cross-env NODE_ENV=production npm run build --workspaces --if-present && ts-node scripts/build-desktop.ts",
     "prepare": "husky install"
   },
   "workspaces": [
@@ -59,5 +59,8 @@
     "ts-jest": "^27.0.7",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0"
   }
 }

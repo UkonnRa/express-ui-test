@@ -1,19 +1,19 @@
 {
-  "name": "@white-rabbit/backend",
-  "version": "1.0.0",
-  "description": "Wonderland WhiteRabbit backend service",
-  "author": "Ukonn Ra<ukonnra@outlook.com>",
-  "license": "MIT",
+  "name": "@white-rabbit/desktop",
   "private": true,
-  "engines": {
-    "node": ">= 16"
-  },
+  "version": "0.0.1",
+  "description": "The desktop application for Wonderland WhiteRabbit",
+  "author": "Ukonn Ra <ukonnra@outlook.com>",
+  "homepage": "https://github.com/alices-wonderland/white-rabbit",
+  "license": "MIT",
+  "main": "dist/index.js",
   "scripts": {
     "orm:update": "mikro-orm schema:update -r",
-    "dev": "cross-env PORT=3000 webpack --config ../../configs/webpack.config.dev.ts",
-    "build": "webpack --config ../../configs/webpack.config.prod.ts",
-    "build:analyze": "rimraf dist/ && mkdir dist && npm run --silent build -- --profile --json > dist/stats.json && webpack-bundle-analyzer -p 8889 dist/stats.json",
-    "serve": "cross-env PORT=3000 node dist/index.js"
+    "dev:webpack": "webpack --config ../../configs/webpack.config.desktop.dev.ts",
+    "dev:electron": "electron .",
+    "build:webpack": "webpack --config ../../configs/webpack.config.desktop.prod.ts",
+    "build:desktop": "npm run build:webpack && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -22,17 +22,22 @@
     ]
   },
   "dependencies": {
+    "@mikro-orm/core": "^4.5.9",
+    "@mikro-orm/sqlite": "^4.5.9",
     "@white-rabbit/business-logic": "*",
-    "express": "^4.17.1",
+    "dotenv": "^10.0.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.0.1",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^4.5.9",
-    "@types/express": "^4.17.13",
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@types/webpack-env": "^1.16.3",
     "@types/webpack-node-externals": "^2.5.3",
+    "electron": "15.3.0",
+    "electron-builder": "^22.13.1",
     "run-script-webpack-plugin": "^0.0.11",
     "terser-webpack-plugin": "^5.2.5",
     "ts-loader": "^9.2.6",
@@ -42,9 +47,5 @@
     "webpack-cli": "^4.9.1",
     "webpack-hot-middleware": "^2.25.1",
     "webpack-node-externals": "^3.0.0"
-  },
-  "peerDependencies": {
-    "@mikro-orm/core": "^4.5.9",
-    "@mikro-orm/postgresql": "^4.5.9"
   }
 }

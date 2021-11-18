@@ -1,6 +1,6 @@
 import webpack from 'webpack';
 import path from 'path';
-import * as process from 'process';
+import process from 'process';
 import TerserPlugin from 'terser-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 
@@ -13,6 +13,12 @@ const config: webpack.Configuration = {
         test: /.tsx?$/,
         loader: 'ts-loader',
       },
+      // Native modules can be bundled as well.
+      {
+        test: /\.node$/,
+        use: 'node-loader',
+      },
+      // Some of MikroORM's dependencies use mjs files, so let's set them up here.
       {
         test: /\.mjs$/,
         include: /node_modules/,
