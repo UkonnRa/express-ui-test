@@ -1,15 +1,15 @@
 {
   "productName": "wonderland-white-rabbit",
   "appId": "com.ukonnra.wonderland.whiterabbit",
-  "files": ["dist/**", "../desktop-render/dist/**"],
+  "files": ["dist/**"],
   "directories": {
-    "output": "dist/release"
+    "output": "release"
   },
   "releaseInfo": {
     "releaseName": "wonderland-white-rabbit"
   },
   "win": {
-    "target": ["portable"]
+    "target": ["zip"]
   },
   "linux": {
     "target": ["AppImage"]

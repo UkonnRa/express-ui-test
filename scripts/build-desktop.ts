@@ -1,6 +1,16 @@
 import { execSync } from 'child_process';
-import { copySync } from 'fs-extra';
+import { copySync, removeSync } from 'fs-extra';
 
-execSync('npm run build:desktop -w @white-rabbit/desktop-render');
+removeSync('services/desktop/release');
+
+console.time('buildRenderResult');
+const buildRenderResult = execSync('npm run build:desktop -w @white-rabbit/desktop-render');
+console.timeEnd('buildRenderResult');
+console.log('Build render result: ', buildRenderResult.toString());
+
 copySync('services/desktop-render/dist', 'services/desktop/dist');
-execSync('npm run build:desktop -w @white-rabbit/desktop');
+
+console.time('buildDesktopResult');
+const buildDesktopResult = execSync('npm run build:desktop -w @white-rabbit/desktop');
+console.timeEnd('buildDesktopResult');
+console.log('Build desktop result: ', buildDesktopResult.toString());

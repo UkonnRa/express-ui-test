@@ -23,6 +23,12 @@ module.exports = {
   },
   overrides: [
     {
+      files: 'services/desktop/src/**/*.ts',
+      rules: {
+        'import/no-extraneous-dependencies': 0,
+      },
+    },
+    {
       files: 'configs/*.ts',
       rules: {
         'import/no-extraneous-dependencies': 0,

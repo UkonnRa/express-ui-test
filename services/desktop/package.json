@@ -12,6 +12,7 @@
     "dev:webpack": "webpack --config ../../configs/webpack.config.desktop.dev.ts",
     "dev:electron": "electron .",
     "build:webpack": "webpack --config ../../configs/webpack.config.desktop.prod.ts",
+    "build:webpack:analyze": "rimraf dist/ && mkdir dist && npm run --silent build:webpack -- --profile --json > dist/stats.json && webpack-bundle-analyzer -p 8888 dist/stats.json",
     "build:desktop": "npm run build:webpack && electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
