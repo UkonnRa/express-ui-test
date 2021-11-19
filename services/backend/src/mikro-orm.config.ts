@@ -5,7 +5,7 @@ const config: Options = {
   entities: [User],
   dbName: 'white-rabbit',
   type: 'postgresql',
-  clientUrl: 'postgresql://postgres:test1234@localhost:5432/white-rabbit',
+  clientUrl: process.env.WHITERABBIT_DATABASE_URL ?? 'postgresql://postgres:test1234@localhost:5432/white-rabbit',
   discovery: { disableDynamicFileAccess: true },
 };
 
