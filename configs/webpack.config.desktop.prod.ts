@@ -1,8 +1,8 @@
 import webpack from 'webpack';
-import prodConfig from './webpack.config.prod';
-import desktopDevConfig from './webpack.config.desktop.dev';
 import path from 'path';
 import process from 'process';
+import prodConfig from './webpack.config.prod';
+import desktopDevConfig from './webpack.config.desktop.dev';
 
 const config: webpack.Configuration = {
   ...prodConfig,

@@ -19,5 +19,24 @@ module.exports = {
     'import/no-cycle': 0,
     'import/no-import-module-exports': 0,
     'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],
+    'no-restricted-syntax': 0,
   },
+  overrides: [
+    {
+      files: 'configs/*.ts',
+      rules: {
+        'import/no-extraneous-dependencies': 0,
+        'import/no-dynamic-require': 0,
+        'no-restricted-syntax': 0,
+        'global-require': 0,
+        '@typescript-eslint/no-var-requires': 0,
+      },
+    },
+    {
+      files: 'scripts/*.ts',
+      rules: {
+        'no-console': 0,
+      },
+    },
+  ],
 };

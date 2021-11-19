@@ -1,7 +1,7 @@
 import webpack, { IgnorePlugin } from 'webpack';
 import mikroCore from '@mikro-orm/core/package.json';
-import base from './webpack.config.base';
 import path from 'path';
+import base from './webpack.config.base';
 import { devDependencies } from '../package.json';
 
 const externals: Record<string, string> = {};
@@ -14,7 +14,7 @@ for (const devDependency of Object.keys(require(path.resolve(process.cwd(), 'pac
   externals[devDependency] = `commonjs ${devDependency}`;
 }
 
-externals['sqlite3'] = 'commonjs sqlite3';
+externals.sqlite3 = 'commonjs sqlite3';
 
 // And anything MikroORM's packaging can be ignored if it's not on disk.
 // Later we check these dynamically and tell webpack to ignore the ones we don't have.

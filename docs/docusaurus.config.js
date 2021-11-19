@@ -12,8 +12,8 @@ module.exports = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
-  organizationName: "Alice's Wonderland",
-  projectName: 'whiterabbit',
+  organizationName: 'alices-wonderland',
+  projectName: 'white-rabbit',
   themeConfig: {
     navbar: {
       title: 'Wonderland WhiteRabbit',
