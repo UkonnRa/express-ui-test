@@ -26,12 +26,8 @@ elif branch.startswith(BRANCH_FEATURE_PREFIX):
 elif branch.startswith(BRANCH_BUGFIX_PREFIX):
     name = branch[len(BRANCH_BUGFIX_PREFIX):]
     print(f"{version}-bug-{name}-{run_id}")
-elif branch.startswith(BRANCH_RELEASE_PREFIX):
-    name = branch[len(BRANCH_RELEASE_PREFIX):]
-    print(f"{version}-rc-{name}-{run_id}")
-elif branch.startswith(BRANCH_HOTFIX_PREFIX):
-    name = branch[len(BRANCH_HOTFIX_PREFIX):]
-    print(f"{version}-rc-{name}-{run_id}")
+elif branch.startswith(BRANCH_RELEASE_PREFIX) or branch.startswith(BRANCH_HOTFIX_PREFIX):
+    print(f"{version}-rc-{run_id}")
 elif branch.startswith(TAG_PREFIX):
     name = branch[len(TAG_PREFIX):]
     if name != version:
