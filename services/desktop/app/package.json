@@ -1,0 +1,16 @@
+{
+  "name": "@white-rabbit/desktop",
+  "private": true,
+  "version": "0.0.1",
+  "description": "The desktop application for Wonderland WhiteRabbit",
+  "author": "Ukonn Ra <ukonnra@outlook.com>",
+  "homepage": "https://github.com/alices-wonderland/white-rabbit",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "dependencies": {
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "electron": "15.3.0"
+  }
+}

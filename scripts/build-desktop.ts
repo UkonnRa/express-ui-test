@@ -8,7 +8,7 @@ const buildRenderResult = execSync('npm run build:desktop -w @white-rabbit/deskt
 console.timeEnd('buildRenderResult');
 console.log('Build render result: ', buildRenderResult.toString());
 
-copySync('services/desktop-render/dist', 'services/desktop/dist');
+copySync('services/desktop-render/dist', 'services/desktop/app/dist');
 
 console.time('buildDesktopResult');
 const buildDesktopResult = execSync('npm run build:desktop -w @white-rabbit/desktop');

@@ -31,6 +31,9 @@
     "@commitlint/config-conventional": "^15.0.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.9",
+    "@types/webpack-bundle-analyzer": "^4.4.1",
+    "@types/webpack-env": "^1.16.3",
+    "@types/webpack-node-externals": "^2.5.3",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "concurrently": "^6.4.0",
@@ -56,11 +59,20 @@
     "markdownlint-cli": "^0.29.0",
     "prettier": "^2.4.1",
     "rimraf": "^3.0.2",
+    "run-script-webpack-plugin": "^0.0.11",
+    "terser-webpack-plugin": "^5.2.5",
     "ts-jest": "^27.0.7",
+    "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.2"
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "^4.5.2",
+    "webpack": "^5.64.1",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-hot-middleware": "^2.25.1",
+    "webpack-node-externals": "^3.0.0"
   },
-  "dependencies": {
+  "peerDependencies": {
     "fs-extra": "^10.0.0"
   }
 }

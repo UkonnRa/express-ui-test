@@ -12,6 +12,7 @@ const config: webpack.Configuration = {
   },
   output: {
     ...devConfig.output,
+    path: path.resolve(process.cwd(), './app/dist'),
     globalObject: 'this',
     filename: '[name].js',
   },
@@ -20,8 +21,9 @@ const config: webpack.Configuration = {
   externals: [
     nodeExternals({
       modulesDir: path.resolve(__dirname, '../node_modules'),
-      allowlist: [/^@white-rabbit\//],
+      allowlist: ['webpack/hot/poll?100', /^@white-rabbit\//],
     }),
   ],
 };
+
 export default config;
