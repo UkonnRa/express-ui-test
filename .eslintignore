@@ -11,3 +11,5 @@ build
 coverage
 *.config.js
 .eslintrc.js
+
+release

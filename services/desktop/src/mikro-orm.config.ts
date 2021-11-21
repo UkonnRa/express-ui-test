@@ -1,12 +1,7 @@
-import { User } from '@white-rabbit/business-logic';
-import { Options } from '@mikro-orm/core/utils';
+import { defineOrmConfig } from '@white-rabbit/business-logic';
 import path from 'path';
 
-const config: Options = {
-  entities: [User],
+export default defineOrmConfig({
   dbName: path.join(process.cwd(), 'white-rabbit.db'),
   type: 'sqlite',
-  discovery: { disableDynamicFileAccess: true },
-};
-
-export default config;
+});

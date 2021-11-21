@@ -19,7 +19,7 @@ module.exports = {
       title: 'Wonderland WhiteRabbit',
       items: [
         {
-          href: 'https://github.com/alices-wonderland/whiterabbit',
+          href: 'https://github.com/alices-wonderland/white-rabbit',
           label: 'GitHub',
           position: 'right',
         },
@@ -40,7 +40,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/alices-wonderland/whiterabbit/docs/',
+          editUrl: 'https://github.com/alices-wonderland/white-rabbit/docs/',
           routeBasePath: '/',
           remarkPlugins: [math],
           rehypePlugins: [katex],
