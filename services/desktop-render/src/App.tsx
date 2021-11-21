@@ -23,7 +23,6 @@ const App: FunctionComponent = () => {
         Node Version:
         <span id="node-version" />
       </div>
-      <World />
       <Button />
       <World />
       <pre>{user}</pre>

@@ -9,8 +9,5 @@
   "main": "dist/index.js",
   "dependencies": {
     "sqlite3": "^5.0.2"
-  },
-  "devDependencies": {
-    "electron": "15.3.0"
   }
 }

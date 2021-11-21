@@ -6,7 +6,7 @@
   "author": "Ukonn Ra <ukonnra@outlook.com>",
   "homepage": "https://github.com/alices-wonderland/white-rabbit",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "app/dist/index.js",
   "scripts": {
     "orm:update": "mikro-orm schema:update -r",
     "dev:webpack": "webpack --config ../../configs/webpack.config.desktop.dev.ts",
@@ -28,7 +28,6 @@
     "@white-rabbit/business-logic": "*",
     "dotenv": "^10.0.0",
     "electron-is-dev": "^2.0.0",
-    "sqlite3": "^5.0.2",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },

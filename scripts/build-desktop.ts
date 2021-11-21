@@ -1,7 +1,5 @@
 import { execSync } from 'child_process';
-import { copySync, removeSync } from 'fs-extra';
-
-removeSync('services/desktop/release');
+import { copySync } from 'fs-extra';
 
 console.time('buildRenderResult');
 const buildRenderResult = execSync('npm run build:desktop -w @white-rabbit/desktop-render');
