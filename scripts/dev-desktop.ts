@@ -1,22 +1,4 @@
-import { exec } from 'child_process';
-
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
-const execAsync = async (tag: string, command: string) => {
-  const child = exec(command);
-  child.stdout?.on('data', (data) => {
-    console.log(`[${tag}] stdout: ${data}`);
-  });
-  child.stderr?.on('data', (data) => {
-    console.log(`[${tag}] stderr: ${data}`);
-  });
-  child.on('close', (code) => {
-    console.log(`[${tag}] closing code: ${code}`);
-  });
-};
+import { execAsync, sleep } from './utils';
 
 const main = async () => {
   await Promise.all([

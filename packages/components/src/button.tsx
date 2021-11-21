@@ -1,9 +1,5 @@
 import { FunctionComponent } from 'react';
 
-const Button: FunctionComponent = () => (
-  <button type="button" onClick={() => console.info('Hello world')}>
-    Click me aaa
-  </button>
-);
+const Button: FunctionComponent = () => <button type="button">Click me</button>;
 
 export default Button;
