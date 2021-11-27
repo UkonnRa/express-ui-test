@@ -7,7 +7,7 @@ const katex = require('rehype-katex');
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: 'Wonderland WhiteRabbit',
-  url: 'https://docs.whiterabbit.ukonnra.com',
+  url: 'https://docs.white-rabbit.ukonnra.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

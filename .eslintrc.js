@@ -41,6 +41,7 @@ module.exports = {
     {
       files: 'scripts/*.ts',
       rules: {
+        'import/no-extraneous-dependencies': 0,
         'no-console': 0,
       },
     },

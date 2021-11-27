@@ -3,6 +3,7 @@ import path from 'path';
 import process from 'process';
 import TerserPlugin from 'terser-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
+import nodeExternals from 'webpack-node-externals';
 
 const config: webpack.Configuration = {
   target: 'node',
@@ -35,6 +36,12 @@ const config: webpack.Configuration = {
     libraryTarget: 'commonjs',
     filename: 'index.js',
   },
+  externals: [
+    nodeExternals({
+      modulesDir: path.resolve(__dirname, '../node_modules'),
+      allowlist: [/^@white-rabbit\//],
+    }),
+  ],
   externalsPresets: {
     node: true,
   },

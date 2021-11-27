@@ -1,7 +1,7 @@
 {
   "productName": "wonderland-white-rabbit",
-  "electronVersion": "16.0.2",
   "appId": "com.ukonnra.wonderland.whiterabbit",
+  "files": ["dist"],
   "directories": {
     "output": "release"
   },
