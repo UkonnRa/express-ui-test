@@ -2,8 +2,6 @@ FROM node:16-alpine as builder
 
 COPY package.json package.json
 
-RUN cat package.json
-
 RUN npm uninstall @white-rabbit/business-logic
 
 RUN npm install --production --no-optional

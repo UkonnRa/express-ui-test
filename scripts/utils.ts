@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { exec } from 'child_process';
 
 export const sleep = (ms: number) =>

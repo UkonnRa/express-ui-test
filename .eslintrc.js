@@ -23,26 +23,9 @@ module.exports = {
   },
   overrides: [
     {
-      files: 'services/desktop/src/**/*.ts',
+      files: ['services/desktop/src/**/*.ts', 'configs/*.ts', 'scripts/*.ts'],
       rules: {
         'import/no-extraneous-dependencies': 0,
-      },
-    },
-    {
-      files: 'configs/*.ts',
-      rules: {
-        'import/no-extraneous-dependencies': 0,
-        'import/no-dynamic-require': 0,
-        'no-restricted-syntax': 0,
-        'global-require': 0,
-        '@typescript-eslint/no-var-requires': 0,
-      },
-    },
-    {
-      files: 'scripts/*.ts',
-      rules: {
-        'import/no-extraneous-dependencies': 0,
-        'no-console': 0,
       },
     },
   ],

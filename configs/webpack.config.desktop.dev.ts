@@ -14,8 +14,7 @@ const config: webpack.Configuration = {
     globalObject: 'this',
     filename: '[name].js',
   },
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  plugins: [devConfig.plugins![0]!],
+  plugins: [new webpack.HotModuleReplacementPlugin()],
 };
 
 export default config;
