@@ -1,8 +1,8 @@
 // eslint-disable-next-line max-classes-per-file
 import { Entity, Enum, ManyToOne } from '@mikro-orm/core';
 import { User } from './user';
-import Group from './group';
-import AccessList from './access-list';
+import { Group } from './group';
+import { AccessList } from './access-list';
 import AbstractEntity from './abstract-entity';
 
 export type AccessTagType = 'USER' | 'GROUP';
@@ -28,7 +28,7 @@ export class AccessItemUser extends AccessItem {
   @ManyToOne(() => User)
   readonly user: User;
 
-  constructor(parent: AccessList, user: User) {
+  constructor({ parent, user }: Omit<AccessItemUserCreateOptions, 'type'>) {
     super(parent);
     this.user = user;
   }
@@ -41,8 +41,22 @@ export class AccessItemGroup extends AccessItem {
   @ManyToOne(() => Group)
   readonly group: Group;
 
-  constructor(parent: AccessList, group: Group) {
+  constructor({ parent, group }: Omit<AccessItemGroupCreateOptions, 'type'>) {
     super(parent);
     this.group = group;
   }
 }
+
+export type AccessItemUserCreateOptions = {
+  type: 'USER';
+  parent: AccessList;
+  user: User;
+};
+
+export type AccessItemGroupCreateOptions = {
+  type: 'GROUP';
+  parent: AccessList;
+  group: Group;
+};
+
+export type AccessItemCreateOptions = AccessItemUserCreateOptions | AccessItemGroupCreateOptions;

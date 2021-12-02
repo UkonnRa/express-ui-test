@@ -14,17 +14,6 @@ const config: webpack.Configuration = {
         test: /.tsx?$/,
         loader: 'ts-loader',
       },
-      // Native modules can be bundled as well.
-      {
-        test: /\.node$/,
-        use: 'node-loader',
-      },
-      // Some of MikroORM's dependencies use mjs files, so let's set them up here.
-      {
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: 'javascript/auto',
-      },
     ],
   },
   resolve: {

@@ -1,8 +1,14 @@
 import { OneToOne, Property } from '@mikro-orm/core';
 import AbstractEntity from './abstract-entity';
-import AccessList from './access-list';
+import { AccessList, AccessListCreateOptions } from './access-list';
 
-abstract class AccessibleEntity<T extends AccessibleEntity<T>> extends AbstractEntity<T> {
+export type AccessibleEntityCreateOptions = {
+  name: string;
+  admins: AccessListCreateOptions;
+  members: AccessListCreateOptions;
+};
+
+export abstract class AccessibleEntity<T extends AccessibleEntity<T>> extends AbstractEntity<T> {
   @Property()
   readonly name: string;
 
@@ -12,12 +18,10 @@ abstract class AccessibleEntity<T extends AccessibleEntity<T>> extends AbstractE
   @OneToOne(() => AccessList)
   readonly members: AccessList;
 
-  constructor(name: string, admins: AccessList, members: AccessList) {
+  protected constructor({ name, admins, members }: AccessibleEntityCreateOptions) {
     super();
     this.name = name;
-    this.admins = admins;
-    this.members = members;
+    this.admins = new AccessList(admins);
+    this.members = new AccessList(members);
   }
 }
-
-export default AccessibleEntity;

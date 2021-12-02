@@ -1,16 +1,7 @@
 import express from 'express';
 import winston from 'winston';
 import { Server } from 'http';
-import {
-  AccessList,
-  Account,
-  AccountType,
-  InventoryAverage,
-  InventoryFIFO,
-  InventoryRecord,
-  Role,
-  User,
-} from '@white-rabbit/business-logic';
+import { Account, AccountType, Journal, Role, User } from '@white-rabbit/business-logic';
 import { MikroORM } from '@mikro-orm/core';
 import mikroConfig from './mikro-orm.config';
 
@@ -33,41 +24,115 @@ const main = async () => {
     transports: [new winston.transports.Console()],
   });
 
+  const cleanUpOrm = async () => {
+    const accounts = await orm.em.find(Account, {}, ['inventory.values']);
+    orm.em.remove(accounts);
+
+    const journals = await orm.em.find(Journal, {}, ['records']);
+    orm.em.remove(journals);
+
+    const users = await orm.em.find(User, {});
+    orm.em.remove(users);
+
+    await orm.em.flush();
+  };
+
   try {
+    app.get('/journals', async (_req, resp) => {
+      await cleanUpOrm();
+
+      const user = new User({
+        name: 'user 1',
+        role: Role.ADMIN,
+      });
+
+      const journal = new Journal({
+        name: 'Journal 2',
+        admins: {
+          type: 'ITEMS',
+          items: [
+            {
+              type: 'USER',
+              user,
+            },
+          ],
+        },
+        members: {
+          type: 'USERS',
+          users: [user],
+        },
+        records: [
+          {
+            user,
+            timestamp: new Date(Date.UTC(2022, 0, 1)),
+          },
+        ],
+      });
+      await orm.em.persistAndFlush([journal]);
+
+      const afterSaving = await orm.em.find(Journal, {}, ['admins.items', 'members.items', 'records']);
+
+      resp.json(afterSaving);
+    });
+
     app.get('/', async (_req, resp) => {
-      const accounts = await orm.em.find(Account, {}, ['inventory.values']);
-      orm.em.remove(accounts);
-      const users = await orm.em.find(User, {});
-      orm.em.remove(accounts);
-      orm.em.remove(users);
-      await orm.em.flush();
+      await cleanUpOrm();
 
-      const user = new User('user 1', Role.ADMIN);
+      const user = new User({
+        name: 'user 1',
+        role: Role.ADMIN,
+      });
 
-      const account = new Account(
-        'Stock Account for NVDA',
-        AccessList.fromUsers([user]),
-        new AccessList(),
-        AccountType.ASSET,
-        'NVDA',
-      );
-      account.inventory = new InventoryAverage(account, 10, 'USD', 500);
+      const account = new Account({
+        name: 'Stock Account for NVDA',
+        admins: {
+          type: 'USERS',
+          users: [user],
+        },
+        members: { type: 'ITEMS' },
+        type: AccountType.ASSET,
+        unit: 'NVDA',
+        inventory: {
+          type: 'AVERAGE',
+          amount: 10,
+          buyingUnit: 'USD',
+          buyingPrice: 500,
+        },
+      });
 
-      const account2 = new Account(
-        'Stock Account for AMD',
-        AccessList.fromUsers([user]),
-        new AccessList(),
-        AccountType.ASSET,
-        'AMD',
-      );
-      const inventory = new InventoryFIFO(account2);
-
-      inventory.values.add(
-        new InventoryRecord(new Date(Date.UTC(2022, 0, 1)), inventory, 20, 'USD', 100),
-        new InventoryRecord(new Date(Date.UTC(2022, 1, 1)), inventory, 20, 'USD', 150),
-        new InventoryRecord(new Date(Date.UTC(2022, 1, 1)), inventory, -52),
-      );
-      account2.inventory = inventory;
+      const account2 = new Account({
+        name: 'Stock Account for AMD',
+        admins: {
+          type: 'USERS',
+          users: [user],
+        },
+        members: { type: 'ITEMS' },
+        type: AccountType.ASSET,
+        unit: 'AMDA',
+        inventory: {
+          type: 'FIFO',
+          values: [
+            {
+              timestamp: new Date(Date.UTC(2022, 0, 1)),
+              amount: 20,
+              buyingUnit: 'USD',
+              buyingPrice: 100,
+            },
+            {
+              timestamp: new Date(Date.UTC(2022, 1, 1)),
+              amount: 10,
+              buyingUnit: 'USD',
+              buyingPrice: 150,
+            },
+            {
+              timestamp: new Date(Date.UTC(2022, 2, 1)),
+              amount: -20,
+              buyingUnit: 'USD',
+              buyingPrice: 100,
+            },
+          ],
+        },
+      });
 
       await orm.em.persistAndFlush([account, account2]);
 
@@ -81,9 +146,9 @@ const main = async () => {
     });
 
     const shutdown = (signal: string, value: number) => {
-      winston.info('Start gracefully shutdown!');
+      logger.info('Start gracefully shutdown!');
       server.close(() => {
-        winston.info(`Process receive signal ${signal} with value ${value}`);
+        logger.info(`Process receive signal ${signal} with value ${value}`);
         process.exit(128 + value);
       });
     };

@@ -2,8 +2,16 @@ import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { Inventory } from './inventory';
 
+export type InventoryRecordCreateOptions = {
+  timestamp: Date;
+  inventory: Inventory;
+  amount: number;
+  buyingUnit?: string;
+  buyingPrice?: number;
+};
+
 @Entity()
-class InventoryRecord {
+export class InventoryRecord {
   @PrimaryKey()
   readonly id: string = v4();
 
@@ -22,7 +30,7 @@ class InventoryRecord {
   @Property({ nullable: true })
   readonly buyingPrice?: number;
 
-  constructor(timestamp: Date, inventory: Inventory, amount: number, buyingUnit?: string, buyingPrice?: number) {
+  constructor({ timestamp, inventory, amount, buyingUnit, buyingPrice }: InventoryRecordCreateOptions) {
     this.timestamp = timestamp;
     this.inventory = inventory;
     this.amount = amount;
@@ -30,5 +38,3 @@ class InventoryRecord {
     this.buyingPrice = buyingPrice;
   }
 }
-
-export default InventoryRecord;

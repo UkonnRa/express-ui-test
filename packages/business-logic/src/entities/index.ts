@@ -1,11 +1,11 @@
 import { Account } from './account';
 import { Inventory, InventoryAverage, InventoryFIFO } from './inventory';
 import { User } from './user';
-import InventoryRecord from './invertory-record';
-import Journal from './journal';
-import FinRecord from './fin-record';
-import Group from './group';
-import AccessList from './access-list';
+import { InventoryRecord } from './invertory-record';
+import { Journal } from './journal';
+import { FinRecord } from './fin-record';
+import { Group } from './group';
+import { AccessList } from './access-list';
 import { AccessItem, AccessItemGroup, AccessItemUser } from './access-item';
 
 export { AccessTagType } from './access-item';

@@ -1,8 +1,9 @@
+/* eslint-disable */
 import React from 'react';
-import OriginalCodeBlock from '@theme-init/CodeBlock';
+import OriginalCodeBlock from '@theme-original/CodeBlock';
 import plantumlEncoder from "plantuml-encoder";
 
-export default function CodeBlock(props) {
+const CodeBlock = (props) => {
   if (props.className?.includes("language-plantuml") === true) {
     const encode = plantumlEncoder.encode(props.children);
     const url = `https://www.plantuml.com/plantuml/svg/${encode}`;
@@ -11,3 +12,5 @@ export default function CodeBlock(props) {
     return <OriginalCodeBlock {...props} />;
   }
 };
+
+export default CodeBlock;

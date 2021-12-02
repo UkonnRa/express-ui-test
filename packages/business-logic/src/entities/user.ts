@@ -7,6 +7,11 @@ export enum Role {
   OWNER,
 }
 
+export type UserCreateOptions = {
+  name: string;
+  role: Role;
+};
+
 @Entity()
 export class User extends AbstractEntity<User> {
   @Property()
@@ -15,7 +20,7 @@ export class User extends AbstractEntity<User> {
   @Enum()
   readonly role: Role;
 
-  constructor(name: string, role: Role) {
+  constructor({ name, role }: UserCreateOptions) {
     super();
     this.name = name;
     this.role = role;

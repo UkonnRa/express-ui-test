@@ -1,7 +1,7 @@
 import { Cascade, Entity, Enum, OneToOne, Property } from '@mikro-orm/core';
-import { Inventory } from './inventory';
-import AccessibleEntity from './accessible-entity';
-import AccessList from './access-list';
+import { Inventory, InventoryAverage, InventoryCreateOptions, InventoryFIFO } from './inventory';
+import { AccessibleEntity, AccessibleEntityCreateOptions } from './accessible-entity';
+import { DistributiveOmit } from '../utils';
 
 export enum AccountType {
   ASSET,
@@ -10,6 +10,12 @@ export enum AccountType {
   EXPENSE,
   EQUITY,
 }
+
+export type AccountCreateOptions = AccessibleEntityCreateOptions & {
+  type: AccountType;
+  unit: string;
+  inventory: DistributiveOmit<InventoryCreateOptions, 'account'>;
+};
 
 @Entity()
 export class Account extends AccessibleEntity<Account> {
@@ -24,11 +30,17 @@ export class Account extends AccessibleEntity<Account> {
     orphanRemoval: true,
     cascade: [Cascade.ALL],
   })
-  inventory: Inventory;
+  readonly inventory: Inventory;
 
-  constructor(name: string, admins: AccessList, members: AccessList, type: AccountType, unit: string) {
-    super(name, admins, members);
+  constructor({ name, admins, members, type, unit, inventory }: AccountCreateOptions) {
+    super({ name, admins, members });
     this.type = type;
     this.unit = unit;
+    const inventoryOptions = { ...inventory, account: this };
+    if (inventoryOptions.type === 'AVERAGE') {
+      this.inventory = new InventoryAverage(inventoryOptions);
+    } else {
+      this.inventory = new InventoryFIFO(inventoryOptions);
+    }
   }
 }

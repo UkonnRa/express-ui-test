@@ -70,7 +70,7 @@ app.on('window-all-closed', async () => {
 ipcMain.removeHandler('business-logic');
 ipcMain.handle('business-logic', async () => {
   logger.info('start parsing ipc event');
-  await orm?.em.persistAndFlush([new User(`name==!!!=test ${new Date()}`, Role.USER)]);
+  await orm?.em.persistAndFlush([new User({ name: `name==!!!=test ${new Date()}`, role: Role.USER })]);
   return JSON.stringify(await orm?.em.find(User, {}), null, 2);
 });
 

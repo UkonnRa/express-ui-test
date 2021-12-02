@@ -1,6 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import { Cascade, Collection, Entity, Enum, OneToMany, OneToOne, Property, QueryOrder } from '@mikro-orm/core';
-import InventoryRecord from './invertory-record';
+import { InventoryRecord, InventoryRecordCreateOptions } from './invertory-record';
 import { Account } from './account';
 import AbstractEntity from './abstract-entity';
 
@@ -36,7 +36,7 @@ export class InventoryAverage extends Inventory {
   @Property({ nullable: true })
   readonly buyingPrice?: number;
 
-  constructor(account: Account, amount: number, buyingUnit: string, buyingPrice: number) {
+  constructor({ account, amount, buyingUnit, buyingPrice }: Omit<InventoryAverageCreateOptions, 'type'>) {
     super(account);
     this.amount = amount;
     this.buyingUnit = buyingUnit;
@@ -55,8 +55,33 @@ export class InventoryFIFO extends Inventory {
   })
   readonly values: Collection<InventoryRecord>;
 
-  constructor(account: Account, values?: InventoryRecord[]) {
+  constructor({ account, values }: Omit<InventoryFIFOCreateOptions, 'type'>) {
     super(account);
-    this.values = new Collection<InventoryRecord>(this, values);
+    this.values = new Collection<InventoryRecord>(
+      this,
+      values?.map(
+        (v) =>
+          new InventoryRecord({
+            ...v,
+            inventory: this,
+          }),
+      ),
+    );
   }
 }
+
+type InventoryAverageCreateOptions = {
+  type: 'AVERAGE';
+  account: Account;
+  amount: number;
+  buyingUnit?: string;
+  buyingPrice?: number;
+};
+
+type InventoryFIFOCreateOptions = {
+  type: 'FIFO';
+  account: Account;
+  values?: Omit<InventoryRecordCreateOptions, 'inventory'>[];
+};
+
+export type InventoryCreateOptions = InventoryAverageCreateOptions | InventoryFIFOCreateOptions;
