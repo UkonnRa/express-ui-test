@@ -8,6 +8,7 @@ module.exports = {
   plugins: ['eslint-plugin', '@typescript-eslint', 'jest', 'import', 'eslint-comments', 'simple-import-sort'],
   extends: [
     'eslint:recommended',
+    'plugin:sonarjs/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'airbnb',

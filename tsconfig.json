@@ -25,7 +25,7 @@
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["webpack-env", "node"],
+    "types": ["webpack-env", "node", "jest"],
     "baseUrl": ".",
     "paths": {
       "@white-rabbit/business-logic": ["packages/business-logic/src"],
