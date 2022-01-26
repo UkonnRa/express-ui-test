@@ -25,7 +25,7 @@
   "dependencies": {
     "@mikro-orm/core": "^4.5.10",
     "@mikro-orm/sqlite": "^4.5.10",
-    "dotenv": "^14.3.0",
+    "dotenv": "^14.3.2",
     "electron-is-dev": "^2.0.0",
     "uuid": "^8.3.2",
     "winston": "^3.4.0"

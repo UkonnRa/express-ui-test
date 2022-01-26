@@ -18,6 +18,7 @@ const nodeCloseAsync = async (server: Server): Promise<void> =>
 
 const main = async () => {
   const app = express();
+  app.disable('x-powered-by');
   const orm = await MikroORM.init(mikroConfig);
   const logger = winston.createLogger({
     format: winston.format.json(),
