@@ -23,7 +23,7 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, 'index.html')}`);
+  mainWindow.loadURL(isDev ? 'http://localhost:4000/journals' : `file://${path.join(__dirname, 'index.html')}`);
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

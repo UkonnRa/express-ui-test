@@ -21,6 +21,7 @@ module.exports = {
     'import/no-import-module-exports': 0,
     'react/function-component-definition': [2, { namedComponents: 'arrow-function' }],
     'no-restricted-syntax': 0,
+    'max-classes-per-file': 0,
   },
   overrides: [
     {

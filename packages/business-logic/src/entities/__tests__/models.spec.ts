@@ -1,4 +1,5 @@
-import { Journal, Role, User } from '@white-rabbit/business-logic';
+import { Role, User } from '../user';
+import { Journal } from '../journal';
 
 test('Journals', () => {
   const user = new User({
@@ -7,6 +8,7 @@ test('Journals', () => {
   });
 
   const journal = new Journal({
+    description: '',
     name: 'Journal 2',
     admins: {
       type: 'ITEMS',

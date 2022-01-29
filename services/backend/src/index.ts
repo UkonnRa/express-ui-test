@@ -1,7 +1,7 @@
 import express from 'express';
 import winston from 'winston';
 import { Server } from 'http';
-import { Account, AccountType, Journal, Role, User } from '@white-rabbit/business-logic';
+import { Account, AccountType, Strategy, Journal, Role, User } from '@white-rabbit/business-logic';
 import { MikroORM } from '@mikro-orm/core';
 import mikroConfig from './mikro-orm.config';
 
@@ -68,78 +68,20 @@ const main = async () => {
             timestamp: new Date(Date.UTC(2022, 0, 1)),
           },
         ],
+        accounts: [
+          {
+            name: 'account 1',
+            type: AccountType.ASSET,
+            unit: 'USD',
+            strategy: Strategy.AVERAGE,
+          },
+        ],
       });
       await orm.em.persistAndFlush([journal]);
 
       const afterSaving = await orm.em.find(Journal, {}, ['admins.items', 'members.items', 'records']);
 
       resp.json(afterSaving);
-    });
-
-    app.get('/', async (_req, resp) => {
-      await cleanUpOrm();
-
-      const user = new User({
-        name: 'user 1',
-        role: Role.ADMIN,
-      });
-
-      const account = new Account({
-        name: 'Stock Account for NVDA',
-        admins: {
-          type: 'USERS',
-          users: [user],
-        },
-        members: { type: 'ITEMS' },
-        type: AccountType.ASSET,
-        unit: 'NVDA',
-        inventory: {
-          type: 'AVERAGE',
-          amount: 10,
-          buyingUnit: 'USD',
-          buyingPrice: 500,
-        },
-      });
-
-      const account2 = new Account({
-        name: 'Stock Account for AMD',
-        admins: {
-          type: 'USERS',
-          users: [user],
-        },
-        members: { type: 'ITEMS' },
-        type: AccountType.ASSET,
-        unit: 'AMDA',
-        inventory: {
-          type: 'FIFO',
-          values: [
-            {
-              timestamp: new Date(Date.UTC(2022, 0, 1)),
-              amount: 20,
-              buyingUnit: 'USD',
-              buyingPrice: 100,
-            },
-            {
-              timestamp: new Date(Date.UTC(2022, 1, 1)),
-              amount: 10,
-              buyingUnit: 'USD',
-              buyingPrice: 150,
-            },
-            {
-              timestamp: new Date(Date.UTC(2022, 2, 1)),
-              amount: -20,
-              buyingUnit: 'USD',
-              buyingPrice: 100,
-            },
-          ],
-        },
-      });
-
-      await orm.em.persistAndFlush([account, account2]);
-
-      const afterSavingAccount = await orm.em.find(Account, {}, ['admins.items', 'members.items', 'inventory.values']);
-
-      resp.json(afterSavingAccount);
     });
 
     const server = app.listen(process.env.PORT, () => {

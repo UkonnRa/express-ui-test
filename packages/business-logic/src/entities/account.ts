@@ -1,7 +1,11 @@
-import { Cascade, Entity, Enum, OneToOne, Property } from '@mikro-orm/core';
-import { Inventory, InventoryAverage, InventoryCreateOptions, InventoryFIFO } from './inventory';
-import { AccessibleEntity, AccessibleEntityCreateOptions } from './accessible-entity';
-import { DistributiveOmit } from '../utils';
+import { Cascade, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
+import AbstractEntity from './abstract-entity';
+import { Journal } from './journal';
+
+export enum Strategy {
+  FIFO,
+  AVERAGE,
+}
 
 export enum AccountType {
   ASSET,
@@ -11,36 +15,42 @@ export enum AccountType {
   EQUITY,
 }
 
-export type AccountCreateOptions = AccessibleEntityCreateOptions & {
+export type AccountCreateOptions = {
+  name: string;
+  journal: Journal;
   type: AccountType;
   unit: string;
-  inventory: DistributiveOmit<InventoryCreateOptions, 'account'>;
+  strategy: Strategy;
+  activated: boolean;
 };
 
 @Entity()
-export class Account extends AccessibleEntity<Account> {
+export class Account extends AbstractEntity<Account> {
+  @Property()
+  readonly name: string;
+
+  @ManyToOne(() => Journal, { cascade: [Cascade.ALL] })
+  readonly journal: Journal;
+
   @Enum()
   readonly type: AccountType;
 
   @Property()
   readonly unit: string;
 
-  @OneToOne(() => Inventory, (inventory) => inventory.account, {
-    owner: true,
-    orphanRemoval: true,
-    cascade: [Cascade.ALL],
-  })
-  readonly inventory: Inventory;
+  @Enum()
+  readonly strategy: Strategy;
 
-  constructor({ name, admins, members, type, unit, inventory }: AccountCreateOptions) {
-    super({ name, admins, members });
+  @Property()
+  readonly activated: boolean;
+
+  constructor({ name, journal, type, unit, strategy, activated }: AccountCreateOptions) {
+    super();
+    this.name = name;
+    this.journal = journal;
     this.type = type;
     this.unit = unit;
-    const inventoryOptions = { ...inventory, account: this };
-    if (inventoryOptions.type === 'AVERAGE') {
-      this.inventory = new InventoryAverage(inventoryOptions);
-    } else {
-      this.inventory = new InventoryFIFO(inventoryOptions);
-    }
+    this.strategy = strategy;
+    this.activated = activated;
   }
 }

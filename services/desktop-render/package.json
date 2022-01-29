@@ -7,7 +7,7 @@
   "homepage": "https://github.com/alices-wonderland/white-rabbit",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 4000",
     "build:desktop": "tsc && vite build",
     "serve": "vite preview"
   },
