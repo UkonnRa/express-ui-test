@@ -10,10 +10,10 @@
   },
   "scripts": {
     "orm:update": "mikro-orm schema:update -r",
-    "dev": "cross-env PORT=3000 webpack --config ../../configs/webpack.config.dev.ts",
+    "dev": "cross-env PORT=3200 webpack --config ../../configs/webpack.config.dev.ts",
     "build": "webpack --config ../../configs/webpack.config.prod.ts",
     "build:analyze": "rimraf dist/ && mkdir dist && npm run --silent build -- --profile --json > dist/stats.json && webpack-bundle-analyzer -p 8889 dist/stats.json",
-    "serve": "cross-env PORT=3000 node dist/index.js"
+    "serve": "cross-env PORT=3100 node dist/index.js"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -24,13 +24,15 @@
   "dependencies": {
     "@mikro-orm/core": "^4.5.10",
     "@mikro-orm/postgresql": "^4.5.10",
+    "@white-rabbit/business-logic": "*",
     "express": "^4.17.2",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
-    "winston": "^3.5.0"
+    "winston": "^3.5.1"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^4.5.10",
-    "@types/express": "^4.17.13",
-    "@white-rabbit/business-logic": "*"
+    "@types/express": "^4.17.13"
   }
 }

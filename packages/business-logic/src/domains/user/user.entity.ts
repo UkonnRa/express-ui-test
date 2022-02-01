@@ -1,5 +1,5 @@
 import { Entity, Enum, Property } from '@mikro-orm/core';
-import AbstractEntity from './abstract-entity';
+import AbstractEntity from '../../shared/abstract.entity';
 
 export enum Role {
   USER,

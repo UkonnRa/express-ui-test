@@ -1,9 +1,10 @@
+import 'reflect-metadata';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { MikroORM } from '@mikro-orm/core';
 import winston from 'winston';
-import { Role, User } from '@white-rabbit/business-logic';
+import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import mikroConfig from './mikro-orm.config';
 
 const logger = winston.createLogger({

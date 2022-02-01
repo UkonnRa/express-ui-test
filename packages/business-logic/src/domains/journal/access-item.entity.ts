@@ -1,8 +1,8 @@
 import { Entity, Enum, ManyToOne } from '@mikro-orm/core';
-import { User } from './user';
-import { Group } from './group';
-import { AccessList } from './access-list';
-import AbstractEntity from './abstract-entity';
+import { User } from '../user';
+import { Group } from '../group';
+import { AccessList } from './access-list.entity';
+import AbstractEntity from '../../shared/abstract.entity';
 
 export type AccessItemType = 'USER' | 'GROUP';
 

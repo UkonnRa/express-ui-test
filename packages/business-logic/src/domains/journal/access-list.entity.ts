@@ -1,9 +1,9 @@
 import { Cascade, Collection, Entity, OneToMany } from '@mikro-orm/core';
-import AbstractEntity from './abstract-entity';
-import { AccessItem, AccessItemCreateOptions, AccessItemGroup, AccessItemUser } from './access-item';
-import { Group } from './group';
-import { User } from './user';
-import { DistributiveOmit } from '../utils';
+import AbstractEntity from '../../shared/abstract.entity';
+import { AccessItem, AccessItemCreateOptions, AccessItemGroup, AccessItemUser } from './access-item.entity';
+import { Group } from '../group/group.entity';
+import { User } from '../user';
+import { DistributiveOmit } from '../../utils';
 
 export type AccessListCreateOptions =
   | { type: 'ITEMS'; items?: DistributiveOmit<AccessItemCreateOptions, 'parent'>[] }

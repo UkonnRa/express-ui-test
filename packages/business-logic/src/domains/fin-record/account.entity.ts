@@ -1,6 +1,6 @@
 import { Cascade, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
-import AbstractEntity from './abstract-entity';
-import { Journal } from './journal';
+import AbstractEntity from '../../shared/abstract.entity';
+import { Journal } from '../journal';
 
 export enum Strategy {
   FIFO,

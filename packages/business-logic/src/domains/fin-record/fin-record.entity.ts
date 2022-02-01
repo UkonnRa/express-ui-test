@@ -1,7 +1,7 @@
 import { Cascade, Entity, ManyToOne, Property } from '@mikro-orm/core';
-import { Journal } from '@white-rabbit/business-logic';
-import AbstractEntity from './abstract-entity';
-import { User } from './user';
+import AbstractEntity from '../../shared/abstract.entity';
+import { User } from '../user';
+import { Journal } from '../journal';
 
 export type FinRecordCreateOptions = {
   timestamp: Date;

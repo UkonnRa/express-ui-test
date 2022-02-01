@@ -1,32 +1,19 @@
 import { MikroORM } from '@mikro-orm/core';
-import { Group, Journal, User } from '../entities';
-import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from '../entities/access-item';
-import { AccessListCreateOptions } from '../entities/access-list';
+import { injectable } from 'tsyringe';
+import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from './access-item.entity';
+import { AccessListCreateOptions } from './access-list.entity';
+import { User } from '../user';
+import { Group } from '../group';
+import { Journal } from './journal.entity';
+import { AccessItemValue, JournalCommandCreate } from './journal.command';
+import AuthUser from '../../shared/auth-user';
+import { NoExpectedScopeError } from '../../shared/errors';
 
-export type JournalCommandType = 'CreateJournal' | 'UpdateJournal' | 'DeleteJournal';
-
-type AccessItemCreateValue = { type: 'USER'; userId: string } | { type: 'GROUP'; groupId: string };
-
-export abstract class JournalCommand {
-  readonly type: JournalCommandType;
-}
-
-export class JournalCommandCreate extends JournalCommand {
-  override readonly type = 'CreateJournal';
-
-  readonly name: string;
-
-  readonly description: string;
-
-  readonly admins: AccessItemCreateValue[];
-
-  readonly members: AccessItemCreateValue[];
-}
-
-export class JournalService {
+@injectable()
+export default class JournalService {
   constructor(private readonly orm: MikroORM) {}
 
-  private async getAccessList(values: AccessItemCreateValue[]): Promise<AccessListCreateOptions> {
+  private async getAccessList(values: AccessItemValue[]): Promise<AccessListCreateOptions> {
     const userIds = [];
     const groupIds = [];
     for (const v of values) {
@@ -43,7 +30,14 @@ export class JournalService {
     return { type: 'ITEMS', items: [...userValues, ...groupValues] };
   }
 
-  async createJournal({ name, description, admins, members }: JournalCommandCreate): Promise<string> {
+  async createJournal(
+    { user, scopes }: AuthUser,
+    { name, description, admins, members }: JournalCommandCreate,
+  ): Promise<string> {
+    if (!scopes.includes('journals:write')) {
+      throw new NoExpectedScopeError(user, 'journals:write');
+    }
+
     const adminList = await this.getAccessList(admins);
     const memberList = await this.getAccessList(members);
     const result = new Journal({ name, description, admins: adminList, members: memberList });

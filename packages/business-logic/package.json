@@ -12,6 +12,7 @@
   },
   "peerDependencies": {
     "@mikro-orm/core": "^4.5.9",
+    "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },

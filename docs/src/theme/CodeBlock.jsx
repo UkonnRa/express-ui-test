@@ -3,7 +3,7 @@ import React from 'react';
 import OriginalCodeBlock from '@theme-original/CodeBlock';
 import plantumlEncoder from "plantuml-encoder";
 
-const CodeBlock = (props) => {
+export const CodeBlock = (props) => {
   if (props.className?.includes("language-plantuml") === true) {
     const encode = plantumlEncoder.encode(props.children);
     const url = `https://www.plantuml.com/plantuml/svg/${encode}`;
@@ -12,5 +12,3 @@ const CodeBlock = (props) => {
     return <OriginalCodeBlock {...props} />;
   }
 };
-
-export default CodeBlock;

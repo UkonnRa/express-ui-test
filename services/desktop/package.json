@@ -25,15 +25,17 @@
   "dependencies": {
     "@mikro-orm/core": "^4.5.10",
     "@mikro-orm/sqlite": "^4.5.10",
-    "dotenv": "^15.0.0",
+    "@white-rabbit/business-logic": "*",
+    "dotenv": "^16.0.0",
     "electron-is-dev": "^2.0.0",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
-    "winston": "^3.5.0"
+    "winston": "^3.5.1"
   },
   "devDependencies": {
     "@mikro-orm/cli": "^4.5.10",
-    "@white-rabbit/business-logic": "*",
-    "electron": "16.0.8",
+    "electron": "17.0.0",
     "electron-builder": "^22.14.5"
   }
 }
