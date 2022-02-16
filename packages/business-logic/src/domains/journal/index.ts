@@ -6,8 +6,8 @@ export {
   AccessItemCreateOptions,
   AccessItemGroupCreateOptions,
   AccessItemUserCreateOptions,
-} from './access-item.entity';
-export { AccessListCreateOptions, AccessList } from './access-list.entity';
-export { JournalCreateOptions, Journal } from './journal.entity';
+} from './access-item';
+export { AccessListCreateOptions, AccessList } from './access-list';
+export { JournalCreateOptions, Journal } from './journal';
 
-export { default as JournalService } from './journal.service';
+export { default as JournalService } from './journal-service';

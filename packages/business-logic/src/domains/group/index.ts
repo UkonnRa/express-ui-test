@@ -1,1 +1,1 @@
-export { GroupCreateOptions, Group } from './group.entity';
+export { GroupCreateOptions, Group } from './group';

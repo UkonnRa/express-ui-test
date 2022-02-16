@@ -1,7 +1,7 @@
 import { Cascade, Collection, Entity, OneToMany, OneToOne, Property, QueryOrder } from '@mikro-orm/core';
 import { FinRecord, FinRecordCreateOptions, Account, AccountCreateOptions } from '../fin-record';
-import AbstractEntity from '../../shared/abstract.entity';
-import { AccessList, AccessListCreateOptions } from './access-list.entity';
+import AbstractEntity from '../../shared/abstract-entity';
+import { AccessList, AccessListCreateOptions } from './access-list';
 
 export type JournalCreateOptions = {
   name: string;

@@ -1,5 +1,5 @@
 import { Collection, Entity, ManyToMany, Property } from '@mikro-orm/core';
-import AbstractEntity from '../../shared/abstract.entity';
+import AbstractEntity from '../../shared/abstract-entity';
 import { User } from '../user';
 
 export type GroupCreateOptions = {

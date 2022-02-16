@@ -1,11 +1,11 @@
 import { MikroORM } from '@mikro-orm/core';
 import { injectable } from 'tsyringe';
-import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from './access-item.entity';
-import { AccessListCreateOptions } from './access-list.entity';
+import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from './access-item';
+import { AccessListCreateOptions } from './access-list';
 import { User } from '../user';
 import { Group } from '../group';
-import { Journal } from './journal.entity';
-import { AccessItemValue, JournalCommandCreate } from './journal.command';
+import { Journal } from './journal';
+import { AccessItemValue, JournalCommandCreate } from './journal-command';
 import AuthUser from '../../shared/auth-user';
 import { NoExpectedScopeError } from '../../shared/errors';
 
