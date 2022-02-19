@@ -1,4 +1,3 @@
-import { Entity, Enum, Property } from '@mikro-orm/core';
 import AbstractEntity from '../../shared/abstract-entity';
 
 export enum Role {
@@ -12,12 +11,9 @@ export type UserCreateOptions = {
   role: Role;
 };
 
-@Entity()
 export class User extends AbstractEntity<User> {
-  @Property()
-  readonly name: string;
+  name: string;
 
-  @Enum()
   readonly role: Role;
 
   constructor({ name, role }: UserCreateOptions) {

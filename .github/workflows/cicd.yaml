@@ -17,8 +17,8 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: test1234
+          POSTGRES_USER: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
           POSTGRES_DB: white-rabbit
         options: >-
           --health-cmd pg_isready
@@ -33,8 +33,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+      - name: Prepare Dependencies
+        run: npm install -g npm && npm cache clean --force && npm ci
       - name: Lint and test
-        run: npm ci && npm run lint && npm run test
+        run: npm run lint && npm run test
         env:
           WHITERABBIT_DEBUG: true
           WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}

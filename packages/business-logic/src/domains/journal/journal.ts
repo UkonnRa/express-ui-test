@@ -1,7 +1,8 @@
-import { Cascade, Collection, Entity, OneToMany, OneToOne, Property, QueryOrder } from '@mikro-orm/core';
 import { FinRecord, FinRecordCreateOptions, Account, AccountCreateOptions } from '../fin-record';
 import AbstractEntity from '../../shared/abstract-entity';
 import { AccessList, AccessListCreateOptions } from './access-list';
+import { FieldValidationLengthError } from '../../shared/errors';
+import { Role, User } from '../user';
 
 export type JournalCreateOptions = {
   name: string;
@@ -12,33 +13,22 @@ export type JournalCreateOptions = {
   accounts?: Omit<AccountCreateOptions, 'journal'>[];
 };
 
-@Entity()
+const MAX_LENGTH_NAME = 20;
+
+const MAX_LENGTH_DESCRIPTION = 400;
+
 export class Journal extends AbstractEntity<Journal> {
-  @Property()
-  readonly name: string;
+  #name: string;
 
-  @Property()
-  readonly description: string;
+  #description: string;
 
-  @OneToOne(() => AccessList)
-  readonly admins: AccessList;
+  admins: AccessList;
 
-  @OneToOne(() => AccessList)
-  readonly members: AccessList;
+  members: AccessList;
 
-  @OneToMany(() => FinRecord, (record) => record.journal, {
-    cascade: [Cascade.ALL],
-    orphanRemoval: true,
-    orderBy: { timestamp: QueryOrder.ASC },
-  })
-  readonly records: Collection<FinRecord>;
+  readonly records: FinRecord[];
 
-  @OneToMany(() => Account, (account) => account.journal, {
-    cascade: [Cascade.ALL],
-    orphanRemoval: true,
-    orderBy: { createdAt: QueryOrder.ASC },
-  })
-  readonly accounts: Collection<Account>;
+  readonly accounts: Account[];
 
   constructor({ name, description, admins, members, records, accounts }: JournalCreateOptions) {
     super();
@@ -46,13 +36,39 @@ export class Journal extends AbstractEntity<Journal> {
     this.description = description;
     this.admins = new AccessList(admins);
     this.members = new AccessList(members);
-    this.records = new Collection<FinRecord>(
-      this,
-      records?.map((record) => new FinRecord({ ...record, journal: this })),
-    );
-    this.accounts = new Collection<Account>(
-      this,
-      accounts?.map((account) => new Account({ ...account, journal: this })),
-    );
+    this.records = records?.map((record) => new FinRecord({ ...record, journal: this })) ?? [];
+    this.accounts = accounts?.map((account) => new Account({ ...account, journal: this })) ?? [];
+  }
+
+  get name(): string {
+    return this.#name;
+  }
+
+  set name(value: string) {
+    const result = value.trim();
+    if (result.length === 0 || result.length > MAX_LENGTH_NAME) {
+      throw new FieldValidationLengthError('Journal', 'name', 0, MAX_LENGTH_NAME);
+    }
+    this.#name = result;
+  }
+
+  get description(): string {
+    return this.#description;
+  }
+
+  set description(value: string) {
+    const result = value.trim();
+    if (result.length > MAX_LENGTH_DESCRIPTION) {
+      throw new FieldValidationLengthError('Journal', 'description', undefined, MAX_LENGTH_DESCRIPTION);
+    }
+    this.#description = value;
+  }
+
+  isReadable(user: User): boolean {
+    return this.isWritable(user) || this.members.contains(user);
+  }
+
+  isWritable(user: User): boolean {
+    return user.role !== Role.USER || this.admins.contains(user);
   }
 }

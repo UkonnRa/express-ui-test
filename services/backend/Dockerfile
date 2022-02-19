@@ -2,7 +2,7 @@ FROM node:16-alpine as builder
 
 COPY package.json package.json
 
-RUN npm uninstall @white-rabbit/business-logic
+RUN npm uninstall @white-rabbit/business-logic @white-rabbit/repository-memory
 
 RUN npm install --production --no-optional
 

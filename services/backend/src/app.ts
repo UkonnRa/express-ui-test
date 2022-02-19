@@ -1,9 +1,8 @@
 import { inject, injectable } from 'tsyringe';
 import { Logger } from 'winston';
-import { MikroORM } from '@mikro-orm/core';
 import express, { Express } from 'express';
 import { Server } from 'http';
-import { Journal, JournalService } from '@white-rabbit/business-logic/src/domains/journal';
+import { JournalRepository, JournalService } from '@white-rabbit/business-logic/src/domains/journal';
 import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 
 const nodeCloseAsync = (server: Server): Promise<void> =>
@@ -23,7 +22,7 @@ export default class App {
 
   constructor(
     @inject('Logger') private readonly logger: Logger,
-    private readonly orm: MikroORM,
+    @inject('JournalRepository') private readonly journalRepository: JournalRepository,
     private readonly journalService: JournalService,
   ) {
     this.app = express();
@@ -48,7 +47,7 @@ export default class App {
 
       this.logger.info('Journal id: ', id);
 
-      const result = await this.orm.em.findOne(Journal, id);
+      const result = await this.journalRepository.findById(id);
 
       this.logger.info('Journal: ', result);
 
@@ -77,7 +76,7 @@ export default class App {
         try {
           await nodeCloseAsync(server);
           this.logger.info('Express server closed gracefully');
-          await this.orm.close();
+          await this.journalRepository.close();
           this.logger.info('ORM closed gracefully');
         } catch (err) {
           this.logger.error('Error when graceful shutdown: ', err);

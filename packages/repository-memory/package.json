@@ -1,7 +1,7 @@
 {
-  "name": "@white-rabbit/business-logic",
+  "name": "@white-rabbit/repository-memory",
   "version": "0.0.1",
-  "description": "Wonderland WhiteRabbit business logic",
+  "description": "Wonderland WhiteRabbit Repository Implementation: In Memory",
   "author": "Ukonn Ra<ukonnra@outlook.com>",
   "license": "MIT",
   "private": true,
@@ -9,6 +9,7 @@
     "node": ">= 16"
   },
   "peerDependencies": {
+    "@white-rabbit/business-logic": "*",
     "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
     "winston": "^3.6.0"

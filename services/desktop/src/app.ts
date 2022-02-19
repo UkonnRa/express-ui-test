@@ -1,7 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import { Logger } from 'winston';
-import { Journal, JournalService } from '@white-rabbit/business-logic/src/domains/journal';
-import { MikroORM } from '@mikro-orm/core';
+import { JournalRepository, JournalService } from '@white-rabbit/business-logic/src/domains/journal';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
@@ -11,14 +10,12 @@ import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 export default class App {
   constructor(
     @inject('Logger') private readonly logger: Logger,
-    private readonly orm: MikroORM,
+    private readonly journalRepository: JournalRepository,
     private readonly journalService: JournalService,
   ) {}
 
   async start() {
     await app.whenReady();
-    const generator = this.orm.getSchemaGenerator();
-    await generator.updateSchema();
 
     if (BrowserWindow.getAllWindows().length === 0) {
       this.logger.info('when ready: create window');
@@ -66,18 +63,18 @@ export default class App {
 
       this.logger.info('Journal id: ', id);
 
-      const result = await this.orm.em.findOne(Journal, id);
+      const result = await this.journalRepository.findById(id);
 
       this.logger.info('Journal: ', result);
 
-      return JSON.stringify(result?.toPOJO(), null, 2);
+      return JSON.stringify(result, null, 2);
     });
 
     if (module.hot) {
       module.hot.accept();
       module.hot.dispose(async () => {
         try {
-          await this.orm.close(true);
+          await this.journalRepository.close();
           this.logger.info('ORM closed gracefully');
         } catch (err) {
           this.logger.error('Error when graceful shutdown: ', err);

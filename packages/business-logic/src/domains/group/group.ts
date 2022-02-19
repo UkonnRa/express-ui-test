@@ -1,4 +1,3 @@
-import { Collection, Entity, ManyToMany, Property } from '@mikro-orm/core';
 import AbstractEntity from '../../shared/abstract-entity';
 import { User } from '../user';
 
@@ -9,29 +8,24 @@ export type GroupCreateOptions = {
   members: User[];
 };
 
-@Entity()
 export class Group extends AbstractEntity<Group> {
-  @Property()
   readonly name: string;
 
-  @Property()
   readonly description: string;
 
-  @ManyToMany(() => User)
-  readonly admins: Collection<User>;
+  readonly admins: User[];
 
-  @ManyToMany(() => User)
-  readonly members: Collection<User>;
+  readonly members: User[];
 
   constructor({ name, description, admins, members }: GroupCreateOptions) {
     super();
     this.name = name;
     this.description = description;
-    this.admins = new Collection<User>(this, admins);
-    this.members = new Collection<User>(this, members);
+    this.admins = admins;
+    this.members = members;
   }
 
   public contains(user: User): boolean {
-    return this.admins.contains(user) || this.members.contains(user);
+    return this.admins.some((u) => u.id === user.id) || this.members.some((u) => u.id === user.id);
   }
 }

@@ -13,8 +13,7 @@
     "dev:electron": "electron .",
     "build:webpack": "webpack --config ../../configs/webpack.config.desktop.prod.ts",
     "build:webpack:analyze": "rimraf dist/ && mkdir dist && npm run --silent build:webpack -- --profile --json > dist/stats.json && webpack-bundle-analyzer -p 8888 dist/stats.json",
-    "build:desktop": "npm run build:webpack && electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "build:desktop": "npm run build:webpack && electron-builder"
   },
   "mikro-orm": {
     "useTsNode": true,
@@ -23,8 +22,8 @@
     ]
   },
   "dependencies": {
-    "@mikro-orm/core": "^5.0.1",
-    "@mikro-orm/sqlite": "^5.0.1",
+    "@mikro-orm/core": "^5.0.2",
+    "@mikro-orm/sqlite": "^5.0.2",
     "@white-rabbit/business-logic": "*",
     "dotenv": "^16.0.0",
     "electron-is-dev": "^2.0.0",
@@ -34,7 +33,7 @@
     "winston": "^3.6.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.0.1",
+    "@mikro-orm/cli": "^5.0.2",
     "electron": "17.0.1",
     "electron-builder": "^22.14.13"
   }

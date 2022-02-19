@@ -4,8 +4,6 @@
   "description": "Wonderland WhiteRabbit react components",
   "author": "Ukonn Ra<ukonnra@outlook.com>",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "private": true,
   "peerDependencies": {
     "react": "^17.0.2",

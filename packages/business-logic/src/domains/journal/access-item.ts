@@ -1,4 +1,3 @@
-import { Entity, Enum, ManyToOne } from '@mikro-orm/core';
 import { User } from '../user';
 import { Group } from '../group';
 import { AccessList } from './access-list';
@@ -6,12 +5,9 @@ import AbstractEntity from '../../shared/abstract-entity';
 
 export type AccessItemType = 'USER' | 'GROUP';
 
-@Entity({ abstract: true, discriminatorColumn: 'type' })
 export abstract class AccessItem extends AbstractEntity<AccessItem> {
-  @Enum()
   readonly type: AccessItemType;
 
-  @ManyToOne(() => AccessList)
   readonly parent: AccessList;
 
   protected constructor(parent: AccessList) {
@@ -22,11 +18,9 @@ export abstract class AccessItem extends AbstractEntity<AccessItem> {
   abstract contains(user: User): boolean;
 }
 
-@Entity({ discriminatorValue: 'USER' })
 export class AccessItemUser extends AccessItem {
   override readonly type = 'USER';
 
-  @ManyToOne(() => User)
   readonly user: User;
 
   constructor({ parent, user }: Omit<AccessItemUserCreateOptions, 'type'>) {
@@ -39,11 +33,9 @@ export class AccessItemUser extends AccessItem {
   }
 }
 
-@Entity({ discriminatorValue: 'GROUP' })
 export class AccessItemGroup extends AccessItem {
   override readonly type = 'GROUP';
 
-  @ManyToOne(() => Group)
   readonly group: Group;
 
   constructor({ parent, group }: Omit<AccessItemGroupCreateOptions, 'type'>) {

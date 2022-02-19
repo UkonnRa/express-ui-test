@@ -1,4 +1,3 @@
-import { Cascade, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
 import AbstractEntity from '../../shared/abstract-entity';
 import { Journal } from '../journal';
 
@@ -24,24 +23,17 @@ export type AccountCreateOptions = {
   activated: boolean;
 };
 
-@Entity()
 export class Account extends AbstractEntity<Account> {
-  @Property()
   readonly name: string;
 
-  @ManyToOne(() => Journal, { cascade: [Cascade.ALL] })
   readonly journal: Journal;
 
-  @Enum()
   readonly type: AccountType;
 
-  @Property()
   readonly unit: string;
 
-  @Enum()
   readonly strategy: Strategy;
 
-  @Property()
   readonly activated: boolean;
 
   constructor({ name, journal, type, unit, strategy, activated }: AccountCreateOptions) {

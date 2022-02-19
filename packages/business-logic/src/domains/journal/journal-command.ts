@@ -12,4 +12,24 @@ export type JournalCommandCreate = {
   readonly members: AccessItemValue[];
 };
 
-export type JournalCommand = JournalCommandCreate;
+export type JournalCommandUpdate = {
+  readonly type: 'UpdateJournal';
+
+  readonly id: string;
+
+  readonly name?: string;
+
+  readonly description?: string;
+
+  readonly admins?: AccessItemValue[];
+
+  readonly members?: AccessItemValue[];
+};
+
+export type JournalCommandDelete = {
+  readonly type: 'DeleteJournal';
+
+  readonly id: string;
+};
+
+export type JournalCommand = JournalCommandCreate | JournalCommandUpdate | JournalCommandDelete;

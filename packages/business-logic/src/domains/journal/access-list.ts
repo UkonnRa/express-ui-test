@@ -1,4 +1,3 @@
-import { Cascade, Collection, Entity, OneToMany } from '@mikro-orm/core';
 import AbstractEntity from '../../shared/abstract-entity';
 import { AccessItem, AccessItemCreateOptions, AccessItemGroup, AccessItemUser } from './access-item';
 import { Group } from '../group';
@@ -10,13 +9,8 @@ export type AccessListCreateOptions =
   | { type: 'USERS'; users: User[] }
   | { type: 'GROUPS'; groups: Group[] };
 
-@Entity()
 export class AccessList extends AbstractEntity<AccessList> {
-  @OneToMany(() => AccessItem, (record) => record.parent, {
-    cascade: [Cascade.ALL],
-    orphanRemoval: true,
-  })
-  readonly items: Collection<AccessItem>;
+  readonly items: AccessItem[];
 
   constructor(options: AccessListCreateOptions) {
     super();
@@ -34,6 +28,10 @@ export class AccessList extends AbstractEntity<AccessList> {
     } else {
       items = options.groups.map((group) => new AccessItemGroup({ parent: this, group }));
     }
-    this.items = new Collection<AccessItem>(this, items);
+    this.items = items;
+  }
+
+  contains(user: User): boolean {
+    return this.items.some((i) => i.contains(user));
   }
 }
