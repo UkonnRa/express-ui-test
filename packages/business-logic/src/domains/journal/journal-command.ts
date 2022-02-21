@@ -1,4 +1,4 @@
-export type AccessItemValue = { type: 'USER'; userId: string } | { type: 'GROUP'; groupId: string };
+import { AccessItemValue } from './index';
 
 export type JournalCommandCreate = {
   readonly type: 'CreateJournal';

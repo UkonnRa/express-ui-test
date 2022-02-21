@@ -8,17 +8,23 @@ import {
 import { Group, GroupRepository } from '@white-rabbit/business-logic/src/domains/group';
 import { User, UserRepository } from '@white-rabbit/business-logic/src/domains/user';
 import { container } from 'tsyringe';
+import { JournalProjection } from '@white-rabbit/business-logic/src/domains/journal/journal-projection';
+import { JournalQuery } from '@white-rabbit/business-logic/src/domains/journal/journal-query';
 import MemoryRepository from './memory-repository';
 
-export class MemoryAccountRepository extends MemoryRepository<Account> implements AccountRepository {}
+export class MemoryAccountRepository extends MemoryRepository<Account, never, never> implements AccountRepository {}
 
-export class MemoryFinRecordRepository extends MemoryRepository<FinRecord> implements FinRecordRepository {}
+export class MemoryFinRecordRepository
+  extends MemoryRepository<FinRecord, never, never>
+  implements FinRecordRepository {}
 
-export class MemoryGroupRepository extends MemoryRepository<Group> implements GroupRepository {}
+export class MemoryGroupRepository extends MemoryRepository<Group, never, never> implements GroupRepository {}
 
-export class MemoryJournalRepository extends MemoryRepository<Journal> implements JournalRepository {}
+export class MemoryJournalRepository
+  extends MemoryRepository<Journal, JournalProjection, JournalQuery>
+  implements JournalRepository {}
 
-export class MemoryUserRepository extends MemoryRepository<User> implements UserRepository {}
+export class MemoryUserRepository extends MemoryRepository<User, never, never> implements UserRepository {}
 
 export const initMemoryRepositories = async () => {
   container.register('AccountRepository', { useValue: new MemoryAccountRepository() });

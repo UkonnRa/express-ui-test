@@ -11,7 +11,7 @@ export type UserCreateOptions = {
   role: Role;
 };
 
-export class User extends AbstractEntity<User> {
+export class User extends AbstractEntity<User, undefined> {
   name: string;
 
   readonly role: Role;
@@ -20,5 +20,19 @@ export class User extends AbstractEntity<User> {
     super();
     this.name = name;
     this.role = role;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isReadable(): boolean {
+    return true;
+  }
+
+  isWritable(user: User): boolean {
+    return user.id === this.id;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  toProjection(): never {
+    throw new Error('Method not implemented.');
   }
 }

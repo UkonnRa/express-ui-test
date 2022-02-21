@@ -10,7 +10,7 @@ import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 export default class App {
   constructor(
     @inject('Logger') private readonly logger: Logger,
-    private readonly journalRepository: JournalRepository,
+    @inject('JournalRepository') private readonly journalRepository: JournalRepository,
     private readonly journalService: JournalService,
   ) {}
 

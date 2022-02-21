@@ -23,7 +23,7 @@ export type AccountCreateOptions = {
   activated: boolean;
 };
 
-export class Account extends AbstractEntity<Account> {
+export class Account extends AbstractEntity<Account, unknown> {
   readonly name: string;
 
   readonly journal: Journal;
@@ -44,5 +44,21 @@ export class Account extends AbstractEntity<Account> {
     this.unit = unit;
     this.strategy = strategy;
     this.activated = activated;
+  }
+
+  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  isReadable(): boolean {
+    // eslint-disable-next-line sonarjs/no-duplicate-string
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  isWritable(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  toProjection(): never {
+    throw new Error('Method not implemented.');
   }
 }

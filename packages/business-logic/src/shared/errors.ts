@@ -25,7 +25,7 @@ export class NoAuthError extends AbstractError {
   readonly operatorId: string;
 
   constructor(user: User, readonly type: string, readonly id: string) {
-    super(`User[${user.id}] has no auth on Type[${type}] with Id[${id}]`);
+    super(`User[${user.id}] has no authorization for operations on Type[${type}] with Id[${id}]`);
     this.operatorId = user.id;
   }
 }
@@ -47,5 +47,35 @@ export class FieldValidationLengthError extends AbstractError {
 
   constructor(readonly type: string, readonly field: string, min?: number, max?: number) {
     super(`Field[${field}] in Type[${type}] should be between ${min} and ${max}`);
+  }
+}
+
+export class InvalidCursorError extends AbstractError {
+  override readonly name = 'InvalidCursor';
+
+  override readonly code = 401;
+
+  constructor(readonly cursor: string) {
+    super(`Cursor[${cursor}] is invalid`);
+  }
+}
+
+export class InvalidQueryError extends AbstractError {
+  override readonly name = 'InvalidQuery';
+
+  override readonly code = 401;
+
+  constructor(readonly cursor?: string) {
+    super(`Query[${cursor}] is invalid`);
+  }
+}
+
+export class InvalidSortFieldError extends AbstractError {
+  override readonly name = 'InvalidSortField';
+
+  override readonly code = 401;
+
+  constructor(readonly type: string, readonly field: string) {
+    super(`Field[${field}] not sortable in Type[${type}]`);
   }
 }

@@ -8,7 +8,7 @@ export type GroupCreateOptions = {
   members: User[];
 };
 
-export class Group extends AbstractEntity<Group> {
+export class Group extends AbstractEntity<Group, never> {
   readonly name: string;
 
   readonly description: string;
@@ -27,5 +27,20 @@ export class Group extends AbstractEntity<Group> {
 
   public contains(user: User): boolean {
     return this.admins.some((u) => u.id === user.id) || this.members.some((u) => u.id === user.id);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isReadable(): boolean {
+    return false;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isWritable(): boolean {
+    return false;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  toProjection(): never {
+    throw new Error('Method not implemented.');
   }
 }

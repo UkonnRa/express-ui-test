@@ -3,13 +3,14 @@ import { AccessItem, AccessItemCreateOptions, AccessItemGroup, AccessItemUser } 
 import { Group } from '../group';
 import { User } from '../user';
 import { DistributiveOmit } from '../../utils';
+import { AccessListProjection } from './journal-projection';
 
 export type AccessListCreateOptions =
   | { type: 'ITEMS'; items?: DistributiveOmit<AccessItemCreateOptions, 'parent'>[] }
   | { type: 'USERS'; users: User[] }
   | { type: 'GROUPS'; groups: Group[] };
 
-export class AccessList extends AbstractEntity<AccessList> {
+export class AccessList extends AbstractEntity<AccessList, AccessListProjection> {
   readonly items: AccessItem[];
 
   constructor(options: AccessListCreateOptions) {
@@ -33,5 +34,19 @@ export class AccessList extends AbstractEntity<AccessList> {
 
   contains(user: User): boolean {
     return this.items.some((i) => i.contains(user));
+  }
+
+  toProjection(): AccessListProjection {
+    return { items: this.items.map((i) => i.toProjection()) };
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isReadable(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  isWritable(): boolean {
+    throw new Error('Method not implemented.');
   }
 }

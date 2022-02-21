@@ -4,20 +4,28 @@ import { AccessList, AccessListCreateOptions } from './access-list';
 import { UserRepository } from '../user';
 import { GroupRepository } from '../group';
 import { Journal } from './journal';
-import { AccessItemValue, JournalCommandCreate, JournalCommandDelete, JournalCommandUpdate } from './journal-command';
+import { JournalCommandCreate, JournalCommandDelete, JournalCommandUpdate } from './journal-command';
 import AuthUser from '../../shared/auth-user';
-import { NoAuthError, NoExpectedScopeError, NotFoundError } from '../../shared/errors';
-import { JournalRepository } from './index';
+import { NoExpectedScopeError } from '../../shared/errors';
+import { AccessItemValue, JournalRepository } from './index';
+import { JournalProjection } from './journal-projection';
+import AbstractService from '../../shared/abstract-service';
+import { JournalQuery } from './journal-query';
 
 @injectable()
-export default class JournalService {
-  private readonly writeScope = 'journals:write';
-
+export default class JournalService extends AbstractService<
+  Journal,
+  JournalRepository,
+  JournalQuery,
+  JournalProjection
+> {
   constructor(
-    @inject('JournalRepository') private readonly repository: JournalRepository,
+    @inject('JournalRepository') protected override readonly repository: JournalRepository,
     @inject('UserRepository') private readonly userRepository: UserRepository,
     @inject('GroupRepository') private readonly groupRepository: GroupRepository,
-  ) {}
+  ) {
+    super('Journal', 'journals:read', 'journals:write', repository);
+  }
 
   private async getAccessList(values: AccessItemValue[]): Promise<AccessListCreateOptions> {
     const userIds = [];
@@ -51,28 +59,11 @@ export default class JournalService {
     return result.id;
   }
 
-  private async getEntityWithAuth({ user, scopes }: AuthUser, id: string): Promise<Journal> {
-    if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user, this.writeScope);
-    }
-
-    const entity = await this.repository.findById(id);
-    if (!entity) {
-      throw new NotFoundError('Journal', id);
-    }
-
-    if (!entity.isWritable(user)) {
-      throw new NoAuthError(user, 'Journal', id);
-    }
-
-    return entity;
-  }
-
   async updateJournal(
     authUser: AuthUser,
     { id, name, description, admins, members }: JournalCommandUpdate,
   ): Promise<void> {
-    const entity = await this.getEntityWithAuth(authUser, id);
+    const entity = await this.getWriteableEntity(authUser, id);
 
     if (!name && !description && !admins && !members) {
       return;
@@ -100,7 +91,7 @@ export default class JournalService {
   }
 
   async deleteJournal(authUser: AuthUser, { id }: JournalCommandDelete): Promise<void> {
-    const entity = await this.getEntityWithAuth(authUser, id);
+    const entity = await this.getWriteableEntity(authUser, id);
 
     entity.deleted = true;
 

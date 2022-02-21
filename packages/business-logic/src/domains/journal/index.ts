@@ -1,5 +1,6 @@
 import AbstractRepository from '../../shared/abstract-repository';
 import { Journal } from './journal';
+import { JournalQuery } from './journal-query';
 
 export {
   AccessItem,
@@ -15,4 +16,6 @@ export { JournalCreateOptions, Journal } from './journal';
 
 export { default as JournalService } from './journal-service';
 
-export type JournalRepository = AbstractRepository<Journal>;
+export type AccessItemValue = { type: 'USER'; userId: string } | { type: 'GROUP'; groupId: string };
+
+export type JournalRepository = AbstractRepository<Journal, JournalQuery>;
