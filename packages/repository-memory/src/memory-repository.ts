@@ -1,10 +1,39 @@
-import AbstractRepository, { Pagination, Sort } from '@white-rabbit/business-logic/src/shared/abstract-repository';
+import AbstractRepository, {
+  AdditionalFilter,
+  PageResult,
+  Pagination,
+  Sort,
+} from '@white-rabbit/business-logic/src/shared/abstract-repository';
 import AbstractEntity from '@white-rabbit/business-logic/src/shared/abstract-entity';
+import { cursorToId } from '@white-rabbit/business-logic/src/utils';
 
-export default abstract class MemoryRepository<T extends AbstractEntity<T, P>, P, Q>
-  implements AbstractRepository<T, Q>
+async function filtersAllMatching<T extends AbstractEntity<T, unknown>>(
+  entities: T[],
+  additionalFilters: AdditionalFilter<T>[],
+): Promise<T[]> {
+  let result = [...entities];
+
+  for (const f of additionalFilters) {
+    // eslint-disable-next-line no-await-in-loop
+    result = await f(result);
+  }
+
+  return result;
+}
+
+export default abstract class MemoryRepository<T extends AbstractEntity<T, V>, V, Q>
+  implements AbstractRepository<T, V, Q>
 {
   protected readonly data: Map<string, T> = new Map();
+
+  abstract doCompare(a: T, b: T, field: string): number;
+
+  abstract doQuery(entity: T, query?: Q): boolean;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  doConvertAdditionalQuery(_?: Q): AdditionalFilter<T>[] {
+    return [];
+  }
 
   close(): void {
     this.data.clear();
@@ -24,8 +53,124 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, P>, P
     return Promise.resolve();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
-  findAll(_sort: Sort, _pagination: Pagination, _query?: Q): Promise<T[]> {
-    return Promise.resolve([]);
+  private compareFunc(a: T, b: T, sort: Sort, startFrom: 'FIRST' | 'LAST'): number {
+    for (const { field, order } of [...sort, { field: 'id', order: 'ASC' }]) {
+      const result = this.doCompare(a, b, field);
+
+      if (result !== 0) {
+        if ((order === 'ASC' && startFrom === 'FIRST') || (order === 'DESC' && startFrom === 'LAST')) {
+          return result;
+        }
+        return result * -1;
+      }
+    }
+
+    return 0;
+  }
+
+  async doFetchEntities(filters: AdditionalFilter<T>[], sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
+    let entities = await this.doFindAll(sort, pagination, query);
+    let result = await filtersAllMatching(entities, filters);
+
+    while (entities.length > 0 && result.length < pagination.size + 1) {
+      let idx = 0;
+      if (pagination.startFrom === 'FIRST') {
+        idx = entities.length - 1;
+      }
+
+      const nextPagination =
+        pagination.startFrom === 'FIRST'
+          ? { ...pagination, after: entities[idx]?.toCursor() }
+          : { ...pagination, before: entities[idx]?.toCursor() };
+
+      // eslint-disable-next-line no-await-in-loop
+      const tempEntities = await this.doFindAll(sort, nextPagination, query);
+      if (tempEntities.length === 0) {
+        break;
+      }
+      entities = tempEntities;
+      // eslint-disable-next-line no-await-in-loop
+      const tempResult = await filtersAllMatching(tempEntities, filters);
+      result = pagination.startFrom === 'FIRST' ? [...result, ...tempResult] : [...tempResult, ...result];
+    }
+
+    return result;
+  }
+
+  private filterFunc = (a: T, sort: Sort, pagination: Pagination): boolean => {
+    let result = true;
+
+    if (pagination.after) {
+      const after = this.data.get(cursorToId(pagination.after));
+      if (after) {
+        const compareTo = this.compareFunc(a, after, sort, pagination.startFrom);
+        result = result && (pagination.startFrom === 'FIRST' ? compareTo > 0 : compareTo < 0);
+      }
+    }
+
+    if (pagination.before) {
+      const before = this.data.get(cursorToId(pagination.before));
+      if (before) {
+        const compareTo = this.compareFunc(a, before, sort, pagination.startFrom);
+        result = result && (pagination.startFrom === 'LAST' ? compareTo > 0 : compareTo < 0);
+      }
+    }
+
+    return result;
+  };
+
+  doFindAll(sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
+    const result = [...this.data.values()]
+      .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom))
+      .filter((a) => this.filterFunc(a, sort, pagination) && this.doQuery(a, query) && !a.deleted)
+      .slice(0, pagination.size);
+
+    if (pagination.startFrom === 'LAST') {
+      result.reverse();
+    }
+
+    return Promise.resolve(result);
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  async findAll(
+    sort: Sort,
+    pagination: Pagination,
+    query?: Q,
+    additionalFilters?: AdditionalFilter<T>[],
+  ): Promise<PageResult<V>> {
+    const filters = (additionalFilters && [...additionalFilters]) ?? [];
+    filters.push(...this.doConvertAdditionalQuery(query));
+
+    const entities = await this.doFetchEntities(filters, sort, pagination, query);
+
+    const afterEntity = pagination.after && (await this.findById(cursorToId(pagination.after)));
+
+    const beforeEntity = pagination.before && (await this.findById(cursorToId(pagination.before)));
+
+    const hasPreviousPage = !!afterEntity || (pagination.startFrom === 'LAST' && entities.length > pagination.size);
+
+    const hasNextPage = !!beforeEntity || (pagination.startFrom === 'FIRST' && entities.length > pagination.size);
+
+    let start = 0;
+    let end: number | undefined = pagination.size;
+    if (pagination.startFrom === 'LAST') {
+      start = -pagination.size;
+      end = undefined;
+    }
+    const pageItems = entities.slice(start, end).map((e) => ({
+      cursor: e.toCursor(),
+      data: e.toValue(),
+    }));
+
+    return {
+      pageInfo: {
+        hasPreviousPage,
+        hasNextPage,
+        startCursor: pageItems[0]?.cursor,
+        endCursor: pageItems[pageItems.length - 1]?.cursor,
+      },
+      pageItems,
+    };
   }
 }

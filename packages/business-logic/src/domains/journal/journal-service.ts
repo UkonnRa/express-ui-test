@@ -8,17 +8,12 @@ import { JournalCommandCreate, JournalCommandDelete, JournalCommandUpdate } from
 import AuthUser from '../../shared/auth-user';
 import { NoExpectedScopeError } from '../../shared/errors';
 import { AccessItemValue, JournalRepository } from './index';
-import { JournalProjection } from './journal-projection';
+import { JournalValue } from './journal-value';
 import AbstractService from '../../shared/abstract-service';
 import { JournalQuery } from './journal-query';
 
 @injectable()
-export default class JournalService extends AbstractService<
-  Journal,
-  JournalRepository,
-  JournalQuery,
-  JournalProjection
-> {
+export default class JournalService extends AbstractService<Journal, JournalRepository, JournalValue, JournalQuery> {
   constructor(
     @inject('JournalRepository') protected override readonly repository: JournalRepository,
     @inject('UserRepository') private readonly userRepository: UserRepository,

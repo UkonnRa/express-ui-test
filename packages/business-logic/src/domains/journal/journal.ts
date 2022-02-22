@@ -3,7 +3,7 @@ import AbstractEntity from '../../shared/abstract-entity';
 import { AccessList, AccessListCreateOptions } from './access-list';
 import { FieldValidationLengthError } from '../../shared/errors';
 import { Role, User } from '../user';
-import { JournalProjection } from './journal-projection';
+import { JournalValue } from './journal-value';
 
 export type JournalCreateOptions = {
   name: string;
@@ -18,7 +18,7 @@ const MAX_LENGTH_NAME = 20;
 
 const MAX_LENGTH_DESCRIPTION = 400;
 
-export class Journal extends AbstractEntity<Journal, JournalProjection> {
+export class Journal extends AbstractEntity<Journal, JournalValue> {
   #name: string;
 
   #description: string;
@@ -73,13 +73,13 @@ export class Journal extends AbstractEntity<Journal, JournalProjection> {
     return user.role !== Role.USER || this.admins.contains(user);
   }
 
-  toProjection(): JournalProjection {
+  toValue(): JournalValue {
     return {
       id: this.id,
       name: this.name,
       description: this.description,
-      admins: this.admins.toProjection(),
-      members: this.members.toProjection(),
+      admins: this.admins.toValue(),
+      members: this.members.toValue(),
     };
   }
 }

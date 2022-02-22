@@ -29,18 +29,15 @@ export class Group extends AbstractEntity<Group, never> {
     return this.admins.some((u) => u.id === user.id) || this.members.some((u) => u.id === user.id);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isReadable(): boolean {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isWritable(): boolean {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  toProjection(): never {
+  toValue(): never {
     throw new Error('Method not implemented.');
   }
 }

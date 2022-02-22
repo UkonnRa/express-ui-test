@@ -22,18 +22,15 @@ export class FinRecord extends AbstractEntity<FinRecord, never> {
     this.journal = journal;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isReadable(): boolean {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isWritable(): boolean {
     return false;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  toProjection(): never {
+  toValue(): never {
     throw new Error('Method not implemented.');
   }
 }

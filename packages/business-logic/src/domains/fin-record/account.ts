@@ -46,19 +46,19 @@ export class Account extends AbstractEntity<Account, unknown> {
     this.activated = activated;
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isReadable(): boolean {
     // eslint-disable-next-line sonarjs/no-duplicate-string
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isWritable(): boolean {
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-  toProjection(): never {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  toValue(): never {
     throw new Error('Method not implemented.');
   }
 }

@@ -22,7 +22,6 @@ export class User extends AbstractEntity<User, undefined> {
     this.role = role;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isReadable(): boolean {
     return true;
   }
@@ -31,8 +30,7 @@ export class User extends AbstractEntity<User, undefined> {
     return user.id === this.id;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  toProjection(): never {
+  toValue(): never {
     throw new Error('Method not implemented.');
   }
 }

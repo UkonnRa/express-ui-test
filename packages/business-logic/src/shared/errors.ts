@@ -65,8 +65,8 @@ export class InvalidQueryError extends AbstractError {
 
   override readonly code = 401;
 
-  constructor(readonly cursor?: string) {
-    super(`Query[${cursor}] is invalid`);
+  constructor(readonly query?: string) {
+    super(`Query[${query}] is invalid`);
   }
 }
 

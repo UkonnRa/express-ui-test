@@ -1,13 +1,13 @@
 import { AccessItemValue } from './index';
 
-export interface JournalProjection {
+export interface JournalValue {
   readonly id: string;
   readonly name: string;
   readonly description: string;
-  readonly admins: AccessListProjection;
-  readonly members: AccessListProjection;
+  readonly admins: AccessListValue;
+  readonly members: AccessListValue;
 }
 
-export interface AccessListProjection {
+export interface AccessListValue {
   readonly items: AccessItemValue[];
 }

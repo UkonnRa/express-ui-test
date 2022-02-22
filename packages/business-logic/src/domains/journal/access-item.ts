@@ -18,7 +18,7 @@ export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemVa
 
   abstract contains(user: User): boolean;
 
-  abstract override toProjection(): AccessItemValue;
+  abstract override toValue(): AccessItemValue;
 }
 
 export class AccessItemUser extends AccessItem {
@@ -35,17 +35,15 @@ export class AccessItemUser extends AccessItem {
     return user.id === this.user.id;
   }
 
-  override toProjection(): AccessItemValue {
+  override toValue(): AccessItemValue {
     return { type: 'USER', userId: this.user.id };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isReadable(): boolean {
     // eslint-disable-next-line sonarjs/no-duplicate-string
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isWritable(): boolean {
     throw new Error('Method not implemented.');
   }
@@ -65,16 +63,14 @@ export class AccessItemGroup extends AccessItem {
     return this.group.contains(user);
   }
 
-  override toProjection(): AccessItemValue {
+  override toValue(): AccessItemValue {
     return { type: 'GROUP', groupId: this.group.id };
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isReadable(): boolean {
     throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isWritable(): boolean {
     throw new Error('Method not implemented.');
   }
