@@ -1,4 +1,4 @@
-import { FinRecord, FinRecordCreateOptions, Account, AccountCreateOptions } from '../fin-record';
+import { FinRecordCreateOptions, AccountCreateOptions } from '../fin-record';
 import AbstractEntity from '../../shared/abstract-entity';
 import { AccessList, AccessListCreateOptions } from './access-list';
 import { FieldValidationLengthError } from '../../shared/errors';
@@ -14,7 +14,9 @@ export type JournalCreateOptions = {
   accounts?: Omit<AccountCreateOptions, 'journal'>[];
 };
 
-const MAX_LENGTH_NAME = 20;
+const MIN_LENGTH_NAME = 6;
+
+const MAX_LENGTH_NAME = 50;
 
 const MAX_LENGTH_DESCRIPTION = 400;
 
@@ -27,18 +29,12 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
 
   members: AccessList;
 
-  readonly records: FinRecord[];
-
-  readonly accounts: Account[];
-
-  constructor({ name, description, admins, members, records, accounts }: JournalCreateOptions) {
+  constructor({ name, description, admins, members }: JournalCreateOptions) {
     super();
     this.name = name;
     this.description = description;
     this.admins = new AccessList(admins);
     this.members = new AccessList(members);
-    this.records = records?.map((record) => new FinRecord({ ...record, journal: this })) ?? [];
-    this.accounts = accounts?.map((account) => new Account({ ...account, journal: this })) ?? [];
   }
 
   get name(): string {
@@ -47,8 +43,8 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
 
   set name(value: string) {
     const result = value.trim();
-    if (result.length === 0 || result.length > MAX_LENGTH_NAME) {
-      throw new FieldValidationLengthError('Journal', 'name', 0, MAX_LENGTH_NAME);
+    if (result.length < MIN_LENGTH_NAME || result.length > MAX_LENGTH_NAME) {
+      throw new FieldValidationLengthError('Journal', 'name', MIN_LENGTH_NAME, MAX_LENGTH_NAME);
     }
     this.#name = result;
   }

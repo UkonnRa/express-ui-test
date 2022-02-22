@@ -1,4 +1,9 @@
-import { Journal, JournalRepository } from '@white-rabbit/business-logic/src/domains/journal';
+import {
+  Journal,
+  JournalRepository,
+  JournalValue,
+  JournalQuery,
+} from '@white-rabbit/business-logic/src/domains/journal';
 import {
   Account,
   AccountRepository,
@@ -6,10 +11,8 @@ import {
   FinRecordRepository,
 } from '@white-rabbit/business-logic/src/domains/fin-record';
 import { Group, GroupRepository } from '@white-rabbit/business-logic/src/domains/group';
-import { User, UserRepository } from '@white-rabbit/business-logic/src/domains/user';
+import { User, UserQuery, UserRepository, UserValue } from '@white-rabbit/business-logic/src/domains/user';
 import { container } from 'tsyringe';
-import { JournalValue } from '@white-rabbit/business-logic/src/domains/journal/journal-projection';
-import { JournalQuery } from '@white-rabbit/business-logic/src/domains/journal/journal-query';
 import { InvalidSortFieldError } from '@white-rabbit/business-logic/src/shared/errors';
 import MemoryRepository from './memory-repository';
 
@@ -78,7 +81,7 @@ export class MemoryJournalRepository
   }
 }
 
-export class MemoryUserRepository extends MemoryRepository<User, never, never> implements UserRepository {
+export class MemoryUserRepository extends MemoryRepository<User, UserValue, UserQuery> implements UserRepository {
   doCompare(): number {
     // eslint-disable-next-line sonarjs/no-duplicate-string
     throw new Error('Method not implemented.');

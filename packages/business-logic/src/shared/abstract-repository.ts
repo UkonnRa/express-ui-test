@@ -9,6 +9,7 @@ export default interface AbstractRepository<T extends AbstractEntity<T, V>, V, Q
 
   findById(id: string): Promise<T | undefined>;
   findByIds(ids: string[]): Promise<T[]>;
+  findOne(query: Q, sort?: Sort, additionalFilters?: AdditionalFilter<T>[]): Promise<V | undefined>;
   findAll(
     sort: Sort,
     pagination: Pagination,
@@ -41,3 +42,12 @@ export interface PageInfo {
   startCursor?: string;
   endCursor?: string;
 }
+
+export type KeywordValue = {
+  fields?: string[];
+  value: string;
+};
+
+export type QueryFullTextValue = {
+  readonly keyword: KeywordValue;
+};

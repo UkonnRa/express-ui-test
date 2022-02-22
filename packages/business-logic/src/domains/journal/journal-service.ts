@@ -6,7 +6,7 @@ import { GroupRepository } from '../group';
 import { Journal } from './journal';
 import { JournalCommandCreate, JournalCommandDelete, JournalCommandUpdate } from './journal-command';
 import AuthUser from '../../shared/auth-user';
-import { NoExpectedScopeError } from '../../shared/errors';
+import { NoExpectedScopeError, NotFoundError } from '../../shared/errors';
 import { AccessItemValue, JournalRepository } from './index';
 import { JournalValue } from './journal-value';
 import AbstractService from '../../shared/abstract-service';
@@ -40,9 +40,13 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
   }
 
   async createJournal(
-    { user, scopes }: AuthUser,
+    { authIdValue, user, scopes }: AuthUser,
     { name, description, admins, members }: JournalCommandCreate,
   ): Promise<string> {
+    if (!user) {
+      throw new NotFoundError('User', authIdValue);
+    }
+
     if (!scopes.includes(this.writeScope)) {
       throw new NoExpectedScopeError(user, this.writeScope);
     }

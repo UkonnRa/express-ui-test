@@ -1,6 +1,7 @@
 import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import { Pagination, Sort } from '@white-rabbit/business-logic/src/shared/abstract-repository';
 import { toBase64 } from 'js-base64';
+import AuthUser from '@white-rabbit/business-logic/src/shared/auth-user';
 import { TestEntity, TestEntityQuery, TestEntityRepository, TestEntityService } from './test-entity';
 
 type Task = {
@@ -17,8 +18,8 @@ describe('Basic functionality for TestEntity & related components', () => {
   const repository = new TestEntityRepository();
   const service = new TestEntityService(repository);
 
-  const admin = new User({ name: 'admin', role: Role.ADMIN });
-  const user = new User({ name: 'user', role: Role.USER });
+  const admin = new User('admin with long name', Role.ADMIN);
+  const user = new User('user with long name', Role.USER);
 
   const entities = [
     new TestEntity('1', 'test 1', 18, ['tag1', 'tag2'], admin.id),
@@ -395,7 +396,19 @@ describe('Basic functionality for TestEntity & related components', () => {
       tasks.map(async ({ sort, pagination, query, result, hasNextPage, hasPreviousPage }) => {
         const data = result.map((i) => entities[i]);
         expect(
-          await service.findAllValues({ user: admin, scopes: ['test:read'] }, sort, pagination, query),
+          await service.findAllValues(
+            new AuthUser(
+              {
+                provider: 'NOOP',
+                id: admin.id,
+              },
+              ['test:read'],
+              admin,
+            ),
+            sort,
+            pagination,
+            query,
+          ),
         ).toStrictEqual({
           pageInfo: {
             hasPreviousPage,

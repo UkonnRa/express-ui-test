@@ -17,7 +17,11 @@ export default abstract class AbstractService<
     protected readonly repository: R,
   ) {}
 
-  protected async getWriteableEntity({ user, scopes }: AuthUser, id: string): Promise<T> {
+  protected async getWriteableEntity({ authIdValue, user, scopes }: AuthUser, id: string): Promise<T> {
+    if (!user) {
+      throw new NotFoundError('User', authIdValue);
+    }
+
     if (!scopes.includes(this.writeScope)) {
       throw new NoExpectedScopeError(user, this.writeScope);
     }
@@ -34,7 +38,11 @@ export default abstract class AbstractService<
     return entity;
   }
 
-  async findValueById({ user, scopes }: AuthUser, id: string): Promise<V> {
+  async findValueById({ authIdValue, user, scopes }: AuthUser, id: string): Promise<V> {
+    if (!user) {
+      throw new NotFoundError('User', authIdValue);
+    }
+
     if (!scopes.includes(this.readScope)) {
       throw new NoExpectedScopeError(user, this.readScope);
     }
@@ -52,11 +60,15 @@ export default abstract class AbstractService<
   }
 
   async findAllValues(
-    { user, scopes }: AuthUser,
+    { authIdValue, user, scopes }: AuthUser,
     sort: Sort,
     pagination: Pagination,
     query?: Q,
   ): Promise<PageResult<V>> {
+    if (!user) {
+      throw new NotFoundError('User', authIdValue);
+    }
+
     if (!scopes.includes(this.readScope)) {
       throw new NoExpectedScopeError(user, this.readScope);
     }

@@ -1,14 +1,8 @@
 import { AccessItemValue } from './index';
+import { QueryFullTextValue } from '../../shared/abstract-repository';
 
-export type KeywordValue = {
-  fields?: string[];
-  value: string;
-};
-
-export type JournalQueryFulltext = {
-  readonly type: 'JournalQueryFulltext';
-
-  readonly keyword: KeywordValue;
+export type JournalQueryFullText = QueryFullTextValue & {
+  readonly type: 'JournalQueryFullText';
 };
 
 export type JournalQueryAccessItem = {
@@ -17,4 +11,4 @@ export type JournalQueryAccessItem = {
   readonly accessItem: AccessItemValue;
 };
 
-export type JournalQuery = JournalQueryFulltext | JournalQueryAccessItem;
+export type JournalQuery = JournalQueryFullText | JournalQueryAccessItem;

@@ -53,6 +53,13 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V>, V
     return Promise.resolve();
   }
 
+  async findOne(query: Q, sort?: Sort, additionalFilters?: AdditionalFilter<T>[]): Promise<V | undefined> {
+    const filters = (additionalFilters && [...additionalFilters]) ?? [];
+    filters.push(...this.doConvertAdditionalQuery(query));
+    const entities = await this.doFetchEntities(filters, sort ?? [], { size: 1, startFrom: 'FIRST' }, query);
+    return entities[0]?.toValue();
+  }
+
   private compareFunc(a: T, b: T, sort: Sort, startFrom: 'FIRST' | 'LAST'): number {
     for (const { field, order } of [...sort, { field: 'id', order: 'ASC' }]) {
       const result = this.doCompare(a, b, field);
@@ -121,8 +128,8 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V>, V
 
   doFindAll(sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
     const result = [...this.data.values()]
-      .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom))
       .filter((a) => this.filterFunc(a, sort, pagination) && this.doQuery(a, query) && !a.deleted)
+      .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom))
       .slice(0, pagination.size);
 
     if (pagination.startFrom === 'LAST') {

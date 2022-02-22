@@ -5,6 +5,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
+import AuthUser from '@white-rabbit/business-logic/src/shared/auth-user';
 
 @injectable()
 export default class App {
@@ -48,10 +49,7 @@ export default class App {
     ipcMain.handle('business-logic', async () => {
       this.logger.info('start parsing ipc event');
       const id = await this.journalService.createJournal(
-        {
-          user: new User({ name: 'name', role: Role.OWNER }),
-          scopes: ['journals:write'],
-        },
+        new AuthUser({ id: 'authId', provider: 'provider' }, ['journals:write'], new User('name', Role.OWNER)),
         {
           type: 'CreateJournal',
           name: 'Journal Name',
