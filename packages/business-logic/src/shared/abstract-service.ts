@@ -11,7 +11,7 @@ export default abstract class AbstractService<
   Q,
 > {
   protected constructor(
-    private readonly type: string,
+    protected readonly type: string,
     protected readonly readScope: string,
     protected readonly writeScope: string,
     protected readonly repository: R,
@@ -23,7 +23,7 @@ export default abstract class AbstractService<
     }
 
     if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user, this.writeScope);
+      throw new NoExpectedScopeError(user.id, this.writeScope);
     }
 
     const entity = await this.repository.findById(id);
@@ -32,7 +32,7 @@ export default abstract class AbstractService<
     }
 
     if (!entity.isWritable(user)) {
-      throw new NoAuthError(user, this.type, id);
+      throw new NoAuthError(this.type, user.id, id);
     }
 
     return entity;
@@ -44,7 +44,7 @@ export default abstract class AbstractService<
     }
 
     if (!scopes.includes(this.readScope)) {
-      throw new NoExpectedScopeError(user, this.readScope);
+      throw new NoExpectedScopeError(user.id, this.readScope);
     }
 
     const entity = await this.repository.findById(id);
@@ -53,7 +53,7 @@ export default abstract class AbstractService<
     }
 
     if (!entity.isReadable(user)) {
-      throw new NoAuthError(user, this.type, id);
+      throw new NoAuthError(this.type, user.id, id);
     }
 
     return entity.toValue();
@@ -70,7 +70,7 @@ export default abstract class AbstractService<
     }
 
     if (!scopes.includes(this.readScope)) {
-      throw new NoExpectedScopeError(user, this.readScope);
+      throw new NoExpectedScopeError(user.id, this.readScope);
     }
 
     if (!query && user.role === Role.USER) {

@@ -48,7 +48,7 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
     }
 
     if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user, this.writeScope);
+      throw new NoExpectedScopeError(user.id, this.writeScope);
     }
 
     const adminList = await this.getAccessList(admins);

@@ -1,5 +1,3 @@
-import { User } from '../domains/user';
-
 export abstract class AbstractError extends Error {
   readonly code: number;
 }
@@ -9,11 +7,8 @@ export class NoExpectedScopeError extends AbstractError {
 
   override readonly code = 401;
 
-  readonly operatorId: string;
-
-  constructor({ id }: User, readonly scope: string) {
-    super(`Scope[${scope}] is not found in the access token for User[${id}], please check your login tokens`);
-    this.operatorId = id;
+  constructor(readonly operatorId: string, readonly scope: string) {
+    super(`Scope[${scope}] is not found in the access token for User[${operatorId}], please check your login tokens`);
   }
 }
 
@@ -22,11 +17,8 @@ export class NoAuthError extends AbstractError {
 
   override readonly code = 401;
 
-  readonly operatorId: string;
-
-  constructor(user: User, readonly type: string, readonly id: string) {
-    super(`User[${user.id}] has no authorization for operations on Type[${type}] with Id[${id}]`);
-    this.operatorId = user.id;
+  constructor(readonly type: string, readonly operatorId?: string, readonly id?: string, readonly field?: string) {
+    super(`User[${operatorId}] has no authorization for operations on Type[${type}] with Id[${id}] on Field[${field}]`);
   }
 }
 

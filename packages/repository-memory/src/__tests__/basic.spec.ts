@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import { Pagination, Sort } from '@white-rabbit/business-logic/src/shared/abstract-repository';
 import { toBase64 } from 'js-base64';
@@ -18,8 +19,8 @@ describe('Basic functionality for TestEntity & related components', () => {
   const repository = new TestEntityRepository();
   const service = new TestEntityService(repository);
 
-  const admin = new User('admin with long name', Role.ADMIN);
-  const user = new User('user with long name', Role.USER);
+  const admin = new User({ name: 'admin with long name', role: Role.ADMIN });
+  const user = new User({ name: 'user with long name', role: Role.USER });
 
   const entities = [
     new TestEntity('1', 'test 1', 18, ['tag1', 'tag2'], admin.id),
