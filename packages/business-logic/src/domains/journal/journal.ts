@@ -1,4 +1,3 @@
-import { FinRecordCreateOptions, AccountCreateOptions } from '../fin-record';
 import AbstractEntity from '../../shared/abstract-entity';
 import { AccessList, AccessListCreateOptions } from './access-list';
 import { FieldValidationLengthError } from '../../shared/errors';
@@ -10,8 +9,6 @@ export type JournalCreateOptions = {
   description: string;
   admins: AccessListCreateOptions;
   members: AccessListCreateOptions;
-  records?: Omit<FinRecordCreateOptions, 'journal'>[];
-  accounts?: Omit<AccountCreateOptions, 'journal'>[];
 };
 
 const MIN_LENGTH_NAME = 6;

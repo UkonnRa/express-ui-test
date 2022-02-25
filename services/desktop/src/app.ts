@@ -1,13 +1,13 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { Logger } from 'winston';
-import { JournalRepository, JournalService } from '@white-rabbit/business-logic/src/domains/journal';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import isDev from 'electron-is-dev';
 import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import AuthUser from '@white-rabbit/business-logic/src/shared/auth-user';
+import { JournalRepository, JournalService } from '@white-rabbit/business-logic/src/domains';
 
-@injectable()
+@singleton()
 export default class App {
   constructor(
     @inject('Logger') private readonly logger: Logger,
@@ -49,7 +49,11 @@ export default class App {
     ipcMain.handle('business-logic', async () => {
       this.logger.info('start parsing ipc event');
       const id = await this.journalService.createJournal(
-        new AuthUser({ id: 'authId', provider: 'provider' }, ['journals:write'], new User('name', Role.OWNER)),
+        new AuthUser(
+          { id: 'authId', provider: 'provider' },
+          ['journals:write'],
+          new User({ name: 'name desktop', role: Role.OWNER }),
+        ),
         {
           type: 'CreateJournal',
           name: 'Journal Name',

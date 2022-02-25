@@ -3,6 +3,7 @@ import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import { InvalidSortFieldError } from '@white-rabbit/business-logic/src/shared/errors';
 import { AdditionalFilter } from '@white-rabbit/business-logic/src/shared/abstract-repository';
 import AbstractService from '@white-rabbit/business-logic/src/shared/abstract-service';
+import { singleton } from 'tsyringe';
 import MemoryRepository from '../memory-repository';
 
 export interface TestEntityValue {
@@ -39,17 +40,7 @@ export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue> {
   }
 }
 
-export class TestEntityService extends AbstractService<
-  TestEntity,
-  TestEntityRepository,
-  TestEntityValue,
-  TestEntityQuery
-> {
-  constructor(repository: TestEntityRepository) {
-    super('TestEntity', 'test:read', 'test:write', repository);
-  }
-}
-
+@singleton()
 export class TestEntityRepository extends MemoryRepository<TestEntity, TestEntityValue, TestEntityQuery> {
   doCompare(a: TestEntity, b: TestEntity, field: string): number {
     if (field === 'name') {
@@ -90,6 +81,18 @@ export class TestEntityRepository extends MemoryRepository<TestEntity, TestEntit
       ];
     }
     return [];
+  }
+}
+
+@singleton()
+export class TestEntityService extends AbstractService<
+  TestEntity,
+  TestEntityRepository,
+  TestEntityValue,
+  TestEntityQuery
+> {
+  constructor(protected override readonly repository: TestEntityRepository) {
+    super('TestEntity', 'test:read', 'test:write', repository);
   }
 }
 
