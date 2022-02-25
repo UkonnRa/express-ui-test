@@ -1,4 +1,4 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { Logger } from 'winston';
 import express, { Express } from 'express';
 import { Server } from 'http';
@@ -17,7 +17,7 @@ const nodeCloseAsync = (server: Server): Promise<void> =>
     });
   });
 
-@injectable()
+@singleton()
 export default class App {
   private readonly app: Express;
 
@@ -33,7 +33,11 @@ export default class App {
   async start() {
     this.app.get('/', async (_req, res) => {
       const id = await this.journalService.createJournal(
-        new AuthUser({ id: 'authId', provider: 'provider' }, ['journals:write'], new User('name', Role.OWNER)),
+        new AuthUser(
+          { id: 'authId', provider: 'provider' },
+          ['journals:write'],
+          new User({ name: 'name backend', role: Role.OWNER }),
+        ),
         {
           type: 'CreateJournal',
           name: 'Journal Name',

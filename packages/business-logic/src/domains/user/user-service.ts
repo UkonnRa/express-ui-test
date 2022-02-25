@@ -1,4 +1,4 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import AbstractService from '../../shared/abstract-service';
 import { UserValue } from './user-value';
 import { UserQuery } from './user-query';
@@ -8,9 +8,9 @@ import AuthUser from '../../shared/auth-user';
 import { UserCommandCreate, UserCommandDelete, UserCommandUpdate } from './user-command';
 import { NoAuthError, NoExpectedScopeError, NotFoundError } from '../../shared/errors';
 
-@injectable()
+@singleton()
 export default class UserService extends AbstractService<User, UserRepository, UserValue, UserQuery> {
-  constructor(@inject('JournalRepository') protected override readonly repository: UserRepository) {
+  constructor(@inject('UserRepository') protected override readonly repository: UserRepository) {
     super('User', 'users:read', 'users:write', repository);
   }
 
@@ -44,7 +44,7 @@ export default class UserService extends AbstractService<User, UserRepository, U
   }
 
   async updateUser(authUser: AuthUser, { id, name, role, authIds }: UserCommandUpdate): Promise<void> {
-    const entity = await this.getWriteableEntity(authUser, id);
+    const entity = await this.getEntity(authUser, id);
 
     const operator = authUser.user;
     if (!operator) {
@@ -79,7 +79,7 @@ export default class UserService extends AbstractService<User, UserRepository, U
   }
 
   async deleteUser(authUser: AuthUser, { id }: UserCommandDelete): Promise<void> {
-    const entity = await this.getWriteableEntity(authUser, id);
+    const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
 

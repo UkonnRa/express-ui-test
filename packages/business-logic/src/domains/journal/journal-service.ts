@@ -1,4 +1,4 @@
-import { inject, injectable } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from './access-item';
 import { AccessList, AccessListCreateOptions } from './access-list';
 import { UserRepository } from '../user';
@@ -12,7 +12,7 @@ import { JournalValue } from './journal-value';
 import AbstractService from '../../shared/abstract-service';
 import { JournalQuery } from './journal-query';
 
-@injectable()
+@singleton()
 export default class JournalService extends AbstractService<Journal, JournalRepository, JournalValue, JournalQuery> {
   constructor(
     @inject('JournalRepository') protected override readonly repository: JournalRepository,
@@ -62,7 +62,7 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
     authUser: AuthUser,
     { id, name, description, admins, members }: JournalCommandUpdate,
   ): Promise<void> {
-    const entity = await this.getWriteableEntity(authUser, id);
+    const entity = await this.getEntity(authUser, id);
 
     if (!name && !description && !admins && !members) {
       return;
@@ -90,7 +90,7 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
   }
 
   async deleteJournal(authUser: AuthUser, { id }: JournalCommandDelete): Promise<void> {
-    const entity = await this.getWriteableEntity(authUser, id);
+    const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
 

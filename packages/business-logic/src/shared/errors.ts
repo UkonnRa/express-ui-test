@@ -68,6 +68,16 @@ export class InvalidSortFieldError extends AbstractError {
   override readonly code = 401;
 
   constructor(readonly type: string, readonly field: string) {
-    super(`Field[${field}] not sortable in Type[${type}]`);
+    super(`Field[${field}] is not sortable in Type[${type}]`);
+  }
+}
+
+export class FieldNotQueryableError extends AbstractError {
+  override readonly name = 'FieldNotQueryableError';
+
+  override readonly code = 401;
+
+  constructor(readonly type: string, readonly field: string) {
+    super(`Field[${field}] is not queryable in Type[${type}]`);
   }
 }

@@ -3,6 +3,7 @@ import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
 import { Pagination, Sort } from '@white-rabbit/business-logic/src/shared/abstract-repository';
 import { toBase64 } from 'js-base64';
 import AuthUser from '@white-rabbit/business-logic/src/shared/auth-user';
+import { container } from 'tsyringe';
 import { TestEntity, TestEntityQuery, TestEntityRepository, TestEntityService } from './test-entity';
 
 type Task = {
@@ -16,8 +17,8 @@ type Task = {
 };
 
 describe('Basic functionality for TestEntity & related components', () => {
-  const repository = new TestEntityRepository();
-  const service = new TestEntityService(repository);
+  const repository = container.resolve(TestEntityRepository);
+  const service = container.resolve(TestEntityService);
 
   const admin = new User({ name: 'admin with long name', role: Role.ADMIN });
   const user = new User({ name: 'user with long name', role: Role.USER });
@@ -384,11 +385,11 @@ describe('Basic functionality for TestEntity & related components', () => {
 
   it('can find entities correctly', async () => {
     await Promise.all(
-      tasks.map(async ({ sort, pagination, query, result, resultNotAdditionalFilters }) =>
+      tasks.map(async ({ sort, pagination, query, result, resultNotAdditionalFilters }) => {
         expect(await repository.doFindAll(sort, pagination, query)).toStrictEqual(
           (resultNotAdditionalFilters ?? result).map((i) => entities[i]),
-        ),
-      ),
+        );
+      }),
     );
   });
 

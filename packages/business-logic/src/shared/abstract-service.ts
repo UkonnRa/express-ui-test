@@ -17,13 +17,15 @@ export default abstract class AbstractService<
     protected readonly repository: R,
   ) {}
 
-  protected async getWriteableEntity({ authIdValue, user, scopes }: AuthUser, id: string): Promise<T> {
+  async getEntity({ authIdValue, user, scopes }: AuthUser, id: string, needWriteable = true): Promise<T> {
     if (!user) {
       throw new NotFoundError('User', authIdValue);
     }
 
-    if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user.id, this.writeScope);
+    const scopeNeeded = needWriteable ? this.writeScope : this.readScope;
+
+    if (!scopes.includes(scopeNeeded)) {
+      throw new NoExpectedScopeError(user.id, scopeNeeded);
     }
 
     const entity = await this.repository.findById(id);
@@ -31,7 +33,8 @@ export default abstract class AbstractService<
       throw new NotFoundError(this.type, id);
     }
 
-    if (!entity.isWritable(user)) {
+    const entityAuthed = needWriteable ? entity.isWritable(user) : entity.isReadable(user);
+    if (!entityAuthed) {
       throw new NoAuthError(this.type, user.id, id);
     }
 
