@@ -1,6 +1,5 @@
 import AbstractEntity from '../../shared/abstract-entity';
 import { AccessList, AccessListCreateOptions } from './access-list';
-import { FieldValidationLengthError } from '../../shared/errors';
 import { Role, User } from '../user';
 import { JournalValue } from './journal-value';
 
@@ -17,7 +16,9 @@ const MAX_LENGTH_NAME = 50;
 
 const MAX_LENGTH_DESCRIPTION = 400;
 
-export class Journal extends AbstractEntity<Journal, JournalValue> {
+export const TYPE = 'Journal';
+
+export class Journal extends AbstractEntity<Journal, JournalValue, typeof TYPE> {
   #name: string;
 
   #description: string;
@@ -26,12 +27,16 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
 
   members: AccessList;
 
+  override get entityType(): typeof TYPE {
+    return TYPE;
+  }
+
   constructor({ name, description, admins, members }: JournalCreateOptions) {
     super();
     this.name = name;
     this.description = description;
-    this.admins = new AccessList(admins);
-    this.members = new AccessList(members);
+    this.admins = new AccessList(this, admins);
+    this.members = new AccessList(this, members);
   }
 
   get name(): string {
@@ -40,10 +45,8 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
 
   set name(value: string) {
     const result = value.trim();
-    if (result.length < MIN_LENGTH_NAME || result.length > MAX_LENGTH_NAME) {
-      throw new FieldValidationLengthError('Journal', 'name', MIN_LENGTH_NAME, MAX_LENGTH_NAME);
-    }
-    this.#name = result;
+    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+    this.#description = result;
   }
 
   get description(): string {
@@ -52,10 +55,8 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
 
   set description(value: string) {
     const result = value.trim();
-    if (result.length > MAX_LENGTH_DESCRIPTION) {
-      throw new FieldValidationLengthError('Journal', 'description', undefined, MAX_LENGTH_DESCRIPTION);
-    }
-    this.#description = value;
+    this.checkLength(value.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.#description = result;
   }
 
   isReadable(user: User): boolean {

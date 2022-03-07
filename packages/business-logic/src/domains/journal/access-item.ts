@@ -6,7 +6,7 @@ import { AccessItemValue } from './index';
 
 export type AccessItemType = 'USER' | 'GROUP';
 
-export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemValue> {
+export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemValue, 'AccessItem'> {
   readonly type: AccessItemType;
 
   readonly parent: AccessList;
@@ -16,9 +16,21 @@ export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemVa
     this.parent = parent;
   }
 
+  override get entityType(): 'AccessItem' {
+    return 'AccessItem';
+  }
+
   abstract contains(user: User): boolean;
 
   abstract override toValue(): AccessItemValue;
+
+  override isReadable(user: User): boolean {
+    return this.parent.isReadable(user);
+  }
+
+  override isWritable(user: User): boolean {
+    return this.parent.isWritable(user);
+  }
 }
 
 export class AccessItemUser extends AccessItem {
@@ -38,15 +50,6 @@ export class AccessItemUser extends AccessItem {
   override toValue(): AccessItemValue {
     return { type: 'USER', userId: this.user.id };
   }
-
-  isReadable(): boolean {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error('Method not implemented.');
-  }
-
-  isWritable(): boolean {
-    throw new Error('Method not implemented.');
-  }
 }
 
 export class AccessItemGroup extends AccessItem {
@@ -65,14 +68,6 @@ export class AccessItemGroup extends AccessItem {
 
   override toValue(): AccessItemValue {
     return { type: 'GROUP', groupId: this.group.id };
-  }
-
-  isReadable(): boolean {
-    throw new Error('Method not implemented.');
-  }
-
-  isWritable(): boolean {
-    throw new Error('Method not implemented.');
   }
 }
 

@@ -4,7 +4,7 @@ import nodeExternals from 'webpack-node-externals';
 import path from 'path';
 import base from './webpack.config.base';
 
-const config: webpack.Configuration = {
+export default {
   ...base,
   mode: 'development',
   entry: [base.entry as string, 'webpack/hot/poll?100'],
@@ -17,5 +17,4 @@ const config: webpack.Configuration = {
     }),
   ],
   plugins: [new webpack.HotModuleReplacementPlugin(), new RunScriptWebpackPlugin({ name: 'index.js' })],
-};
-export default config;
+} as webpack.Configuration;

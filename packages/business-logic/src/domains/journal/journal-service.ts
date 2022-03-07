@@ -1,10 +1,9 @@
 import { inject, singleton } from 'tsyringe';
 import { AccessItemGroupCreateOptions, AccessItemUserCreateOptions } from './access-item';
 import { AccessList, AccessListCreateOptions } from './access-list';
-import { Journal } from './journal';
+import { Journal, TYPE } from './journal';
 import { JournalCommandCreate, JournalCommandDelete, JournalCommandUpdate } from './journal-command';
 import AuthUser from '../../shared/auth-user';
-import { NoExpectedScopeError, NotFoundError } from '../../shared/errors';
 import { AccessItemValue } from './index';
 import { JournalValue } from './journal-value';
 import AbstractService from '../../shared/abstract-service';
@@ -18,7 +17,7 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
     @inject('UserRepository') private readonly userRepository: UserRepository,
     @inject('GroupRepository') private readonly groupRepository: GroupRepository,
   ) {
-    super('Journal', 'journals:read', 'journals:write', repository);
+    super(TYPE, 'journals:read', 'journals:write', repository);
   }
 
   private async getAccessList(values: AccessItemValue[]): Promise<AccessListCreateOptions> {
@@ -32,23 +31,23 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
       }
     }
     const users = await this.userRepository.findByIds(userIds);
-    const userValues = users.map<Omit<AccessItemUserCreateOptions, 'parent'>>((v) => ({ type: 'USER', user: v }));
+    const userValues = [...users].map<Omit<AccessItemUserCreateOptions, 'parent'>>((e) => ({
+      type: 'USER',
+      user: e[1],
+    }));
     const groups = await this.groupRepository.findByIds(groupIds);
-    const groupValues = groups.map<Omit<AccessItemGroupCreateOptions, 'parent'>>((v) => ({ type: 'GROUP', group: v }));
+    const groupValues = [...groups].map<Omit<AccessItemGroupCreateOptions, 'parent'>>((e) => ({
+      type: 'GROUP',
+      group: e[1],
+    }));
     return { type: 'ITEMS', items: [...userValues, ...groupValues] };
   }
 
   async createJournal(
-    { authIdValue, user, scopes }: AuthUser,
+    authUser: AuthUser,
     { name, description, admins, members }: JournalCommandCreate,
   ): Promise<string> {
-    if (!user) {
-      throw new NotFoundError('User', authIdValue);
-    }
-
-    if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user.id, this.writeScope);
-    }
+    this.checkScope(authUser);
 
     const adminList = await this.getAccessList(admins);
     const memberList = await this.getAccessList(members);
@@ -77,12 +76,12 @@ export default class JournalService extends AbstractService<Journal, JournalRepo
 
     if (admins) {
       const temp = await this.getAccessList(admins);
-      entity.admins = new AccessList(temp);
+      entity.admins = new AccessList(entity, temp);
     }
 
     if (members) {
       const temp = await this.getAccessList(members);
-      entity.members = new AccessList(temp);
+      entity.members = new AccessList(entity, temp);
     }
 
     await this.repository.save(entity);

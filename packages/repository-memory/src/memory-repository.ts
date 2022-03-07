@@ -7,7 +7,7 @@ import AbstractRepository, {
 import AbstractEntity from '@white-rabbit/business-logic/src/shared/abstract-entity';
 import { cursorToId } from '@white-rabbit/business-logic/src/utils';
 
-async function filtersAllMatching<T extends AbstractEntity<T, unknown>>(
+async function filtersAllMatching<T extends AbstractEntity<T, unknown, unknown>>(
   entities: T[],
   additionalFilters: AdditionalFilter<T>[],
 ): Promise<T[]> {
@@ -21,7 +21,7 @@ async function filtersAllMatching<T extends AbstractEntity<T, unknown>>(
   return result;
 }
 
-export default abstract class MemoryRepository<T extends AbstractEntity<T, V>, V, Q>
+export default abstract class MemoryRepository<T extends AbstractEntity<T, V, unknown>, V, Q>
   implements AbstractRepository<T, V, Q>
 {
   protected readonly data: Map<string, T> = new Map();
@@ -44,8 +44,8 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V>, V
     return Promise.resolve(result?.deleted ? undefined : result);
   }
 
-  findByIds(ids: string[]): Promise<T[]> {
-    return Promise.resolve([...this.data.values()].filter((v) => !v.deleted && ids.includes(v.id)));
+  findByIds(ids: string[]): Promise<Map<string, T>> {
+    return Promise.resolve(new Map([...this.data].filter(([k, v]) => !v.deleted && ids.includes(k))));
   }
 
   save(entity: T): Promise<void> {

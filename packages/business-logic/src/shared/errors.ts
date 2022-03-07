@@ -42,6 +42,29 @@ export class FieldValidationLengthError extends AbstractError {
   }
 }
 
+export class FieldValidationZeroError extends AbstractError {
+  override readonly name = 'FieldValidationZero';
+
+  override readonly code = 401;
+
+  constructor(
+    readonly type: string,
+    readonly field: string,
+    readonly isPositive: boolean,
+    readonly orZero: boolean = false,
+  ) {
+    let range = 'positive';
+    if (isPositive && orZero) {
+      range = 'non-negative';
+    } else if (!isPositive && !orZero) {
+      range = 'negative';
+    } else if (!isPositive && orZero) {
+      range = 'non-positive';
+    }
+    super(`Field[${field}] in Type[${type}] should be ${range}`);
+  }
+}
+
 export class InvalidCursorError extends AbstractError {
   override readonly name = 'InvalidCursor';
 

@@ -1,5 +1,5 @@
 import { Journal, JournalValue, JournalQuery } from '@white-rabbit/business-logic/src/domains/journal';
-import { FinRecord } from '@white-rabbit/business-logic/src/domains/fin-record';
+import { FinRecord, FinRecordQuery, FinRecordValue } from '@white-rabbit/business-logic/src/domains/fin-record';
 import { Group, GroupQuery, GroupValue } from '@white-rabbit/business-logic/src/domains/group';
 import { User, UserQuery, UserValue } from '@white-rabbit/business-logic/src/domains/user';
 import { container } from 'tsyringe';
@@ -69,7 +69,7 @@ export class MemoryAccountRepository
 }
 
 export class MemoryFinRecordRepository
-  extends MemoryRepository<FinRecord, never, never>
+  extends MemoryRepository<FinRecord, FinRecordValue, FinRecordQuery>
   implements FinRecordRepository
 {
   doCompare(): number {

@@ -4,16 +4,23 @@ import { Group } from '../group';
 import { User } from '../user';
 import { DistributiveOmit } from '../../utils';
 import { AccessListValue } from './journal-value';
+import { Journal } from './journal';
 
 export type AccessListCreateOptions =
   | { type: 'ITEMS'; items?: DistributiveOmit<AccessItemCreateOptions, 'parent'>[] }
   | { type: 'USERS'; users: User[] }
   | { type: 'GROUPS'; groups: Group[] };
 
-export class AccessList extends AbstractEntity<AccessList, AccessListValue> {
-  readonly items: AccessItem[];
+const MAX_LENGTH_LIST = 32;
 
-  constructor(options: AccessListCreateOptions) {
+export class AccessList extends AbstractEntity<AccessList, AccessListValue, 'AccessList'> {
+  #items: AccessItem[];
+
+  override get entityType(): 'AccessList' {
+    return 'AccessList';
+  }
+
+  constructor(private readonly journal: Journal, options: AccessListCreateOptions) {
     super();
     let items: AccessItem[];
     if (options.type === 'ITEMS') {
@@ -32,6 +39,15 @@ export class AccessList extends AbstractEntity<AccessList, AccessListValue> {
     this.items = items;
   }
 
+  get items(): AccessItem[] {
+    return this.#items;
+  }
+
+  set items(value: AccessItem[]) {
+    this.checkLength(value.length, 'items', { max: MAX_LENGTH_LIST });
+    this.#items = value;
+  }
+
   contains(user: User): boolean {
     return this.items.some((i) => i.contains(user));
   }
@@ -40,11 +56,11 @@ export class AccessList extends AbstractEntity<AccessList, AccessListValue> {
     return { items: this.items.map((i) => i.toValue()) };
   }
 
-  isReadable(): boolean {
-    throw new Error('Method not implemented.');
+  isReadable(user: User): boolean {
+    return this.journal.isReadable(user);
   }
 
-  isWritable(): boolean {
-    throw new Error('Method not implemented.');
+  isWritable(user: User): boolean {
+    return this.journal.isWritable(user);
   }
 }

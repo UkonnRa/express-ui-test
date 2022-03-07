@@ -1,5 +1,4 @@
 import AbstractEntity from '../../shared/abstract-entity';
-import { FieldValidationLengthError } from '../../shared/errors';
 import { UserValue } from './user-value';
 
 export type UserCreateOptions = {
@@ -18,12 +17,20 @@ const MIN_LENGTH_NAME = 6;
 
 const MAX_LENGTH_NAME = 50;
 
-export class User extends AbstractEntity<User, UserValue> {
+const MAX_LENGTH_AUTH_IDS = 6;
+
+export const TYPE = 'User';
+
+export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
   #name: string;
 
   role: Role;
 
-  authIds: Map<string, string>;
+  #authIds: Map<string, string>;
+
+  get entityType(): typeof TYPE {
+    return TYPE;
+  }
 
   constructor({ name, role, authIds }: UserCreateOptions) {
     super();
@@ -38,10 +45,17 @@ export class User extends AbstractEntity<User, UserValue> {
 
   set name(value: string) {
     const result = value.trim();
-    if (result.length < MIN_LENGTH_NAME || result.length > MAX_LENGTH_NAME) {
-      throw new FieldValidationLengthError('User', 'name', MIN_LENGTH_NAME, MAX_LENGTH_NAME);
-    }
+    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
     this.#name = result;
+  }
+
+  get authIds(): Map<string, string> {
+    return this.#authIds;
+  }
+
+  set authIds(value: Map<string, string>) {
+    this.checkLength(value.size, 'authIds', { max: MAX_LENGTH_AUTH_IDS });
+    this.#authIds = value;
   }
 
   isReadable(): boolean {

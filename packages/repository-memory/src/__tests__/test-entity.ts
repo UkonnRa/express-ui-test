@@ -16,7 +16,9 @@ export interface TestEntityValue {
   readonly tags: string[];
 }
 
-export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue> {
+export const TYPE = 'TestEntity';
+
+export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue, typeof TYPE> {
   constructor(
     override readonly id: string,
     readonly name: string,
@@ -37,6 +39,10 @@ export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue> {
 
   toValue(): TestEntityValue {
     return { id: this.id, name: this.name, age: this.age, tags: this.tags };
+  }
+
+  get entityType(): typeof TYPE {
+    return TYPE;
   }
 }
 

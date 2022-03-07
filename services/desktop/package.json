@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@mikro-orm/cli": "^5.0.5",
-    "electron": "17.1.0",
+    "electron": "17.1.2",
     "electron-builder": "^22.14.13"
   }
 }

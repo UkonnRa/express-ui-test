@@ -3,7 +3,7 @@ import path from 'path';
 import process from 'process';
 import devConfig from './webpack.config.dev';
 
-const config: webpack.Configuration = {
+export default {
   ...devConfig,
   entry: {
     index: [path.resolve(process.cwd(), './src/index.ts'), 'webpack/hot/poll?100'],
@@ -15,6 +15,4 @@ const config: webpack.Configuration = {
     filename: '[name].js',
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
-};
-
-export default config;
+} as webpack.Configuration;

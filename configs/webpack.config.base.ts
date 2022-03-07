@@ -5,7 +5,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { TsconfigPathsPlugin } from 'tsconfig-paths-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
 
-const config: webpack.Configuration = {
+export default {
   target: 'node',
   entry: path.resolve(process.cwd(), './src/index.ts'),
   module: {
@@ -47,6 +47,4 @@ const config: webpack.Configuration = {
       }),
     ],
   },
-};
-
-export default config;
+} as webpack.Configuration;

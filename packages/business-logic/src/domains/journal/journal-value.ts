@@ -1,5 +1,3 @@
-import { AccessItemValue } from './index';
-
 export interface JournalValue {
   readonly id: string;
   readonly name: string;
@@ -11,3 +9,5 @@ export interface JournalValue {
 export interface AccessListValue {
   readonly items: AccessItemValue[];
 }
+
+export type AccessItemValue = { type: 'USER'; userId: string } | { type: 'GROUP'; groupId: string };

@@ -1,6 +1,5 @@
 import AbstractEntity from '../../shared/abstract-entity';
 import { Journal } from '../journal';
-import { FieldValidationLengthError } from '../../shared/errors';
 import { User } from '../user';
 import { AccountValue } from '.';
 
@@ -36,9 +35,15 @@ const MAX_LENGTH_NAME_EACH = 50;
 
 const MAX_LENGTH_DESCRIPTION = 400;
 
+const MIN_LENGTH_UNIT = 1;
+
+const MAX_LENGTH_UNIT = 20;
+
 const NAME_SEPARATOR = '::';
 
-export class Account extends AbstractEntity<Account, AccountValue> {
+export const TYPE = 'Account';
+
+export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> {
   #name: string[];
 
   #description: string;
@@ -47,9 +52,13 @@ export class Account extends AbstractEntity<Account, AccountValue> {
 
   accountType: AccountType;
 
-  unit: string;
+  #unit: string;
 
   strategy: Strategy;
+
+  get entityType(): typeof TYPE {
+    return TYPE;
+  }
 
   constructor({ name, description, journal, accountType, unit, strategy }: AccountCreateOptions) {
     super();
@@ -70,16 +79,11 @@ export class Account extends AbstractEntity<Account, AccountValue> {
   }
 
   set name(value: string[]) {
-    if (value.length < MIN_LENGTH_NAME || value.length > MAX_LENGTH_NAME) {
-      throw new FieldValidationLengthError('Journal', 'name', MIN_LENGTH_NAME, MAX_LENGTH_NAME);
-    }
-
+    this.checkLength(value.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
     this.#name = [];
     for (const v of value) {
       const result = v.trim();
-      if (result.length < MIN_LENGTH_NAME_EACH || result.length > MAX_LENGTH_NAME_EACH) {
-        throw new FieldValidationLengthError('Journal', 'name.each', MIN_LENGTH_NAME_EACH, MAX_LENGTH_NAME_EACH);
-      }
+      this.checkLength(result.length, 'name.each', { min: MIN_LENGTH_NAME_EACH, max: MAX_LENGTH_NAME_EACH });
       this.#name.push(result);
     }
   }
@@ -90,10 +94,18 @@ export class Account extends AbstractEntity<Account, AccountValue> {
 
   set description(value: string) {
     const result = value.trim();
-    if (result.length > MAX_LENGTH_DESCRIPTION) {
-      throw new FieldValidationLengthError('Journal', 'description', undefined, MAX_LENGTH_DESCRIPTION);
-    }
-    this.#description = value;
+    this.checkLength(result.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.#description = result;
+  }
+
+  get unit(): string {
+    return this.#unit;
+  }
+
+  set unit(value: string) {
+    const result = value.trim();
+    this.checkLength(result.length, 'unit', { min: MIN_LENGTH_UNIT, max: MAX_LENGTH_UNIT });
+    this.#unit = result;
   }
 
   isReadable(user: User): boolean {

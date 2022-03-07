@@ -1,6 +1,5 @@
 import AbstractEntity from '../../shared/abstract-entity';
 import { User } from '../user';
-import { FieldValidationLengthError } from '../../shared/errors';
 import { GroupValue } from './group-value';
 
 export type GroupCreateOptions = {
@@ -21,7 +20,9 @@ const MAX_LENGTH_DESCRIPTION = 400;
 
 const MAX_LENGTH_LIST = 256;
 
-export class Group extends AbstractEntity<Group, GroupValue> {
+export const TYPE = 'Group';
+
+export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   #name: string;
 
   #description: string;
@@ -44,9 +45,7 @@ export class Group extends AbstractEntity<Group, GroupValue> {
 
   set name(value: string) {
     const result = value.trim();
-    if (result.length < MIN_LENGTH_NAME || result.length > MAX_LENGTH_NAME) {
-      throw new FieldValidationLengthError('Group', 'name', MIN_LENGTH_NAME, MAX_LENGTH_NAME);
-    }
+    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
     this.#name = result;
   }
 
@@ -56,10 +55,8 @@ export class Group extends AbstractEntity<Group, GroupValue> {
 
   set description(value: string) {
     const result = value.trim();
-    if (result.length > MAX_LENGTH_DESCRIPTION) {
-      throw new FieldValidationLengthError('Group', 'description', undefined, MAX_LENGTH_DESCRIPTION);
-    }
-    this.#description = value;
+    this.checkLength(value.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.#description = result;
   }
 
   get admins(): User[] {
@@ -67,9 +64,7 @@ export class Group extends AbstractEntity<Group, GroupValue> {
   }
 
   set admins(value: User[]) {
-    if (value.length > MAX_LENGTH_LIST) {
-      throw new FieldValidationLengthError('Group', 'admins', undefined, MAX_LENGTH_NAME);
-    }
+    this.checkLength(value.length, 'admins', { max: MAX_LENGTH_LIST });
     this.#admins = value;
     this.members = this.#members;
   }
@@ -80,9 +75,7 @@ export class Group extends AbstractEntity<Group, GroupValue> {
 
   set members(value: User[]) {
     const result = value.filter(({ id }) => !this.admins.some((v) => v.id === id));
-    if (result.length > MAX_LENGTH_LIST) {
-      throw new FieldValidationLengthError('Group', 'members', undefined, MAX_LENGTH_NAME);
-    }
+    this.checkLength(value.length, 'members', { max: MAX_LENGTH_LIST });
     this.#members = result;
   }
 
@@ -106,5 +99,9 @@ export class Group extends AbstractEntity<Group, GroupValue> {
       admins: this.admins.map(({ id }) => id),
       members: this.members.map(({ id }) => id),
     };
+  }
+
+  get entityType(): typeof TYPE {
+    return TYPE;
   }
 }

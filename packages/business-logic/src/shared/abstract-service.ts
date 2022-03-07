@@ -2,10 +2,10 @@ import AbstractEntity from './abstract-entity';
 import AuthUser from './auth-user';
 import AbstractRepository, { PageResult, Pagination, Sort } from './abstract-repository';
 import { InvalidQueryError, NoAuthError, NoExpectedScopeError, NotFoundError } from './errors';
-import { Role } from '../domains/user';
+import { Role, TYPE_USER, User } from '../domains/user';
 
 export default abstract class AbstractService<
-  T extends AbstractEntity<T, V>,
+  T extends AbstractEntity<T, V, unknown>,
   R extends AbstractRepository<T, V, Q>,
   V,
   Q,
@@ -17,9 +17,9 @@ export default abstract class AbstractService<
     protected readonly repository: R,
   ) {}
 
-  async getEntity({ authIdValue, user, scopes }: AuthUser, id: string, needWriteable = true): Promise<T> {
+  protected checkScope({ authIdValue, user, scopes }: AuthUser, needWriteable = true): User {
     if (!user) {
-      throw new NotFoundError('User', authIdValue);
+      throw new NotFoundError(TYPE_USER, authIdValue);
     }
 
     const scopeNeeded = needWriteable ? this.writeScope : this.readScope;
@@ -27,6 +27,12 @@ export default abstract class AbstractService<
     if (!scopes.includes(scopeNeeded)) {
       throw new NoExpectedScopeError(user.id, scopeNeeded);
     }
+
+    return user;
+  }
+
+  async getEntity(authUser: AuthUser, id: string, needWriteable = true): Promise<T> {
+    const user = this.checkScope(authUser, needWriteable);
 
     const entity = await this.repository.findById(id);
     if (!entity) {
@@ -41,40 +47,12 @@ export default abstract class AbstractService<
     return entity;
   }
 
-  async findValueById({ authIdValue, user, scopes }: AuthUser, id: string): Promise<V> {
-    if (!user) {
-      throw new NotFoundError('User', authIdValue);
-    }
-
-    if (!scopes.includes(this.readScope)) {
-      throw new NoExpectedScopeError(user.id, this.readScope);
-    }
-
-    const entity = await this.repository.findById(id);
-    if (!entity) {
-      throw new NotFoundError(this.type, id);
-    }
-
-    if (!entity.isReadable(user)) {
-      throw new NoAuthError(this.type, user.id, id);
-    }
-
-    return entity.toValue();
+  findValueById(authUser: AuthUser, id: string): Promise<V> {
+    return this.getEntity(authUser, id, false).then((e) => e.toValue());
   }
 
-  async findAllValues(
-    { authIdValue, user, scopes }: AuthUser,
-    sort: Sort,
-    pagination: Pagination,
-    query?: Q,
-  ): Promise<PageResult<V>> {
-    if (!user) {
-      throw new NotFoundError('User', authIdValue);
-    }
-
-    if (!scopes.includes(this.readScope)) {
-      throw new NoExpectedScopeError(user.id, this.readScope);
-    }
+  async findAllValues(authUser: AuthUser, sort: Sort, pagination: Pagination, query?: Q): Promise<PageResult<V>> {
+    const user = this.checkScope(authUser, false);
 
     if (!query && user.role === Role.USER) {
       throw new InvalidQueryError('undefined');

@@ -1,4 +1,4 @@
-export { Role, User, UserCreateOptions } from './user';
+export { Role, User, UserCreateOptions, TYPE as TYPE_USER } from './user';
 export {
   UserCommand,
   UserCommandCreate,

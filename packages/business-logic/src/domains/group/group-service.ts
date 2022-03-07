@@ -5,8 +5,8 @@ import { Group } from './index';
 import { GroupQuery } from './group-query';
 import AuthUser from '../../shared/auth-user';
 import { GroupCommandCreate, GroupCommandDelete, GroupCommandUpdate } from './group-command';
-import { NoExpectedScopeError, NotFoundError } from '../../shared/errors';
 import { GroupRepository, UserRepository } from '../index';
+import { TYPE } from './group';
 
 @singleton()
 export default class GroupService extends AbstractService<Group, GroupRepository, GroupValue, GroupQuery> {
@@ -14,23 +14,20 @@ export default class GroupService extends AbstractService<Group, GroupRepository
     @inject('GroupRepository') protected override readonly repository: GroupRepository,
     @inject('UserRepository') private readonly userRepository: UserRepository,
   ) {
-    super('Group', 'groups:read', 'groups:write', repository);
+    super(TYPE, 'groups:read', 'groups:write', repository);
   }
 
-  async createGroup(
-    { authIdValue, user, scopes }: AuthUser,
-    { name, description, admins, members }: GroupCommandCreate,
-  ): Promise<string> {
-    if (!user) {
-      throw new NotFoundError('User', authIdValue);
-    }
-    if (!scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(user.id, this.writeScope);
-    }
+  async createGroup(authUser: AuthUser, { name, description, admins, members }: GroupCommandCreate): Promise<string> {
+    this.checkScope(authUser);
 
     const adminEntities = await this.userRepository.findByIds(admins);
     const memberEntities = await this.userRepository.findByIds(members);
-    const result = new Group({ name, description, admins: adminEntities, members: memberEntities });
+    const result = new Group({
+      name,
+      description,
+      admins: [...adminEntities.values()],
+      members: [...memberEntities.values()],
+    });
     await this.repository.save(result);
     return result.id;
   }
@@ -51,11 +48,11 @@ export default class GroupService extends AbstractService<Group, GroupRepository
     }
 
     if (admins) {
-      entity.admins = await this.userRepository.findByIds(admins);
+      entity.admins = [...(await this.userRepository.findByIds(admins)).values()];
     }
 
     if (members) {
-      entity.members = await this.userRepository.findByIds(members);
+      entity.members = [...(await this.userRepository.findByIds(members)).values()];
     }
 
     await this.repository.save(entity);

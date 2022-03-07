@@ -4,7 +4,6 @@ import { AccountCommandCreate, AccountCommandDelete, AccountCommandUpdate, Accou
 import { AccountQuery } from './account-query';
 import AbstractService from '../../shared/abstract-service';
 import AuthUser from '../../shared/auth-user';
-import { NoExpectedScopeError, NotFoundError } from '../../shared/errors';
 import { AccountRepository } from '../index';
 import JournalService from '../journal/journal-service';
 
@@ -21,12 +20,7 @@ export default class AccountService extends AbstractService<Account, AccountRepo
     authUser: AuthUser,
     { name, description, journal, accountType, unit, strategy }: AccountCommandCreate,
   ): Promise<string> {
-    if (!authUser.user) {
-      throw new NotFoundError('User', authUser.authIdValue);
-    }
-    if (!authUser.scopes.includes(this.writeScope)) {
-      throw new NoExpectedScopeError(authUser.user.id, this.writeScope);
-    }
+    this.checkScope(authUser);
 
     const journalEntity = await this.journalService.getEntity(authUser, journal, false);
 

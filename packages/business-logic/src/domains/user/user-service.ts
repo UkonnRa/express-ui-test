@@ -2,7 +2,7 @@ import { inject, singleton } from 'tsyringe';
 import AbstractService from '../../shared/abstract-service';
 import { UserValue } from './user-value';
 import { UserQuery } from './user-query';
-import { Role, User } from './user';
+import { Role, TYPE, User } from './user';
 import AuthUser from '../../shared/auth-user';
 import { UserCommandCreate, UserCommandDelete, UserCommandUpdate } from './user-command';
 import { NoAuthError, NoExpectedScopeError, NotFoundError } from '../../shared/errors';
@@ -11,7 +11,7 @@ import { UserRepository } from '../index';
 @singleton()
 export default class UserService extends AbstractService<User, UserRepository, UserValue, UserQuery> {
   constructor(@inject('UserRepository') protected override readonly repository: UserRepository) {
-    super('User', 'users:read', 'users:write', repository);
+    super(TYPE, 'users:read', 'users:write', repository);
   }
 
   async createUser(
