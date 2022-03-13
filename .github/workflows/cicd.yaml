@@ -52,8 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  parse-tag:
-    name: Build Docker Image
+  build-linux:
+    name: Build Docker Image and Deskop on Linux
     runs-on: ubuntu-latest
     needs:
       - test
@@ -79,3 +79,26 @@ jobs:
           echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG
+      - name: Archive Linux Desktop
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-linux
+          path: services/desktop/release/wonderland-white-rabbit.AppImage
+  build-win:
+    runs-on: windows-latest
+    needs:
+      - test
+    if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Build Project
+        run: npm install -g npm && npm cache clean --force && npm ci && npm run build:desktop
+      - name: Archive Windows Desktop
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-windows
+          path: services/desktop/release/wonderland-white-rabbit.zip

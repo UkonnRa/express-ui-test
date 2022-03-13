@@ -16,7 +16,8 @@
     "clean": "rimraf packages/*/dist/ services/*/dist/ services/desktop/release/",
     "clean:all": "npm run clean && rimraf node_modules/ services/*/node_modules/",
     "dev:desktop": "ts-node scripts/dev-desktop.ts",
-    "build": "npm run clean && cross-env NODE_ENV=production npm run build --workspaces --if-present && ts-node scripts/build-desktop.ts",
+    "build:desktop": "ts-node scripts/build-desktop.ts",
+    "build": "npm run clean && cross-env NODE_ENV=production npm run build --workspaces --if-present && npm run build:desktop",
     "prepare": "husky install",
     "dependencies:update": "npx npm-check-updates -ui -x rehype-katex,remark-math,@mdx-js/react --deep --dep prod,dev,peer,bundle,optional"
   },
