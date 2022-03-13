@@ -1,10 +1,10 @@
 FROM node:16-alpine as builder
 
+ENV NODE_ENV production
+
 COPY package.json package.json
 
-RUN npm uninstall @white-rabbit/business-logic @white-rabbit/repository-memory
-
-RUN npm install --production --no-optional
+RUN npm install --no-optional
 
 FROM node:16-alpine
 

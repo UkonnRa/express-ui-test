@@ -3,7 +3,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2021,
     sourceType: 'module',
-    project: ['./tsconfig.json', './packages/*/tsconfig.json', './services/*/tsconfig.json'],
+    project: ['./tsconfig.json'],
   },
   plugins: ['eslint-plugin', '@typescript-eslint', 'jest', 'import', 'eslint-comments', 'simple-import-sort'],
   extends: [
@@ -23,13 +23,6 @@ module.exports = {
     'no-restricted-syntax': 0,
     'max-classes-per-file': 0,
     'class-methods-use-this': 0,
+    'import/no-extraneous-dependencies': 0,
   },
-  overrides: [
-    {
-      files: ['services/desktop/src/**/*.ts', 'configs/*.ts', 'scripts/*.ts'],
-      rules: {
-        'import/no-extraneous-dependencies': 0,
-      },
-    },
-  ],
 };
