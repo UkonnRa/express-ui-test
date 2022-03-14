@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HelloButton } from '@white-rabbit/components-vue';
+import { HelloButton } from '@white-rabbit/components';
 </script>
 
 <template>

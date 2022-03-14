@@ -9,9 +9,9 @@
     "node": ">= 16"
   },
   "scripts": {
-    "test": "jest --coverage --passWithNoTests",
-    "lint": "prettier --check \"./**/*.{ts,tsx,js,json,md,mdx}\" && eslint . --ext .js,.ts,.tsx && npm run lint:markdown",
-    "lint:fix": "prettier --write \"./**/*.{ts,tsx,js,json,md,mdx}\" && eslint . --fix --ext .js,.ts,.tsx && npm run lint:markdown --fix",
+    "test": "jest --coverage",
+    "lint": "prettier --check \"./**/*.{ts,vue,js,json,md,mdx}\" && npm run lint --workspaces --if-present && npm run lint:markdown",
+    "lint:fix": "prettier --write \"./**/*.{ts,vue,js,json,md,mdx}\" && npm run lint:fix --workspaces --if-present && npm run lint:markdown --fix",
     "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/*/README.md services/*/README.md docs/docs/*.{md,mdx}",
     "clean": "rimraf packages/*/dist/ services/*/dist/ services/desktop/release/",
     "clean:all": "npm run clean && rimraf node_modules/ services/*/node_modules/",

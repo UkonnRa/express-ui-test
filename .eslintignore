@@ -27,7 +27,7 @@ coverage
 *.sln
 *.sw?
 
-.eslintrc.js
+.eslintrc.backend.js
 *.config.js
 .docusaurus
 build
