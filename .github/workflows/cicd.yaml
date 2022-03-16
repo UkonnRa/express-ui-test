@@ -12,6 +12,14 @@ jobs:
   test:
     name: Continuous Integration
     runs-on: ubuntu-latest
+    env:
+      WHITERABBIT_DEBUG: true
+      WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
+      WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
+      WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
+      WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
+      WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
+      WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -19,15 +27,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Lint and test
-        run: yarn && yarn lint && yarn test && yarn test:e2e
-        env:
-          WHITERABBIT_DEBUG: true
-          WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
-          WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
-          WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
-          WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
-          WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
-          WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
+        run: yarn && yarn test && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -43,6 +43,8 @@ jobs:
     needs:
       - test
     if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    env:
+      NODE_ENV: production
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -55,7 +57,7 @@ jobs:
       - name: Build Project
         run: yarn && yarn build
       - name: Perpare Tools
-        run: apt-get update -y && apt-get upgrade -y && apt-get install jq -y
+        run: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install jq -y
       - name: Build Docker Image
         run: >-
           PACKAGE_VERSION=$(cat package.json | jq ".version" --raw-output) &&
@@ -72,10 +74,13 @@ jobs:
           name: desktop-linux
           path: packages/app-desktop/release/white-rabbit-*.AppImage
   build-win:
+    name: Build Deskop on Windows
     runs-on: windows-latest
     needs:
       - test
     if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    env:
+      NODE_ENV: production
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -83,7 +88,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Build Project
-        run: yarn && yarn workspace @white-rabbit/desktop build
+        run: yarn && yarn build
       - name: Archive Windows Desktop
         uses: actions/upload-artifact@v3
         with:
