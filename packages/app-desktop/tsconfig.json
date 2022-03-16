@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src"],
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../business-logic"
+    },
+    {
+      "path": "../repository-memory"
+    },
+    {
+      "path": "../repository-sequelize"
+    }
+  ]
+}

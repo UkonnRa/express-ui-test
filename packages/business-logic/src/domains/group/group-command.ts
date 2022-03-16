@@ -1,5 +1,5 @@
-export type GroupCommandCreate = {
-  readonly type: 'GroupCommandCreate';
+export interface GroupCommandCreate {
+  readonly type: "GroupCommandCreate";
 
   readonly name: string;
 
@@ -8,10 +8,10 @@ export type GroupCommandCreate = {
   readonly admins: string[];
 
   readonly members: string[];
-};
+}
 
-export type GroupCommandUpdate = {
-  readonly type: 'GroupCommandUpdate';
+export interface GroupCommandUpdate {
+  readonly type: "GroupCommandUpdate";
 
   readonly id: string;
 
@@ -22,12 +22,15 @@ export type GroupCommandUpdate = {
   readonly admins?: string[];
 
   readonly members?: string[];
-};
+}
 
-export type GroupCommandDelete = {
-  readonly type: 'GroupCommandDelete';
+export interface GroupCommandDelete {
+  readonly type: "GroupCommandDelete";
 
   readonly id: string;
-};
+}
 
-export type GroupCommand = GroupCommandCreate | GroupCommandUpdate | GroupCommandDelete;
+export type GroupCommand =
+  | GroupCommandCreate
+  | GroupCommandUpdate
+  | GroupCommandDelete;

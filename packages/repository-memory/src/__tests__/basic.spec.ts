@@ -1,12 +1,20 @@
-import 'reflect-metadata';
-import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
-import { Pagination, Sort } from '@white-rabbit/business-logic/src/shared/abstract-repository';
-import { toBase64 } from 'js-base64';
-import AuthUser from '@white-rabbit/business-logic/src/shared/auth-user';
-import { container } from 'tsyringe';
-import { TestEntity, TestEntityQuery, TestEntityRepository, TestEntityService } from './test-entity';
+import "reflect-metadata";
+import { Role, User } from "@white-rabbit/business-logic/src/domains/user";
+import {
+  Pagination,
+  Sort,
+} from "@white-rabbit/business-logic/src/shared/abstract-repository";
+import { toBase64 } from "js-base64";
+import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
+import { container } from "tsyringe";
+import {
+  TestEntity,
+  TestEntityQuery,
+  TestEntityRepository,
+  TestEntityService,
+} from "./test-entity";
 
-type Task = {
+interface Task {
   sort: Sort;
   pagination: Pagination;
   hasPreviousPage: boolean;
@@ -14,30 +22,30 @@ type Task = {
   result: number[];
   query?: TestEntityQuery;
   resultNotAdditionalFilters?: number[];
-};
+}
 
-describe('Basic functionality for TestEntity & related components', () => {
+describe("Basic functionality for TestEntity & related components", () => {
   const repository = container.resolve(TestEntityRepository);
   const service = container.resolve(TestEntityService);
 
-  const admin = new User({ name: 'admin with long name', role: Role.ADMIN });
-  const user = new User({ name: 'user with long name', role: Role.USER });
+  const admin = new User({ name: "admin with long name", role: Role.ADMIN });
+  const user = new User({ name: "user with long name", role: Role.USER });
 
   const entities = [
-    new TestEntity('1', 'test 1', 18, ['tag1', 'tag2'], admin.id),
-    new TestEntity('2', 'test 2', 20, ['tag2', 'tag4'], user.id),
-    new TestEntity('3', 'test 3', 18, ['tag1', 'tag3'], user.id),
-    new TestEntity('4', 'test 2', 20, ['tag1', 'tag3'], user.id),
+    new TestEntity("1", "test 1", 18, ["tag1", "tag2"], admin.id),
+    new TestEntity("2", "test 2", 20, ["tag2", "tag4"], user.id),
+    new TestEntity("3", "test 3", 18, ["tag1", "tag3"], user.id),
+    new TestEntity("4", "test 2", 20, ["tag1", "tag3"], user.id),
   ];
 
-  Promise.all(entities.map((e) => repository.save(e)));
+  void Promise.all(entities.map(async (e) => repository.save(e)));
 
   const tasks: Task[] = [
     // { field: 'age', order: "ASC" }: 0, 2, 1, 3
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         size: 1,
       },
       hasNextPage: false,
@@ -45,29 +53,29 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1],
       resultNotAdditionalFilters: [3],
       query: {
-        type: 'TestEntityQueryFullText',
-        keyword: 'tag2',
+        type: "TestEntityQueryFullText",
+        keyword: "tag2",
       },
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         size: 1,
       },
       hasNextPage: true,
       hasPreviousPage: false,
       result: [0],
       query: {
-        type: 'TestEntityQueryFullText',
-        keyword: 'tag2',
+        type: "TestEntityQueryFullText",
+        keyword: "tag2",
       },
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
-        before: toBase64('fake id', true),
+        startFrom: "LAST",
+        before: toBase64("fake id", true),
         size: 2,
       },
       hasNextPage: false,
@@ -75,10 +83,10 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
-        before: toBase64('fake id', true),
+        startFrom: "LAST",
+        before: toBase64("fake id", true),
         size: 5,
       },
       hasNextPage: false,
@@ -86,9 +94,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2, 1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         size: 5,
       },
       hasNextPage: false,
@@ -96,9 +104,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2, 1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         size: 2,
       },
       hasPreviousPage: false,
@@ -106,9 +114,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[0]?.toCursor(),
         size: 2,
       },
@@ -117,9 +125,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [2, 1],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[1]?.toCursor(),
         size: 2,
       },
@@ -128,9 +136,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[2]?.toCursor(),
         size: 2,
       },
@@ -139,9 +147,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[3]?.toCursor(),
         size: 2,
       },
@@ -150,9 +158,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         before: entities[0]?.toCursor(),
         size: 2,
       },
@@ -161,9 +169,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         before: entities[1]?.toCursor(),
         size: 2,
       },
@@ -172,9 +180,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         before: entities[2]?.toCursor(),
         size: 2,
       },
@@ -183,9 +191,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         before: entities[3]?.toCursor(),
         size: 2,
       },
@@ -194,9 +202,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         size: 2,
       },
       hasPreviousPage: true,
@@ -204,9 +212,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         before: entities[0]?.toCursor(),
         size: 2,
       },
@@ -215,9 +223,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         before: entities[1]?.toCursor(),
         size: 2,
       },
@@ -226,9 +234,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         before: entities[2]?.toCursor(),
         size: 2,
       },
@@ -237,9 +245,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         before: entities[3]?.toCursor(),
         size: 2,
       },
@@ -248,9 +256,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [2, 1],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[0]?.toCursor(),
         size: 2,
       },
@@ -259,9 +267,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[1]?.toCursor(),
         size: 2,
       },
@@ -270,9 +278,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[2]?.toCursor(),
         size: 2,
       },
@@ -281,9 +289,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [1, 3],
     },
     {
-      sort: [{ field: 'age', order: 'ASC' }],
+      sort: [{ field: "age", order: "ASC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[3]?.toCursor(),
         size: 2,
       },
@@ -294,9 +302,9 @@ describe('Basic functionality for TestEntity & related components', () => {
     //
     // { field: 'age', order: "DESC" }: 1, 3, 0, 2
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[0]?.toCursor(),
         size: 2,
       },
@@ -305,9 +313,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [2],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[1]?.toCursor(),
         size: 2,
       },
@@ -316,9 +324,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [3, 0],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[2]?.toCursor(),
         size: 2,
       },
@@ -327,9 +335,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'FIRST',
+        startFrom: "FIRST",
         after: entities[3]?.toCursor(),
         size: 2,
       },
@@ -338,9 +346,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[0]?.toCursor(),
         size: 2,
       },
@@ -349,9 +357,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [2],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[1]?.toCursor(),
         size: 2,
       },
@@ -360,9 +368,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [0, 2],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[2]?.toCursor(),
         size: 2,
       },
@@ -371,9 +379,9 @@ describe('Basic functionality for TestEntity & related components', () => {
       result: [],
     },
     {
-      sort: [{ field: 'age', order: 'DESC' }],
+      sort: [{ field: "age", order: "DESC" }],
       pagination: {
-        startFrom: 'LAST',
+        startFrom: "LAST",
         after: entities[3]?.toCursor(),
         size: 2,
       },
@@ -383,44 +391,66 @@ describe('Basic functionality for TestEntity & related components', () => {
     },
   ];
 
-  it('can find entities correctly', async () => {
+  it("can find entities correctly", async () => {
     await Promise.all(
-      tasks.map(async ({ sort, pagination, query, result, resultNotAdditionalFilters }) => {
-        expect(await repository.doFindAll(sort, pagination, query)).toStrictEqual(
-          (resultNotAdditionalFilters ?? result).map((i) => entities[i]),
-        );
-      }),
+      tasks.map(
+        async ({
+          sort,
+          pagination,
+          query,
+          result,
+          resultNotAdditionalFilters,
+        }) => {
+          expect(
+            await repository.doFindAll(sort, pagination, query)
+          ).toStrictEqual(
+            (resultNotAdditionalFilters ?? result).map((i) => entities[i])
+          );
+        }
+      )
     );
   });
 
-  it('can get pagination correctly', async () => {
+  it("can get pagination correctly", async () => {
     await Promise.all(
-      tasks.map(async ({ sort, pagination, query, result, hasNextPage, hasPreviousPage }) => {
-        const data = result.map((i) => entities[i]);
-        expect(
-          await service.findAllValues(
-            new AuthUser(
-              {
-                provider: 'NOOP',
-                id: admin.id,
-              },
-              ['test:read'],
-              admin,
-            ),
-            sort,
-            pagination,
-            query,
-          ),
-        ).toStrictEqual({
-          pageInfo: {
-            hasPreviousPage,
-            hasNextPage,
-            startCursor: data[0]?.toCursor(),
-            endCursor: data[data.length - 1]?.toCursor(),
-          },
-          pageItems: data.map((e) => ({ cursor: e?.toCursor(), data: e?.toValue() })),
-        });
-      }),
+      tasks.map(
+        async ({
+          sort,
+          pagination,
+          query,
+          result,
+          hasNextPage,
+          hasPreviousPage,
+        }) => {
+          const data = result.map((i) => entities[i]);
+          expect(
+            await service.findAllValues(
+              new AuthUser(
+                {
+                  provider: "NOOP",
+                  id: admin.id,
+                },
+                ["test:read"],
+                admin
+              ),
+              sort,
+              pagination,
+              query
+            )
+          ).toStrictEqual({
+            pageInfo: {
+              hasPreviousPage,
+              hasNextPage,
+              startCursor: data[0]?.toCursor(),
+              endCursor: data[data.length - 1]?.toCursor(),
+            },
+            pageItems: data.map((e) => ({
+              cursor: e?.toCursor(),
+              data: e?.toValue(),
+            })),
+          });
+        }
+      )
     );
   });
 });

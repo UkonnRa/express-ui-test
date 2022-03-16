@@ -1,11 +1,11 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { UserValue } from './user-value';
+import AbstractEntity from "../../shared/abstract-entity";
+import { UserValue } from "./user-value";
 
-export type UserCreateOptions = {
+export interface UserCreateOptions {
   name: string;
   role: Role;
   authIds?: Map<string, string>;
-};
+}
 
 export enum Role {
   USER,
@@ -19,7 +19,7 @@ const MAX_LENGTH_NAME = 50;
 
 const MAX_LENGTH_AUTH_IDS = 6;
 
-export const TYPE = 'User';
+export const TYPE = "User";
 
 export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
   #name: string;
@@ -45,7 +45,10 @@ export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
 
   set name(value: string) {
     const result = value.trim();
-    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+    this.checkLength(result.length, "name", {
+      min: MIN_LENGTH_NAME,
+      max: MAX_LENGTH_NAME,
+    });
     this.#name = result;
   }
 
@@ -54,7 +57,7 @@ export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
   }
 
   set authIds(value: Map<string, string>) {
-    this.checkLength(value.size, 'authIds', { max: MAX_LENGTH_AUTH_IDS });
+    this.checkLength(value.size, "authIds", { max: MAX_LENGTH_AUTH_IDS });
     this.#authIds = value;
   }
 
@@ -67,6 +70,11 @@ export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
   }
 
   toValue(): UserValue {
-    return { id: this.id, name: this.#name, role: this.role, authIds: this.authIds };
+    return {
+      id: this.id,
+      name: this.#name,
+      role: this.role,
+      authIds: this.authIds,
+    };
   }
 }

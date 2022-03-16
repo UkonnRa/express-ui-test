@@ -1,6 +1,6 @@
-import { AccountType, Strategy } from './account';
+import { AccountType, Strategy } from "./account";
 
-export type AccountValue = {
+export interface AccountValue {
   readonly id: string;
   readonly name: string[];
   readonly description: string;
@@ -8,4 +8,4 @@ export type AccountValue = {
   readonly accountType: AccountType;
   readonly unit: string;
   readonly strategy: Strategy;
-};
+}

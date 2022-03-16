@@ -1,0 +1,18 @@
+{
+  "name": "@white-rabbit/app-frontend",
+  "packageManager": "yarn@3.2.0",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --port 5051",
+    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
+    "lint:fix": "yarn lint --fix",
+    "test": "vitest run --coverage",
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:5051/ 'cypress run'"
+  },
+  "dependencies": {
+    "@white-rabbit/components": "workspace:^",
+    "vue": "^3.2.31"
+  }
+}

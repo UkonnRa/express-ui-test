@@ -1,7 +1,7 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { Journal } from '../journal';
-import { User } from '../user';
-import { AccountValue } from '.';
+import AbstractEntity from "../../shared/abstract-entity";
+import { Journal } from "../journal";
+import { User } from "../user";
+import { AccountValue } from ".";
 
 export enum Strategy {
   FIFO,
@@ -16,14 +16,14 @@ export enum AccountType {
   EQUITY,
 }
 
-export type AccountCreateOptions = {
+export interface AccountCreateOptions {
   name: string[];
   description: string;
   journal: Journal;
   accountType: AccountType;
   unit: string;
   strategy: Strategy;
-};
+}
 
 const MIN_LENGTH_NAME = 2;
 
@@ -39,11 +39,15 @@ const MIN_LENGTH_UNIT = 1;
 
 const MAX_LENGTH_UNIT = 20;
 
-const NAME_SEPARATOR = '::';
+const NAME_SEPARATOR = "::";
 
-export const TYPE = 'Account';
+export const TYPE = "Account";
 
-export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> {
+export class Account extends AbstractEntity<
+  Account,
+  AccountValue,
+  typeof TYPE
+> {
   #name: string[];
 
   #description: string;
@@ -60,7 +64,14 @@ export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> 
     return TYPE;
   }
 
-  constructor({ name, description, journal, accountType, unit, strategy }: AccountCreateOptions) {
+  constructor({
+    name,
+    description,
+    journal,
+    accountType,
+    unit,
+    strategy,
+  }: AccountCreateOptions) {
     super();
     this.name = name;
     this.description = description;
@@ -79,11 +90,17 @@ export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> 
   }
 
   set name(value: string[]) {
-    this.checkLength(value.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+    this.checkLength(value.length, "name", {
+      min: MIN_LENGTH_NAME,
+      max: MAX_LENGTH_NAME,
+    });
     this.#name = [];
     for (const v of value) {
       const result = v.trim();
-      this.checkLength(result.length, 'name.each', { min: MIN_LENGTH_NAME_EACH, max: MAX_LENGTH_NAME_EACH });
+      this.checkLength(result.length, "name.each", {
+        min: MIN_LENGTH_NAME_EACH,
+        max: MAX_LENGTH_NAME_EACH,
+      });
       this.#name.push(result);
     }
   }
@@ -94,7 +111,9 @@ export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> 
 
   set description(value: string) {
     const result = value.trim();
-    this.checkLength(result.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.checkLength(result.length, "description", {
+      max: MAX_LENGTH_DESCRIPTION,
+    });
     this.#description = result;
   }
 
@@ -104,7 +123,10 @@ export class Account extends AbstractEntity<Account, AccountValue, typeof TYPE> 
 
   set unit(value: string) {
     const result = value.trim();
-    this.checkLength(result.length, 'unit', { min: MIN_LENGTH_UNIT, max: MAX_LENGTH_UNIT });
+    this.checkLength(result.length, "unit", {
+      min: MIN_LENGTH_UNIT,
+      max: MAX_LENGTH_UNIT,
+    });
     this.#unit = result;
   }
 

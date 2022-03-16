@@ -1,0 +1,32 @@
+{
+  "name": "@white-rabbit/app-backend",
+  "packageManager": "yarn@3.2.0",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "publishConfig": {
+    "main": "dist/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "yarn clean && ts-node esbuild.config.ts",
+    "dev": "yarn build --watch",
+    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest --coverage"
+  },
+  "dependencies": {
+    "@white-rabbit/business-logic": "workspace:^",
+    "@white-rabbit/repository-memory": "workspace:^",
+    "@white-rabbit/repository-sequelize": "workspace:^",
+    "express": "^4.17.3",
+    "js-base64": "^3.7.2",
+    "sequelize": "^6.17.0",
+    "sqlite3": "^5.0.2",
+    "tsyringe": "^4.6.0",
+    "uuid": "^8.3.2",
+    "winston": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13"
+  }
+}

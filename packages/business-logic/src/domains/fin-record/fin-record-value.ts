@@ -1,4 +1,4 @@
-import { FinRecordState } from './fin-record';
+import { FinRecordState } from "./fin-record";
 
 export interface FinRecordValue {
   readonly id: string;

@@ -1,17 +1,17 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { Account } from '../account';
-import { FinRecord } from './fin-record';
-import { User } from '../user';
-import { FieldValidationZeroError } from '../../shared/errors';
-import { FinItemValue } from './fin-record-value';
+import AbstractEntity from "../../shared/abstract-entity";
+import { Account } from "../account";
+import { User } from "../user";
+import { FieldValidationZeroError } from "../../shared/errors";
+import { FinRecord } from "./fin-record";
+import { FinItemValue } from "./fin-record-value";
 
-export type FinItemCreateOptions = {
+export interface FinItemCreateOptions {
   account: Account;
   amount: number;
   unit?: string;
   price?: number;
   note?: string;
-};
+}
 
 const MIN_LENGTH_UNIT = 6;
 
@@ -19,9 +19,13 @@ const MAX_LENGTH_UNIT = 50;
 
 const MAX_LENGTH_NOTE = 400;
 
-export const TYPE = 'FinItem' as const;
+export const TYPE = "FinItem" as const;
 
-export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> {
+export class FinItem extends AbstractEntity<
+  FinItem,
+  FinItemValue,
+  typeof TYPE
+> {
   readonly account: Account;
 
   #amount: number;
@@ -32,7 +36,10 @@ export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> 
 
   #note?: string;
 
-  constructor(readonly finRecord: FinRecord, { account, amount, unit, price, note }: FinItemCreateOptions) {
+  constructor(
+    readonly finRecord: FinRecord,
+    { account, amount, unit, price, note }: FinItemCreateOptions
+  ) {
     super();
     this.account = account;
     this.amount = amount;
@@ -47,7 +54,7 @@ export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> 
 
   set amount(value: number) {
     if (value < 0) {
-      throw new FieldValidationZeroError(this.entityType, 'amount', true);
+      throw new FieldValidationZeroError(this.entityType, "amount", true);
     }
     this.#amount = value;
   }
@@ -59,7 +66,10 @@ export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> 
   set unit(value: string | undefined) {
     const result = value?.trim();
     if (result !== undefined) {
-      this.checkLength(result.length, 'unit', { min: MIN_LENGTH_UNIT, max: MAX_LENGTH_UNIT });
+      this.checkLength(result.length, "unit", {
+        min: MIN_LENGTH_UNIT,
+        max: MAX_LENGTH_UNIT,
+      });
     }
     this.#unit = result;
   }
@@ -70,7 +80,7 @@ export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> 
 
   set price(value: number | undefined) {
     if (value !== undefined && value <= 0) {
-      throw new FieldValidationZeroError(this.entityType, 'price', true, false);
+      throw new FieldValidationZeroError(this.entityType, "price", true, false);
     }
     this.#price = value;
   }
@@ -82,7 +92,7 @@ export class FinItem extends AbstractEntity<FinItem, FinItemValue, typeof TYPE> 
   set note(value: string | undefined) {
     const result = value?.trim();
     if (result !== undefined) {
-      this.checkLength(result.length, 'note', { max: MAX_LENGTH_NOTE });
+      this.checkLength(result.length, "note", { max: MAX_LENGTH_NOTE });
     }
     this.#note = result;
   }

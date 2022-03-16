@@ -1,12 +1,12 @@
-import { QueryFullTextValue } from '../../shared/abstract-repository';
-import { AccountType, Strategy } from './account';
+import { QueryFullTextValue } from "../../shared/abstract-repository";
+import { AccountType, Strategy } from "./account";
 
 export type AccountQueryFullText = QueryFullTextValue & {
-  readonly type: 'AccountQueryFullText';
+  readonly type: "AccountQueryFullText";
 };
 
-export type AccountQueryByJournal = {
-  readonly type: 'AccountQueryByJournal';
+export interface AccountQueryByJournal {
+  readonly type: "AccountQueryByJournal";
 
   readonly journal: string;
 
@@ -15,6 +15,6 @@ export type AccountQueryByJournal = {
   readonly unit?: string;
 
   readonly strategy?: Strategy;
-};
+}
 
 export type AccountQuery = AccountQueryFullText | AccountQueryByJournal;

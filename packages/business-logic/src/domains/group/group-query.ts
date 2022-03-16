@@ -1,15 +1,15 @@
-import { QueryFullTextValue } from '../../shared/abstract-repository';
+import { QueryFullTextValue } from "../../shared/abstract-repository";
 
 export type GroupQueryFullText = QueryFullTextValue & {
-  readonly type: 'GroupQueryFullText';
+  readonly type: "GroupQueryFullText";
 };
 
-export type GroupQueryByUser = {
-  readonly type: 'GroupQueryByUser';
+export interface GroupQueryByUser {
+  readonly type: "GroupQueryByUser";
 
   readonly user: string;
 
-  readonly field?: 'admins' | 'members';
-};
+  readonly field?: "admins" | "members";
+}
 
 export type GroupQuery = GroupQueryFullText | GroupQueryByUser;

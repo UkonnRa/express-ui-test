@@ -12,21 +12,14 @@ jobs:
   test:
     name: Continuous Integration
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
-          POSTGRES_DB: white-rabbit
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+    env:
+      WHITERABBIT_DEBUG: true
+      WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
+      WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
+      WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
+      WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
+      WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
+      WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -34,15 +27,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Lint and test
-        run: npm install -g npm && npm cache clean --force && npm ci && npm run lint && npm run test
-        env:
-          WHITERABBIT_DEBUG: true
-          WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
-          WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
-          WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
-          WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
-          WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
-          WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
+        run: yarn && yarn test && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -52,12 +37,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  parse-tag:
-    name: Build Docker Image
+  build-linux:
+    name: Build Docker Image and Deskop on Linux
     runs-on: ubuntu-latest
     needs:
       - test
     if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    env:
+      NODE_ENV: production
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -68,14 +55,42 @@ jobs:
         with:
           python-version: '3.x'
       - name: Build Project
-        run: npm install -g npm && npm cache clean --force && npm ci && npm run build
+        run: yarn && yarn build
+      - name: Perpare Tools
+        run: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install jq -y
       - name: Build Docker Image
         run: >-
-          PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g') &&
+          PACKAGE_VERSION=$(cat package.json | jq ".version" --raw-output) &&
           IMAGE_TAG=$(./scripts/parse-branch.py ${{ github.ref }} $PACKAGE_VERSION) &&
           echo "Image Tag: $IMAGE_TAG" &&
-          docker build services/backend -t ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
-          docker build services/frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
+          docker build packages/app-backend -t ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
+          docker build packages/app-frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
           echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG
+      - name: Archive Linux Desktop
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-linux
+          path: packages/app-desktop/release/white-rabbit-*.AppImage
+  build-win:
+    name: Build Deskop on Windows
+    runs-on: windows-latest
+    needs:
+      - test
+    if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    env:
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+      - name: Build Project
+        run: yarn && yarn build
+      - name: Archive Windows Desktop
+        uses: actions/upload-artifact@v3
+        with:
+          name: desktop-windows
+          path: packages/app-desktop/release/white-rabbit-*.zip

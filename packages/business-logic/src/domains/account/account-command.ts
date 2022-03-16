@@ -1,7 +1,7 @@
-import { AccountType, Strategy } from './account';
+import { AccountType, Strategy } from "./account";
 
-export type AccountCommandCreate = {
-  readonly type: 'AccountCommandCreate';
+export interface AccountCommandCreate {
+  readonly type: "AccountCommandCreate";
 
   readonly name: string[];
 
@@ -14,10 +14,10 @@ export type AccountCommandCreate = {
   readonly unit: string;
 
   readonly strategy: Strategy;
-};
+}
 
-export type AccountCommandUpdate = {
-  readonly type: 'AccountCommandCreate';
+export interface AccountCommandUpdate {
+  readonly type: "AccountCommandCreate";
 
   readonly id: string;
 
@@ -30,12 +30,12 @@ export type AccountCommandUpdate = {
   readonly unit?: string;
 
   readonly strategy?: Strategy;
-};
+}
 
-export type AccountCommandDelete = {
-  readonly type: 'AccountCommandCreate';
+export interface AccountCommandDelete {
+  readonly type: "AccountCommandCreate";
 
   readonly id: string;
-};
+}
 
 export type AccountCommand = AccountCommandCreate | AccountCommandUpdate;

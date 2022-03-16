@@ -1,5 +1,32 @@
-dist
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+!.yarn/cache
+#.pnp.*
 node_modules
-.idea
+
+packages/app-desktop/app/.yarn
+docs/.yarn
+
+# Build results
+dist
+release
+tsconfig.tsbuildinfo
+docs/build
+
+# Generated files
+.docusaurus
+.cache-loader
+
+#Test results
 coverage
-*.db
+packages/**/cypress/videos
+
+#IDE
+.idea

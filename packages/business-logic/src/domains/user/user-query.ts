@@ -1,7 +1,7 @@
-import { QueryFullTextValue } from '../../shared/abstract-repository';
+import { QueryFullTextValue } from "../../shared/abstract-repository";
 
 export type UserQueryFullText = QueryFullTextValue & {
-  readonly type: 'UserQueryFullText';
+  readonly type: "UserQueryFullText";
 };
 
 export type UserQuery = UserQueryFullText;

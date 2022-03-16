@@ -1,38 +1,58 @@
-import { inject, singleton } from 'tsyringe';
-import AbstractService from '../../shared/abstract-service';
-import { UserValue } from './user-value';
-import { UserQuery } from './user-query';
-import { Role, TYPE, User } from './user';
-import AuthUser from '../../shared/auth-user';
-import { UserCommandCreate, UserCommandDelete, UserCommandUpdate } from './user-command';
-import { NoAuthError, NoExpectedScopeError, NotFoundError } from '../../shared/errors';
-import { UserRepository } from '../index';
+import { inject, singleton } from "tsyringe";
+import AbstractService from "../../shared/abstract-service";
+import AuthUser from "../../shared/auth-user";
+import {
+  NoAuthError,
+  NoExpectedScopeError,
+  NotFoundError,
+} from "../../shared/errors";
+import { UserRepository } from "../index";
+import { UserValue } from "./user-value";
+import { UserQuery } from "./user-query";
+import { Role, TYPE, User } from "./user";
+import {
+  UserCommandCreate,
+  UserCommandDelete,
+  UserCommandUpdate,
+} from "./user-command";
 
 @singleton()
-export default class UserService extends AbstractService<User, UserRepository, UserValue, UserQuery> {
-  constructor(@inject('UserRepository') protected override readonly repository: UserRepository) {
-    super(TYPE, 'users:read', 'users:write', repository);
+export default class UserService extends AbstractService<
+  User,
+  UserRepository,
+  UserValue,
+  UserQuery
+> {
+  constructor(
+    @inject("UserRepository")
+    protected override readonly repository: UserRepository
+  ) {
+    super(TYPE, "users:read", "users:write", repository);
   }
 
   async createUser(
     { authId, authIdValue, user, scopes }: AuthUser,
-    { name, role, authIds }: UserCommandCreate,
+    { name, role, authIds }: UserCommandCreate
   ): Promise<string> {
     if (!scopes.includes(this.writeScope)) {
       throw new NoExpectedScopeError(authIdValue, this.writeScope);
     }
 
     let result: User;
-    if (!user) {
+    if (user == null) {
       if (role !== Role.USER) {
-        throw new NoAuthError(this.type, user, undefined, 'role');
+        throw new NoAuthError(this.type, user, undefined, "role");
       }
 
-      if (authIds && authIds.size > 0) {
-        throw new NoAuthError(this.type, user, undefined, 'authIds');
+      if (authIds != null && authIds.size > 0) {
+        throw new NoAuthError(this.type, user, undefined, "authIds");
       }
 
-      result = new User({ name, role, authIds: new Map([[authId.provider, authId.id]]) });
+      result = new User({
+        name,
+        role,
+        authIds: new Map([[authId.provider, authId.id]]),
+      });
     } else if (user.role > role) {
       result = new User({ name, role, authIds });
     } else {
@@ -43,42 +63,48 @@ export default class UserService extends AbstractService<User, UserRepository, U
     return result.id;
   }
 
-  async updateUser(authUser: AuthUser, { id, name, role, authIds }: UserCommandUpdate): Promise<void> {
+  async updateUser(
+    authUser: AuthUser,
+    { id, name, role, authIds }: UserCommandUpdate
+  ): Promise<void> {
     const entity = await this.getEntity(authUser, id);
 
     const operator = authUser.user;
-    if (!operator) {
-      throw new NotFoundError('User', authUser.authIdValue);
+    if (operator == null) {
+      throw new NotFoundError("User", authUser.authIdValue);
     }
 
-    if (!name && !role && !authIds) {
+    if (name != null && role != null && authIds == null) {
       return;
     }
 
-    if (name) {
+    if (name != null) {
       entity.name = name;
     }
 
-    if (role) {
+    if (role != null) {
       if (operator.role > role) {
         entity.role = role;
       } else {
-        throw new NoAuthError(this.type, operator.id, id, 'role');
+        throw new NoAuthError(this.type, operator.id, id, "role");
       }
     }
 
-    if (authIds) {
+    if (authIds != null) {
       if (operator.role > Role.USER) {
         entity.authIds = authIds;
       } else {
-        throw new NoAuthError(this.type, operator.id, id, 'authIds');
+        throw new NoAuthError(this.type, operator.id, id, "authIds");
       }
     }
 
     await this.repository.save(entity);
   }
 
-  async deleteUser(authUser: AuthUser, { id }: UserCommandDelete): Promise<void> {
+  async deleteUser(
+    authUser: AuthUser,
+    { id }: UserCommandDelete
+  ): Promise<void> {
     const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
