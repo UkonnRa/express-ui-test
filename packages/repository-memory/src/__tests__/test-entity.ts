@@ -1,10 +1,10 @@
-import AbstractEntity from '@white-rabbit/business-logic/src/shared/abstract-entity';
-import { Role, User } from '@white-rabbit/business-logic/src/domains/user';
-import { InvalidSortFieldError } from '@white-rabbit/business-logic/src/shared/errors';
-import { AdditionalFilter } from '@white-rabbit/business-logic/src/shared/abstract-repository';
-import AbstractService from '@white-rabbit/business-logic/src/shared/abstract-service';
-import { singleton } from 'tsyringe';
-import MemoryRepository from '../memory-repository';
+import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
+import { Role, User } from "@white-rabbit/business-logic/src/domains/user";
+import { InvalidSortFieldError } from "@white-rabbit/business-logic/src/shared/errors";
+import { AdditionalFilter } from "@white-rabbit/business-logic/src/shared/abstract-repository";
+import AbstractService from "@white-rabbit/business-logic/src/shared/abstract-service";
+import { singleton } from "tsyringe";
+import MemoryRepository from "../memory-repository";
 
 export interface TestEntityValue {
   readonly id: string;
@@ -16,15 +16,19 @@ export interface TestEntityValue {
   readonly tags: string[];
 }
 
-export const TYPE = 'TestEntity';
+export const TYPE = "TestEntity";
 
-export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue, typeof TYPE> {
+export class TestEntity extends AbstractEntity<
+  TestEntity,
+  TestEntityValue,
+  typeof TYPE
+> {
   constructor(
     override readonly id: string,
     readonly name: string,
     readonly age: number,
     readonly tags: string[],
-    readonly authorId: string,
+    readonly authorId: string
   ) {
     super();
   }
@@ -47,42 +51,52 @@ export class TestEntity extends AbstractEntity<TestEntity, TestEntityValue, type
 }
 
 @singleton()
-export class TestEntityRepository extends MemoryRepository<TestEntity, TestEntityValue, TestEntityQuery> {
+export class TestEntityRepository extends MemoryRepository<
+  TestEntity,
+  TestEntityValue,
+  TestEntityQuery
+> {
   doCompare(a: TestEntity, b: TestEntity, field: string): number {
-    if (field === 'name') {
+    if (field === "name") {
       if (a.name !== b.name) {
         return a.name.localeCompare(b.name);
       }
-    } else if (field === 'age') {
+    } else if (field === "age") {
       if (a.age !== b.age) {
         return a.age - b.age;
       }
-    } else if (field === 'id') {
+    } else if (field === "id") {
       return a.id.localeCompare(b.id);
     } else {
-      throw new InvalidSortFieldError('TestEntity', field);
+      throw new InvalidSortFieldError("TestEntity", field);
     }
     return 0;
   }
 
   doQuery(entity: TestEntity, query?: TestEntityQuery): boolean {
-    if (query?.type === 'TestEntityQueryIncludeTag') {
+    if (query?.type === "TestEntityQueryIncludeTag") {
       return entity.tags.includes(query.tag);
     }
 
-    if (query?.type === 'TestEntityQueryAgeBetween') {
+    if (query?.type === "TestEntityQueryAgeBetween") {
       return entity.age >= query.start && entity.age < query.end;
     }
 
     return true;
   }
 
-  override doConvertAdditionalQuery(query?: TestEntityQuery): AdditionalFilter<TestEntity>[] {
-    if (query?.type === 'TestEntityQueryFullText') {
+  override doConvertAdditionalQuery(
+    query?: TestEntityQuery
+  ): Array<AdditionalFilter<TestEntity>> {
+    if (query?.type === "TestEntityQueryFullText") {
       return [
-        (es) =>
+        async (es) =>
           Promise.resolve(
-            es.filter((e) => e.name.includes(query.keyword) || e.tags.some((t) => t.includes(query.keyword))),
+            es.filter(
+              (e) =>
+                e.name.includes(query.keyword) ||
+                e.tags.some((t) => t.includes(query.keyword))
+            )
           ),
       ];
     }
@@ -98,25 +112,28 @@ export class TestEntityService extends AbstractService<
   TestEntityQuery
 > {
   constructor(protected override readonly repository: TestEntityRepository) {
-    super('TestEntity', 'test:read', 'test:write', repository);
+    super("TestEntity", "test:read", "test:write", repository);
   }
 }
 
-export type TestEntityQueryIncludeTag = {
-  type: 'TestEntityQueryIncludeTag';
+export interface TestEntityQueryIncludeTag {
+  type: "TestEntityQueryIncludeTag";
 
   tag: string;
-};
+}
 
-export type TestEntityQueryAgeBetween = {
-  type: 'TestEntityQueryAgeBetween';
+export interface TestEntityQueryAgeBetween {
+  type: "TestEntityQueryAgeBetween";
   start: number;
   end: number;
-};
+}
 
-export type TestEntityQueryFullText = {
-  type: 'TestEntityQueryFullText';
+export interface TestEntityQueryFullText {
+  type: "TestEntityQueryFullText";
   keyword: string;
-};
+}
 
-export type TestEntityQuery = TestEntityQueryIncludeTag | TestEntityQueryAgeBetween | TestEntityQueryFullText;
+export type TestEntityQuery =
+  | TestEntityQueryIncludeTag
+  | TestEntityQueryAgeBetween
+  | TestEntityQueryFullText;

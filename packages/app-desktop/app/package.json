@@ -1,0 +1,11 @@
+{
+  "name": "@white-rabbit/app-desktop-impl",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "dependencies": {
+    "sqlite3": "^5.0.2"
+  },
+  "devDependencies": {
+    "electron": "17.1.2"
+  }
+}

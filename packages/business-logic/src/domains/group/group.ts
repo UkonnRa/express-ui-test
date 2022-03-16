@@ -1,8 +1,8 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { User } from '../user';
-import { GroupValue } from './group-value';
+import AbstractEntity from "../../shared/abstract-entity";
+import { User } from "../user";
+import { GroupValue } from "./group-value";
 
-export type GroupCreateOptions = {
+export interface GroupCreateOptions {
   name: string;
 
   description: string;
@@ -10,7 +10,7 @@ export type GroupCreateOptions = {
   admins: User[];
 
   members: User[];
-};
+}
 
 const MIN_LENGTH_NAME = 6;
 
@@ -20,7 +20,7 @@ const MAX_LENGTH_DESCRIPTION = 400;
 
 const MAX_LENGTH_LIST = 256;
 
-export const TYPE = 'Group';
+export const TYPE = "Group";
 
 export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   #name: string;
@@ -45,7 +45,10 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
 
   set name(value: string) {
     const result = value.trim();
-    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+    this.checkLength(result.length, "name", {
+      min: MIN_LENGTH_NAME,
+      max: MAX_LENGTH_NAME,
+    });
     this.#name = result;
   }
 
@@ -55,7 +58,9 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
 
   set description(value: string) {
     const result = value.trim();
-    this.checkLength(value.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.checkLength(value.length, "description", {
+      max: MAX_LENGTH_DESCRIPTION,
+    });
     this.#description = result;
   }
 
@@ -64,7 +69,7 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   set admins(value: User[]) {
-    this.checkLength(value.length, 'admins', { max: MAX_LENGTH_LIST });
+    this.checkLength(value.length, "admins", { max: MAX_LENGTH_LIST });
     this.#admins = value;
     this.members = this.#members;
   }
@@ -74,8 +79,10 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   set members(value: User[]) {
-    const result = value.filter(({ id }) => !this.admins.some((v) => v.id === id));
-    this.checkLength(value.length, 'members', { max: MAX_LENGTH_LIST });
+    const result = value.filter(
+      ({ id }) => !this.admins.some((v) => v.id === id)
+    );
+    this.checkLength(value.length, "members", { max: MAX_LENGTH_LIST });
     this.#members = result;
   }
 
@@ -84,7 +91,9 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   isReadable(user: User): boolean {
-    return this.isWritable(user) || this.members.some(({ id }) => id === user.id);
+    return (
+      this.isWritable(user) || this.members.some(({ id }) => id === user.id)
+    );
   }
 
   isWritable(user: User): boolean {

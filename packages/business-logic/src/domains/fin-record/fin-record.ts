@@ -1,11 +1,11 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { User } from '../user';
-import { Journal } from '../journal';
-import { FinItem, FinItemCreateOptions } from './fin-item';
-import { FinRecordValue } from './fin-record-value';
-import { AccountType } from '../account';
+import AbstractEntity from "../../shared/abstract-entity";
+import { User } from "../user";
+import { Journal } from "../journal";
+import { AccountType } from "../account";
+import { FinItem, FinItemCreateOptions } from "./fin-item";
+import { FinRecordValue } from "./fin-record-value";
 
-export type FinRecordCreateOptions = {
+export interface FinRecordCreateOptions {
   timestamp: Date;
   user: User;
   journal: Journal;
@@ -14,9 +14,9 @@ export type FinRecordCreateOptions = {
   items: FinItemCreateOptions[];
   tags: string[];
   isContingent: boolean;
-};
+}
 
-export const TYPE = 'FinRecord' as const;
+export const TYPE = "FinRecord" as const;
 
 const MIN_LENGTH_NAME = 6;
 
@@ -40,7 +40,11 @@ export enum FinRecordState {
   UNITS_NOT_MATCH,
 }
 
-export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof TYPE> {
+export class FinRecord extends AbstractEntity<
+  FinRecord,
+  FinRecordValue,
+  typeof TYPE
+> {
   timestamp: Date;
 
   readonly user: User;
@@ -57,7 +61,16 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
 
   isContingent: boolean;
 
-  constructor({ timestamp, user, journal, name, description, items, tags, isContingent }: FinRecordCreateOptions) {
+  constructor({
+    timestamp,
+    user,
+    journal,
+    name,
+    description,
+    items,
+    tags,
+    isContingent,
+  }: FinRecordCreateOptions) {
     super();
     this.timestamp = timestamp;
     this.user = user;
@@ -76,7 +89,10 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
   set name(value: string) {
     const result = value?.trim();
     if (result !== undefined) {
-      this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+      this.checkLength(result.length, "name", {
+        min: MIN_LENGTH_NAME,
+        max: MAX_LENGTH_NAME,
+      });
     }
     this.#name = result;
   }
@@ -88,7 +104,7 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
   set description(value: string) {
     const result = value?.trim();
     if (result !== undefined) {
-      this.checkLength(result.length, 'name', { max: MAX_LENGTH_DESCRIPTION });
+      this.checkLength(result.length, "name", { max: MAX_LENGTH_DESCRIPTION });
     }
     this.#description = result;
   }
@@ -98,10 +114,13 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
   }
 
   set items(value: FinItem[]) {
-    this.checkLength(value.length, 'items', { min: MIN_LENGTH_ITEMS, max: MAX_LENGTH_ITEMS });
+    this.checkLength(value.length, "items", {
+      min: MIN_LENGTH_ITEMS,
+      max: MAX_LENGTH_ITEMS,
+    });
   }
 
-  setItemWithOptions(options: FinItemCreateOptions[]) {
+  setItemWithOptions(options: FinItemCreateOptions[]): void {
     this.items = options.map((i) => new FinItem(this, i));
   }
 
@@ -110,11 +129,14 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
   }
 
   set tags(value: string[]) {
-    this.checkLength(value.length, 'tags', { max: MAX_LENGTH_TAGS });
+    this.checkLength(value.length, "tags", { max: MAX_LENGTH_TAGS });
     this.#tags = [];
     for (const tag of value) {
       const v = tag.trim();
-      this.checkLength(v.length, 'tags.each', { min: MIN_LENGTH_TAG, max: MAX_LENGTH_TAG });
+      this.checkLength(v.length, "tags.each", {
+        min: MIN_LENGTH_TAG,
+        max: MAX_LENGTH_TAG,
+      });
       this.#tags.push(v);
     }
   }
@@ -126,7 +148,7 @@ export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue, typeof 
     for (const item of this.items) {
       const itemUnit = item.unit ?? item.account.unit;
 
-      if (!unit) {
+      if (unit == null) {
         unit = itemUnit;
       } else if (unit !== itemUnit) {
         return FinRecordState.UNITS_NOT_MATCH;

@@ -12,21 +12,6 @@ jobs:
   test:
     name: Continuous Integration
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
-          POSTGRES_DB: white-rabbit
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     steps:
       - uses: actions/checkout@v2
       - name: Setup node v16
@@ -34,7 +19,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Lint and test
-        run: npm install -g npm && npm cache clean --force && npm ci && npm run lint && npm run test
+        run: yarn && yarn lint && yarn test && yarn test:e2e
         env:
           WHITERABBIT_DEBUG: true
           WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
@@ -68,14 +53,16 @@ jobs:
         with:
           python-version: '3.x'
       - name: Build Project
-        run: npm install -g npm && npm cache clean --force && npm ci && npm run build
+        run: yarn && yarn build
+      - name: Perpare Tools
+        run: apt-get update -y && apt-get upgrade -y && apt-get install jq -y
       - name: Build Docker Image
         run: >-
-          PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g') &&
+          PACKAGE_VERSION=$(cat package.json | jq ".version" --raw-output) &&
           IMAGE_TAG=$(./scripts/parse-branch.py ${{ github.ref }} $PACKAGE_VERSION) &&
           echo "Image Tag: $IMAGE_TAG" &&
-          docker build services/backend -t ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
-          docker build services/frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
+          docker build packages/app-backend -t ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
+          docker build packages/app-frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
           echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend:$IMAGE_TAG &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG
@@ -83,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: desktop-linux
-          path: services/desktop/release/wonderland-white-rabbit.AppImage
+          path: packages/app-desktop/release/white-rabbit-*.AppImage
   build-win:
     runs-on: windows-latest
     needs:
@@ -96,9 +83,9 @@ jobs:
         with:
           node-version: 16.x
       - name: Build Project
-        run: npm install -g npm && npm cache clean --force && npm ci && npm run build:desktop
+        run: yarn && yarn workspace @white-rabbit/desktop build
       - name: Archive Windows Desktop
         uses: actions/upload-artifact@v3
         with:
           name: desktop-windows
-          path: services/desktop/release/wonderland-white-rabbit.zip
+          path: packages/app-desktop/release/white-rabbit-*.zip

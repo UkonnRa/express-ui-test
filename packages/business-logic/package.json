@@ -1,18 +1,24 @@
 {
   "name": "@white-rabbit/business-logic",
+  "packageManager": "yarn@3.2.0",
   "version": "0.0.1",
-  "description": "Wonderland WhiteRabbit business logic",
-  "author": "Ukonn Ra<ukonnra@outlook.com>",
-  "license": "MIT",
-  "private": true,
-  "engines": {
-    "node": ">= 16"
+  "main": "src/index.ts",
+  "publishConfig": {
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts"
+  },
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "build": "yarn clean && tsc -b && ts-node esbuild.config.ts",
+    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
+    "lint:fix": "yarn lint --fix",
+    "test": "jest --coverage"
   },
   "peerDependencies": {
-    "js-base64": "^3.7.2",
-    "tsyringe": "^4.6.0",
-    "uuid": "^8.3.2",
-    "winston": "^3.6.0"
+    "js-base64": "*",
+    "tsyringe": "*",
+    "uuid": "*",
+    "winston": "*"
   },
   "devDependencies": {
     "@types/uuid": "^8.3.4"

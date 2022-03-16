@@ -1,1 +1,2 @@
-export { default as HelloButton } from './HelloButton.vue';
+export { default as Hello } from "./Hello.vue";
+export { default as World } from "./World.vue";

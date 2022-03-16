@@ -1,0 +1,19 @@
+{
+  "name": "@white-rabbit/desktop-render",
+  "packageManager": "yarn@3.2.0",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview --port 5050",
+    "lint": "yarn lint:typecheck && eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
+    "lint:fix": "yarn lint --fix",
+    "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "test": "vitest run --coverage",
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'"
+  },
+  "dependencies": {
+    "@white-rabbit/components": "workspace:^",
+    "vue": "^3.2.31"
+  }
+}

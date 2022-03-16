@@ -4,19 +4,12 @@
     "moduleResolution": "Node",
     "target": "ESNext",
     "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
     "strictPropertyInitialization": false,
-    "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-    "noUncheckedIndexedAccess": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -25,16 +18,9 @@
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "types": ["webpack-env", "node", "jest"],
     "baseUrl": ".",
     "paths": {
-      "@white-rabbit/business-logic": ["packages/business-logic/src"],
-      "@white-rabbit/components": ["packages/components/src"],
-      "@white-rabbit/repository-mikroorm": ["packages/repository-mikroorm/src"],
-      "@white-rabbit/repository-memory": ["packages/repository-memory/src"],
-      "@white-rabbit/backend": ["services/backend/src"],
-      "@white-rabbit/frontend": ["services/frontend/src"],
-      "@white-rabbit/desktop": ["services/desktop/src"]
+      "@white-rabbit/*": ["packages/*/src"]
     }
   },
   "exclude": ["node_modules"]

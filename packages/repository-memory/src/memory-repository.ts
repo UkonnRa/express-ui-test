@@ -3,14 +3,13 @@ import AbstractRepository, {
   PageResult,
   Pagination,
   Sort,
-} from '@white-rabbit/business-logic/src/shared/abstract-repository';
-import AbstractEntity from '@white-rabbit/business-logic/src/shared/abstract-entity';
-import { cursorToId } from '@white-rabbit/business-logic/src/utils';
+} from "@white-rabbit/business-logic/src/shared/abstract-repository";
+import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
+import { cursorToId } from "@white-rabbit/business-logic/src/utils";
 
-async function filtersAllMatching<T extends AbstractEntity<T, unknown, unknown>>(
-  entities: T[],
-  additionalFilters: AdditionalFilter<T>[],
-): Promise<T[]> {
+async function filtersAllMatching<
+  T extends AbstractEntity<T, unknown, unknown>
+>(entities: T[], additionalFilters: Array<AdditionalFilter<T>>): Promise<T[]> {
   let result = [...entities];
 
   for (const f of additionalFilters) {
@@ -21,8 +20,11 @@ async function filtersAllMatching<T extends AbstractEntity<T, unknown, unknown>>
   return result;
 }
 
-export default abstract class MemoryRepository<T extends AbstractEntity<T, V, unknown>, V, Q>
-  implements AbstractRepository<T, V, Q>
+export default abstract class MemoryRepository<
+  T extends AbstractEntity<T, V, unknown>,
+  V,
+  Q
+> implements AbstractRepository<T, V, Q>
 {
   protected readonly data: Map<string, T> = new Map();
 
@@ -31,7 +33,7 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V, un
   abstract doQuery(entity: T, query?: Q): boolean;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  doConvertAdditionalQuery(_?: Q): AdditionalFilter<T>[] {
+  doConvertAdditionalQuery(_?: Q): Array<AdditionalFilter<T>> {
     return [];
   }
 
@@ -39,33 +41,54 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V, un
     this.data.clear();
   }
 
-  findById(id: string): Promise<T | undefined> {
+  async findById(id: string): Promise<T | undefined> {
     const result = this.data.get(id);
-    return Promise.resolve(result?.deleted ? undefined : result);
+    return result?.deleted === true ? undefined : result;
   }
 
-  findByIds(ids: string[]): Promise<Map<string, T>> {
-    return Promise.resolve(new Map([...this.data].filter(([k, v]) => !v.deleted && ids.includes(k))));
+  async findByIds(ids: string[]): Promise<Map<string, T>> {
+    return new Map(
+      [...this.data].filter(([k, v]) => !v.deleted && ids.includes(k))
+    );
   }
 
-  save(entity: T): Promise<void> {
+  async save(entity: T): Promise<void> {
     this.data.set(entity.id, entity);
-    return Promise.resolve();
   }
 
-  async findOne(query: Q, sort?: Sort, additionalFilters?: AdditionalFilter<T>[]): Promise<V | undefined> {
-    const filters = (additionalFilters && [...additionalFilters]) ?? [];
+  async findOne(
+    query: Q,
+    sort?: Sort,
+    additionalFilters?: Array<AdditionalFilter<T>>
+  ): Promise<V | undefined> {
+    const filters = [];
+    if (additionalFilters !== undefined) {
+      filters.push(...additionalFilters);
+    }
     filters.push(...this.doConvertAdditionalQuery(query));
-    const entities = await this.doFetchEntities(filters, sort ?? [], { size: 1, startFrom: 'FIRST' }, query);
+    const entities = await this.doFetchEntities(
+      filters,
+      sort ?? [],
+      { size: 1, startFrom: "FIRST" },
+      query
+    );
     return entities[0]?.toValue();
   }
 
-  private compareFunc(a: T, b: T, sort: Sort, startFrom: 'FIRST' | 'LAST'): number {
-    for (const { field, order } of [...sort, { field: 'id', order: 'ASC' }]) {
+  private compareFunc(
+    a: T,
+    b: T,
+    sort: Sort,
+    startFrom: "FIRST" | "LAST"
+  ): number {
+    for (const { field, order } of [...sort, { field: "id", order: "ASC" }]) {
       const result = this.doCompare(a, b, field);
 
       if (result !== 0) {
-        if ((order === 'ASC' && startFrom === 'FIRST') || (order === 'DESC' && startFrom === 'LAST')) {
+        if (
+          (order === "ASC" && startFrom === "FIRST") ||
+          (order === "DESC" && startFrom === "LAST")
+        ) {
           return result;
         }
         return result * -1;
@@ -75,18 +98,23 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V, un
     return 0;
   }
 
-  async doFetchEntities(filters: AdditionalFilter<T>[], sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
+  async doFetchEntities(
+    filters: Array<AdditionalFilter<T>>,
+    sort: Sort,
+    pagination: Pagination,
+    query?: Q
+  ): Promise<T[]> {
     let entities = await this.doFindAll(sort, pagination, query);
     let result = await filtersAllMatching(entities, filters);
 
     while (entities.length > 0 && result.length < pagination.size + 1) {
       let idx = 0;
-      if (pagination.startFrom === 'FIRST') {
+      if (pagination.startFrom === "FIRST") {
         idx = entities.length - 1;
       }
 
       const nextPagination =
-        pagination.startFrom === 'FIRST'
+        pagination.startFrom === "FIRST"
           ? { ...pagination, after: entities[idx]?.toCursor() }
           : { ...pagination, before: entities[idx]?.toCursor() };
 
@@ -98,45 +126,71 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V, un
       entities = tempEntities;
       // eslint-disable-next-line no-await-in-loop
       const tempResult = await filtersAllMatching(tempEntities, filters);
-      result = pagination.startFrom === 'FIRST' ? [...result, ...tempResult] : [...tempResult, ...result];
+      result =
+        pagination.startFrom === "FIRST"
+          ? [...result, ...tempResult]
+          : [...tempResult, ...result];
     }
 
     return result;
   }
 
-  private filterFunc = (a: T, sort: Sort, pagination: Pagination): boolean => {
+  private readonly filterFunc = (
+    a: T,
+    sort: Sort,
+    pagination: Pagination
+  ): boolean => {
     let result = true;
 
-    if (pagination.after) {
+    if (pagination.after != null) {
       const after = this.data.get(cursorToId(pagination.after));
-      if (after) {
-        const compareTo = this.compareFunc(a, after, sort, pagination.startFrom);
-        result = result && (pagination.startFrom === 'FIRST' ? compareTo > 0 : compareTo < 0);
+      if (after != null) {
+        const compareTo = this.compareFunc(
+          a,
+          after,
+          sort,
+          pagination.startFrom
+        );
+        result =
+          result &&
+          (pagination.startFrom === "FIRST" ? compareTo > 0 : compareTo < 0);
       }
     }
 
-    if (pagination.before) {
+    if (pagination.before != null) {
       const before = this.data.get(cursorToId(pagination.before));
-      if (before) {
-        const compareTo = this.compareFunc(a, before, sort, pagination.startFrom);
-        result = result && (pagination.startFrom === 'LAST' ? compareTo > 0 : compareTo < 0);
+      if (before != null) {
+        const compareTo = this.compareFunc(
+          a,
+          before,
+          sort,
+          pagination.startFrom
+        );
+        result =
+          result &&
+          (pagination.startFrom === "LAST" ? compareTo > 0 : compareTo < 0);
       }
     }
 
     return result;
   };
 
-  doFindAll(sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
+  async doFindAll(sort: Sort, pagination: Pagination, query?: Q): Promise<T[]> {
     const result = [...this.data.values()]
-      .filter((a) => this.filterFunc(a, sort, pagination) && this.doQuery(a, query) && !a.deleted)
+      .filter(
+        (a) =>
+          this.filterFunc(a, sort, pagination) &&
+          this.doQuery(a, query) &&
+          !a.deleted
+      )
       .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom))
       .slice(0, pagination.size);
 
-    if (pagination.startFrom === 'LAST') {
+    if (pagination.startFrom === "LAST") {
       result.reverse();
     }
 
-    return Promise.resolve(result);
+    return result;
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -144,24 +198,40 @@ export default abstract class MemoryRepository<T extends AbstractEntity<T, V, un
     sort: Sort,
     pagination: Pagination,
     query?: Q,
-    additionalFilters?: AdditionalFilter<T>[],
+    additionalFilters?: Array<AdditionalFilter<T>>
   ): Promise<PageResult<V>> {
-    const filters = (additionalFilters && [...additionalFilters]) ?? [];
-    filters.push(...this.doConvertAdditionalQuery(query));
+    const filters = [];
+    if (additionalFilters !== undefined) {
+      filters.push(...additionalFilters);
+    }
+    filters?.push(...this.doConvertAdditionalQuery(query));
 
-    const entities = await this.doFetchEntities(filters, sort, pagination, query);
+    const entities = await this.doFetchEntities(
+      filters,
+      sort,
+      pagination,
+      query
+    );
 
-    const afterEntity = pagination.after && (await this.findById(cursorToId(pagination.after)));
+    const afterEntity =
+      pagination.after != null &&
+      (await this.findById(cursorToId(pagination.after)));
 
-    const beforeEntity = pagination.before && (await this.findById(cursorToId(pagination.before)));
+    const beforeEntity =
+      pagination.before != null &&
+      (await this.findById(cursorToId(pagination.before)));
 
-    const hasPreviousPage = !!afterEntity || (pagination.startFrom === 'LAST' && entities.length > pagination.size);
+    const hasPreviousPage =
+      Boolean(afterEntity) ||
+      (pagination.startFrom === "LAST" && entities.length > pagination.size);
 
-    const hasNextPage = !!beforeEntity || (pagination.startFrom === 'FIRST' && entities.length > pagination.size);
+    const hasNextPage =
+      Boolean(beforeEntity) ||
+      (pagination.startFrom === "FIRST" && entities.length > pagination.size);
 
     let start = 0;
     let end: number | undefined = pagination.size;
-    if (pagination.startFrom === 'LAST') {
+    if (pagination.startFrom === "LAST") {
       start = -pagination.size;
       end = undefined;
     }

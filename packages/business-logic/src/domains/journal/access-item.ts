@@ -1,12 +1,16 @@
-import { User } from '../user';
-import { Group } from '../group';
-import { AccessList } from './access-list';
-import AbstractEntity from '../../shared/abstract-entity';
-import { AccessItemValue } from './index';
+import { User } from "../user";
+import { Group } from "../group";
+import AbstractEntity from "../../shared/abstract-entity";
+import { AccessList } from "./access-list";
+import { AccessItemValue } from "./index";
 
-export type AccessItemType = 'USER' | 'GROUP';
+export type AccessItemType = "USER" | "GROUP";
 
-export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemValue, 'AccessItem'> {
+export abstract class AccessItem extends AbstractEntity<
+  AccessItem,
+  AccessItemValue,
+  "AccessItem"
+> {
   readonly type: AccessItemType;
 
   readonly parent: AccessList;
@@ -16,8 +20,8 @@ export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemVa
     this.parent = parent;
   }
 
-  override get entityType(): 'AccessItem' {
-    return 'AccessItem';
+  override get entityType(): "AccessItem" {
+    return "AccessItem";
   }
 
   abstract contains(user: User): boolean;
@@ -34,11 +38,11 @@ export abstract class AccessItem extends AbstractEntity<AccessItem, AccessItemVa
 }
 
 export class AccessItemUser extends AccessItem {
-  override readonly type = 'USER';
+  override readonly type = "USER";
 
   readonly user: User;
 
-  constructor({ parent, user }: Omit<AccessItemUserCreateOptions, 'type'>) {
+  constructor({ parent, user }: Omit<AccessItemUserCreateOptions, "type">) {
     super(parent);
     this.user = user;
   }
@@ -48,16 +52,16 @@ export class AccessItemUser extends AccessItem {
   }
 
   override toValue(): AccessItemValue {
-    return { type: 'USER', userId: this.user.id };
+    return { type: "USER", userId: this.user.id };
   }
 }
 
 export class AccessItemGroup extends AccessItem {
-  override readonly type = 'GROUP';
+  override readonly type = "GROUP";
 
   readonly group: Group;
 
-  constructor({ parent, group }: Omit<AccessItemGroupCreateOptions, 'type'>) {
+  constructor({ parent, group }: Omit<AccessItemGroupCreateOptions, "type">) {
     super(parent);
     this.group = group;
   }
@@ -67,20 +71,22 @@ export class AccessItemGroup extends AccessItem {
   }
 
   override toValue(): AccessItemValue {
-    return { type: 'GROUP', groupId: this.group.id };
+    return { type: "GROUP", groupId: this.group.id };
   }
 }
 
-export type AccessItemUserCreateOptions = {
-  type: 'USER';
+export interface AccessItemUserCreateOptions {
+  type: "USER";
   parent: AccessList;
   user: User;
-};
+}
 
-export type AccessItemGroupCreateOptions = {
-  type: 'GROUP';
+export interface AccessItemGroupCreateOptions {
+  type: "GROUP";
   parent: AccessList;
   group: Group;
-};
+}
 
-export type AccessItemCreateOptions = AccessItemUserCreateOptions | AccessItemGroupCreateOptions;
+export type AccessItemCreateOptions =
+  | AccessItemUserCreateOptions
+  | AccessItemGroupCreateOptions;

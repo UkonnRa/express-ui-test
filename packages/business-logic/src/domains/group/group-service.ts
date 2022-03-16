@@ -1,23 +1,36 @@
-import { inject, singleton } from 'tsyringe';
-import AbstractService from '../../shared/abstract-service';
-import { GroupValue } from './group-value';
-import { Group } from './index';
-import { GroupQuery } from './group-query';
-import AuthUser from '../../shared/auth-user';
-import { GroupCommandCreate, GroupCommandDelete, GroupCommandUpdate } from './group-command';
-import { GroupRepository, UserRepository } from '../index';
-import { TYPE } from './group';
+import { inject, singleton } from "tsyringe";
+import AbstractService from "../../shared/abstract-service";
+import AuthUser from "../../shared/auth-user";
+import { GroupRepository, UserRepository } from "../index";
+import { GroupQuery } from "./group-query";
+import {
+  GroupCommandCreate,
+  GroupCommandDelete,
+  GroupCommandUpdate,
+} from "./group-command";
+import { GroupValue } from "./group-value";
+import { TYPE } from "./group";
+import { Group } from "./index";
 
 @singleton()
-export default class GroupService extends AbstractService<Group, GroupRepository, GroupValue, GroupQuery> {
+export default class GroupService extends AbstractService<
+  Group,
+  GroupRepository,
+  GroupValue,
+  GroupQuery
+> {
   constructor(
-    @inject('GroupRepository') protected override readonly repository: GroupRepository,
-    @inject('UserRepository') private readonly userRepository: UserRepository,
+    @inject("GroupRepository")
+    protected override readonly repository: GroupRepository,
+    @inject("UserRepository") private readonly userRepository: UserRepository
   ) {
-    super(TYPE, 'groups:read', 'groups:write', repository);
+    super(TYPE, "groups:read", "groups:write", repository);
   }
 
-  async createGroup(authUser: AuthUser, { name, description, admins, members }: GroupCommandCreate): Promise<string> {
+  async createGroup(
+    authUser: AuthUser,
+    { name, description, admins, members }: GroupCommandCreate
+  ): Promise<string> {
     this.checkScope(authUser);
 
     const adminEntities = await this.userRepository.findByIds(admins);
@@ -32,33 +45,48 @@ export default class GroupService extends AbstractService<Group, GroupRepository
     return result.id;
   }
 
-  async updateGroup(authUser: AuthUser, { id, name, description, admins, members }: GroupCommandUpdate): Promise<void> {
+  async updateGroup(
+    authUser: AuthUser,
+    { id, name, description, admins, members }: GroupCommandUpdate
+  ): Promise<void> {
     const entity = await this.getEntity(authUser, id);
 
-    if (!name && !description && !admins && !members) {
+    if (
+      name != null &&
+      description != null &&
+      admins == null &&
+      members == null
+    ) {
       return;
     }
 
-    if (name) {
+    if (name != null) {
       entity.name = name;
     }
 
-    if (description) {
+    if (description != null) {
       entity.description = description;
     }
 
-    if (admins) {
-      entity.admins = [...(await this.userRepository.findByIds(admins)).values()];
+    if (admins != null) {
+      entity.admins = [
+        ...(await this.userRepository.findByIds(admins)).values(),
+      ];
     }
 
-    if (members) {
-      entity.members = [...(await this.userRepository.findByIds(members)).values()];
+    if (members != null) {
+      entity.members = [
+        ...(await this.userRepository.findByIds(members)).values(),
+      ];
     }
 
     await this.repository.save(entity);
   }
 
-  async deleteGroup(authUser: AuthUser, { id }: GroupCommandDelete): Promise<void> {
+  async deleteGroup(
+    authUser: AuthUser,
+    { id }: GroupCommandDelete
+  ): Promise<void> {
     const entity = await this.getEntity(authUser, id);
     entity.deleted = true;
     await this.repository.save(entity);

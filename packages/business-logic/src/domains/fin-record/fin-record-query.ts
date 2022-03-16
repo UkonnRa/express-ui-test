@@ -1,16 +1,16 @@
-import { QueryFullTextValue } from '../../shared/abstract-repository';
+import { QueryFullTextValue } from "../../shared/abstract-repository";
 
-type FinRecordQueryBase = {
+interface FinRecordQueryBase {
   readonly journal: string;
-};
+}
 
 export type FinRecordQueryFullText = QueryFullTextValue &
   FinRecordQueryBase & {
-    readonly type: 'FinRecordQueryFullText';
+    readonly type: "FinRecordQueryFullText";
   };
 
 export type FinRecordQueryTimeRange = FinRecordQueryBase & {
-  readonly type: 'FinRecordQueryTimeRange';
+  readonly type: "FinRecordQueryTimeRange";
   readonly from: Date;
   readonly to: Date;
 };

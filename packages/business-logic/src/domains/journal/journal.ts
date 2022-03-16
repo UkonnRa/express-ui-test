@@ -1,14 +1,14 @@
-import AbstractEntity from '../../shared/abstract-entity';
-import { AccessList, AccessListCreateOptions } from './access-list';
-import { Role, User } from '../user';
-import { JournalValue } from './journal-value';
+import AbstractEntity from "../../shared/abstract-entity";
+import { Role, User } from "../user";
+import { AccessList, AccessListCreateOptions } from "./access-list";
+import { JournalValue } from "./journal-value";
 
-export type JournalCreateOptions = {
+export interface JournalCreateOptions {
   name: string;
   description: string;
   admins: AccessListCreateOptions;
   members: AccessListCreateOptions;
-};
+}
 
 const MIN_LENGTH_NAME = 6;
 
@@ -16,9 +16,13 @@ const MAX_LENGTH_NAME = 50;
 
 const MAX_LENGTH_DESCRIPTION = 400;
 
-export const TYPE = 'Journal';
+export const TYPE = "Journal";
 
-export class Journal extends AbstractEntity<Journal, JournalValue, typeof TYPE> {
+export class Journal extends AbstractEntity<
+  Journal,
+  JournalValue,
+  typeof TYPE
+> {
   #name: string;
 
   #description: string;
@@ -45,7 +49,10 @@ export class Journal extends AbstractEntity<Journal, JournalValue, typeof TYPE> 
 
   set name(value: string) {
     const result = value.trim();
-    this.checkLength(result.length, 'name', { min: MIN_LENGTH_NAME, max: MAX_LENGTH_NAME });
+    this.checkLength(result.length, "name", {
+      min: MIN_LENGTH_NAME,
+      max: MAX_LENGTH_NAME,
+    });
     this.#description = result;
   }
 
@@ -55,7 +62,9 @@ export class Journal extends AbstractEntity<Journal, JournalValue, typeof TYPE> 
 
   set description(value: string) {
     const result = value.trim();
-    this.checkLength(value.length, 'description', { max: MAX_LENGTH_DESCRIPTION });
+    this.checkLength(value.length, "description", {
+      max: MAX_LENGTH_DESCRIPTION,
+    });
     this.#description = result;
   }
 

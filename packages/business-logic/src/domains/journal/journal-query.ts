@@ -1,14 +1,14 @@
-import { AccessItemValue } from './index';
-import { QueryFullTextValue } from '../../shared/abstract-repository';
+import { QueryFullTextValue } from "../../shared/abstract-repository";
+import { AccessItemValue } from "./index";
 
 export type JournalQueryFullText = QueryFullTextValue & {
-  readonly type: 'JournalQueryFullText';
+  readonly type: "JournalQueryFullText";
 };
 
-export type JournalQueryAccessItem = {
-  readonly type: 'JournalQueryAccessItem';
+export interface JournalQueryAccessItem {
+  readonly type: "JournalQueryAccessItem";
 
   readonly accessItem: AccessItemValue;
-};
+}
 
 export type JournalQuery = JournalQueryFullText | JournalQueryAccessItem;
