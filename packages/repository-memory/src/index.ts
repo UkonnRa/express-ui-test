@@ -14,6 +14,7 @@ import {
   GroupValue,
 } from "@white-rabbit/business-logic/src/domains/group";
 import {
+  TYPE_USER,
   User,
   UserQuery,
   UserValue,
@@ -27,6 +28,7 @@ import {
   Account,
   AccountQuery,
   AccountValue,
+  TYPE_ACCOUNT,
 } from "@white-rabbit/business-logic/src/domains/account";
 import {
   AccountRepository,
@@ -57,7 +59,7 @@ export class MemoryAccountRepository
     if (field === "strategy") {
       return a.strategy.valueOf() - b.strategy.valueOf();
     }
-    throw new InvalidSortFieldError("Account", field);
+    throw new InvalidSortFieldError(TYPE_ACCOUNT, field);
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -73,7 +75,7 @@ export class MemoryAccountRepository
         } else if (field === "description") {
           result = result || entity.description.includes(value);
         } else {
-          throw new FieldNotQueryableError("Account", field);
+          throw new FieldNotQueryableError(TYPE_ACCOUNT, field);
         }
       }
       return result;
@@ -144,14 +146,36 @@ export class MemoryUserRepository
   extends MemoryRepository<User, UserValue, UserQuery>
   implements UserRepository
 {
-  doCompare(): number {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  doCompare(a: User, b: User, field: string): number {
+    if (field === "id") {
+      return a.id.localeCompare(b.id);
+    }
+    if (field === "name") {
+      return a.name.localeCompare(b.name);
+    }
+    if (field === "role") {
+      return a.role.valueOf() - b.role.valueOf();
+    }
+    throw new InvalidSortFieldError(TYPE_USER, field);
   }
 
-  doQuery(): boolean {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  doQuery(entity: User, query?: UserQuery): boolean {
+    if (query?.type === "UserQueryFullText") {
+      const { fields, value } = query.keyword;
+
+      let result = false;
+
+      for (const field of fields ?? ["name"]) {
+        if (field === "name") {
+          result = result || entity.name.includes(value);
+        } else {
+          throw new FieldNotQueryableError(TYPE_USER, field);
+        }
+      }
+      return result;
+    }
+
+    return true;
   }
 }
 

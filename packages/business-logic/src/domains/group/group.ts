@@ -27,16 +27,16 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
 
   #description: string;
 
-  #admins: User[];
+  #members: User[] = [];
 
-  #members: User[];
+  #admins: User[] = [];
 
   constructor({ name, description, admins, members }: GroupCreateOptions) {
     super();
     this.name = name;
     this.description = description;
-    this.admins = admins;
     this.members = members;
+    this.admins = admins;
   }
 
   get name(): string {

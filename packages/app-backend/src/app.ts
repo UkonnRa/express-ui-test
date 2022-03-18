@@ -32,7 +32,7 @@ export default class App {
             new User({ name: "name backend", role: Role.OWNER })
           ),
           {
-            type: "CreateJournal",
+            type: "JournalCommandCreate",
             name: "Journal Name",
             description: "Journal Desc",
             admins: [],

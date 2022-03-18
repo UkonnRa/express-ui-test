@@ -17,7 +17,7 @@ export interface AccountCommandCreate {
 }
 
 export interface AccountCommandUpdate {
-  readonly type: "AccountCommandCreate";
+  readonly type: "AccountCommandUpdate";
 
   readonly id: string;
 
@@ -33,9 +33,12 @@ export interface AccountCommandUpdate {
 }
 
 export interface AccountCommandDelete {
-  readonly type: "AccountCommandCreate";
+  readonly type: "AccountCommandDelete";
 
   readonly id: string;
 }
 
-export type AccountCommand = AccountCommandCreate | AccountCommandUpdate;
+export type AccountCommand =
+  | AccountCommandCreate
+  | AccountCommandUpdate
+  | AccountCommandDelete;

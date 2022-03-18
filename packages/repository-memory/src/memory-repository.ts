@@ -56,6 +56,10 @@ export default abstract class MemoryRepository<
     this.data.set(entity.id, entity);
   }
 
+  async saveAll(entities: T[]): Promise<void> {
+    entities.forEach((e) => this.data.set(e.id, e));
+  }
+
   async findOne(
     query: Q,
     sort?: Sort,

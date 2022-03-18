@@ -1,0 +1,14 @@
+{
+  "name": "@white-rabbit/test-suite",
+  "packageManager": "yarn@3.2.0",
+  "version": "0.0.1",
+  "scripts": {
+    "clean": "rimraf dist tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
+    "lint:fix": "yarn lint --fix"
+  },
+  "peerDependencies": {
+    "@white-rabbit/business-logic": "workspace:^*",
+    "tsyringe": "*"
+  }
+}

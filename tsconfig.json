@@ -18,10 +18,7 @@
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": ".",
-    "paths": {
-      "@white-rabbit/*": ["packages/*/src"]
-    }
+    "baseUrl": "."
   },
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,7 @@
 import { AccessItemValue } from "./index";
 
 export interface JournalCommandCreate {
-  readonly type: "CreateJournal";
+  readonly type: "JournalCommandCreate";
 
   readonly name: string;
 
@@ -13,7 +13,7 @@ export interface JournalCommandCreate {
 }
 
 export interface JournalCommandUpdate {
-  readonly type: "UpdateJournal";
+  readonly type: "JournalCommandUpdate";
 
   readonly id: string;
 
@@ -27,7 +27,7 @@ export interface JournalCommandUpdate {
 }
 
 export interface JournalCommandDelete {
-  readonly type: "DeleteJournal";
+  readonly type: "JournalCommandDelete";
 
   readonly id: string;
 }

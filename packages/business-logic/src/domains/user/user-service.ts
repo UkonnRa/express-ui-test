@@ -11,6 +11,7 @@ import { UserValue } from "./user-value";
 import { UserQuery } from "./user-query";
 import { Role, TYPE, User } from "./user";
 import {
+  UserCommand,
   UserCommandCreate,
   UserCommandDelete,
   UserCommandUpdate,
@@ -21,7 +22,8 @@ export default class UserService extends AbstractService<
   User,
   UserRepository,
   UserValue,
-  UserQuery
+  UserQuery,
+  UserCommand
 > {
   constructor(
     @inject("UserRepository")
@@ -66,7 +68,7 @@ export default class UserService extends AbstractService<
   async updateUser(
     authUser: AuthUser,
     { id, name, role, authIds }: UserCommandUpdate
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     const operator = authUser.user;
@@ -75,7 +77,7 @@ export default class UserService extends AbstractService<
     }
 
     if (name != null && role != null && authIds == null) {
-      return;
+      return entity.id;
     }
 
     if (name != null) {
@@ -99,16 +101,32 @@ export default class UserService extends AbstractService<
     }
 
     await this.repository.save(entity);
+
+    return entity.id;
   }
 
   async deleteUser(
     authUser: AuthUser,
     { id }: UserCommandDelete
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
 
     await this.repository.save(entity);
+
+    return entity.id;
+  }
+
+  async handle(authUser: AuthUser, command: UserCommand): Promise<string> {
+    if (command.type === "UserCommandCreate") {
+      return this.createUser(authUser, command);
+    } else if (command.type === "UserCommandUpdate") {
+      return this.updateUser(authUser, command);
+    } else if (command.type === "UserCommandRebindAuthProvider") {
+      throw new Error("Unimplemented");
+    } else {
+      return this.deleteUser(authUser, command);
+    }
   }
 }

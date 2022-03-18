@@ -6,6 +6,7 @@ import JournalService from "../journal/journal-service";
 import { AccountQuery } from "./account-query";
 import { Account } from "./account";
 import {
+  AccountCommand,
   AccountCommandCreate,
   AccountCommandDelete,
   AccountCommandUpdate,
@@ -17,7 +18,8 @@ export default class AccountService extends AbstractService<
   Account,
   AccountRepository,
   AccountValue,
-  AccountQuery
+  AccountQuery,
+  AccountCommand
 > {
   constructor(
     @inject("AccountRepository")
@@ -63,7 +65,7 @@ export default class AccountService extends AbstractService<
   async updateAccount(
     authUser: AuthUser,
     { id, name, description, accountType, unit, strategy }: AccountCommandUpdate
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     if (
@@ -73,7 +75,7 @@ export default class AccountService extends AbstractService<
       unit == null &&
       strategy == null
     ) {
-      return;
+      return entity.id;
     }
 
     if (name != null) {
@@ -97,14 +99,27 @@ export default class AccountService extends AbstractService<
     }
 
     await this.repository.save(entity);
+
+    return entity.id;
   }
 
   async deleteAccount(
     authUser: AuthUser,
     { id }: AccountCommandDelete
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
     entity.deleted = true;
     await this.repository.save(entity);
+    return entity.id;
+  }
+
+  async handle(authUser: AuthUser, command: AccountCommand): Promise<string> {
+    if (command.type === "AccountCommandCreate") {
+      return this.createAccount(authUser, command);
+    } else if (command.type === "AccountCommandUpdate") {
+      return this.updateAccount(authUser, command);
+    } else {
+      return this.deleteAccount(authUser, command);
+    }
   }
 }

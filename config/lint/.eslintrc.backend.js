@@ -21,6 +21,7 @@ module.exports = {
     "max-classes-per-file": 0,
     "class-methods-use-this": 0,
     "@typescript-eslint/return-await": 0,
+    "sonarjs/no-duplicate-string": 0,
     "import/order": 1,
     "no-return-await": 2,
   },

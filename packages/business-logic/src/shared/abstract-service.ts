@@ -17,14 +17,17 @@ export default abstract class AbstractService<
   T extends AbstractEntity<T, V, unknown>,
   R extends AbstractRepository<T, V, Q>,
   V,
-  Q
+  Q,
+  C
 > {
   protected constructor(
     protected readonly type: string,
-    protected readonly readScope: string,
-    protected readonly writeScope: string,
+    readonly readScope: string,
+    readonly writeScope: string,
     protected readonly repository: R
   ) {}
+
+  abstract handle(authUser: AuthUser, command: C): Promise<string>;
 
   protected checkScope(
     { authIdValue, user, scopes }: AuthUser,

@@ -4,6 +4,7 @@ import AuthUser from "../../shared/auth-user";
 import { GroupRepository, UserRepository } from "../index";
 import { GroupQuery } from "./group-query";
 import {
+  GroupCommand,
   GroupCommandCreate,
   GroupCommandDelete,
   GroupCommandUpdate,
@@ -17,7 +18,8 @@ export default class GroupService extends AbstractService<
   Group,
   GroupRepository,
   GroupValue,
-  GroupQuery
+  GroupQuery,
+  GroupCommand
 > {
   constructor(
     @inject("GroupRepository")
@@ -48,7 +50,7 @@ export default class GroupService extends AbstractService<
   async updateGroup(
     authUser: AuthUser,
     { id, name, description, admins, members }: GroupCommandUpdate
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     if (
@@ -57,7 +59,7 @@ export default class GroupService extends AbstractService<
       admins == null &&
       members == null
     ) {
-      return;
+      return entity.id;
     }
 
     if (name != null) {
@@ -81,14 +83,26 @@ export default class GroupService extends AbstractService<
     }
 
     await this.repository.save(entity);
+    return entity.id;
   }
 
   async deleteGroup(
     authUser: AuthUser,
     { id }: GroupCommandDelete
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
     entity.deleted = true;
     await this.repository.save(entity);
+    return entity.id;
+  }
+
+  async handle(authUser: AuthUser, command: GroupCommand): Promise<string> {
+    if (command.type === "GroupCommandCreate") {
+      return this.createGroup(authUser, command);
+    } else if (command.type === "GroupCommandUpdate") {
+      return this.updateGroup(authUser, command);
+    } else {
+      return this.deleteGroup(authUser, command);
+    }
   }
 }

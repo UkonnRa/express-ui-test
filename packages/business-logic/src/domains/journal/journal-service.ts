@@ -9,6 +9,7 @@ import {
 import { AccessList, AccessListCreateOptions } from "./access-list";
 import { Journal, TYPE } from "./journal";
 import {
+  JournalCommand,
   JournalCommandCreate,
   JournalCommandDelete,
   JournalCommandUpdate,
@@ -22,7 +23,8 @@ export default class JournalService extends AbstractService<
   Journal,
   JournalRepository,
   JournalValue,
-  JournalQuery
+  JournalQuery,
+  JournalCommand
 > {
   constructor(
     @inject("JournalRepository")
@@ -83,7 +85,7 @@ export default class JournalService extends AbstractService<
   async updateJournal(
     authUser: AuthUser,
     { id, name, description, admins, members }: JournalCommandUpdate
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     if (
@@ -92,7 +94,7 @@ export default class JournalService extends AbstractService<
       admins == null &&
       members == null
     ) {
-      return;
+      return entity.id;
     }
 
     if (name != null) {
@@ -114,16 +116,28 @@ export default class JournalService extends AbstractService<
     }
 
     await this.repository.save(entity);
+    return entity.id;
   }
 
   async deleteJournal(
     authUser: AuthUser,
     { id }: JournalCommandDelete
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
 
     await this.repository.save(entity);
+    return entity.id;
+  }
+
+  async handle(authUser: AuthUser, command: JournalCommand): Promise<string> {
+    if (command.type === "JournalCommandCreate") {
+      return this.createJournal(authUser, command);
+    } else if (command.type === "JournalCommandUpdate") {
+      return this.updateJournal(authUser, command);
+    } else {
+      return this.deleteJournal(authUser, command);
+    }
   }
 }

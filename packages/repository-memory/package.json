@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/uuid": "^8.3.4",
+    "@white-rabbit/test-suite": "workspace:^*",
     "reflect-metadata": "^0.1.13"
   }
 }

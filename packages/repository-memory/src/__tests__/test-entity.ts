@@ -4,6 +4,7 @@ import { InvalidSortFieldError } from "@white-rabbit/business-logic/src/shared/e
 import { AdditionalFilter } from "@white-rabbit/business-logic/src/shared/abstract-repository";
 import AbstractService from "@white-rabbit/business-logic/src/shared/abstract-service";
 import { singleton } from "tsyringe";
+import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
 import MemoryRepository from "../memory-repository";
 
 export interface TestEntityValue {
@@ -109,10 +110,15 @@ export class TestEntityService extends AbstractService<
   TestEntity,
   TestEntityRepository,
   TestEntityValue,
-  TestEntityQuery
+  TestEntityQuery,
+  unknown
 > {
   constructor(protected override readonly repository: TestEntityRepository) {
     super("TestEntity", "test:read", "test:write", repository);
+  }
+
+  async handle(_authUser: AuthUser, _command: unknown): Promise<string> {
+    throw new Error("Unimplemented");
   }
 }
 

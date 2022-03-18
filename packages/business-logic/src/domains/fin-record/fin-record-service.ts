@@ -8,6 +8,7 @@ import { FinItemValue, FinRecordValue } from "./fin-record-value";
 import { FinRecord, TYPE } from "./fin-record";
 import { FinRecordQuery } from "./fin-record-query";
 import {
+  FinRecordCommand,
   FinRecordCommandCreate,
   FinRecordCommandDelete,
   FinRecordCommandUpdate,
@@ -19,7 +20,8 @@ export default class FinRecordService extends AbstractService<
   FinRecord,
   FinRecordRepository,
   FinRecordValue,
-  FinRecordQuery
+  FinRecordQuery,
+  FinRecordCommand
 > {
   constructor(
     @inject("FinRecordRepository")
@@ -88,7 +90,7 @@ export default class FinRecordService extends AbstractService<
       tags,
       isContingent,
     }: FinRecordCommandUpdate
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
     if (
       timestamp == null &&
@@ -98,7 +100,7 @@ export default class FinRecordService extends AbstractService<
       tags == null &&
       isContingent != null
     ) {
-      return;
+      return entity.id;
     }
 
     if (timestamp != null) {
@@ -126,16 +128,29 @@ export default class FinRecordService extends AbstractService<
     }
 
     await this.repository.save(entity);
+
+    return entity.id;
   }
 
   async deleteFinRecord(
     authUser: AuthUser,
     { id }: FinRecordCommandDelete
-  ): Promise<void> {
+  ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
     entity.deleted = true;
 
     await this.repository.save(entity);
+    return entity.id;
+  }
+
+  async handle(authUser: AuthUser, command: FinRecordCommand): Promise<string> {
+    if (command.type === "FinRecordCommandCreate") {
+      return this.createFinRecord(authUser, command);
+    } else if (command.type === "FinRecordCommandUpdate") {
+      return this.updateFinRecord(authUser, command);
+    } else {
+      return this.deleteFinRecord(authUser, command);
+    }
   }
 }

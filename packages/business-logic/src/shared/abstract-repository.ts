@@ -29,6 +29,8 @@ export default interface AbstractRepository<
 
   save: (entity: T) => Promise<void>;
 
+  saveAll: (entity: T[]) => Promise<void>;
+
   close: () => void;
 }
 
