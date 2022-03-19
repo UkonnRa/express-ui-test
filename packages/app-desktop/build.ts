@@ -13,17 +13,17 @@ const main = async (): Promise<void> => {
     undefined,
     false
   );
-  try {
-    await fs.cp("../desktop-render/dist", "./dist", { recursive: true });
-    await fs.cp("./dist", "./app/dist", { recursive: true });
-  } catch (e) {
-    console.error(
-      "[@white-rabbit/desktop] Failed to copy built result from @project/desktop-render",
-      e
-    );
-    process.exit(1);
-  }
   if (process.env.NODE_ENV === "production") {
+    try {
+      await fs.cp("../desktop-render/dist", "./dist", { recursive: true });
+      await fs.cp("./dist", "./app/dist", { recursive: true });
+    } catch (e) {
+      console.error(
+        "[@white-rabbit/desktop] Failed to copy built result from @project/desktop-render",
+        e
+      );
+      process.exit(1);
+    }
     await electronBuild({
       targets: Platform.current().createTarget(),
       config: {
@@ -45,7 +45,9 @@ const main = async (): Promise<void> => {
       },
     });
   }
-  process.exit();
+  if (!process.argv.includes("--watch")) {
+    process.exit();
+  }
 };
 
 void main();

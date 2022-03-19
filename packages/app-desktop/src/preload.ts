@@ -1,13 +1,6 @@
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
-/* eslint-env browser */
-window.addEventListener("DOMContentLoaded", () => {
-  const replaceText = (selector: string, text?: string): void => {
-    const element = document.getElementById(selector);
-    if (element != null && text != null) element.innerText = text;
-  };
+import fs from "fs";
+import { contextBridge, ipcRenderer } from "electron";
 
-  ["chrome", "node", "electron"].forEach((type) => {
-    replaceText(`${type}-version`, process.versions[type]);
-  });
-});
+// --------- Expose some API to Renderer-process. ---------
+contextBridge.exposeInMainWorld("fs", fs);
+contextBridge.exposeInMainWorld("ipcRenderer", ipcRenderer);

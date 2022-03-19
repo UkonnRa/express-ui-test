@@ -53,7 +53,7 @@ export class Journal extends AbstractEntity<
       min: MIN_LENGTH_NAME,
       max: MAX_LENGTH_NAME,
     });
-    this.#description = result;
+    this.#name = result;
   }
 
   get description(): string {

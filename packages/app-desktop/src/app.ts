@@ -16,7 +16,7 @@ export default class App {
     @inject("Logger") private readonly logger: Logger,
     @inject("JournalRepository")
     private readonly journalRepository: JournalRepository,
-    private readonly journalService: JournalService
+    @inject(JournalService) private readonly journalService: JournalService
   ) {}
 
   async start(): Promise<void> {
@@ -68,7 +68,7 @@ export default class App {
           new User({ name: "name desktop", role: Role.OWNER })
         ),
         {
-          type: "CreateJournal",
+          type: "JournalCommandCreate",
           name: "Journal Name",
           description: "Journal Desc",
           admins: [],
@@ -76,13 +76,19 @@ export default class App {
         }
       );
 
-      this.logger.info("Journal id: ", id);
+      this.logger.info("Journal id: " + id);
 
       const result = await this.journalRepository.findById(id);
 
-      this.logger.info("Journal: ", result);
-
-      return JSON.stringify(result, null, 2);
+      return JSON.stringify(
+        {
+          id: result?.id,
+          name: result?.name,
+          description: result?.description,
+        },
+        null,
+        2
+      );
     });
   }
 
@@ -92,7 +98,7 @@ export default class App {
       width: 800,
       height: 600,
       webPreferences: {
-        contextIsolation: false,
+        contextIsolation: true,
         nodeIntegration: true,
         preload: path.join(__dirname, "preload.js"),
       },
@@ -100,7 +106,7 @@ export default class App {
 
     await mainWindow.loadURL(
       isDev
-        ? "http://localhost:4000/journals"
+        ? "http://localhost:3000/"
         : `file://${path.join(__dirname, "index.html")}`
     );
   }
