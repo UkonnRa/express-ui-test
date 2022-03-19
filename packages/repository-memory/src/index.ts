@@ -179,7 +179,7 @@ export class MemoryUserRepository
   }
 }
 
-export const initMemoryRepositories = (): void => {
+export const initMemoryRepositories = async (): Promise<void> => {
   container.register("AccountRepository", {
     useValue: new MemoryAccountRepository(),
   });

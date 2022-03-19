@@ -6,6 +6,7 @@ import {
 } from "esbuild";
 import { watch } from "chokidar";
 import path from "path";
+import { ChildProcess } from "child_process";
 
 const afterBuildSuccess = async (
   packageName: string,
@@ -24,7 +25,17 @@ export type Tsconfig = {
   references?: { path: string }[];
 };
 
-export const build = async (tsconfig: Tsconfig, options?: BuildOptions) => {
+export type ExecOptions = {
+  start: () => ChildProcess;
+  stop: (process: ChildProcess) => void;
+};
+
+export const build = async (
+  tsconfig: Tsconfig,
+  options?: BuildOptions,
+  execOptions?: ExecOptions,
+  processEndDirectly: boolean = true
+) => {
   const packageJson = require(path.resolve(
     process.cwd(),
     "package.json"
@@ -48,23 +59,30 @@ export const build = async (tsconfig: Tsconfig, options?: BuildOptions) => {
   await afterBuildSuccess(packageName, result);
   if (process.argv.includes("--watch")) {
     const dependencies =
-      tsconfig.references?.map(({ path }) => `${path}/src`) ?? [];
+      tsconfig.references?.map((ref) => `${ref.path}/src`) ?? [];
     console.log(
-      `[${packageName}] Watch files in the project src and Dependencies:`
+      `[${packageName}] Start watching files in the project **src** and Dependencies:`
     );
     dependencies.forEach((dependency) => console.log(`  * ${dependency}`));
+    let process = execOptions?.start();
     watch(["./src", ...dependencies], { ignoreInitial: true }).on(
       "all",
-      async (event, path) => {
-        console.log(
-          `[${packageName}] Rebuild due to File[${path}] with Event[${event}]`
-        );
+      async (event, file) => {
         try {
+          if (execOptions && process) {
+            execOptions.stop(process);
+          }
+          console.log(
+            `[${packageName}] Rebuild due to File[${file}] with Event[${event}]`
+          );
           await afterBuildSuccess(packageName, await result.rebuild());
+          process = execOptions?.start();
         } catch (e) {
           console.error(`[${packageName}] Rebuild error: `, e);
         }
       }
     );
+  } else if (processEndDirectly) {
+    process.exit();
   }
 };

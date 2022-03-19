@@ -20,7 +20,7 @@ import {
 } from "@white-rabbit/business-logic/src/domains";
 
 describe("Accounts", () => {
-  initMemoryRepositories();
+  void initMemoryRepositories();
   const accountRepository: AccountRepository =
     container.resolve("AccountRepository");
   const journalRepository: JournalRepository =

@@ -1,11 +1,7 @@
 import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
 import AuthUser from "../../shared/auth-user";
-import {
-  NoAuthError,
-  NoExpectedScopeError,
-  NotFoundError,
-} from "../../shared/errors";
+import { NoAuthError, NoExpectedScopeError } from "../../shared/errors";
 import { UserRepository } from "../index";
 import { UserValue } from "./user-value";
 import { UserQuery } from "./user-query";
@@ -71,12 +67,10 @@ export default class UserService extends AbstractService<
   ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
-    const operator = authUser.user;
-    if (operator == null) {
-      throw new NotFoundError("User", authUser.authIdValue);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const operator = authUser.user!;
 
-    if (name != null && role != null && authIds == null) {
+    if (name == null && role == null && authIds == null) {
       return entity.id;
     }
 
@@ -88,7 +82,7 @@ export default class UserService extends AbstractService<
       if (operator.role > role) {
         entity.role = role;
       } else {
-        throw new NoAuthError(this.type, operator.id, id, "role");
+        throw new NoAuthError(entity.entityType, operator.id, id, "role");
       }
     }
 
@@ -96,7 +90,7 @@ export default class UserService extends AbstractService<
       if (operator.role > Role.USER) {
         entity.authIds = authIds;
       } else {
-        throw new NoAuthError(this.type, operator.id, id, "authIds");
+        throw new NoAuthError(entity.entityType, operator.id, id, "authIds");
       }
     }
 

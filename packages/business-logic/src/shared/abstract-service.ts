@@ -62,7 +62,7 @@ export default abstract class AbstractService<
       ? entity.isWritable(user)
       : entity.isReadable(user);
     if (!entityAuthed) {
-      throw new NoAuthError(this.type, user.id, id);
+      throw new NoAuthError(entity.entityType, user.id, id);
     }
 
     return entity;

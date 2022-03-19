@@ -7,6 +7,7 @@ import {
   JournalRepository,
   JournalService,
 } from "@white-rabbit/business-logic/src/domains";
+import { Journal } from "@white-rabbit/business-logic/src/domains/journal";
 
 @singleton()
 export default class App {
@@ -16,7 +17,7 @@ export default class App {
     @inject("Logger") private readonly logger: Logger,
     @inject("JournalRepository")
     private readonly journalRepository: JournalRepository,
-    private readonly journalService: JournalService
+    @inject(JournalService) private readonly journalService: JournalService
   ) {
     this.app = express();
     this.app.disable("x-powered-by");
@@ -25,15 +26,22 @@ export default class App {
   async start(): Promise<void> {
     this.app.get("/", (_req: Request, res: Response) => {
       const handle = async (): Promise<void> => {
+        const journal = new Journal({
+          name: "Journal Name",
+          description: "Journal Desc",
+          admins: { type: "ITEMS", items: [] },
+          members: { type: "ITEMS", items: [] },
+        });
+        console.log("Journal: ", journal);
         const id = await this.journalService.createJournal(
           new AuthUser(
             { id: "authId", provider: "provider" },
-            ["journals:write"],
+            [this.journalService.writeScope],
             new User({ name: "name backend", role: Role.OWNER })
           ),
           {
             type: "JournalCommandCreate",
-            name: "Journal Name",
+            name: "Journal Name 1",
             description: "Journal Desc",
             admins: [],
             members: [],

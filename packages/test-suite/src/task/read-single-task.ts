@@ -1,6 +1,11 @@
 import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
-import { ErrorType } from "./abstract-task";
-import { AbstractReadTaskFailure, AbstractReadTaskSuccess } from "./read-task";
+import { AbstractError } from "@white-rabbit/business-logic/src/shared/errors";
+import {
+  AbstractReadTaskFailure,
+  AbstractReadTaskSuccess,
+  ReadContextFailure,
+  ReadContextSuccess,
+} from "./read-task";
 
 export class ReadTaskSingleSuccess<V> extends AbstractReadTaskSuccess<
   string,
@@ -13,23 +18,24 @@ export class ReadTaskSingleSuccess<V> extends AbstractReadTaskSuccess<
     override readonly name: string,
     override readonly authUserHandler: () => AuthUser,
     override readonly inputHandler: () => string,
-    override readonly handler: (result: V) => void
+    override readonly handler: (context: ReadContextSuccess<string, V>) => void
   ) {
     super(name, authUserHandler, inputHandler);
   }
 }
 
-export class ReadTaskSingleFailure extends AbstractReadTaskFailure<
-  string,
-  "Single"
-> {
+export class ReadTaskSingleFailure<
+  E extends AbstractError = AbstractError
+> extends AbstractReadTaskFailure<string, "Single", E> {
   override readonly readType = "Single";
 
   constructor(
     override readonly name: string,
     override readonly authUserHandler: () => AuthUser,
     override readonly inputHandler: () => string,
-    override readonly error: ErrorType
+    override readonly errorHandler: (
+      context: ReadContextFailure<string>
+    ) => Partial<E>
   ) {
     super(name, authUserHandler, inputHandler);
   }

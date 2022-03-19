@@ -54,8 +54,8 @@ export default class GroupService extends AbstractService<
     const entity = await this.getEntity(authUser, id);
 
     if (
-      name != null &&
-      description != null &&
+      name == null &&
+      description == null &&
       admins == null &&
       members == null
     ) {

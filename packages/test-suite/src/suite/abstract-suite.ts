@@ -150,31 +150,31 @@ export abstract class AbstractSuite<
           const input = task.inputHandler();
           if (task.type === "Success") {
             const result = await this.service.findValueById(authUser, input);
-            task.handler(result);
+            task.handler({ input, authUser, result });
           } else {
-            expect(await this.service.findValueById(authUser, input)).toThrow(
-              task.error
-            );
+            await expect(async () =>
+              this.service.findValueById(authUser, input)
+            ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
           }
         } else {
-          const { sort, pagination, query } = task.inputHandler();
+          const input = task.inputHandler();
           if (task.type === "Success") {
             const result = await this.service.findAllValues(
               authUser,
-              sort,
-              pagination,
-              query
+              input.sort,
+              input.pagination,
+              input.query
             );
-            task.handler(result);
+            task.handler({ input, authUser, result });
           } else {
-            expect(
-              await this.service.findAllValues(
+            await expect(async () =>
+              this.service.findAllValues(
                 authUser,
-                sort,
-                pagination,
-                query
+                input.sort,
+                input.pagination,
+                input.query
               )
-            ).toThrow(task.error);
+            ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
           }
         }
       }
@@ -185,15 +185,15 @@ export abstract class AbstractSuite<
       async (task: WriteTask<C, T>) => {
         await this.prepareData();
         const authUser = task.authUserHandler();
-        const input = task.inputHandler();
+        const command = task.inputHandler();
         if (task.type === "Success") {
-          const id = await this.service.handle(authUser, input);
-          const entity = await this.repository.findById(id);
-          task.handler(entity);
+          const id = await this.service.handle(authUser, command);
+          const result = await this.repository.findById(id);
+          task.handler({ command, authUser, result });
         } else {
-          expect(await this.service.handle(authUser, input)).toThrow(
-            task.error
-          );
+          await expect(async () =>
+            this.service.handle(authUser, command)
+          ).rejects.toMatchObject(task.errorHandler({ command, authUser }));
         }
       }
     );

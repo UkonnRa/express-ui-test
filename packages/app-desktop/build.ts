@@ -4,10 +4,15 @@ import { build as esbuild } from "../../config/build/esbuild.config";
 import tsconfig from "./tsconfig.json";
 
 const main = async (): Promise<void> => {
-  await esbuild(tsconfig, {
-    external: ["pg-hstore", "electron"],
-    entryPoints: ["src/index.ts", "src/preload.ts"],
-  });
+  await esbuild(
+    tsconfig,
+    {
+      external: ["pg-hstore", "electron"],
+      entryPoints: ["src/index.ts", "src/preload.ts"],
+    },
+    undefined,
+    false
+  );
   try {
     await fs.cp("../desktop-render/dist", "./dist", { recursive: true });
     await fs.cp("./dist", "./app/dist", { recursive: true });
@@ -18,26 +23,28 @@ const main = async (): Promise<void> => {
     );
     process.exit(1);
   }
-  await electronBuild({
-    targets: Platform.current().createTarget(),
-    config: {
-      productName: "white-rabbit",
-      appId: "com.ukonnra.wonderland.whiterabbit",
-      files: ["dist"],
-      directories: {
-        output: "release",
+  if (process.env.NODE_ENV === "production") {
+    await electronBuild({
+      targets: Platform.current().createTarget(),
+      config: {
+        productName: "white-rabbit",
+        appId: "com.ukonnra.wonderland.whiterabbit",
+        files: ["dist"],
+        directories: {
+          output: "release",
+        },
+        releaseInfo: {
+          releaseName: "white-rabbit",
+        },
+        win: {
+          target: ["zip"],
+        },
+        linux: {
+          target: ["AppImage"],
+        },
       },
-      releaseInfo: {
-        releaseName: "white-rabbit",
-      },
-      win: {
-        target: ["zip"],
-      },
-      linux: {
-        target: ["AppImage"],
-      },
-    },
-  });
+    });
+  }
   process.exit();
 };
 

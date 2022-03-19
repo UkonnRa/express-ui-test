@@ -1,25 +1,46 @@
 import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
-import { AbstractTask, ErrorType } from "./abstract-task";
+import { AbstractError } from "@white-rabbit/business-logic/src/shared/errors";
+import { AbstractTask } from "./abstract-task";
 
-export class WriteTaskSuccess<C, T> implements AbstractTask<C> {
+interface ContextSuccess<C, T> {
+  readonly command: C;
+  readonly authUser: AuthUser;
+  readonly result?: T;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class WriteTaskSuccess<C, T, CC extends C = any>
+  implements AbstractTask<C>
+{
   readonly type = "Success";
 
   constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => C,
-    readonly handler: (entity?: T) => void
+    readonly inputHandler: () => CC,
+    readonly handler: (context: ContextSuccess<CC, T>) => void
   ) {}
 }
 
-export class WriteTaskFailure<C> implements AbstractTask<C> {
+interface ContextFailure<C> {
+  readonly command: C;
+  readonly authUser: AuthUser;
+}
+
+export class WriteTaskFailure<
+  C,
+  E extends AbstractError = AbstractError,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  CC extends C = any
+> implements AbstractTask<C>
+{
   readonly type = "Failure";
 
   constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => C,
-    readonly error: ErrorType
+    readonly inputHandler: () => CC,
+    readonly errorHandler: (context: ContextFailure<CC>) => Partial<E>
   ) {}
 }
 

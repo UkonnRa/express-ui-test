@@ -98,7 +98,7 @@ export default class FinRecordService extends AbstractService<
       description == null &&
       items == null &&
       tags == null &&
-      isContingent != null
+      isContingent == null
     ) {
       return entity.id;
     }
