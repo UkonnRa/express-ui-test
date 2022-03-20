@@ -21,5 +21,5 @@
       * [x] `lcov` files should be generated, including unit ~~and e2e tests~~
         * E2E tests are not suitable for generating lcov related tests, since they are black box tests
       * About coverage tools supporting on Monorepo:
-        * [ ] SonarCloud support Monorepo by [mapping a repository to multiple Sonar projects](https://docs.sonarcloud.io/advanced-setup/monorepo-support/)
-        * [ ] Codecov support Monorepo by [splitting the reports to different parts using Flags feature](https://docs.codecov.com/docs/flags)
+        * [x] SonarCloud support Monorepo by [mapping a repository to multiple Sonar projects](https://docs.sonarcloud.io/advanced-setup/monorepo-support/)
+        * [x] Codecov support Monorepo by [splitting the reports to different parts using Flags feature](https://docs.codecov.com/docs/flags)

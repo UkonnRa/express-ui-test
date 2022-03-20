@@ -98,7 +98,20 @@ export abstract class AbstractSuite<
           ["Provider 4", "AuthId 4-5"],
         ]),
       },
-    ].map((options: UserCreateOptions) => new User(options));
+      {
+        name: "6: User Deleted",
+        role: Role.USER,
+        authIds: new Map([
+          ["Provider 2", "AuthId 2-6"],
+          ["Provider 4", "AuthId 4-6"],
+        ]),
+      },
+    ].map((options: UserCreateOptions, idx) => {
+      const user = new User(options);
+      user.id = `user-id-${idx}`;
+      return user;
+    });
+    users[6].deleted = true;
     await this.userRepository.saveAll(users);
     this.users = users;
 
@@ -115,7 +128,11 @@ export abstract class AbstractSuite<
         admins: [users[4], users[5]],
         members: [users[2], users[3]],
       },
-    ].map((options: GroupCreateOptions) => new Group(options));
+    ].map((options: GroupCreateOptions, idx) => {
+      const group = new Group(options);
+      group.id = `group-id-${idx}`;
+      return group;
+    });
     await this.groupRepository.saveAll(groups);
     this.groups = groups;
   }

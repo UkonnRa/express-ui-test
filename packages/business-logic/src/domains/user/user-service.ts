@@ -10,6 +10,7 @@ import {
   UserCommand,
   UserCommandCreate,
   UserCommandDelete,
+  UserCommandRebindAuthProvider,
   UserCommandUpdate,
 } from "./user-command";
 
@@ -95,7 +96,17 @@ export default class UserService extends AbstractService<
     }
 
     await this.repository.save(entity);
+    return entity.id;
+  }
 
+  async rebindAuthId(
+    authUser: AuthUser,
+    command: UserCommandRebindAuthProvider
+  ): Promise<string> {
+    const entity = await this.getEntity(authUser, command.id);
+    const { provider, id } = authUser.authId;
+    entity.authIds.set(provider, id);
+    await this.repository.save(entity);
     return entity.id;
   }
 
@@ -104,11 +115,8 @@ export default class UserService extends AbstractService<
     { id }: UserCommandDelete
   ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
-
     entity.deleted = true;
-
     await this.repository.save(entity);
-
     return entity.id;
   }
 
@@ -118,7 +126,7 @@ export default class UserService extends AbstractService<
     } else if (command.type === "UserCommandUpdate") {
       return this.updateUser(authUser, command);
     } else if (command.type === "UserCommandRebindAuthProvider") {
-      throw new Error("Unimplemented");
+      return this.rebindAuthId(authUser, command);
     } else {
       return this.deleteUser(authUser, command);
     }

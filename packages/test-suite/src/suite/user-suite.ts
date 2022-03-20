@@ -8,6 +8,8 @@ import {
   UserCommandCreate,
   UserQueryFullText,
   UserCommandUpdate,
+  UserCommandRebindAuthProvider,
+  UserCommandDelete,
 } from "@white-rabbit/business-logic/src/domains/user";
 import {
   GroupRepository,
@@ -21,6 +23,7 @@ import {
   NoExpectedScopeError,
   NotFoundError,
 } from "@white-rabbit/business-logic/src/shared/errors";
+import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
 import {
   ReadTask,
   ReadTaskPageSuccess,
@@ -335,6 +338,74 @@ export class UserSuite extends AbstractSuite<
         operatorId: authUser.user?.id,
         id: command.id,
         field: "authIds",
+      })
+    ),
+    new WriteTaskSuccess<UserCommand, User, UserCommandRebindAuthProvider>(
+      "rebind auth token",
+      () => {
+        const authUser = this.getAuthUser(4);
+        return new AuthUser(
+          {
+            provider: "Provider 3",
+            id: "New Id",
+          },
+          authUser.scopes,
+          authUser.user
+        );
+      },
+      () => ({
+        type: "UserCommandRebindAuthProvider",
+        id: this.users[4].id,
+      }),
+      ({ authUser, result }) => {
+        expect(result?.authIds.get(authUser.authId.provider)).toBe(
+          authUser.authId.id
+        );
+      }
+    ),
+    new WriteTaskSuccess<UserCommand, User, UserCommandDelete>(
+      "delete user",
+      () => this.getAuthUser(4),
+      () => ({
+        type: "UserCommandDelete",
+        id: this.users[4].id,
+      }),
+      ({ result }) => {
+        expect(result).toBeFalsy();
+      }
+    ),
+    new WriteTaskSuccess<UserCommand, User, UserCommandDelete>(
+      "delete user by admin",
+      () => this.getAuthUser(2),
+      () => ({
+        type: "UserCommandDelete",
+        id: this.users[4].id,
+      }),
+      ({ result }) => {
+        expect(result).toBeFalsy();
+      }
+    ),
+    new WriteTaskSuccess<UserCommand, User, UserCommandDelete>(
+      "delete user by owner",
+      () => this.getAuthUser(0),
+      () => ({
+        type: "UserCommandDelete",
+        id: this.users[2].id,
+      }),
+      ({ result }) => {
+        expect(result).toBeFalsy();
+      }
+    ),
+    new WriteTaskFailure<UserCommand, NotFoundError>(
+      "delete user: already deleted",
+      () => this.getAuthUser(0),
+      () => ({
+        type: "UserCommandDelete",
+        id: this.users[6].id,
+      }),
+      ({ command }) => ({
+        type: TYPE_USER,
+        id: command.id,
       })
     ),
   ];

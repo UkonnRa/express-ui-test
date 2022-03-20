@@ -8,7 +8,7 @@ export default abstract class AbstractEntity<
   V,
   P
 > {
-  readonly id = v4();
+  id = v4();
 
   deleted = false;
 
