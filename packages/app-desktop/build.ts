@@ -1,5 +1,7 @@
 import { promises as fs } from "fs";
+import { exec } from "child_process";
 import { build as electronBuild, Platform } from "electron-builder";
+import treeKill from "tree-kill";
 import { build as esbuild } from "../../config/build/esbuild.config";
 import tsconfig from "./tsconfig.json";
 
@@ -10,7 +12,30 @@ const main = async (): Promise<void> => {
       external: ["pg-hstore", "electron"],
       entryPoints: ["src/index.ts", "src/preload.ts"],
     },
-    undefined,
+    {
+      start: () => {
+        return exec("yarn dev:electron", (err) => {
+          if (err != null) {
+            console.log("[@white-rabbit/app-desktop] Killed dev:electron");
+          }
+        });
+      },
+      stop: (process) => {
+        console.log("[@white-rabbit/app-desktop] Kill node process");
+        process.stdout?.destroy();
+        process.stderr?.destroy();
+        if (process.pid != null) {
+          treeKill(process.pid, (err?: Error) => {
+            if (err != null) {
+              console.error(
+                "[@white-rabbit/app-desktop] Error when treeKill: ",
+                err
+              );
+            }
+          });
+        }
+      },
+    },
     false
   );
   if (process.env.NODE_ENV === "production") {

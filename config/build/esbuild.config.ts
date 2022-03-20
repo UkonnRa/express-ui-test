@@ -65,6 +65,16 @@ export const build = async (
     );
     dependencies.forEach((dependency) => console.log(`  * ${dependency}`));
     let process = execOptions?.start();
+    process?.stdout?.on("data", (data) => {
+      if (data.length > 0) {
+        console.log(`[${packageName}] Stdout:`, data);
+      }
+    });
+    process?.stderr?.on("data", (data) => {
+      if (data.length > 0) {
+        console.log(`[${packageName}] Stderr:`, data);
+      }
+    });
     watch(["./src", ...dependencies], { ignoreInitial: true }).on(
       "all",
       async (event, file) => {

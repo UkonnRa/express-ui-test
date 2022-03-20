@@ -8,7 +8,7 @@
     "clean": "rimraf dist release app/.yarn app/dist app/node_modules",
     "build": "yarn clean && ts-node build.ts",
     "dev:electron": "electron .",
-    "dev:esbuild": "yarn build --watch",
+    "dev": "yarn build --watch",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
     "test": "jest --coverage"

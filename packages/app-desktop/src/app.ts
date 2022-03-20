@@ -60,7 +60,6 @@ export default class App {
     // code. You can also put them in separate files and require them here.
     ipcMain.removeHandler("business-logic");
     ipcMain.handle("business-logic", async () => {
-      this.logger.info("start parsing ipc event");
       const id = await this.journalService.createJournal(
         new AuthUser(
           { id: "authId", provider: "provider" },

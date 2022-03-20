@@ -10,7 +10,7 @@ void build(
   },
   {
     start: () => {
-      const process = execFile("node", ["./dist/index.js"], (err) => {
+      return execFile("node", ["./dist/index.js"], (err) => {
         if (err != null) {
           if (err.signal === "SIGTERM") {
             console.log("[@white-rabbit/app-backend] Killed index.js");
@@ -22,13 +22,6 @@ void build(
           }
         }
       });
-      process.stdout?.on("data", (data) => {
-        console.log("[@white-rabbit/app-backend] Stdout:", data);
-      });
-      process.stderr?.on("data", (data) => {
-        console.log("[@white-rabbit/app-backend] Stderr:", data);
-      });
-      return process;
     },
     stop: (process) => {
       console.log("[@white-rabbit/app-backend] Kill node process");
