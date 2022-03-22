@@ -1,5 +1,5 @@
 <template>
-  <button @click="onClick">Hello {{ times }} times</button>
+  <v-btn color="primary" @click="onClick">Hello {{ times }} times</v-btn>
 </template>
 
 <script setup lang="ts">

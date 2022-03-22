@@ -8,11 +8,15 @@
     "preview": "vite preview --port 5051",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
-    "test": "vitest run --coverage",
+    "test": "echo 'Should not run `vitest run --coverage`'",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5051/ 'cypress run'"
   },
   "dependencies": {
+    "@mdi/font": "6.6.95",
     "@white-rabbit/components": "workspace:^",
-    "vue": "^3.2.31"
+    "roboto-fontface": "^0.10.0",
+    "vue": "^3.2.31",
+    "vuetify": "^3.0.0-beta.0",
+    "webfontloader": "^1.6.28"
   }
 }

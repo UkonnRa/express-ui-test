@@ -1,5 +1,5 @@
 <template>
-  <button @click="onClick">World {{ times }} times</button>
+  <v-btn color="secondary" @click="onClick">World {{ times }} times</v-btn>
 </template>
 
 <script setup lang="ts">

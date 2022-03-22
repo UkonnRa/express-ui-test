@@ -1,10 +1,9 @@
 <template>
-  <Hello></Hello>
-  <World></World>
+  <Scaffold></Scaffold>
 </template>
 
 <script setup lang="ts">
-import { Hello, World } from "@white-rabbit/components";
+import { Scaffold } from "@white-rabbit/components";
 </script>
 
 <style scoped></style>
