@@ -20,6 +20,7 @@ import AbstractRepository from "@white-rabbit/business-logic/src/shared/abstract
 import AuthUser, {
   AuthId,
 } from "@white-rabbit/business-logic/src/shared/auth-user";
+import { Pagination } from "@white-rabbit/business-logic/dist/shared/abstract-repository";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<
@@ -42,7 +43,7 @@ export abstract class AbstractSuite<
 
   protected abstract writeTasks: Array<WriteTask<C, T>>;
 
-  protected abstract readTasks: Array<ReadTask<Q, V>>;
+  protected abstract readTasks: Array<ReadTask<T, Q, V>>;
 
   protected users: User[];
 
@@ -161,7 +162,7 @@ export abstract class AbstractSuite<
 
     each(this.readTasks).test(
       `Read task for ${this.type}: $name`,
-      async (task: ReadTask<Q, V>) => {
+      async (task: ReadTask<T, Q, V>) => {
         const authUser = task.authUserHandler();
         if (task.readType === "Single") {
           const input = task.inputHandler();
@@ -182,7 +183,49 @@ export abstract class AbstractSuite<
               input.pagination,
               input.query
             );
-            task.handler({ input, authUser, result });
+            task.handler({
+              input,
+              authUser,
+              result: { page: result, position: "current" },
+            });
+            if (task.expectedResult.previous !== undefined) {
+              const p: Pagination = {
+                size: input.pagination.size,
+                before: result.pageInfo.startCursor,
+                startFrom: "LAST",
+              };
+              const i = { ...input, pagination: p };
+              const prevResult = await this.service.findAllValues(
+                authUser,
+                i.sort,
+                i.pagination,
+                i.query
+              );
+              task.handler({
+                input: i,
+                authUser,
+                result: { page: prevResult, position: "previous" },
+              });
+            }
+            if (task.expectedResult.next !== undefined) {
+              const p: Pagination = {
+                size: input.pagination.size,
+                after: result.pageInfo.endCursor,
+                startFrom: "FIRST",
+              };
+              const i = { ...input, pagination: p };
+              const nextResult = await this.service.findAllValues(
+                authUser,
+                i.sort,
+                i.pagination,
+                i.query
+              );
+              task.handler({
+                input: i,
+                authUser,
+                result: { page: nextResult, position: "next" },
+              });
+            }
           } else {
             await expect(async () =>
               this.service.findAllValues(

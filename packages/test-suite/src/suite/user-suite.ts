@@ -61,14 +61,14 @@ export class UserSuite extends AbstractSuite<
     );
   }
 
-  override readTasks: Array<ReadTask<UserQuery, UserValue>> = [
+  override readTasks: Array<ReadTask<User, UserQuery, UserValue>> = [
     new ReadTaskSingleSuccess<UserValue>(
       "find self by ID",
       () => this.getAuthUser(0),
       () => this.users[0].id,
       ({ result }) => expect(result.name).toBe(this.users[0].name)
     ),
-    new ReadTaskPageSuccess<UserQuery, UserValue, UserQueryFullText>(
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
       "find all by fullText",
       () => this.getAuthUser(0),
       () => ({
@@ -76,20 +76,94 @@ export class UserSuite extends AbstractSuite<
         pagination: { size: 1, startFrom: "FIRST" },
         query: { type: "UserQueryFullText", keyword: { value: "Owner" } },
       }),
-      ({ result }) => {
-        expect(result.pageInfo).toEqual(
-          expect.objectContaining({
-            hasNextPage: true,
-            hasPreviousPage: false,
-          })
-        );
-        expect(result.pageItems[0].data).toEqual(
-          expect.objectContaining({
-            id: this.users[0].id,
-            name: this.users[0].name,
-            role: this.users[0].role,
-          })
-        );
+      () => this.users,
+      {
+        next: [1],
+        current: [0],
+      }
+    ),
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
+      "find all by fullText: numbers",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [{ field: "name", order: "ASC" }],
+        pagination: { size: 2, startFrom: "FIRST" },
+        query: { type: "UserQueryFullText", keyword: { value: "2" } },
+      }),
+      () => this.users,
+      {
+        next: [3, 5],
+        current: [1, 2],
+      }
+    ),
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
+      "find all from central",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [{ field: "name", order: "ASC" }],
+        pagination: {
+          size: 3,
+          startFrom: "FIRST",
+          after: this.users[1].toCursor(),
+        },
+      }),
+      () => this.users,
+      {
+        previous: [0, 1],
+        current: [2, 3, 4],
+        next: [5],
+      }
+    ),
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
+      "find all from last",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [{ field: "name", order: "ASC" }],
+        pagination: {
+          size: 3,
+          startFrom: "LAST",
+          before: this.users[5].toCursor(),
+        },
+      }),
+      () => this.users,
+      {
+        previous: [0, 1],
+        current: [2, 3, 4],
+        next: [5],
+      }
+    ),
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
+      "find all sorting role",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [{ field: "role", order: "ASC" }],
+        pagination: {
+          size: 3,
+          startFrom: "FIRST",
+          before: this.users[2].toCursor(),
+        },
+      }),
+      () => this.users,
+      {
+        current: [4, 5],
+        next: [2, 3, 0],
+      }
+    ),
+    new ReadTaskPageSuccess<User, UserQuery, UserValue, UserQueryFullText>(
+      "find all sorting role: reverse",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [{ field: "role", order: "ASC" }],
+        pagination: {
+          size: 3,
+          startFrom: "LAST",
+          after: this.users[0].toCursor(),
+        },
+      }),
+      () => this.users,
+      {
+        current: [1],
+        previous: [2, 3, 0],
       }
     ),
   ];

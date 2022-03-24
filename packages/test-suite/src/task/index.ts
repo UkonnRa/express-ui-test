@@ -1,3 +1,4 @@
+import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
 import { ReadTaskPage } from "./read-page-task";
 import { ReadTaskSingle } from "./read-single-task";
 
@@ -14,4 +15,6 @@ export {
 } from "./read-single-task";
 export { WriteTaskSuccess, WriteTaskFailure, WriteTask } from "./write-task";
 
-export type ReadTask<Q, V> = ReadTaskPage<Q, V> | ReadTaskSingle<V>;
+export type ReadTask<T extends AbstractEntity<T, V, unknown>, Q, V> =
+  | ReadTaskPage<T, Q, V>
+  | ReadTaskSingle<V>;
