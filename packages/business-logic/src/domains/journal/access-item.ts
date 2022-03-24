@@ -67,7 +67,7 @@ export class AccessItemGroup extends AccessItem {
   }
 
   contains(user: User): boolean {
-    return this.group.contains(user);
+    return this.group.contains(user.id);
   }
 
   override toValue(): AccessItemValue {

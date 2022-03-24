@@ -116,14 +116,43 @@ export class MemoryGroupRepository
   extends MemoryRepository<Group, GroupValue, GroupQuery>
   implements GroupRepository
 {
-  doCompare(): number {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  doCompare(a: Group, b: Group, field: string): number {
+    if (field === "id") {
+      return a.id.localeCompare(b.id);
+    }
+    if (field === "name") {
+      return a.name.localeCompare(b.name);
+    }
+    if (field === "description") {
+      return a.description.localeCompare(b.description);
+    }
+    throw new InvalidSortFieldError(TYPE_ACCOUNT, field);
   }
 
-  doQuery(): boolean {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  doQuery(entity: Group, query?: GroupQuery): boolean {
+    if (query?.type === "GroupQueryFullText") {
+      const { fields, value } = query.keyword;
+
+      let result = false;
+
+      for (const field of fields ?? ["name", "description"]) {
+        if (field === "name") {
+          result = result || entity.name.includes(value);
+        } else if (field === "description") {
+          result = result || entity.description.includes(value);
+        } else {
+          throw new FieldNotQueryableError(TYPE_ACCOUNT, field);
+        }
+      }
+      return result;
+    }
+
+    if (query?.type === "GroupQueryByUser") {
+      return entity.contains(query.user, query.field);
+    }
+
+    return true;
   }
 }
 

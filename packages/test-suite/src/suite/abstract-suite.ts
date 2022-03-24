@@ -16,11 +16,12 @@ import {
 import each from "jest-each";
 import AbstractService from "@white-rabbit/business-logic/src/shared/abstract-service";
 import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
-import AbstractRepository from "@white-rabbit/business-logic/src/shared/abstract-repository";
+import AbstractRepository, {
+  Pagination,
+} from "@white-rabbit/business-logic/src/shared/abstract-repository";
 import AuthUser, {
   AuthId,
 } from "@white-rabbit/business-logic/src/shared/auth-user";
-import { Pagination } from "@white-rabbit/business-logic/dist/shared/abstract-repository";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<
@@ -31,14 +32,15 @@ export abstract class AbstractSuite<
   Q,
   C
 > {
+  protected readonly userRepository: UserRepository;
+  protected readonly userService: UserService;
+  protected readonly groupRepository: GroupRepository;
+  protected readonly groupService: GroupService;
+
   protected constructor(
     readonly type: string,
     readonly repository: R,
-    readonly service: S,
-    readonly userRepository: UserRepository,
-    readonly userService: UserService,
-    readonly groupRepository: GroupRepository,
-    readonly groupService: GroupService
+    readonly service: S
   ) {}
 
   protected abstract writeTasks: Array<WriteTask<C, T>>;
@@ -119,15 +121,27 @@ export abstract class AbstractSuite<
     const groups: Group[] = [
       {
         name: "Group 1",
-        description: "Group 1 Description",
+        description: "Group 1 Description - foo, bar",
         admins: [users[3], users[4]],
         members: [users[0], users[1]],
       },
       {
         name: "Group 2",
-        description: "Group 2 Description",
+        description: "Group 2 Description - bar, baz",
         admins: [users[4], users[5]],
         members: [users[2], users[3]],
+      },
+      {
+        name: "Group 3",
+        description: "Group 3 Description - baz, foo",
+        admins: [users[0], users[2]],
+        members: [users[1], users[5]],
+      },
+      {
+        name: "Group 4",
+        description: "Group 4 Description - bar, foo",
+        admins: [users[1], users[5]],
+        members: [users[3], users[4]],
       },
     ].map((options: GroupCreateOptions, idx) => {
       const group = new Group(options);

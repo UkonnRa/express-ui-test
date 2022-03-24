@@ -1,5 +1,5 @@
 import AbstractEntity from "../../shared/abstract-entity";
-import { User } from "../user";
+import { Role, User } from "../user";
 import { GroupValue } from "./group-value";
 
 export interface GroupCreateOptions {
@@ -69,8 +69,9 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   set admins(value: User[]) {
-    this.checkLength(value.length, "admins", { max: MAX_LENGTH_LIST });
-    this.#admins = value;
+    const result = new Map(value.map((v) => [v.id, v]));
+    this.checkLength(result.size, "admins", { max: MAX_LENGTH_LIST });
+    this.#admins = [...result.values()];
     this.members = this.#members;
   }
 
@@ -79,15 +80,25 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   set members(value: User[]) {
-    const result = value.filter(
-      ({ id }) => !this.admins.some((v) => v.id === id)
+    const result = new Map(
+      value
+        .filter(({ id }) => !this.admins.some((v) => v.id === id))
+        .map((v) => [v.id, v])
     );
-    this.checkLength(value.length, "members", { max: MAX_LENGTH_LIST });
-    this.#members = result;
+    this.checkLength(result.size, "members", { max: MAX_LENGTH_LIST });
+    this.#members = [...result.values()];
   }
 
-  public contains(user: User): boolean {
-    return this.isReadable(user);
+  public contains(userId: string, field?: "admins" | "members"): boolean {
+    const adminContains = this.admins.some(({ id }) => id === userId);
+    const memberContains = this.members.some(({ id }) => id === userId);
+    if (field === "admins") {
+      return adminContains;
+    } else if (field === "members") {
+      return memberContains;
+    } else {
+      return adminContains || memberContains;
+    }
   }
 
   isReadable(user: User): boolean {
@@ -97,7 +108,9 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
   }
 
   isWritable(user: User): boolean {
-    return this.admins.some(({ id }) => id === user.id);
+    return (
+      user.role !== Role.USER || this.admins.some(({ id }) => id === user.id)
+    );
   }
 
   toValue(): GroupValue {

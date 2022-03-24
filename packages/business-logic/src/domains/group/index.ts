@@ -5,5 +5,9 @@ export {
   GroupCommandUpdate,
   GroupCommandDelete,
 } from "./group-command";
-export { GroupQuery, GroupQueryFullText } from "./group-query";
+export {
+  GroupQuery,
+  GroupQueryFullText,
+  GroupQueryByUser,
+} from "./group-query";
 export { GroupValue } from "./group-value";

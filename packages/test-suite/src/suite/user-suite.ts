@@ -50,15 +50,7 @@ export class UserSuite extends AbstractSuite<
     override readonly groupRepository: GroupRepository,
     override readonly groupService: GroupService
   ) {
-    super(
-      TYPE_USER,
-      userRepository,
-      userService,
-      userRepository,
-      userService,
-      groupRepository,
-      groupService
-    );
+    super(TYPE_USER, userRepository, userService);
   }
 
   override readTasks: Array<ReadTask<User, UserQuery, UserValue>> = [
