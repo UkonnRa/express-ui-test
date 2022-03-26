@@ -5,14 +5,15 @@
   "main": "src/index.ts",
   "publishConfig": {
     "main": "dist/components.umd.js",
-    "module": "dist/components.es.js",
-    "types": "dist/index.d.ts"
+    "module": "dist/components.es.js"
   },
   "scripts": {
     "build": "vite build && vue-tsc --emitDeclarationOnly",
     "lint": "yarn lint:typecheck && eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
     "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "test": "echo 'Should not run `vitest run --coverage`'"
+    "test": "echo 'Should not run `vitest run --coverage`'",
+    "storybook": "start-storybook -p 5021",
+    "build-storybook": "build-storybook"
   }
 }

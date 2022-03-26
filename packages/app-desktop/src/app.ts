@@ -105,7 +105,7 @@ export default class App {
 
     await mainWindow.loadURL(
       isDev
-        ? "http://localhost:3000/"
+        ? "http://localhost:5030/"
         : `file://${path.join(__dirname, "index.html")}`
     );
   }

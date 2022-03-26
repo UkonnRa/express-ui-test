@@ -9,11 +9,11 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "yarn clean && ts-node esbuild.config.ts",
-    "dev": "yarn build --watch",
+    "dev": "cross-env PORT=5000 yarn build --watch",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
     "test": "jest --coverage",
-    "preview": "node ./dist/index.js"
+    "preview": "cross-env PORT=5000 node ./dist/index.js"
   },
   "dependencies": {
     "@white-rabbit/business-logic": "workspace:^",

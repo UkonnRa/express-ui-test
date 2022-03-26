@@ -19,6 +19,7 @@ dist
 release
 tsconfig.tsbuildinfo
 docs/build
+storybook-static
 
 # Generated files
 .docusaurus

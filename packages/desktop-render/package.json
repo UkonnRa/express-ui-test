@@ -3,14 +3,16 @@
   "packageManager": "yarn@3.2.0",
   "version": "0.0.1",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5030",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview --port 5050",
+    "preview": "vite preview --port 5030",
     "lint": "yarn lint:typecheck && eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
     "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "test": "echo 'Should not run `vitest run --coverage`'",
-    "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'"
+    "test:e2e": "start-server-and-test preview http://127.0.0.1:5030/ 'cypress run'",
+    "storybook": "start-storybook -p 5031",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@mdi/font": "6.6.95",
