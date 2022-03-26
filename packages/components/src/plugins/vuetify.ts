@@ -1,6 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import { createVuetify, type ThemeDefinition } from "vuetify";
-// eslint-disable-next-line import/no-unresolved
 import "vuetify/styles/main.sass";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 
 const light: ThemeDefinition = {
   dark: false,
@@ -31,6 +33,8 @@ const dark: ThemeDefinition = {
 };
 
 export default createVuetify({
+  components,
+  directives,
   theme: {
     defaultTheme: "light",
     themes: {

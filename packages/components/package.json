@@ -13,7 +13,7 @@
     "lint:fix": "yarn lint --fix",
     "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "test": "echo 'Should not run `vitest run --coverage`'",
-    "storybook": "start-storybook -p 5021",
-    "build-storybook": "build-storybook"
+    "storybook": "start-storybook -p 5021 -c ../../config/storybook",
+    "build-storybook": "build-storybook -c ../../config/storybook"
   }
 }

@@ -11,8 +11,8 @@
     "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "test": "echo 'Should not run `vitest run --coverage`'",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5030/ 'cypress run'",
-    "storybook": "start-storybook -p 5031",
-    "build-storybook": "build-storybook"
+    "storybook": "start-storybook -p 5031 -c ../../config/storybook",
+    "build-storybook": "build-storybook -c ../../config/storybook"
   },
   "dependencies": {
     "@mdi/font": "6.6.95",
