@@ -8,13 +8,14 @@
     "preview": "vite preview --port 5010",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
-    "test": "echo 'Should not run `vitest run --coverage`'",
+    "test": "cross-env NODE_ENV=test vitest run --coverage",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:5010/ 'cypress run'",
     "storybook": "start-storybook -p 5011 -c ../../config/storybook",
     "build-storybook": "build-storybook -c ../../config/storybook"
   },
   "dependencies": {
-    "@mdi/font": "6.6.95",
+    "@mdi/font": "6.6.96",
+    "@vueuse/core": "^8.2.3",
     "@white-rabbit/components": "workspace:^",
     "roboto-fontface": "^0.10.0",
     "vue": "^3.2.31",

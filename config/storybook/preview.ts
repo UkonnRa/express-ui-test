@@ -1,5 +1,6 @@
 import { app } from "@storybook/vue3";
 import { vuetifyConfig } from "@white-rabbit/components/src/plugins";
+import "@mdi/font/css/materialdesignicons.css";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -15,7 +16,7 @@ export const parameters = {
 export const decorators = [
   (story: unknown) => ({
     components: { story },
-    template: "<v-app><story /></v-app>",
+    template: "<v-app style='height: 100vh'><story /></v-app>",
   }),
 ];
 

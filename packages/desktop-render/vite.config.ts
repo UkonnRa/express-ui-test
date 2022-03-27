@@ -2,11 +2,12 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "@vuetify/vite-plugin";
 
-export default defineConfig({
+export default defineConfig((env) => ({
   plugins: [
     vue(),
     vuetify({
-      autoImport: true,
+      autoImport: env.mode !== "test",
+      styles: env.mode === "test" ? "none" : undefined,
     }),
   ],
   test: {
@@ -16,4 +17,4 @@ export default defineConfig({
     },
   },
   base: "",
-});
+}));
