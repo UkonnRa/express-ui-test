@@ -1,4 +1,4 @@
-import { Role } from "./user";
+import type { Role } from "./user";
 
 export interface UserCommandCreate {
   type: "UserCommandCreate";

@@ -1,5 +1,5 @@
 import AbstractEntity from "../../shared/abstract-entity";
-import { UserValue } from "./user-value";
+import type { UserValue } from "./user-value";
 
 export interface UserCreateOptions {
   name: string;

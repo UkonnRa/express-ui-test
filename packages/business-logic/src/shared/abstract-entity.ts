@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { Base64 } from "js-base64";
-import { User } from "../domains/user";
+import type { User } from "../domains/user";
 import { FieldValidationLengthError } from "./errors";
 
 export default abstract class AbstractEntity<

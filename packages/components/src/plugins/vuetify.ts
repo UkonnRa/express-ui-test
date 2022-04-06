@@ -1,8 +1,10 @@
 /* eslint-disable import/no-unresolved */
-import { createVuetify, type ThemeDefinition } from "vuetify";
+import {
+  createVuetify,
+  type ThemeDefinition,
+  type VuetifyOptions,
+} from "vuetify";
 import "vuetify/styles/main.sass";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
 
 const light: ThemeDefinition = {
   dark: false,
@@ -32,9 +34,7 @@ const dark: ThemeDefinition = {
   },
 };
 
-export default createVuetify({
-  components,
-  directives,
+export const vuetifyOptions: VuetifyOptions = {
   theme: {
     defaultTheme: "light",
     themes: {
@@ -42,4 +42,6 @@ export default createVuetify({
       dark,
     },
   },
-});
+};
+
+export default createVuetify(vuetifyOptions);

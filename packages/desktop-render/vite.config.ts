@@ -15,6 +15,7 @@ export default defineConfig((env) => ({
     coverage: {
       reporter: ["lcov", "html"],
     },
+    setupFiles: ["../../config/test/vitest.setup.ts"],
   },
   base: "",
 }));

@@ -20,6 +20,7 @@ release
 tsconfig.tsbuildinfo
 docs/build
 storybook-static
+stats.html
 
 # Generated files
 .docusaurus
@@ -28,6 +29,7 @@ storybook-static
 #Test results
 coverage
 packages/**/cypress/videos
+packages/**/cypress/screenshots
 
 #IDE
 .idea

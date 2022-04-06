@@ -1,4 +1,4 @@
-import AbstractEntity from "./abstract-entity";
+import type AbstractEntity from "./abstract-entity";
 
 export type AdditionalFilter<T extends AbstractEntity<T, unknown, unknown>> = (
   entity: T[]

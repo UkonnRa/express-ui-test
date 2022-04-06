@@ -1,6 +1,10 @@
 import { app } from "@storybook/vue3";
-import { vuetifyConfig } from "@white-rabbit/components/src/plugins";
+import { vuetifyOptions } from "@white-rabbit/components/src/plugins";
 import "@mdi/font/css/materialdesignicons.css";
+import JournalViewApiImpl from "../api/JournalViewApiImpl";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -16,8 +20,16 @@ export const parameters = {
 export const decorators = [
   (story: unknown) => ({
     components: { story },
-    template: "<v-app style='height: 100vh'><story /></v-app>",
+    template: "<v-app><story /></v-app>",
   }),
 ];
 
-app.use(vuetifyConfig);
+app.use(
+  createVuetify({
+    ...vuetifyOptions,
+    components,
+    directives,
+  })
+);
+
+app.provide("JournalViewApi", new JournalViewApiImpl());

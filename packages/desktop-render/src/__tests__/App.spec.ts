@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import { Hello } from "@white-rabbit/components";
+import App from "../App.vue";
 
 describe("App.vue", () => {
   it("can be mounted", () => {
-    const wrapper = mount(Hello);
-    expect(wrapper.text()).toContain("Hello");
+    const wrapper = mount(App);
+    expect(wrapper.text()).toContain("WhiteRabbit");
   });
 });

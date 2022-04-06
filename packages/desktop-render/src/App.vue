@@ -1,5 +1,5 @@
 <template>
-  <Scaffold></Scaffold>
+  <journal-view></journal-view>
   <button @click="loadBusinessLogic">Load business logic</button>
   <code>
     <pre>{{ result }}</pre>
@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { Scaffold } from "@white-rabbit/components";
+import JournalView from "@white-rabbit/components/src/views/JournalView.vue";
 import { ref } from "vue";
 
 const result = ref("");

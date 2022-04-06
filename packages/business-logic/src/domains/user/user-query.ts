@@ -1,4 +1,4 @@
-import { QueryFullTextValue } from "../../shared/abstract-repository";
+import type { QueryFullTextValue } from "../../shared/abstract-repository";
 
 export type UserQueryFullText = QueryFullTextValue & {
   readonly type: "UserQueryFullText";

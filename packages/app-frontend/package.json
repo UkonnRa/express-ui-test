@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "vite --port 5010",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vue-tsc --noEmit && cross-env NODE_ENV=production vite build",
     "preview": "vite preview --port 5010",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
     "lint:fix": "yarn lint --fix",
@@ -17,6 +17,7 @@
     "@mdi/font": "6.6.96",
     "@vueuse/core": "^8.2.3",
     "@white-rabbit/components": "workspace:^",
+    "pinia": "^2.0.13",
     "roboto-fontface": "^0.10.0",
     "vue": "^3.2.31",
     "vuetify": "^3.0.0-beta.0",
