@@ -5,6 +5,6 @@ import App from "../App.vue";
 describe("App.vue", () => {
   it("can be mounted", () => {
     const wrapper = mount(App);
-    expect(wrapper.text()).toContain("WhiteRabbit");
+    expect(wrapper.get("v-navigation-drawer").text()).toContain("WhiteRabbit");
   });
 });

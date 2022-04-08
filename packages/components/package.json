@@ -21,6 +21,7 @@
     "@vueuse/components": "*",
     "@vueuse/core": "*",
     "pinia": "*",
-    "uuid": "*"
+    "uuid": "*",
+    "vuetify": "*"
   }
 }

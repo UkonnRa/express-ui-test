@@ -20,7 +20,7 @@
     "@white-rabbit/components": "workspace:^",
     "roboto-fontface": "^0.10.0",
     "vue": "^3.2.31",
-    "vuetify": "^3.0.0-beta.0",
+    "vuetify": "npm:@vuetify/nightly@next",
     "webfontloader": "^1.6.28"
   }
 }

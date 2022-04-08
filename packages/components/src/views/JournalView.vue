@@ -48,7 +48,11 @@
           </div>
           <div class="mt-1">
             <v-btn color="primary" variant="outlined" class="mr-1">Visit</v-btn>
-            <v-btn color="secondary" variant="outlined" class="mr-1"
+            <v-btn
+              color="secondary"
+              variant="outlined"
+              class="mr-1"
+              @click="onUpdateJournal(item.data)"
               >Update</v-btn
             >
             <v-btn color="warning" variant="outlined">Delete</v-btn>
@@ -56,18 +60,29 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    <v-container v-else>Not Found</v-container>
+    <div v-else class="journal-list-not-found">Not Found</div>
   </app-scaffold>
+  <v-dialog v-model="updateJournalDialog">
+    <v-card v-if="!updateJournal"> Not Found </v-card>
+    <journal-view-update-dialog
+      v-else
+      :journal="updateJournal"
+    ></journal-view-update-dialog>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { JournalViewAccessList, AppScaffold } from "../components";
 import { inject, ref } from "vue";
-import type { JournalViewApi } from "../api/JournalViewApi";
+import type { Journal, JournalViewApi } from "../api/JournalViewApi";
 import { useAsyncState } from "@vueuse/core";
+import AppScaffold from "../components/AppScaffold.vue";
+import JournalViewAccessList from "../components/JournalViewAccessList.vue";
+import JournalViewUpdateDialog from "../components/JournalViewUpdateDialog.vue";
 
 const keyword = ref("");
 const includeDeactivated = ref(false);
+const updateJournalDialog = ref(false);
+const updateJournal = ref<Journal | null>(null);
 
 const api = inject<JournalViewApi>("JournalViewApi");
 if (!api) {
@@ -78,6 +93,11 @@ const { state, isLoading } = useAsyncState(
   api.findAll(keyword.value, includeDeactivated.value),
   null
 );
+
+const onUpdateJournal = (journal: Journal) => {
+  updateJournalDialog.value = true;
+  updateJournal.value = journal;
+};
 </script>
 
 <style scoped lang="scss">
@@ -90,5 +110,11 @@ const { state, isLoading } = useAsyncState(
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.journal-list-not-found {
+  border: dashed gray;
+  text-align: center;
+  color: gray;
 }
 </style>

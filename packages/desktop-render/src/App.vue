@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import JournalView from "@white-rabbit/components/src/views/JournalView.vue";
+import { JournalView } from "@white-rabbit/components";
 import { ref } from "vue";
 
 const result = ref("");

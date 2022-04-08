@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import JournalView from "@white-rabbit/components/src/views/JournalView.vue";
+import { JournalView } from "@white-rabbit/components";
 </script>
 
 <style scoped></style>
