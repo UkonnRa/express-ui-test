@@ -2,6 +2,8 @@ import {
   Journal,
   JournalValue,
   JournalQuery,
+  AccessItemValue,
+  AccessList,
 } from "@white-rabbit/business-logic/src/domains/journal";
 import {
   FinRecord,
@@ -12,6 +14,7 @@ import {
   Group,
   GroupQuery,
   GroupValue,
+  TYPE_GROUP,
 } from "@white-rabbit/business-logic/src/domains/group";
 import {
   TYPE_USER,
@@ -160,14 +163,57 @@ export class MemoryJournalRepository
   extends MemoryRepository<Journal, JournalValue, JournalQuery>
   implements JournalRepository
 {
-  doCompare(): number {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  doCompare(a: Journal, b: Journal, field: string): number {
+    if (field === "id") {
+      return a.id.localeCompare(b.id);
+    }
+    if (field === "name") {
+      return a.name.localeCompare(b.name);
+    }
+    if (field === "description") {
+      return a.description.localeCompare(b.description);
+    }
+    throw new InvalidSortFieldError(TYPE_USER, field);
   }
 
-  doQuery(): boolean {
-    // eslint-disable-next-line sonarjs/no-duplicate-string
-    throw new Error("Method not implemented.");
+  private doFindItem(list: AccessList, queryItem: AccessItemValue): boolean {
+    return (
+      list.find((item) => {
+        if (
+          (item instanceof User && queryItem.type === TYPE_USER) ||
+          (item instanceof Group && queryItem.type === TYPE_GROUP)
+        ) {
+          return item.id === queryItem.id;
+        }
+        return false;
+      }) !== undefined
+    );
+  }
+
+  doQuery(entity: Journal, query?: JournalQuery): boolean {
+    if (query?.type === "JournalQueryFullText") {
+      const { fields, value } = query.keyword;
+
+      let result = false;
+
+      for (const field of fields ?? ["name"]) {
+        if (field === "name") {
+          result = result || entity.name.includes(value);
+        } else {
+          throw new FieldNotQueryableError(TYPE_USER, field);
+        }
+      }
+      return result;
+    }
+
+    if (query?.type === "JournalQueryAccessItem") {
+      return (
+        this.doFindItem(entity.admins, query.accessItem) ||
+        this.doFindItem(entity.members, query.accessItem)
+      );
+    }
+
+    return true;
   }
 }
 

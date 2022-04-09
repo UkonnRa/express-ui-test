@@ -1,8 +1,7 @@
 import {
   GroupRepository,
-  GroupService,
   UserRepository,
-  UserService,
+  JournalRepository,
 } from "@white-rabbit/business-logic/src/domains";
 import {
   Role,
@@ -22,6 +21,10 @@ import AbstractRepository, {
 import AuthUser, {
   AuthId,
 } from "@white-rabbit/business-logic/src/shared/auth-user";
+import {
+  Journal,
+  JournalCreateOptions,
+} from "@white-rabbit/business-logic/src/domains/journal";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<
@@ -33,9 +36,8 @@ export abstract class AbstractSuite<
   C
 > {
   protected readonly userRepository: UserRepository;
-  protected readonly userService: UserService;
   protected readonly groupRepository: GroupRepository;
-  protected readonly groupService: GroupService;
+  protected readonly journalRepository: JournalRepository;
 
   protected constructor(
     readonly type: string,
@@ -50,6 +52,8 @@ export abstract class AbstractSuite<
   protected users: User[];
 
   protected groups: Group[];
+
+  protected journals: Journal[];
 
   private async prepareData(): Promise<void> {
     const users: User[] = [
@@ -150,6 +154,35 @@ export abstract class AbstractSuite<
     });
     await this.groupRepository.saveAll(groups);
     this.groups = groups;
+
+    const journals: Journal[] = (
+      [
+        {
+          name: "Journal 1",
+          description: "Journal 1 Description",
+          admins: [users[0], users[1]],
+          members: [groups[0]],
+        },
+        {
+          name: "Journal 2",
+          description: "Journal 2 Description",
+          admins: [users[0], users[1]],
+          members: [users[2], users[3]],
+        },
+        {
+          name: "Journal 3",
+          description: "Journal 3 Description",
+          admins: [users[1], groups[1]],
+          members: [groups[0]],
+        },
+      ] as JournalCreateOptions[]
+    ).map((options: JournalCreateOptions, idx) => {
+      const journal = new Journal(options);
+      journal.id = `journal-id-${idx}`;
+      return journal;
+    });
+    await this.journalRepository.saveAll(journals);
+    this.journals = journals;
   }
 
   protected getAuthUser(
@@ -258,6 +291,9 @@ export abstract class AbstractSuite<
       `Write task for ${this.type}: $name`,
       async (task: WriteTask<C, T>) => {
         await this.prepareData();
+        if (task.setup !== undefined) {
+          await task.setup();
+        }
         const authUser = task.authUserHandler();
         const command = task.inputHandler();
         if (task.type === "Success") {

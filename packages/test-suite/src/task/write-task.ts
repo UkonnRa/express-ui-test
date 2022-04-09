@@ -18,7 +18,8 @@ export class WriteTaskSuccess<C, T, CC extends C = any>
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
     readonly inputHandler: () => CC,
-    readonly handler: (context: ContextSuccess<CC, T>) => void
+    readonly handler: (context: ContextSuccess<CC, T>) => void,
+    readonly setup?: () => Promise<void>
   ) {}
 }
 
@@ -40,7 +41,8 @@ export class WriteTaskFailure<
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
     readonly inputHandler: () => CC,
-    readonly errorHandler: (context: ContextFailure<CC>) => Partial<E>
+    readonly errorHandler: (context: ContextFailure<CC>) => Partial<E>,
+    readonly setup?: () => Promise<void>
   ) {}
 }
 

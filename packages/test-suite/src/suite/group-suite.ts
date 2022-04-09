@@ -2,8 +2,8 @@ import { inject, singleton } from "tsyringe";
 import {
   GroupRepository,
   GroupService,
+  JournalRepository,
   UserRepository,
-  UserService,
 } from "@white-rabbit/business-logic/src/domains";
 import {
   TYPE_GROUP,
@@ -45,10 +45,11 @@ export class GroupSuite extends AbstractSuite<
 > {
   constructor(
     @inject("UserRepository") override readonly userRepository: UserRepository,
-    override readonly userService: UserService,
     @inject("GroupRepository")
     override readonly groupRepository: GroupRepository,
-    override readonly groupService: GroupService
+    @inject("JournalRepository")
+    override readonly journalRepository: JournalRepository,
+    groupService: GroupService
   ) {
     super(TYPE_GROUP, groupRepository, groupService);
   }

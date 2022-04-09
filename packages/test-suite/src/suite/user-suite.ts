@@ -13,7 +13,7 @@ import {
 } from "@white-rabbit/business-logic/src/domains/user";
 import {
   GroupRepository,
-  GroupService,
+  JournalRepository,
   UserRepository,
   UserService,
 } from "@white-rabbit/business-logic/src/domains";
@@ -45,10 +45,11 @@ export class UserSuite extends AbstractSuite<
 > {
   constructor(
     @inject("UserRepository") override readonly userRepository: UserRepository,
-    override readonly userService: UserService,
     @inject("GroupRepository")
     override readonly groupRepository: GroupRepository,
-    override readonly groupService: GroupService
+    @inject("JournalRepository")
+    override readonly journalRepository: JournalRepository,
+    userService: UserService
   ) {
     super(TYPE_USER, userRepository, userService);
   }

@@ -29,8 +29,8 @@ export default class App {
         const journal = new Journal({
           name: "Journal Name",
           description: "Journal Desc",
-          admins: { type: "ITEMS", items: [] },
-          members: { type: "ITEMS", items: [] },
+          admins: [],
+          members: [],
         });
         console.log("Journal: ", journal);
         const id = await this.journalService.createJournal(

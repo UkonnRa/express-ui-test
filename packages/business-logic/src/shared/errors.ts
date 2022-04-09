@@ -53,8 +53,8 @@ export class FieldValidationLengthError extends AbstractError {
   constructor(
     readonly type: string,
     readonly field: string,
-    min?: number,
-    max?: number
+    readonly min?: number,
+    readonly max?: number
   ) {
     super(
       `Field[${field}] in Type[${type}] should be between ${String(

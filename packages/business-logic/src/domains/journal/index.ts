@@ -1,14 +1,9 @@
 export {
-  AccessItem,
-  AccessItemUser,
-  AccessItemGroup,
-  AccessItemType,
-  AccessItemCreateOptions,
-  AccessItemGroupCreateOptions,
-  AccessItemUserCreateOptions,
-} from "./access-item";
-export { AccessListCreateOptions, AccessList } from "./access-list";
-export { JournalCreateOptions, Journal } from "./journal";
+  JournalCreateOptions,
+  Journal,
+  TYPE as TYPE_JOURNAL,
+  AccessList,
+} from "./journal";
 export {
   JournalCommand,
   JournalCommandCreate,
@@ -20,8 +15,4 @@ export {
   JournalQueryAccessItem,
   JournalQueryFullText,
 } from "./journal-query";
-export {
-  JournalValue,
-  AccessListValue,
-  AccessItemValue,
-} from "./journal-value";
+export { JournalValue, AccessItemValue } from "./journal-value";

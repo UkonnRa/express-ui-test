@@ -2,12 +2,8 @@ import { inject, singleton } from "tsyringe";
 import AuthUser from "../../shared/auth-user";
 import AbstractService from "../../shared/abstract-service";
 import { GroupRepository, JournalRepository, UserRepository } from "../index";
-import {
-  AccessItemGroupCreateOptions,
-  AccessItemUserCreateOptions,
-} from "./access-item";
-import { AccessList, AccessListCreateOptions } from "./access-list";
-import { Journal, TYPE } from "./journal";
+import { TYPE_USER } from "../user";
+import { Journal, TYPE, AccessList } from "./journal";
 import {
   JournalCommand,
   JournalCommandCreate,
@@ -35,33 +31,19 @@ export default class JournalService extends AbstractService<
     super(TYPE, "journals:read", "journals:write", repository);
   }
 
-  private async getAccessList(
-    values: AccessItemValue[]
-  ): Promise<AccessListCreateOptions> {
+  private async getAccessList(values: AccessItemValue[]): Promise<AccessList> {
     const userIds = [];
     const groupIds = [];
     for (const v of values) {
-      if (v.type === "USER") {
-        userIds.push(v.userId);
+      if (v.type === TYPE_USER) {
+        userIds.push(v.id);
       } else {
-        groupIds.push(v.groupId);
+        groupIds.push(v.id);
       }
     }
     const users = await this.userRepository.findByIds(userIds);
-    const userValues = [...users].map<
-      Omit<AccessItemUserCreateOptions, "parent">
-    >((e) => ({
-      type: "USER",
-      user: e[1],
-    }));
     const groups = await this.groupRepository.findByIds(groupIds);
-    const groupValues = [...groups].map<
-      Omit<AccessItemGroupCreateOptions, "parent">
-    >((e) => ({
-      type: "GROUP",
-      group: e[1],
-    }));
-    return { type: "ITEMS", items: [...userValues, ...groupValues] };
+    return [...users.values(), ...groups.values()];
   }
 
   async createJournal(
@@ -106,13 +88,11 @@ export default class JournalService extends AbstractService<
     }
 
     if (admins != null) {
-      const temp = await this.getAccessList(admins);
-      entity.admins = new AccessList(entity, temp);
+      entity.admins = await this.getAccessList(admins);
     }
 
     if (members != null) {
-      const temp = await this.getAccessList(members);
-      entity.members = new AccessList(entity, temp);
+      entity.members = await this.getAccessList(members);
     }
 
     await this.repository.save(entity);
