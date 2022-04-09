@@ -1,21 +1,7 @@
-export interface PageInfo {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: string;
-  endCursor?: string;
-}
-
-export interface PageResult<V> {
-  pageInfo: PageInfo;
-  pageItems: Array<{ cursor: string; data: V }>;
-}
-
-export interface AccessList {
-  readonly items: Array<AccessItem>;
-}
+import type { PageResult } from "./index";
 
 export interface AccessItem {
-  readonly type: "USER" | "GROUP";
+  readonly type: "User" | "Group";
   readonly id: string;
   readonly name: string;
 }
@@ -24,8 +10,8 @@ export interface Journal {
   readonly id: string;
   readonly name: string;
   readonly description: string;
-  readonly admins: AccessList;
-  readonly members: AccessList;
+  readonly admins: Array<AccessItem>;
+  readonly members: Array<AccessItem>;
 }
 
 export interface JournalViewApi {

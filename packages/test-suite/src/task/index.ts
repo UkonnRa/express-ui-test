@@ -1,4 +1,4 @@
-import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
+import { AbstractEntity } from "@white-rabbit/business-logic";
 import { ReadTaskPage } from "./read-page-task";
 import { ReadTaskSingle } from "./read-single-task";
 

@@ -3,12 +3,13 @@ import { inject, singleton } from "tsyringe";
 import { Logger } from "winston";
 import { app, BrowserWindow, ipcMain } from "electron";
 import isDev from "electron-is-dev";
-import { Role, User } from "@white-rabbit/business-logic/src/domains/user";
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
 import {
+  Role,
+  User,
+  AuthUser,
   JournalRepository,
   JournalService,
-} from "@white-rabbit/business-logic/src/domains";
+} from "@white-rabbit/business-logic";
 
 @singleton()
 export default class App {

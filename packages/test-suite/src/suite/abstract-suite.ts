@@ -2,29 +2,21 @@ import {
   GroupRepository,
   UserRepository,
   JournalRepository,
-} from "@white-rabbit/business-logic/src/domains";
-import {
   Role,
   User,
   UserCreateOptions,
-} from "@white-rabbit/business-logic/src/domains/user";
-import {
   Group,
   GroupCreateOptions,
-} from "@white-rabbit/business-logic/src/domains/group";
-import each from "jest-each";
-import AbstractService from "@white-rabbit/business-logic/src/shared/abstract-service";
-import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
-import AbstractRepository, {
+  AbstractService,
+  AbstractEntity,
+  AbstractRepository,
   Pagination,
-} from "@white-rabbit/business-logic/src/shared/abstract-repository";
-import AuthUser, {
+  AuthUser,
   AuthId,
-} from "@white-rabbit/business-logic/src/shared/auth-user";
-import {
   Journal,
   JournalCreateOptions,
-} from "@white-rabbit/business-logic/src/domains/journal";
+} from "@white-rabbit/business-logic";
+import each from "jest-each";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<

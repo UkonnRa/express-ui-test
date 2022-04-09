@@ -1,7 +1,8 @@
 import { Role, TYPE_USER, User } from "../domains/user";
 import AbstractEntity from "./abstract-entity";
-import AuthUser from "./auth-user";
-import AbstractRepository, {
+import { AuthUser } from "./auth-user";
+import {
+  AbstractRepository,
   PageResult,
   Pagination,
   Sort,

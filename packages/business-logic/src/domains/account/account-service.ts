@@ -1,6 +1,6 @@
 import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
-import AuthUser from "../../shared/auth-user";
+import { AuthUser } from "../../shared/auth-user";
 import { AccountRepository } from "../index";
 import JournalService from "../journal/journal-service";
 import { AccountQuery } from "./account-query";

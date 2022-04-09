@@ -2,10 +2,10 @@ import {
   PageResult,
   Pagination,
   Sort,
-} from "@white-rabbit/business-logic/src/shared/abstract-repository";
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
-import { AbstractError } from "@white-rabbit/business-logic/src/shared/errors";
-import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
+  AuthUser,
+  AbstractEntity,
+  AbstractError,
+} from "@white-rabbit/business-logic";
 import {
   AbstractReadTaskFailure,
   AbstractReadTaskSuccess,

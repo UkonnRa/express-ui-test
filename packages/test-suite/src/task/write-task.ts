@@ -1,5 +1,4 @@
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
-import { AbstractError } from "@white-rabbit/business-logic/src/shared/errors";
+import { AuthUser, AbstractError } from "@white-rabbit/business-logic";
 import { AbstractTask } from "./abstract-task";
 
 interface ContextSuccess<C, T> {

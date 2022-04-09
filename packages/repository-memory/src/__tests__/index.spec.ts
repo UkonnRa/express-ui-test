@@ -1,10 +1,6 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import {
-  UserSuite,
-  GroupSuite,
-  JournalSuite,
-} from "@white-rabbit/test-suite/src/suite";
+import { UserSuite, GroupSuite, JournalSuite } from "@white-rabbit/test-suite";
 import { initMemoryRepositories } from "../index";
 
 describe("Repository:Memory Integration Test", () => {

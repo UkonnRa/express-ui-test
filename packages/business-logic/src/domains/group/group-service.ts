@@ -1,6 +1,6 @@
 import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
-import AuthUser from "../../shared/auth-user";
+import { AuthUser } from "../../shared/auth-user";
 import { GroupRepository, UserRepository } from "../index";
 import { GroupQuery } from "./group-query";
 import {

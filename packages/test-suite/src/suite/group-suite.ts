@@ -4,8 +4,6 @@ import {
   GroupService,
   JournalRepository,
   UserRepository,
-} from "@white-rabbit/business-logic/src/domains";
-import {
   TYPE_GROUP,
   Group,
   GroupValue,
@@ -16,14 +14,12 @@ import {
   GroupCommandDelete,
   GroupQueryFullText,
   GroupQueryByUser,
-} from "@white-rabbit/business-logic/src/domains/group";
-import {
   FieldValidationLengthError,
   NoExpectedScopeError,
   NotFoundError,
   NoAuthError,
-} from "@white-rabbit/business-logic/src/shared/errors";
-import { TYPE_USER } from "@white-rabbit/business-logic/src/domains/user";
+  TYPE_USER,
+} from "@white-rabbit/business-logic";
 import {
   ReadTask,
   ReadTaskPageSuccess,

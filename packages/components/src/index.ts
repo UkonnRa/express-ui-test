@@ -1,1 +1,2 @@
-export { default as JournalView } from "./views/JournalView.vue";
+export * from "./api";
+export * from "./views";

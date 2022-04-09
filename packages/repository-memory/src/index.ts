@@ -4,42 +4,30 @@ import {
   JournalQuery,
   AccessItemValue,
   AccessList,
-} from "@white-rabbit/business-logic/src/domains/journal";
-import {
   FinRecord,
   FinRecordQuery,
   FinRecordValue,
-} from "@white-rabbit/business-logic/src/domains/fin-record";
-import {
   Group,
   GroupQuery,
   GroupValue,
   TYPE_GROUP,
-} from "@white-rabbit/business-logic/src/domains/group";
-import {
   TYPE_USER,
   User,
   UserQuery,
   UserValue,
-} from "@white-rabbit/business-logic/src/domains/user";
-import { container } from "tsyringe";
-import {
   FieldNotQueryableError,
   InvalidSortFieldError,
-} from "@white-rabbit/business-logic/src/shared/errors";
-import {
   Account,
   AccountQuery,
   AccountValue,
   TYPE_ACCOUNT,
-} from "@white-rabbit/business-logic/src/domains/account";
-import {
   AccountRepository,
   FinRecordRepository,
   GroupRepository,
   JournalRepository,
   UserRepository,
-} from "@white-rabbit/business-logic/src/domains";
+} from "@white-rabbit/business-logic";
+import { container } from "tsyringe";
 import MemoryRepository from "./memory-repository";
 
 export class MemoryAccountRepository

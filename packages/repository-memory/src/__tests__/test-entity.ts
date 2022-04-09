@@ -1,10 +1,13 @@
-import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
-import { Role, User } from "@white-rabbit/business-logic/src/domains/user";
-import { InvalidSortFieldError } from "@white-rabbit/business-logic/src/shared/errors";
-import { AdditionalFilter } from "@white-rabbit/business-logic/src/shared/abstract-repository";
-import AbstractService from "@white-rabbit/business-logic/src/shared/abstract-service";
+import {
+  AbstractEntity,
+  Role,
+  User,
+  InvalidSortFieldError,
+  AdditionalFilter,
+  AbstractService,
+  AuthUser,
+} from "@white-rabbit/business-logic";
 import { singleton } from "tsyringe";
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
 import MemoryRepository from "../memory-repository";
 
 export interface TestEntityValue {

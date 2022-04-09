@@ -6,7 +6,7 @@ export interface AuthId {
   readonly id: string;
 }
 
-export default class AuthUser {
+export class AuthUser {
   constructor(
     readonly authId: AuthId,
     readonly scopes: string[],

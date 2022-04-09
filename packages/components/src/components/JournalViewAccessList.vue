@@ -6,7 +6,7 @@
       color="primary"
       :title="`[${i.type}] ${i.name}`"
     >
-      <v-icon v-if="i.type === 'USER'" :left="true">mdi-account</v-icon>
+      <v-icon v-if="i.type === 'User'" :left="true">mdi-account</v-icon>
       <v-icon v-else :left="true">mdi-account-group</v-icon>
       <span>{{ i.name }}</span>
     </v-chip>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AccessItem } from "../api/JournalViewApi";
+import type { AccessItem } from "../api";
 
 interface Props {
   readonly items: AccessItem[];

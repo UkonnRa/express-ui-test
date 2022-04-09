@@ -4,7 +4,7 @@ export type AdditionalFilter<T extends AbstractEntity<T, unknown, unknown>> = (
   entity: T[]
 ) => Promise<T[]>;
 
-export default interface AbstractRepository<
+export interface AbstractRepository<
   T extends AbstractEntity<T, V, unknown>,
   V,
   Q

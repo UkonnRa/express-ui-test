@@ -10,20 +10,16 @@ import {
   UserCommandUpdate,
   UserCommandRebindAuthProvider,
   UserCommandDelete,
-} from "@white-rabbit/business-logic/src/domains/user";
-import {
   GroupRepository,
   JournalRepository,
   UserRepository,
   UserService,
-} from "@white-rabbit/business-logic/src/domains";
-import { inject, singleton } from "tsyringe";
-import {
   NoAuthError,
   NoExpectedScopeError,
   NotFoundError,
-} from "@white-rabbit/business-logic/src/shared/errors";
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
+  AuthUser,
+} from "@white-rabbit/business-logic";
+import { inject, singleton } from "tsyringe";
 import {
   ReadTask,
   ReadTaskPageSuccess,

@@ -1,4 +1,4 @@
-import AuthUser from "@white-rabbit/business-logic/src/shared/auth-user";
+import { AuthUser } from "@white-rabbit/business-logic";
 
 export interface AbstractTask<I> {
   readonly type: "Success" | "Failure";

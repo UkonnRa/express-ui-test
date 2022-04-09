@@ -2,7 +2,7 @@
   <journal-view></journal-view>
   <button @click="loadBusinessLogic">Load business logic</button>
   <code>
-    <pre>{{ result }}</pre>
+    {{ result }}
   </code>
 </template>
 

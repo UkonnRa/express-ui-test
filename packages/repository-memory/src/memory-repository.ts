@@ -1,11 +1,12 @@
-import AbstractRepository, {
+import {
+  AbstractRepository,
   AdditionalFilter,
   PageResult,
   Pagination,
   Sort,
-} from "@white-rabbit/business-logic/src/shared/abstract-repository";
-import AbstractEntity from "@white-rabbit/business-logic/src/shared/abstract-entity";
-import { cursorToId } from "@white-rabbit/business-logic/src/utils";
+  AbstractEntity,
+  cursorToId,
+} from "@white-rabbit/business-logic";
 
 async function filtersAllMatching<
   T extends AbstractEntity<T, unknown, unknown>

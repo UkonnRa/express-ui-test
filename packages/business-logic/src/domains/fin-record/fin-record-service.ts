@@ -1,7 +1,7 @@
 import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
 import { AccountRepository, FinRecordRepository } from "../index";
-import AuthUser from "../../shared/auth-user";
+import { AuthUser } from "../../shared/auth-user";
 import UserService from "../user/user-service";
 import JournalService from "../journal/journal-service";
 import { FinItemValue, FinRecordValue } from "./fin-record-value";

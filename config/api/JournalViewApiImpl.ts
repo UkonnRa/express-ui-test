@@ -1,5 +1,4 @@
-import type { PageResult } from "@white-rabbit/business-logic/src/shared/abstract-repository";
-import type { Journal } from "@white-rabbit/components/src/api/JournalViewApi";
+import type { Journal, PageResult } from "@white-rabbit/components";
 import { v4 } from "uuid";
 import { Base64 } from "js-base64";
 
@@ -8,39 +7,31 @@ const journals: Array<Journal> = [
     id: v4(),
     name: "Journal Name 1",
     description: "Journal Description 1",
-    admins: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "USER" : "GROUP",
-        id: v4(),
-        name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
-    members: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "GROUP" : "USER",
-        id: v4(),
-        name: `Member ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
+    admins: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "User" : "Group",
+      id: v4(),
+      name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
+    })),
+    members: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "Group" : "User",
+      id: v4(),
+      name: `Member ${v4().slice(0, (i % 3) * 10)}`,
+    })),
   },
   {
     id: v4(),
     name: "Journal Name 2 with long long long long long long long long long long long long long long long long long long long long name",
     description: "Journal Description 2",
-    admins: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "USER" : "GROUP",
-        id: v4(),
-        name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
-    members: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "GROUP" : "USER",
-        id: v4(),
-        name: `Member ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
+    admins: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "User" : "Group",
+      id: v4(),
+      name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
+    })),
+    members: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "Group" : "User",
+      id: v4(),
+      name: `Member ${v4().slice(0, (i % 3) * 10)}`,
+    })),
   },
   {
     id: v4(),
@@ -50,20 +41,16 @@ const journals: Array<Journal> = [
 Nam et ante quis diam pharetra molestie. Nunc porta dui ac quam bibendum, quis dignissim neque maximus. Donec non pharetra mi. Ut auctor finibus justo, id vulputate sapien eleifend vehicula. Nulla et dui quis orci ultrices maximus. Sed lobortis mi sed pellentesque tincidunt. Etiam iaculis ipsum sit amet molestie mollis.
 
 Quisque laoreet, felis eu luctus sagittis, mi nulla consectetur mi, vel fringilla magna libero quis odio. Vestibulum eget urna enim. Donec tincidunt accumsan hendrerit. Suspendisse iaculis, elit et semper accumsan, libero lectus egestas neque, non pretium nisi sapien non nisi. Morbi egestas pulvinar neque, a auctor augue blandit vitae. Curabitur convallis sem non felis sodales, et gravida ipsum sodales. Duis aliquam volutpat metus, in malesuada justo tincidunt non. Etiam mattis lacus orci, quis convallis ante volutpat vitae. Donec id magna a magna maximus lacinia sed vitae odio. In iaculis, felis eget porttitor blandit, justo enim vehicula ante, quis rhoncus diam turpis hendrerit velit. Quisque posuere pretium velit, ut volutpat tellus facilisis at. Quisque a magna eget mauris euismod posuere. Praesent cursus vel nibh vel vehicula. Nunc imperdiet turpis nisl, ac dictum felis rutrum ut. Fusce laoreet tellus a purus varius, non fringilla sapien volutpat. Mauris convallis, turpis vitae rutrum congue, ipsum sem dapibus lacus, nec consectetur diam diam ut tortor.`,
-    admins: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "USER" : "GROUP",
-        id: v4(),
-        name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
-    members: {
-      items: Array.from({ length: 10 }, (_, i) => ({
-        type: i % 2 === 0 ? "GROUP" : "USER",
-        id: v4(),
-        name: `Member ${v4().slice(0, (i % 3) * 10)}`,
-      })),
-    },
+    admins: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "User" : "Group",
+      id: v4(),
+      name: `Admin ${v4().slice(0, (i % 3) * 10)}`,
+    })),
+    members: Array.from({ length: 10 }, (_, i) => ({
+      type: i % 2 === 0 ? "Group" : "User",
+      id: v4(),
+      name: `Member ${v4().slice(0, (i % 3) * 10)}`,
+    })),
   },
 ];
 

@@ -2,6 +2,7 @@
   "name": "@white-rabbit/test-suite",
   "packageManager": "yarn@3.2.0",
   "version": "0.0.1",
+  "main": "src/index.ts",
   "scripts": {
     "clean": "rimraf dist tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",

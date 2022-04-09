@@ -1,4 +1,4 @@
-import AbstractRepository from "../shared/abstract-repository";
+import { AbstractRepository } from "../shared/abstract-repository";
 import { User, UserQuery, UserValue } from "./user";
 import { Journal, JournalQuery, JournalValue } from "./journal";
 import { Group, GroupQuery, GroupValue } from "./group";

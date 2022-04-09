@@ -3,23 +3,19 @@ import {
   JournalRepository,
   UserRepository,
   JournalService,
-} from "@white-rabbit/business-logic/src/domains";
-import { inject, singleton } from "tsyringe";
-import {
   User,
   Role,
   TYPE_USER,
-} from "@white-rabbit/business-logic/src/domains/user";
-import {
   TYPE_JOURNAL,
   Journal,
   JournalValue,
   JournalQuery,
   JournalCommand,
   JournalCommandCreate,
-} from "@white-rabbit/business-logic/src/domains/journal";
-import { FieldValidationLengthError } from "@white-rabbit/business-logic/src/shared/errors";
-import { TYPE_GROUP } from "@white-rabbit/business-logic/src/domains/group";
+  FieldValidationLengthError,
+  TYPE_GROUP,
+} from "@white-rabbit/business-logic";
+import { inject, singleton } from "tsyringe";
 import {
   ReadTask,
   ReadTaskSingleSuccess,

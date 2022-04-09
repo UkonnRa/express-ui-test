@@ -4,7 +4,11 @@
     <v-card-subtitle>ID: {{ props.journal.id }}</v-card-subtitle>
     <v-card-text>
       <v-form v-model="valid">
-        <v-text-field v-model="name" label="Name" required></v-text-field>
+        <v-text-field
+          v-model="journalName"
+          label="Name"
+          required
+        ></v-text-field>
         <v-textarea v-model="description" label="Description" required>
         </v-textarea>
         <v-autocomplete
@@ -28,11 +32,15 @@
         </v-autocomplete>
       </v-form>
     </v-card-text>
+    <v-card-actions>
+      <v-btn color="primary">Save</v-btn>
+      <v-btn>Close</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import type { Journal } from "../api/JournalViewApi";
+import type { Journal } from "../api";
 import { computed, ref } from "vue";
 import { v4 } from "uuid";
 
@@ -43,9 +51,9 @@ interface Props {
 const props = defineProps<Props>();
 
 const valid = ref(true);
-const name = ref(props.journal.name);
+const journalName = ref(props.journal.name);
 const description = ref(props.journal.description);
-const admins = ref(props.journal.admins.items.map((item) => item.id));
+const admins = ref(props.journal.admins.map((item) => item.id));
 
 const isLoading = ref(false);
 // error TS2322: Type '{ type: string; value: string; title: string; }[]' is not assignable to type 'SelectItem[]'
@@ -72,7 +80,7 @@ const itemIdName = computed(
         value,
         title,
       ]),
-      ...props.journal.admins.items.map<[string, string]>(({ id, name }) => [
+      ...props.journal.admins.map<[string, string]>(({ id, name }) => [
         id,
         name,
       ]),

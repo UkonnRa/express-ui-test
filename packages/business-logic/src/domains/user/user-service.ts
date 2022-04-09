@@ -1,6 +1,6 @@
 import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
-import AuthUser from "../../shared/auth-user";
+import { AuthUser } from "../../shared/auth-user";
 import { NoAuthError, NoExpectedScopeError } from "../../shared/errors";
 import { UserRepository } from "../index";
 import { UserValue } from "./user-value";

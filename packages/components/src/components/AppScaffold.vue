@@ -16,14 +16,16 @@
           </v-list-item-avatar>
         </template>
       </v-list-item>
-      <v-list-item title="Username" subtitle="email@email.com">
-        <template #prepend>
-          <v-list-item-avatar>
-            <v-avatar color="primary" class="mr-2">
-              <span>Us</span>
-            </v-avatar>
-          </v-list-item-avatar>
-        </template>
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-avatar color="primary">
+            <span>Us</span>
+          </v-avatar>
+        </v-list-item-avatar>
+        <v-list-item-header class="ml-2">
+          <v-list-item-title>Username</v-list-item-title>
+          <v-list-item-subtitle>email@email.com</v-list-item-subtitle>
+        </v-list-item-header>
       </v-list-item>
       <v-divider></v-divider>
       <v-list>
