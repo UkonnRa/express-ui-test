@@ -17,6 +17,7 @@ import {
   JournalCreateOptions,
 } from "@white-rabbit/business-logic";
 import each from "jest-each";
+import dayjs from "dayjs";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<
@@ -154,6 +155,8 @@ export abstract class AbstractSuite<
           description: "Journal 1 Description",
           admins: [users[0], users[1]],
           members: [groups[0]],
+          startDate: dayjs("2020-01-01"),
+          endDate: dayjs("2020-02-01"),
         },
         {
           name: "Journal 2",
@@ -166,6 +169,16 @@ export abstract class AbstractSuite<
           description: "Journal 3 Description",
           admins: [users[1], groups[1]],
           members: [groups[0]],
+          startDate: dayjs("2020-01-15"),
+          endDate: dayjs("2020-02-15"),
+        },
+        {
+          name: "Journal 4",
+          description: "Journal 4 Description",
+          admins: [users[1]],
+          members: [groups[0]],
+          startDate: dayjs("2020-01-15"),
+          archived: true,
         },
       ] as JournalCreateOptions[]
     ).map((options: JournalCreateOptions, idx) => {

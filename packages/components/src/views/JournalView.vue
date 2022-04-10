@@ -115,16 +115,24 @@
               ></journal-view-access-list>
             </div>
             <div class="mt-1">
-              <v-btn color="primary" variant="outlined" class="mr-1"
-                >Visit</v-btn
-              >
+              <v-btn color="primary" variant="outlined" class="mr-1">
+                Visit
+              </v-btn>
               <v-btn
                 color="secondary"
                 variant="outlined"
                 class="mr-1"
                 @click="onUpdateJournal(item.data)"
-                >Update</v-btn
               >
+                Update
+                <v-dialog v-model="updateJournalDialog">
+                  <v-card v-if="!updateJournal"> Not Found </v-card>
+                  <journal-view-update-dialog
+                    v-else
+                    :journal="updateJournal"
+                  ></journal-view-update-dialog>
+                </v-dialog>
+              </v-btn>
               <v-btn color="warning" variant="outlined">Delete</v-btn>
             </div>
           </v-expansion-panel-text>
@@ -133,13 +141,6 @@
       <div v-else class="journal-list-not-found">Not Found</div>
     </div>
   </app-scaffold>
-  <v-dialog v-model="updateJournalDialog">
-    <v-card v-if="!updateJournal"> Not Found </v-card>
-    <journal-view-update-dialog
-      v-else
-      :journal="updateJournal"
-    ></journal-view-update-dialog>
-  </v-dialog>
 </template>
 
 <script setup lang="ts">

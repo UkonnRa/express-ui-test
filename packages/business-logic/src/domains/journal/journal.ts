@@ -1,15 +1,20 @@
+import dayjs from "dayjs";
 import AbstractEntity from "../../shared/abstract-entity";
 import { Role, User } from "../user";
 import { Group } from "../group";
+import { FieldStartEndDateMismatchError } from "../../shared/errors";
 import { AccessItemValue, JournalValue } from "./journal-value";
 
 export type AccessList = Array<User | Group>;
 
 export interface JournalCreateOptions {
-  name: string;
-  description: string;
-  admins: AccessList;
-  members: AccessList;
+  readonly name: string;
+  readonly description: string;
+  readonly admins: AccessList;
+  readonly members: AccessList;
+  readonly startDate?: Date;
+  readonly endDate?: Date;
+  readonly archived?: boolean;
 }
 
 const MIN_LENGTH_NAME = 6;
@@ -31,20 +36,37 @@ export class Journal extends AbstractEntity<
 
   #description: string;
 
+  #startDate?: Date;
+
+  #endDate?: Date;
+
   #admins: AccessList = [];
 
   #members: AccessList = [];
+
+  archived;
 
   override get entityType(): typeof TYPE {
     return TYPE;
   }
 
-  constructor({ name, description, admins, members }: JournalCreateOptions) {
+  constructor({
+    name,
+    description,
+    admins,
+    members,
+    startDate,
+    endDate,
+    archived,
+  }: JournalCreateOptions) {
     super();
     this.name = name;
     this.description = description;
     this.admins = admins;
     this.members = members;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.archived = archived === undefined ? false : archived;
   }
 
   get name(): string {
@@ -121,6 +143,36 @@ export class Journal extends AbstractEntity<
     );
     this.checkLength(result.size, "members", { max: MAX_LENGTH_LIST });
     this.#members = [...result.values()];
+  }
+
+  private static checkStrictlyBefore(start?: Date, end?: Date): void {
+    if (start != null && end != null && !dayjs(start).isBefore(end)) {
+      throw new FieldStartEndDateMismatchError(
+        TYPE,
+        "startDate",
+        "endDate",
+        start,
+        end
+      );
+    }
+  }
+
+  get startDate(): Date | undefined {
+    return this.#startDate;
+  }
+
+  set startDate(value: Date | undefined) {
+    Journal.checkStrictlyBefore(value, this.endDate);
+    this.#startDate = value;
+  }
+
+  get endDate(): Date | undefined {
+    return this.#endDate;
+  }
+
+  set endDate(value: Date | undefined) {
+    Journal.checkStrictlyBefore(this.startDate, value);
+    this.#endDate = value;
   }
 
   isReadable(user: User): boolean {

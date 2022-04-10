@@ -14,10 +14,13 @@ import {
   JournalCommandCreate,
   FieldValidationLengthError,
   TYPE_GROUP,
+  JournalQueryFuzzySearch,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
+import dayjs from "dayjs";
 import {
   ReadTask,
+  ReadTaskPageSuccess,
   ReadTaskSingleSuccess,
   WriteTask,
   WriteTaskFailure,
@@ -51,6 +54,33 @@ export class JournalSuite extends AbstractSuite<
       () => this.getAuthUser(0),
       () => this.journals[0].id,
       ({ result }) => expect(result.name).toBe(this.journals[0].name)
+    ),
+    new ReadTaskPageSuccess<
+      Journal,
+      JournalQuery,
+      JournalValue,
+      JournalQueryFuzzySearch
+    >(
+      "find all by fuzzy search",
+      () => this.getAuthUser(0),
+      () => ({
+        sort: [
+          { field: "startDate", order: "ASC" },
+          { field: "name", order: "ASC" },
+        ],
+        pagination: { size: 2, startFrom: "FIRST" },
+        query: {
+          type: "JournalQueryFuzzySearch",
+          includingArchived: true,
+          startDate: dayjs("2020-01-14").toDate(),
+          endDate: dayjs("2020-02-14").toDate(),
+        },
+      }),
+      () => this.journals,
+      {
+        next: [2, 3],
+        current: [1, 0],
+      }
     ),
   ];
 
