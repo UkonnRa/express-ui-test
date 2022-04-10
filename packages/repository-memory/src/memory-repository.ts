@@ -188,8 +188,8 @@ export default abstract class MemoryRepository<
           this.doQuery(a, query) &&
           !a.deleted
       )
-      .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom))
-      .slice(0, pagination.size);
+      .sort((a, b) => this.compareFunc(a, b, sort, pagination.startFrom));
+    // .slice(0, pagination.size);
 
     if (pagination.startFrom === "LAST") {
       result.reverse();

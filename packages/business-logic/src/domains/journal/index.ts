@@ -14,5 +14,6 @@ export {
   JournalQuery,
   JournalQueryAccessItem,
   JournalQueryFullText,
+  JournalQueryFuzzySearch,
 } from "./journal-query";
 export { JournalValue, AccessItemValue } from "./journal-value";

@@ -26,8 +26,10 @@ import {
   GroupRepository,
   JournalRepository,
   UserRepository,
+  JournalQueryFuzzySearch,
 } from "@white-rabbit/business-logic";
 import { container } from "tsyringe";
+import dayjs from "dayjs";
 import MemoryRepository from "./memory-repository";
 
 export class MemoryAccountRepository
@@ -151,6 +153,16 @@ export class MemoryJournalRepository
   extends MemoryRepository<Journal, JournalValue, JournalQuery>
   implements JournalRepository
 {
+  private static nullableDateCompare(
+    defaultValue: number,
+    a?: Date,
+    b?: Date
+  ): number {
+    const aMillis = a === undefined ? defaultValue : dayjs(a).valueOf();
+    const bMillis = b === undefined ? defaultValue : dayjs(b).valueOf();
+    return aMillis - bMillis;
+  }
+
   doCompare(a: Journal, b: Journal, field: string): number {
     if (field === "id") {
       return a.id.localeCompare(b.id);
@@ -160,6 +172,20 @@ export class MemoryJournalRepository
     }
     if (field === "description") {
       return a.description.localeCompare(b.description);
+    }
+    if (field === "startDate") {
+      return MemoryJournalRepository.nullableDateCompare(
+        Number.MIN_VALUE,
+        a.startDate,
+        b.startDate
+      );
+    }
+    if (field === "endDate") {
+      return MemoryJournalRepository.nullableDateCompare(
+        Number.MAX_VALUE,
+        a.endDate,
+        b.endDate
+      );
     }
     throw new InvalidSortFieldError(TYPE_USER, field);
   }
@@ -176,6 +202,41 @@ export class MemoryJournalRepository
         return false;
       }) !== undefined
     );
+  }
+
+  private doQueryFuzzySearch(
+    entity: Journal,
+    query: JournalQueryFuzzySearch
+  ): boolean {
+    let result = true;
+
+    if (!query.includingArchived) {
+      result = result && !entity.archived;
+    }
+
+    if (query.keyword != null) {
+      result =
+        result &&
+        (entity.name.includes(query.keyword) ||
+          entity.description.includes(query.keyword));
+    }
+
+    if (query.startDate != null && entity.endDate != null) {
+      result = result && !dayjs(query.startDate).isAfter(entity.endDate);
+    }
+
+    if (query.endDate != null && entity.startDate != null) {
+      result = result && !dayjs(entity.startDate).isAfter(query.endDate);
+    }
+
+    if (query.accessItem != null) {
+      result =
+        result &&
+        (this.doFindItem(entity.admins, query.accessItem) ||
+          this.doFindItem(entity.members, query.accessItem));
+    }
+
+    return result;
   }
 
   doQuery(entity: Journal, query?: JournalQuery): boolean {
@@ -199,6 +260,10 @@ export class MemoryJournalRepository
         this.doFindItem(entity.admins, query.accessItem) ||
         this.doFindItem(entity.members, query.accessItem)
       );
+    }
+
+    if (query?.type === "JournalQueryFuzzySearch") {
+      return this.doQueryFuzzySearch(entity, query);
     }
 
     return true;

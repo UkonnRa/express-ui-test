@@ -6,6 +6,6 @@
     "sqlite3": "npm:@vscode/sqlite3@^5.0.7"
   },
   "devDependencies": {
-    "electron": "18.0.1"
+    "electron": "18.0.3"
   }
 }

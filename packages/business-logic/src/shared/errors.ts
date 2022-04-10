@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export abstract class AbstractError extends Error {
   readonly code: number;
 }
@@ -85,6 +87,34 @@ export class FieldValidationZeroError extends AbstractError {
     }
     super(`Field[${field}] in Type[${type}] should be ${range}`);
   }
+}
+
+export class FieldStartEndDateMismatchError extends AbstractError {
+  override readonly name = "FieldStartEndDateMismatchError";
+
+  constructor(
+    readonly type: string,
+    readonly startField: string,
+    readonly endField: string,
+    readonly startValue?: Date,
+    readonly endValue?: Date
+  ) {
+    const format = (date?: Date): string => {
+      if (date != null) {
+        return dayjs(date).format();
+      }
+      return "undefined";
+    };
+    super(
+      `StartField[${startField}, value=${format(
+        startValue
+      )}] in Type[${type}] should strictly before EndField[${endField}, value=${format(
+        endValue
+      )}]`
+    );
+  }
+
+  override readonly code = 401;
 }
 
 export class InvalidCursorError extends AbstractError {

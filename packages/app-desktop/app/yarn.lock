@@ -113,7 +113,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@white-rabbit/app-desktop-impl@workspace:."
   dependencies:
-    electron: 18.0.1
+    electron: 18.0.3
     sqlite3: "npm:@vscode/sqlite3@^5.0.7"
   languageName: unknown
   linkType: soft
@@ -407,16 +407,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:18.0.1":
-  version: 18.0.1
-  resolution: "electron@npm:18.0.1"
+"electron@npm:18.0.3":
+  version: 18.0.3
+  resolution: "electron@npm:18.0.3"
   dependencies:
     "@electron/get": ^1.13.0
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 90d2e7d640643edcf41ddfeedc0a0e535154b68e039fe561dc208895497369d9afcf7c2cf3142d196055718d21cb100eb94360ee6356c911a1019e01d93cebbd
+  checksum: 3a3e21748d44c7e83719808b3a8494895c9f9ef76aed644fe792ec45d6009d3177077253ae88f9a22a0abb2add166ec8cd13435e1961d15516d00002441f7a1d
   languageName: node
   linkType: hard
 
