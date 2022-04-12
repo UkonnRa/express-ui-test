@@ -48,17 +48,27 @@ export default class JournalService extends AbstractService<
 
   async createJournal(
     authUser: AuthUser,
-    { name, description, admins, members }: JournalCommandCreate
+    {
+      name,
+      description,
+      admins,
+      members,
+      startDate,
+      endDate,
+    }: JournalCommandCreate
   ): Promise<string> {
-    this.checkScope(authUser);
+    const operator = this.checkScope(authUser);
 
     const adminList = await this.getAccessList(admins);
+    adminList.push(operator);
     const memberList = await this.getAccessList(members);
     const result = new Journal({
       name,
       description,
       admins: adminList,
       members: memberList,
+      startDate,
+      endDate,
     });
     await this.repository.save(result);
     return result.id;
@@ -66,7 +76,15 @@ export default class JournalService extends AbstractService<
 
   async updateJournal(
     authUser: AuthUser,
-    { id, name, description, admins, members }: JournalCommandUpdate
+    {
+      id,
+      name,
+      description,
+      admins,
+      members,
+      startDate,
+      endDate,
+    }: JournalCommandUpdate
   ): Promise<string> {
     const entity = await this.getEntity(authUser, id);
 
@@ -74,7 +92,9 @@ export default class JournalService extends AbstractService<
       name == null &&
       description == null &&
       admins == null &&
-      members == null
+      members == null &&
+      startDate == null &&
+      endDate == null
     ) {
       return entity.id;
     }
@@ -93,6 +113,19 @@ export default class JournalService extends AbstractService<
 
     if (members != null) {
       entity.members = await this.getAccessList(members);
+    }
+
+    if (endDate?.type === "UNSET" && startDate?.type === "SET") {
+      entity.updateDate("endDate", endDate);
+      entity.updateDate("startDate", startDate);
+    } else {
+      if (startDate != null) {
+        entity.updateDate("startDate", startDate);
+      }
+
+      if (endDate != null) {
+        entity.updateDate("endDate", endDate);
+      }
     }
 
     await this.repository.save(entity);

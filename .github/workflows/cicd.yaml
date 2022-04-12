@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-    if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    if: github.ref == 'refs/heads/develop' || startswith(github.ref, 'refs/heads/feature') || startswith(github.ref, 'refs/heads/release') || startswith(github.ref, 'refs/heads/hotfix') || startswith(github.ref, 'refs/heads/bugfix')
     env:
       NODE_ENV: production
     steps:
@@ -78,7 +78,7 @@ jobs:
     runs-on: windows-latest
     needs:
       - test
-    if: github.ref != 'refs/heads/main' && !startswith(github.ref, 'refs/heads/dependabot')
+    if: github.ref == 'refs/heads/develop' || startswith(github.ref, 'refs/heads/feature') || startswith(github.ref, 'refs/heads/release') || startswith(github.ref, 'refs/heads/hotfix') || startswith(github.ref, 'refs/heads/bugfix')
     env:
       NODE_ENV: production
     steps:

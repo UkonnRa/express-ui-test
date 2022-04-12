@@ -1,3 +1,4 @@
+import { UpdateNullableValue } from "../index";
 import { AccessItemValue } from "./index";
 
 export interface JournalCommandCreate {
@@ -10,6 +11,10 @@ export interface JournalCommandCreate {
   readonly admins: AccessItemValue[];
 
   readonly members: AccessItemValue[];
+
+  readonly startDate?: Date;
+
+  readonly endDate?: Date;
 }
 
 export interface JournalCommandUpdate {
@@ -24,6 +29,10 @@ export interface JournalCommandUpdate {
   readonly admins?: AccessItemValue[];
 
   readonly members?: AccessItemValue[];
+
+  readonly startDate?: UpdateNullableValue<Date>;
+
+  readonly endDate?: UpdateNullableValue<Date>;
 }
 
 export interface JournalCommandDelete {

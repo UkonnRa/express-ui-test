@@ -59,10 +59,11 @@ export default abstract class AbstractService<
       throw new NotFoundError(this.type, id);
     }
 
-    const entityAuthed = needWriteable
-      ? entity.isWritable(user)
-      : entity.isReadable(user);
-    if (!entityAuthed) {
+    if (!needWriteable && !entity.isReadable(user)) {
+      throw new NotFoundError(entity.entityType, id);
+    }
+
+    if (needWriteable && !entity.isWritable(user)) {
       throw new NoAuthError(entity.entityType, user.id, id);
     }
 
@@ -81,8 +82,11 @@ export default abstract class AbstractService<
   ): Promise<PageResult<V>> {
     const user = this.checkScope(authUser, false);
 
-    if (query == null && user.role === Role.USER) {
-      throw new InvalidQueryError("undefined");
+    if (
+      (query == null || Object.entries(query).length === 0) &&
+      user.role === Role.USER
+    ) {
+      throw new InvalidQueryError(JSON.stringify(query));
     }
 
     return this.repository.findAll(sort, pagination, query, [
