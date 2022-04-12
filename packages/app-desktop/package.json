@@ -24,7 +24,7 @@
     "js-base64": "^3.7.2",
     "pinia": "^2.0.13",
     "sequelize": "^6.18.0",
-    "sqlite3": "npm:@vscode/sqlite3@latest",
+    "sqlite3": "npm:@vscode/sqlite3@^5.0.8",
     "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
     "winston": "^3.7.2"
