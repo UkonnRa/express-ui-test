@@ -116,7 +116,7 @@
             </div>
             <div class="mt-1">
               <v-btn color="primary" variant="outlined" class="mr-1">
-                Visit
+                {{ t("actions.visit") }}
               </v-btn>
               <v-btn
                 color="secondary"
@@ -124,7 +124,7 @@
                 class="mr-1"
                 @click="onUpdateJournal(item.data)"
               >
-                Update
+                {{ t("actions.update") }}
                 <v-dialog v-model="updateJournalDialog">
                   <v-card v-if="!updateJournal"> Not Found </v-card>
                   <journal-view-update-dialog
@@ -133,7 +133,9 @@
                   ></journal-view-update-dialog>
                 </v-dialog>
               </v-btn>
-              <v-btn color="warning" variant="outlined">Delete</v-btn>
+              <v-btn color="warning" variant="outlined">
+                {{ t("actions.delete") }}
+              </v-btn>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -152,6 +154,7 @@ import {
   JournalViewUpdateDialog,
   JournalViewAccessList,
 } from "../components";
+import { useI18n } from "vue-i18n";
 
 type OrderBy = "Start Date ASC" | "Start Date DESC";
 
@@ -174,6 +177,8 @@ const api = inject<JournalViewApi>("JournalViewApi");
 if (!api) {
   throw new Error("JournalViewApi not found");
 }
+
+const { t } = useI18n();
 
 const { state, isLoading } = useAsyncState(
   api.findAll(keyword.value, includeDeactivated.value),

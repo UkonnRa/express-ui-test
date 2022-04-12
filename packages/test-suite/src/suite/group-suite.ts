@@ -19,6 +19,7 @@ import {
   NotFoundError,
   NoAuthError,
   TYPE_USER,
+  AccountRepository,
 } from "@white-rabbit/business-logic";
 import {
   ReadTask,
@@ -45,6 +46,8 @@ export class GroupSuite extends AbstractSuite<
     override readonly groupRepository: GroupRepository,
     @inject("JournalRepository")
     override readonly journalRepository: JournalRepository,
+    @inject("AccountRepository")
+    override readonly accountRepository: AccountRepository,
     groupService: GroupService
   ) {
     super(TYPE_GROUP, groupRepository, groupService);

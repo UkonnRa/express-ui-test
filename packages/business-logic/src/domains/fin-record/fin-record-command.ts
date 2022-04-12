@@ -3,7 +3,6 @@ import { FinItemValue } from "./fin-record-value";
 export interface FinRecordCommandCreate {
   readonly type: "FinRecordCommandCreate";
   readonly timestamp: Date;
-  readonly user: string;
   readonly journal: string;
   readonly name: string;
   readonly description: string;

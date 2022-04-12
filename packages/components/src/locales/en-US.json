@@ -1,0 +1,7 @@
+{
+  "actions": {
+    "delete": "Delete",
+    "update": "Update",
+    "visit": "Visit"
+  }
+}

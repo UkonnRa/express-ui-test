@@ -150,3 +150,33 @@ export class FieldNotQueryableError extends AbstractError {
     super(`Field[${field}] is not queryable in Type[${type}]`);
   }
 }
+
+export class InvalidTextError extends AbstractError {
+  override readonly name = "InvalidText";
+
+  override readonly code = 401;
+
+  constructor(
+    readonly type: string,
+    readonly field: string,
+    readonly text: string
+  ) {
+    super(`Text[${text}] is not valid for Field[${field}] in Type[${type}]`);
+  }
+}
+
+export class FinRecordNotZeroOutError extends AbstractError {
+  override readonly name = "FinRecordNotZeroOut";
+
+  override readonly code = 401;
+
+  constructor(
+    readonly finRecordName: string,
+    readonly leftSide: number,
+    readonly rightSide: number
+  ) {
+    super(
+      `FinRecord[name = ${finRecordName}] does not zero out. The left side (assets + expenses) is ${leftSide} and the right side (liabilities + equity + income) is ${rightSide}`
+    );
+  }
+}

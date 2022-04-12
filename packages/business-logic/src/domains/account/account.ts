@@ -1,7 +1,8 @@
 import AbstractEntity from "../../shared/abstract-entity";
 import { Journal } from "../journal";
 import { User } from "../user";
-import { AccountValue } from ".";
+import { InvalidTextError } from "../../shared/errors";
+import { AccountValue } from "./account-value";
 
 export enum Strategy {
   FIFO,
@@ -29,7 +30,7 @@ const MIN_LENGTH_NAME = 2;
 
 const MAX_LENGTH_NAME = 10;
 
-const MIN_LENGTH_NAME_EACH = 6;
+const MIN_LENGTH_NAME_EACH = 2;
 
 const MAX_LENGTH_NAME_EACH = 50;
 
@@ -97,6 +98,9 @@ export class Account extends AbstractEntity<
     this.#name = [];
     for (const v of value) {
       const result = v.trim();
+      if (v.includes(NAME_SEPARATOR)) {
+        throw new InvalidTextError(TYPE, "name.each", NAME_SEPARATOR);
+      }
       this.checkLength(result.length, "name.each", {
         min: MIN_LENGTH_NAME_EACH,
         max: MAX_LENGTH_NAME_EACH,

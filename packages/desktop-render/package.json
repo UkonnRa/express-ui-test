@@ -16,14 +16,15 @@
   },
   "dependencies": {
     "@mdi/font": "6.6.96",
-    "@vueuse/components": "^8.2.5",
-    "@vueuse/core": "^8.2.5",
+    "@vueuse/components": "^8.3.1",
+    "@vueuse/core": "^8.3.1",
     "@white-rabbit/components": "workspace:^",
     "pinia": "^2.0.13",
     "roboto-fontface": "^0.10.0",
     "uuid": "^8.3.2",
-    "vue": "^3.2.32",
-    "vuetify": "npm:@vuetify/nightly@^3.0.0-next-20220411.0",
+    "vue": "^3.2.33",
+    "vue-i18n": "9.1.9",
+    "vuetify": "npm:@vuetify/nightly@^3.0.0-next-20220421.0",
     "webfontloader": "^1.6.28"
   }
 }

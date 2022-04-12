@@ -3,7 +3,6 @@ import { FinRecordState } from "./fin-record";
 export interface FinRecordValue {
   readonly id: string;
   readonly timestamp: Date;
-  readonly user: string;
   readonly journal: string;
   readonly name: string;
   readonly description: string;
@@ -20,3 +19,39 @@ export interface FinItemValue {
   readonly price?: number;
   readonly note?: string;
 }
+
+export type TimeSeriesAggregateValue = TimeSeriesItemValue[];
+
+export interface TimeSeriesItemValue {
+  readonly timestamp: Date;
+  readonly items: TimeSeriesPerUnitItem[];
+}
+
+export interface TimeSeriesPerUnitItem {
+  readonly unit: string;
+  readonly amount: number;
+}
+
+export interface AccountHierarchyValue {
+  readonly accountName: string;
+  readonly unit: string;
+  readonly amount: string;
+  readonly children: AccountHierarchyItemValue[];
+}
+
+export interface AccountHierarchyItemValue {
+  readonly accountName: string;
+  readonly amount: string;
+  readonly children?: AccountHierarchyItemValue[];
+}
+
+export type AccountAggregateValue = Array<
+  Omit<AccountHierarchyValue, "children">
+>;
+
+export interface SumItemValue {
+  readonly unit: string;
+  readonly amount: number;
+}
+
+export type SumValue = SumItemValue[];

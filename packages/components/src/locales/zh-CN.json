@@ -1,0 +1,7 @@
+{
+  "actions": {
+    "delete": "删除",
+    "update": "更新",
+    "visit": "浏览"
+  }
+}

@@ -18,6 +18,7 @@ import {
   NoExpectedScopeError,
   NotFoundError,
   AuthUser,
+  AccountRepository,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
 import {
@@ -45,6 +46,8 @@ export class UserSuite extends AbstractSuite<
     override readonly groupRepository: GroupRepository,
     @inject("JournalRepository")
     override readonly journalRepository: JournalRepository,
+    @inject("AccountRepository")
+    override readonly accountRepository: AccountRepository,
     userService: UserService
   ) {
     super(TYPE_USER, userRepository, userService);

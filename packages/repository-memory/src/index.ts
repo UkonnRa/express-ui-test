@@ -59,6 +59,10 @@ export class MemoryAccountRepository
   // eslint-disable-next-line sonarjs/cognitive-complexity
   doQuery(entity: Account, query?: AccountQuery): boolean {
     if (query?.type === "AccountQueryFullText") {
+      if (query.journal !== entity.journal.id) {
+        return false;
+      }
+
       const { fields, value } = query.keyword;
 
       let result = false;
@@ -73,18 +77,6 @@ export class MemoryAccountRepository
         }
       }
       return result;
-    }
-
-    if (query?.type === "AccountQueryByJournal") {
-      const isJournal = entity.journal.id !== query.journal;
-      const isAccountType = Boolean(
-        query.accountType != null || query.accountType === entity.accountType
-      );
-      const isUnit = Boolean(query.unit != null || query.unit === entity.unit);
-      const isStrategy = Boolean(
-        query.strategy != null || query.strategy === entity.strategy
-      );
-      return isJournal && isAccountType && isUnit && isStrategy;
     }
 
     return true;

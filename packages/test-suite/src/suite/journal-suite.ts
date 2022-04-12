@@ -24,6 +24,7 @@ import {
   InvalidQueryError,
   InvalidSortFieldError,
   FieldNotQueryableError,
+  AccountRepository,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
 import dayjs from "dayjs";
@@ -54,6 +55,8 @@ export class JournalSuite extends AbstractSuite<
     override readonly groupRepository: GroupRepository,
     @inject("JournalRepository")
     override readonly journalRepository: JournalRepository,
+    @inject("AccountRepository")
+    override readonly accountRepository: AccountRepository,
     journalService: JournalService
   ) {
     super(TYPE_JOURNAL, journalRepository, journalService);

@@ -11,9 +11,5 @@ export {
   AccountCommandUpdate,
   AccountCommandDelete,
 } from "./account-command";
-export {
-  AccountQuery,
-  AccountQueryByJournal,
-  AccountQueryFullText,
-} from "./account-query";
+export { AccountQuery, AccountQueryFullText } from "./account-query";
 export { AccountValue } from "./account-value";

@@ -2,7 +2,6 @@ import { inject, singleton } from "tsyringe";
 import AbstractService from "../../shared/abstract-service";
 import { AccountRepository, FinRecordRepository } from "../index";
 import { AuthUser } from "../../shared/auth-user";
-import UserService from "../user/user-service";
 import JournalService from "../journal/journal-service";
 import { FinItemValue, FinRecordValue } from "./fin-record-value";
 import { FinRecord, TYPE } from "./fin-record";
@@ -26,7 +25,6 @@ export default class FinRecordService extends AbstractService<
   constructor(
     @inject("FinRecordRepository")
     protected override readonly repository: FinRecordRepository,
-    private readonly userService: UserService,
     private readonly journalService: JournalService,
     @inject("AccountRepository")
     private readonly accountRepository: AccountRepository
@@ -55,11 +53,6 @@ export default class FinRecordService extends AbstractService<
     command: FinRecordCommandCreate
   ): Promise<string> {
     this.checkScope(authUser);
-    const user = await this.userService.getEntity(
-      authUser,
-      command.user,
-      false
-    );
     const journal = await this.journalService.getEntity(
       authUser,
       command.journal,
@@ -67,7 +60,6 @@ export default class FinRecordService extends AbstractService<
     );
     const finRecord = new FinRecord({
       timestamp: command.timestamp,
-      user,
       journal,
       name: command.name,
       description: command.description,

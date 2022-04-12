@@ -61,7 +61,23 @@
         title="Toggle dark/light theme"
         @click="theme = theme === 'light' ? 'dark' : 'light'"
       ></v-btn>
-      <v-btn variant="text" icon="mdi-translate"></v-btn>
+      <v-menu>
+        <template #activator="{ props }">
+          <v-btn variant="text" prepend-icon="mdi-translate" v-bind="props">
+            {{ getLocaleName(locale) }}
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="[key, value] in availableLocaleValues"
+            :key="key"
+            :value="value"
+            @click="locale = key"
+          >
+            <v-list-item-title>{{ value }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <v-main>
       <v-container fluid class="h">
@@ -72,13 +88,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Props {}
 
 const rail = ref(false);
 const theme = ref<"light" | "dark">("light");
+const { locale, availableLocales } = useI18n();
+const getLocaleName = (lang: string): string => {
+  switch (lang) {
+    case "en-US":
+      return "English";
+    case "zh-CN":
+      return "中文";
+    default:
+      throw Error(`Language[${locale}] not supported`);
+  }
+};
+const availableLocaleValues = computed(() => {
+  return availableLocales.map((v) => [v, getLocaleName(v)]);
+});
 </script>
 
 <style scoped lang="scss">

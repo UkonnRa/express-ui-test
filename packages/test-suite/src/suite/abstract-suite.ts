@@ -1,20 +1,25 @@
 import {
-  GroupRepository,
-  UserRepository,
-  JournalRepository,
-  Role,
-  User,
-  UserCreateOptions,
-  Group,
-  GroupCreateOptions,
-  AbstractService,
   AbstractEntity,
   AbstractRepository,
-  Pagination,
-  AuthUser,
+  AbstractService,
+  Account,
+  AccountCreateOptions,
+  AccountRepository,
+  AccountType,
   AuthId,
+  AuthUser,
+  Group,
+  GroupCreateOptions,
+  GroupRepository,
   Journal,
   JournalCreateOptions,
+  JournalRepository,
+  Pagination,
+  Role,
+  Strategy,
+  User,
+  UserCreateOptions,
+  UserRepository,
 } from "@white-rabbit/business-logic";
 import each from "jest-each";
 import dayjs from "dayjs";
@@ -31,6 +36,7 @@ export abstract class AbstractSuite<
   protected readonly userRepository: UserRepository;
   protected readonly groupRepository: GroupRepository;
   protected readonly journalRepository: JournalRepository;
+  protected readonly accountRepository: AccountRepository;
 
   protected constructor(
     readonly type: string,
@@ -48,7 +54,14 @@ export abstract class AbstractSuite<
 
   protected journals: Journal[];
 
+  protected accounts: Account[];
+
   private async prepareData(): Promise<void> {
+    this.userRepository.close();
+    this.groupRepository.close();
+    this.journalRepository.close();
+    this.accountRepository.close();
+
     const users: User[] = [
       {
         name: "0: Owner 1",
@@ -188,6 +201,65 @@ export abstract class AbstractSuite<
     });
     await this.journalRepository.saveAll(journals);
     this.journals = journals;
+
+    const accounts: Account[] = (
+      [
+        {
+          name: ["Journal 1", "Asset", "Account 1", "关键词一"],
+          description: "Journal 1 - Account 1 Description",
+          journal: this.journals[0],
+          accountType: AccountType.ASSET,
+          unit: "CNY",
+          strategy: Strategy.AVERAGE,
+        },
+        {
+          name: ["Journal 1", "Expense", "Account 2", "关键词二"],
+          description: "Journal 1 - Account 2 Description",
+          journal: this.journals[0],
+          accountType: AccountType.EXPENSE,
+          unit: "CNY",
+          strategy: Strategy.AVERAGE,
+        },
+        {
+          name: ["Journal 1", "Equity", "Account 3", "关键词三"],
+          description: "Journal 1 - Account 3 Description",
+          journal: this.journals[0],
+          accountType: AccountType.EQUITY,
+          unit: "NVDA",
+          strategy: Strategy.FIFO,
+        },
+        {
+          name: ["Journal 1", "Income", "Account 4", "关键词四"],
+          description: "Journal 1 - Account 4 Description",
+          journal: this.journals[0],
+          accountType: AccountType.INCOME,
+          unit: "USD",
+          strategy: Strategy.AVERAGE,
+        },
+        {
+          name: ["Journal 1", "Income", "Account 5", "关键词五"],
+          description: "Journal 1 - Account 5 Description",
+          journal: this.journals[0],
+          accountType: AccountType.LIABILITY,
+          unit: "CNY",
+          strategy: Strategy.AVERAGE,
+        },
+        {
+          name: ["Journal 2", "Asset", "Account 1", "关键词六"],
+          description: "Journal 2 - Account 1 Description",
+          journal: this.journals[1],
+          accountType: AccountType.ASSET,
+          unit: "CNY",
+          strategy: Strategy.AVERAGE,
+        },
+      ] as AccountCreateOptions[]
+    ).map((options: AccountCreateOptions, idx) => {
+      const account = new Account(options);
+      account.id = `account-id-${idx}`;
+      return account;
+    });
+    await this.accountRepository.saveAll(accounts);
+    this.accounts = accounts;
   }
 
   protected getAuthUser(
@@ -309,6 +381,9 @@ export abstract class AbstractSuite<
           await expect(async () =>
             this.service.handle(authUser, command)
           ).rejects.toMatchObject(task.errorHandler({ command, authUser }));
+        }
+        if (task.setup !== undefined) {
+          await this.prepareData();
         }
       }
     );

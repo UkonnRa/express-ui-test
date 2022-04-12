@@ -1,5 +1,8 @@
 import { app } from "@storybook/vue3";
-import { vuetifyOptions } from "@white-rabbit/components/src/plugins";
+import {
+  vueI18nConfig,
+  vuetifyOptions,
+} from "@white-rabbit/components/src/plugins";
 import "@mdi/font/css/materialdesignicons.css";
 import JournalViewApiImpl from "../api/JournalViewApiImpl";
 import { createVuetify } from "vuetify";
@@ -31,5 +34,6 @@ app.use(
     directives,
   })
 );
+app.use(vueI18nConfig);
 
 app.provide("JournalViewApi", new JournalViewApiImpl());

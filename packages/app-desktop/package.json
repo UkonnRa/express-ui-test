@@ -18,19 +18,19 @@
     "@white-rabbit/desktop-render": "workspace:^",
     "@white-rabbit/repository-memory": "workspace:^",
     "@white-rabbit/repository-sequelize": "workspace:^",
-    "dayjs": "^1.11.0",
+    "dayjs": "^1.11.1",
     "electron-is-dev": "^2.0.0",
     "express": "^4.17.3",
     "js-base64": "^3.7.2",
     "pinia": "^2.0.13",
-    "sequelize": "^6.18.0",
-    "sqlite3": "npm:@vscode/sqlite3@^5.0.8",
+    "sequelize": "^6.19.0",
+    "sqlite3": "^5.0.5",
     "tsyringe": "^4.6.0",
     "uuid": "^8.3.2",
     "winston": "^3.7.2"
   },
   "devDependencies": {
-    "electron": "18.0.3",
-    "electron-builder": "^23.0.4"
+    "electron": "18.1.0",
+    "electron-builder": "^23.0.7"
   }
 }

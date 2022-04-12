@@ -2,6 +2,8 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "@vuetify/vite-plugin";
 import visualizer from "rollup-plugin-visualizer";
+import { vueI18n } from "@intlify/vite-plugin-vue-i18n";
+import path from "path";
 
 export default defineConfig((env) => ({
   plugins: [
@@ -15,7 +17,15 @@ export default defineConfig((env) => ({
         wait: false,
       },
     }),
+    vueI18n({
+      include: path.resolve(__dirname, "../components/src/locales/**"),
+    }),
   ],
+  resolve: {
+    alias: {
+      "vue-i18n": "vue-i18n/dist/vue-i18n.runtime.esm-bundler.js",
+    },
+  },
   test: {
     environment: "jsdom",
     coverage: {

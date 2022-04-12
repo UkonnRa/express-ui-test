@@ -2,12 +2,12 @@ import AbstractEntity from "../../shared/abstract-entity";
 import { User } from "../user";
 import { Journal } from "../journal";
 import { AccountType } from "../account";
+import { FinRecordNotZeroOutError } from "../../shared/errors";
 import { FinItem, FinItemCreateOptions } from "./fin-item";
 import { FinRecordValue } from "./fin-record-value";
 
 export interface FinRecordCreateOptions {
   timestamp: Date;
-  user: User;
   journal: Journal;
   name: string;
   description: string;
@@ -47,9 +47,7 @@ export class FinRecord extends AbstractEntity<
 > {
   timestamp: Date;
 
-  readonly user: User;
-
-  readonly journal: Journal;
+  journal: Journal;
 
   #name: string;
 
@@ -63,7 +61,6 @@ export class FinRecord extends AbstractEntity<
 
   constructor({
     timestamp,
-    user,
     journal,
     name,
     description,
@@ -73,7 +70,6 @@ export class FinRecord extends AbstractEntity<
   }: FinRecordCreateOptions) {
     super();
     this.timestamp = timestamp;
-    this.user = user;
     this.journal = journal;
     this.name = name;
     this.description = description;
@@ -113,11 +109,28 @@ export class FinRecord extends AbstractEntity<
     return this.#items;
   }
 
-  set items(value: FinItem[]) {
-    this.checkLength(value.length, "items", {
+  set items(items: FinItem[]) {
+    this.checkLength(items.length, "items", {
       min: MIN_LENGTH_ITEMS,
       max: MAX_LENGTH_ITEMS,
     });
+    let leftSide = 0;
+    let rightSide = 0;
+    for (const item of items) {
+      switch (item.account.accountType) {
+        case AccountType.ASSET:
+        case AccountType.EXPENSE:
+          leftSide += item.amount;
+          break;
+        default:
+          rightSide += item.amount;
+          break;
+      }
+    }
+    if (leftSide !== rightSide) {
+      throw new FinRecordNotZeroOutError(this.name, leftSide, rightSide);
+    }
+    this.#items = items;
   }
 
   setItemWithOptions(options: FinItemCreateOptions[]): void {
@@ -182,7 +195,6 @@ export class FinRecord extends AbstractEntity<
     return {
       id: this.id,
       timestamp: this.timestamp,
-      user: this.user.id,
       journal: this.journal.id,
       name: this.name,
       description: this.description,

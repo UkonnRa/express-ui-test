@@ -42,5 +42,8 @@
   },
   "devDependencies": {
     "plantuml-encoder": "^1.4.0"
+  },
+  "resolutions": {
+    "async": "^3.2.2"
   }
 }
