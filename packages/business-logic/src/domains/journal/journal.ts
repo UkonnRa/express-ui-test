@@ -3,6 +3,7 @@ import AbstractEntity from "../../shared/abstract-entity";
 import { Role, User } from "../user";
 import { Group } from "../group";
 import { FieldStartEndDateMismatchError } from "../../shared/errors";
+import { UpdateNullableValue } from "../index";
 import { AccessItemValue, JournalValue } from "./journal-value";
 
 export type AccessList = Array<User | Group>;
@@ -173,6 +174,18 @@ export class Journal extends AbstractEntity<
   set endDate(value: Date | undefined) {
     Journal.checkStrictlyBefore(this.startDate, value);
     this.#endDate = value;
+  }
+
+  updateDate(
+    field: "startDate" | "endDate",
+    value: UpdateNullableValue<Date>
+  ): void {
+    const date = value.type === "UNSET" ? undefined : value.value;
+    if (field === "startDate") {
+      this.startDate = date;
+    } else {
+      this.endDate = date;
+    }
   }
 
   isReadable(user: User): boolean {

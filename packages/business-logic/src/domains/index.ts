@@ -5,6 +5,10 @@ import { Group, GroupQuery, GroupValue } from "./group";
 import { FinRecord, FinRecordQuery, FinRecordValue } from "./fin-record";
 import { Account, AccountQuery, AccountValue } from "./account";
 
+export type UpdateNullableValue<V> =
+  | { type: "UNSET" }
+  | { type: "SET"; value: V };
+
 export { default as AccountService } from "./account/account-service";
 export type AccountRepository = AbstractRepository<
   Account,

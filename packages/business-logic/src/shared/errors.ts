@@ -90,31 +90,25 @@ export class FieldValidationZeroError extends AbstractError {
 }
 
 export class FieldStartEndDateMismatchError extends AbstractError {
-  override readonly name = "FieldStartEndDateMismatchError";
+  override readonly name = "FieldStartEndDateMismatch";
+
+  override readonly code = 401;
 
   constructor(
     readonly type: string,
     readonly startField: string,
     readonly endField: string,
-    readonly startValue?: Date,
-    readonly endValue?: Date
+    readonly startValue: Date,
+    readonly endValue: Date
   ) {
-    const format = (date?: Date): string => {
-      if (date != null) {
-        return dayjs(date).format();
-      }
-      return "undefined";
-    };
     super(
-      `StartField[${startField}, value=${format(
+      `StartField[${startField}, value=${dayjs(
         startValue
-      )}] in Type[${type}] should strictly before EndField[${endField}, value=${format(
+      ).format()}] in Type[${type}] should strictly before EndField[${endField}, value=${dayjs(
         endValue
-      )}]`
+      ).format()}]`
     );
   }
-
-  override readonly code = 401;
 }
 
 export class InvalidCursorError extends AbstractError {
@@ -148,7 +142,7 @@ export class InvalidSortFieldError extends AbstractError {
 }
 
 export class FieldNotQueryableError extends AbstractError {
-  override readonly name = "FieldNotQueryableError";
+  override readonly name = "FieldNotQueryable";
 
   override readonly code = 401;
 

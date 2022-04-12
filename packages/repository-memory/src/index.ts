@@ -27,6 +27,7 @@ import {
   JournalRepository,
   UserRepository,
   JournalQueryFuzzySearch,
+  TYPE_JOURNAL,
 } from "@white-rabbit/business-logic";
 import { container } from "tsyringe";
 import dayjs from "dayjs";
@@ -119,7 +120,7 @@ export class MemoryGroupRepository
     if (field === "description") {
       return a.description.localeCompare(b.description);
     }
-    throw new InvalidSortFieldError(TYPE_ACCOUNT, field);
+    throw new InvalidSortFieldError(TYPE_GROUP, field);
   }
 
   // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -135,7 +136,7 @@ export class MemoryGroupRepository
         } else if (field === "description") {
           result = result || entity.description.includes(value);
         } else {
-          throw new FieldNotQueryableError(TYPE_ACCOUNT, field);
+          throw new FieldNotQueryableError(TYPE_GROUP, field);
         }
       }
       return result;
@@ -187,7 +188,7 @@ export class MemoryJournalRepository
         b.endDate
       );
     }
-    throw new InvalidSortFieldError(TYPE_USER, field);
+    throw new InvalidSortFieldError(TYPE_JOURNAL, field);
   }
 
   private doFindItem(list: AccessList, queryItem: AccessItemValue): boolean {
@@ -249,7 +250,7 @@ export class MemoryJournalRepository
         if (field === "name") {
           result = result || entity.name.includes(value);
         } else {
-          throw new FieldNotQueryableError(TYPE_USER, field);
+          throw new FieldNotQueryableError(TYPE_JOURNAL, field);
         }
       }
       return result;
