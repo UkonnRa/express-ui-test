@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "dist/index.js",
   "dependencies": {
-    "sqlite3": "npm:@vscode/sqlite3@^5.0.7"
+    "sqlite3": "npm:@vscode/sqlite3@^5.0.8"
   },
   "devDependencies": {
     "electron": "18.0.3"

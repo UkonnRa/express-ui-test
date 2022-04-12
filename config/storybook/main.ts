@@ -1,5 +1,6 @@
 import path from "path";
 import type { StorybookConfig } from "@storybook/core-common";
+import { mergeConfig, UserConfig } from "vite";
 
 export default {
   stories: [
@@ -9,21 +10,14 @@ export default {
   addons: ["@storybook/addon-links", "@storybook/addon-essentials"],
   framework: "@storybook/vue3",
   core: {
-    builder: "storybook-builder-vite",
+    builder: "@storybook/builder-vite",
   },
-  webpackFinal: async (config) => {
-    // register webpack path aliases
-    if (config.resolve?.alias) {
-      config.resolve.alias["~storybook"] = path.resolve(process.cwd());
-      config.resolve.alias["@"] = path.resolve(process.cwd(), "src");
-    }
-    // enable sass
-    if (config.module?.rules) {
-      config.module.rules.push({
-        test: /\.sass$/,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      });
-    }
-    return config;
+  async viteFinal(config: UserConfig) {
+    return mergeConfig(config, {
+      resolve: {
+        // https://github.com/storybookjs/storybook/issues/10887#issuecomment-901109891
+        dedupe: ["@storybook/client-api"],
+      },
+    });
   },
 } as StorybookConfig;
