@@ -20,6 +20,7 @@
     "@mdi/font": "*",
     "@vueuse/components": "*",
     "@vueuse/core": "*",
+    "@white-rabbit/type-bridge": "workspace:^",
     "pinia": "*",
     "uuid": "*",
     "vue-i18n": "9",

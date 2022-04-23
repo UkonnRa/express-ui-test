@@ -1,10 +1,15 @@
 import dayjs from "dayjs";
+import {
+  AccessItemValue,
+  JournalValue,
+  Role,
+  TYPE_JOURNAL,
+  UpdateNullableValue,
+} from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
-import { Role, User } from "../user";
+import { User } from "../user";
 import { Group } from "../group";
 import { FieldStartEndDateMismatchError } from "../../shared/errors";
-import { UpdateNullableValue } from "../index";
-import { AccessItemValue, JournalValue } from "./journal-value";
 
 export type AccessList = Array<User | Group>;
 
@@ -26,13 +31,7 @@ const MAX_LENGTH_DESCRIPTION = 400;
 
 const MAX_LENGTH_LIST = 16;
 
-export const TYPE = "Journal";
-
-export class Journal extends AbstractEntity<
-  Journal,
-  JournalValue,
-  typeof TYPE
-> {
+export class Journal extends AbstractEntity<Journal, JournalValue> {
   #name: string;
 
   #description: string;
@@ -45,10 +44,10 @@ export class Journal extends AbstractEntity<
 
   #members: AccessList = [];
 
-  archived;
+  archived: boolean;
 
-  override get entityType(): typeof TYPE {
-    return TYPE;
+  override get entityType(): symbol {
+    return TYPE_JOURNAL;
   }
 
   constructor({
@@ -96,7 +95,7 @@ export class Journal extends AbstractEntity<
   }
 
   private static getAccessItemId(item: User | Group): string {
-    return `${item.entityType}${item.id}`;
+    return `${item.entityType.toString()}${item.id}`;
   }
 
   private static accessListContains(
@@ -149,7 +148,7 @@ export class Journal extends AbstractEntity<
   private static checkStrictlyBefore(start?: Date, end?: Date): void {
     if (start != null && end != null && !dayjs(start).isBefore(end)) {
       throw new FieldStartEndDateMismatchError(
-        TYPE,
+        TYPE_JOURNAL,
         "startDate",
         "endDate",
         start,
@@ -209,8 +208,11 @@ export class Journal extends AbstractEntity<
       id: this.id,
       name: this.name,
       description: this.description,
+      startDate: this.startDate,
+      endDate: this.endDate,
       admins: Journal.toAccessListValue(this.admins),
       members: Journal.toAccessListValue(this.members),
+      archived: this.archived,
     };
   }
 }

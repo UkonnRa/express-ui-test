@@ -1,4 +1,5 @@
 import { inject, singleton } from "tsyringe";
+import { GroupValue, TYPE_GROUP } from "@white-rabbit/type-bridge";
 import AbstractService from "../../shared/abstract-service";
 import { AuthUser } from "../../shared/auth-user";
 import { GroupRepository, UserRepository } from "../index";
@@ -9,8 +10,6 @@ import {
   GroupCommandDelete,
   GroupCommandUpdate,
 } from "./group-command";
-import { GroupValue } from "./group-value";
-import { TYPE } from "./group";
 import { Group } from "./index";
 
 @singleton()
@@ -26,7 +25,7 @@ export default class GroupService extends AbstractService<
     protected override readonly repository: GroupRepository,
     @inject("UserRepository") private readonly userRepository: UserRepository
   ) {
-    super(TYPE, "groups:read", "groups:write", repository);
+    super(TYPE_GROUP, "groups:read", "groups:write", repository);
   }
 
   async createGroup(

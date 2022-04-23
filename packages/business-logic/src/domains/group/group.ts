@@ -1,6 +1,6 @@
+import { GroupValue, Role, TYPE_GROUP } from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
-import { Role, User } from "../user";
-import { GroupValue } from "./group-value";
+import { User } from "../user";
 
 export interface GroupCreateOptions {
   name: string;
@@ -20,9 +20,7 @@ const MAX_LENGTH_DESCRIPTION = 400;
 
 const MAX_LENGTH_LIST = 256;
 
-export const TYPE = "Group";
-
-export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
+export class Group extends AbstractEntity<Group, GroupValue> {
   #name: string;
 
   #description: string;
@@ -123,7 +121,7 @@ export class Group extends AbstractEntity<Group, GroupValue, typeof TYPE> {
     };
   }
 
-  get entityType(): typeof TYPE {
-    return TYPE;
+  get entityType(): symbol {
+    return TYPE_GROUP;
   }
 }

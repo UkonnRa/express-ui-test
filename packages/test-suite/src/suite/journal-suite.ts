@@ -4,21 +4,9 @@ import {
   UserRepository,
   JournalService,
   User,
-  Role,
-  TYPE_USER,
-  TYPE_JOURNAL,
   Journal,
-  JournalValue,
-  JournalQuery,
-  JournalCommand,
-  JournalCommandCreate,
   FieldValidationLengthError,
-  TYPE_GROUP,
-  JournalQueryFuzzySearch,
-  JournalQueryFullText,
   NotFoundError,
-  JournalCommandUpdate,
-  JournalCommandDelete,
   FieldStartEndDateMismatchError,
   InvalidCursorError,
   InvalidQueryError,
@@ -26,6 +14,20 @@ import {
   FieldNotQueryableError,
   AccountRepository,
 } from "@white-rabbit/business-logic";
+import {
+  Role,
+  TYPE_USER,
+  TYPE_JOURNAL,
+  TYPE_GROUP,
+  JournalValue,
+  JournalQuery,
+  JournalCommand,
+  JournalQueryFuzzySearch,
+  JournalQueryFullText,
+  JournalCommandCreate,
+  JournalCommandUpdate,
+  JournalCommandDelete,
+} from "@white-rabbit/type-bridge";
 import { inject, singleton } from "tsyringe";
 import dayjs from "dayjs";
 import {

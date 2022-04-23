@@ -1,20 +1,22 @@
 import {
   Account,
-  AccountCommand,
-  AccountCommandCreate,
-  AccountQuery,
   AccountRepository,
   AccountService,
-  AccountType,
-  AccountValue,
   GroupRepository,
   JournalRepository,
   JournalService,
-  Strategy,
-  TYPE_ACCOUNT,
   UserRepository,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
+import {
+  AccountCommand,
+  AccountCommandCreate,
+  AccountQuery,
+  AccountType,
+  AccountValue,
+  Strategy,
+  TYPE_ACCOUNT,
+} from "@white-rabbit/type-bridge";
 import {
   ReadTask,
   ReadTaskSingleSuccess,

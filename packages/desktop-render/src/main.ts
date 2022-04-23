@@ -7,12 +7,13 @@ import {
   vuetifyConfig,
 } from "@white-rabbit/components/src/plugins";
 import JournalViewApiImpl from "./api/JournalViewApiImpl";
+import { JOURNAL_API_KEY } from "@white-rabbit/components";
 
 void loadFonts();
 const app = createApp(App);
 app.use(vuetifyConfig);
 app.use(vueI18nConfig);
-app.provide("JournalViewApi", new JournalViewApiImpl());
+app.provide(JOURNAL_API_KEY, new JournalViewApiImpl());
 app.mount("#app");
 
 console.log("fs", window.fs);

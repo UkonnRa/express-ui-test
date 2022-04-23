@@ -1,4 +1,4 @@
-import { FinItemValue } from "./fin-record-value";
+import { FinItemValue } from "@white-rabbit/type-bridge";
 
 export interface FinRecordCommandCreate {
   readonly type: "FinRecordCommandCreate";

@@ -1,12 +1,12 @@
 <template>
   <div class="access-list">
     <v-chip
-      v-for="i in props.items"
+      v-for="i in items"
       :key="i.id"
       color="primary"
-      :title="`[${i.type}] ${i.name}`"
+      :title="`[${i.type.toString()}] ${i.name}`"
     >
-      <v-icon v-if="i.type === 'User'" :left="true">mdi-account</v-icon>
+      <v-icon v-if="i.type === TYPE_USER" :left="true">mdi-account</v-icon>
       <v-icon v-else :left="true">mdi-account-group</v-icon>
       <span>{{ i.name }}</span>
     </v-chip>
@@ -14,13 +14,23 @@
 </template>
 
 <script setup lang="ts">
-import type { AccessItem } from "../api";
+import type { AccessItemValue } from "@white-rabbit/type-bridge";
+import { TYPE_USER } from "@white-rabbit/type-bridge";
+import { computed } from "vue";
+
+export interface AccessItem extends AccessItemValue {
+  readonly name: string;
+}
 
 interface Props {
-  readonly items: AccessItem[];
+  readonly items: AccessItemValue[];
 }
 
 const props = defineProps<Props>();
+
+const items = computed(() =>
+  props.items.map((i) => ({ ...i, name: `ID: ${i.id}` }))
+);
 </script>
 
 <style scoped lang="scss">

@@ -1,23 +1,15 @@
 import {
-  PageResult,
-  Pagination,
-  Sort,
   AuthUser,
   AbstractEntity,
   AbstractError,
 } from "@white-rabbit/business-logic";
+import { PageResult, QueryType } from "@white-rabbit/type-bridge";
 import {
   AbstractReadTaskFailure,
   AbstractReadTaskSuccess,
   ReadContextFailure,
   ReadContextSuccess,
 } from "./read-task";
-
-interface QueryType<Q> {
-  sort: Sort;
-  pagination: Pagination;
-  query?: Q;
-}
 
 interface ExpectedResult {
   current: number[];
@@ -31,7 +23,7 @@ interface ActualResult<V> {
 }
 
 export class ReadTaskPageSuccess<
-  T extends AbstractEntity<T, V, unknown>,
+  T extends AbstractEntity<T, V>,
   Q,
   V,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,6 +81,6 @@ export class ReadTaskPageFailure<
   }
 }
 
-export type ReadTaskPage<T extends AbstractEntity<T, V, unknown>, Q, V> =
+export type ReadTaskPage<T extends AbstractEntity<T, V>, Q, V> =
   | ReadTaskPageSuccess<T, Q, V>
   | ReadTaskPageFailure<Q>;

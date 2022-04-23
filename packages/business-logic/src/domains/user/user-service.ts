@@ -1,11 +1,11 @@
 import { inject, singleton } from "tsyringe";
+import { Role, TYPE_USER, UserValue } from "@white-rabbit/type-bridge";
 import AbstractService from "../../shared/abstract-service";
 import { AuthUser } from "../../shared/auth-user";
 import { NoAuthError, NoExpectedScopeError } from "../../shared/errors";
 import { UserRepository } from "../index";
-import { UserValue } from "./user-value";
 import { UserQuery } from "./user-query";
-import { Role, TYPE, User } from "./user";
+import { User } from "./user";
 import {
   UserCommand,
   UserCommandCreate,
@@ -26,7 +26,7 @@ export default class UserService extends AbstractService<
     @inject("UserRepository")
     protected override readonly repository: UserRepository
   ) {
-    super(TYPE, "users:read", "users:write", repository);
+    super(TYPE_USER, "users:read", "users:write", repository);
   }
 
   async createUser(

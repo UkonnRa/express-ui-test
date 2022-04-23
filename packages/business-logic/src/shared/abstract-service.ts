@@ -1,12 +1,14 @@
-import { Role, TYPE_USER, User } from "../domains/user";
-import AbstractEntity from "./abstract-entity";
-import { AuthUser } from "./auth-user";
 import {
-  AbstractRepository,
   PageResult,
   Pagination,
+  Role,
   Sort,
-} from "./abstract-repository";
+  TYPE_USER,
+} from "@white-rabbit/type-bridge";
+import { User } from "../domains/user";
+import AbstractEntity from "./abstract-entity";
+import { AuthUser } from "./auth-user";
+import { AbstractRepository } from "./abstract-repository";
 import {
   InvalidQueryError,
   NoAuthError,
@@ -15,14 +17,14 @@ import {
 } from "./errors";
 
 export default abstract class AbstractService<
-  T extends AbstractEntity<T, V, unknown>,
+  T extends AbstractEntity<T, V>,
   R extends AbstractRepository<T, V, Q>,
   V,
   Q,
   C
 > {
   protected constructor(
-    protected readonly type: string,
+    protected readonly type: symbol,
     readonly readScope: string,
     readonly writeScope: string,
     protected readonly repository: R

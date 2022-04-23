@@ -4,9 +4,8 @@ import type { User } from "../domains/user";
 import { FieldValidationLengthError } from "./errors";
 
 export default abstract class AbstractEntity<
-  T extends AbstractEntity<T, V, P>,
-  V,
-  P
+  T extends AbstractEntity<T, V>,
+  V
 > {
   id = v4();
 
@@ -18,7 +17,7 @@ export default abstract class AbstractEntity<
 
   abstract toValue(): V;
 
-  abstract get entityType(): P & string;
+  abstract get entityType(): symbol;
 
   toCursor(): string {
     return Base64.encodeURL(this.id);

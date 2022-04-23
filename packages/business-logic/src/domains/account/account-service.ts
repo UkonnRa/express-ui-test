@@ -1,17 +1,18 @@
 import { inject, singleton } from "tsyringe";
-import AbstractService from "../../shared/abstract-service";
-import { AuthUser } from "../../shared/auth-user";
-import { AccountRepository } from "../index";
-import JournalService from "../journal/journal-service";
-import { AccountQuery } from "./account-query";
-import { Account } from "./account";
 import {
   AccountCommand,
   AccountCommandCreate,
   AccountCommandDelete,
   AccountCommandUpdate,
+  AccountQuery,
   AccountValue,
-} from "./index";
+  TYPE_ACCOUNT,
+} from "@white-rabbit/type-bridge";
+import AbstractService from "../../shared/abstract-service";
+import { AuthUser } from "../../shared/auth-user";
+import { AccountRepository } from "../index";
+import JournalService from "../journal/journal-service";
+import { Account } from "./account";
 
 @singleton()
 export default class AccountService extends AbstractService<
@@ -26,7 +27,7 @@ export default class AccountService extends AbstractService<
     protected override readonly repository: AccountRepository,
     private readonly journalService: JournalService
   ) {
-    super("Account", "accounts:read", "accounts:write", repository);
+    super(TYPE_ACCOUNT, "accounts:read", "accounts:write", repository);
   }
 
   async createAccount(

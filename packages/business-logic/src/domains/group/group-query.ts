@@ -1,4 +1,4 @@
-import { QueryFullTextValue } from "../../shared/abstract-repository";
+import { QueryFullTextValue } from "@white-rabbit/type-bridge";
 
 export type GroupQueryFullText = QueryFullTextValue & {
   readonly type: "GroupQueryFullText";

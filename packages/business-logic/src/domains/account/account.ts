@@ -1,21 +1,13 @@
+import {
+  AccountType,
+  AccountValue,
+  Strategy,
+  TYPE_ACCOUNT,
+} from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
 import { Journal } from "../journal";
 import { User } from "../user";
 import { InvalidTextError } from "../../shared/errors";
-import { AccountValue } from "./account-value";
-
-export enum Strategy {
-  FIFO,
-  AVERAGE,
-}
-
-export enum AccountType {
-  ASSET,
-  LIABILITY,
-  INCOME,
-  EXPENSE,
-  EQUITY,
-}
 
 export interface AccountCreateOptions {
   name: string[];
@@ -42,13 +34,7 @@ const MAX_LENGTH_UNIT = 20;
 
 const NAME_SEPARATOR = "::";
 
-export const TYPE = "Account";
-
-export class Account extends AbstractEntity<
-  Account,
-  AccountValue,
-  typeof TYPE
-> {
+export class Account extends AbstractEntity<Account, AccountValue> {
   #name: string[];
 
   #description: string;
@@ -61,8 +47,8 @@ export class Account extends AbstractEntity<
 
   strategy: Strategy;
 
-  get entityType(): typeof TYPE {
-    return TYPE;
+  get entityType(): symbol {
+    return TYPE_ACCOUNT;
   }
 
   constructor({
@@ -99,7 +85,7 @@ export class Account extends AbstractEntity<
     for (const v of value) {
       const result = v.trim();
       if (v.includes(NAME_SEPARATOR)) {
-        throw new InvalidTextError(TYPE, "name.each", NAME_SEPARATOR);
+        throw new InvalidTextError(TYPE_ACCOUNT, "name.each", NAME_SEPARATOR);
       }
       this.checkLength(result.length, "name.each", {
         min: MIN_LENGTH_NAME_EACH,

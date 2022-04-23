@@ -1,15 +1,5 @@
-export {
-  FinRecordCreateOptions,
-  FinRecord,
-  FinRecordState,
-  TYPE as TYPE_FIN_RECORD,
-} from "./fin-record";
-export {
-  FinItem,
-  FinItemCreateOptions,
-  TYPE as TYPE_FIN_ITEM,
-} from "./fin-item";
-export { FinItemValue, FinRecordValue } from "./fin-record-value";
+export { FinRecordCreateOptions, FinRecord } from "./fin-record";
+export { FinItem, FinItemCreateOptions } from "./fin-item";
 export {
   FinRecordCommand,
   FinRecordCommandCreate,

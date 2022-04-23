@@ -1,4 +1,4 @@
-export { Role, User, type UserCreateOptions, TYPE as TYPE_USER } from "./user";
+export { User, type UserCreateOptions } from "./user";
 export type {
   UserCommand,
   UserCommandCreate,
@@ -7,4 +7,3 @@ export type {
   UserCommandDelete,
 } from "./user-command";
 export type { UserQuery, UserQueryFullText } from "./user-query";
-export type { UserValue } from "./user-value";

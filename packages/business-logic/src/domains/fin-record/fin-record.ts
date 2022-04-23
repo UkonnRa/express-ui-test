@@ -1,10 +1,14 @@
+import {
+  AccountType,
+  FinRecordState,
+  FinRecordValue,
+  TYPE_FIN_RECORD,
+} from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
 import { User } from "../user";
 import { Journal } from "../journal";
-import { AccountType } from "../account";
 import { FinRecordNotZeroOutError } from "../../shared/errors";
 import { FinItem, FinItemCreateOptions } from "./fin-item";
-import { FinRecordValue } from "./fin-record-value";
 
 export interface FinRecordCreateOptions {
   timestamp: Date;
@@ -34,17 +38,7 @@ const MAX_LENGTH_TAG = 20;
 
 const MAX_LENGTH_TAGS = 10;
 
-export enum FinRecordState {
-  NORMAL,
-  NOT_ZERO_OUT,
-  UNITS_NOT_MATCH,
-}
-
-export class FinRecord extends AbstractEntity<
-  FinRecord,
-  FinRecordValue,
-  typeof TYPE
-> {
+export class FinRecord extends AbstractEntity<FinRecord, FinRecordValue> {
   timestamp: Date;
 
   journal: Journal;
@@ -205,7 +199,7 @@ export class FinRecord extends AbstractEntity<
     };
   }
 
-  get entityType(): typeof TYPE {
-    return TYPE;
+  get entityType(): symbol {
+    return TYPE_FIN_RECORD;
   }
 }

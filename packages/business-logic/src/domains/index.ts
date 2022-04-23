@@ -1,13 +1,18 @@
+import {
+  AccountQuery,
+  AccountValue,
+  FinRecordValue,
+  GroupValue,
+  JournalQuery,
+  JournalValue,
+  UserValue,
+} from "@white-rabbit/type-bridge";
 import { AbstractRepository } from "../shared/abstract-repository";
-import { User, UserQuery, UserValue } from "./user";
-import { Journal, JournalQuery, JournalValue } from "./journal";
-import { Group, GroupQuery, GroupValue } from "./group";
-import { FinRecord, FinRecordQuery, FinRecordValue } from "./fin-record";
-import { Account, AccountQuery, AccountValue } from "./account";
-
-export type UpdateNullableValue<V> =
-  | { type: "UNSET" }
-  | { type: "SET"; value: V };
+import { User, UserQuery } from "./user";
+import { Journal } from "./journal";
+import { Group, GroupQuery } from "./group";
+import { FinRecord, FinRecordQuery } from "./fin-record";
+import { Account } from "./account";
 
 export { default as AccountService } from "./account/account-service";
 export type AccountRepository = AbstractRepository<

@@ -2,13 +2,13 @@ import { inject, singleton } from "tsyringe";
 import { Logger } from "winston";
 import express, { Express, Request, Response } from "express";
 import {
-  Role,
   User,
   AuthUser,
   JournalRepository,
   JournalService,
   Journal,
 } from "@white-rabbit/business-logic";
+import { Role } from "@white-rabbit/type-bridge";
 
 @singleton()
 export default class App {

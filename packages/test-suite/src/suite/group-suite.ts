@@ -4,9 +4,7 @@ import {
   GroupService,
   JournalRepository,
   UserRepository,
-  TYPE_GROUP,
   Group,
-  GroupValue,
   GroupQuery,
   GroupCommand,
   GroupCommandCreate,
@@ -18,9 +16,9 @@ import {
   NoExpectedScopeError,
   NotFoundError,
   NoAuthError,
-  TYPE_USER,
   AccountRepository,
 } from "@white-rabbit/business-logic";
+import { GroupValue, TYPE_GROUP, TYPE_USER } from "@white-rabbit/type-bridge";
 import {
   ReadTask,
   ReadTaskPageSuccess,

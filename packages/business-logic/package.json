@@ -15,6 +15,7 @@
     "test": "jest --coverage"
   },
   "peerDependencies": {
+    "@white-rabbit/type-bridge": "workspace:^",
     "dayjs": "*",
     "js-base64": "*",
     "tsyringe": "*",

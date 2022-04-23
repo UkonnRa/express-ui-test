@@ -1,7 +1,11 @@
 {
-  "actions": {
-    "delete": "Delete",
-    "update": "Update",
-    "visit": "Visit"
+  "delete": "Delete",
+  "update": "Update",
+  "visit": "Visit",
+  "about": "About",
+  "toggleTheme": "Toggle Theme",
+  "includeArchived": {
+    "label": "Include Archived",
+    "title": "If true, both active journals and archived ones will be included"
   }
 }

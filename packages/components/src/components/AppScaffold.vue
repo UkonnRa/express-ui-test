@@ -47,7 +47,7 @@
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-information"
-          title="About"
+          :title="t('about')"
           value="about"
         ></v-list-item>
       </v-list>
@@ -58,7 +58,7 @@
       <v-btn
         variant="text"
         icon="mdi-theme-light-dark"
-        title="Toggle dark/light theme"
+        :title="t('toggleTheme')"
         @click="theme = theme === 'light' ? 'dark' : 'light'"
       ></v-btn>
       <v-menu>
@@ -96,7 +96,7 @@ export interface Props {}
 
 const rail = ref(false);
 const theme = ref<"light" | "dark">("light");
-const { locale, availableLocales } = useI18n();
+const { locale, availableLocales, t } = useI18n();
 const getLocaleName = (lang: string): string => {
   switch (lang) {
     case "en-US":
@@ -115,5 +115,37 @@ const availableLocaleValues = computed(() => {
 <style scoped lang="scss">
 .v-main {
   min-height: 100vh;
+}
+</style>
+
+<style lang="scss">
+.v-main *,
+.v-overlay-container * {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(
+      var(--v-theme-on-background),
+      var(--v-medium-emphasis-opacity)
+    );
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box; // <== make the border work
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(
+      var(--v-theme-on-background),
+      var(--v-high-emphasis-opacity)
+    );
+    border: 0;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 </style>

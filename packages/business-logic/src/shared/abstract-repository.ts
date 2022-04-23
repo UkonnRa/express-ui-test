@@ -1,14 +1,11 @@
+import { PageResult, Pagination, Sort } from "@white-rabbit/type-bridge";
 import type AbstractEntity from "./abstract-entity";
 
-export type AdditionalFilter<T extends AbstractEntity<T, unknown, unknown>> = (
+export type AdditionalFilter<T extends AbstractEntity<T, unknown>> = (
   entity: T[]
 ) => Promise<T[]>;
 
-export interface AbstractRepository<
-  T extends AbstractEntity<T, V, unknown>,
-  V,
-  Q
-> {
+export interface AbstractRepository<T extends AbstractEntity<T, V>, V, Q> {
   doCompare: (a: T, b: T, field: string) => number;
   doQuery: (entity: T, query?: Q) => boolean;
   doConvertAdditionalQuery: (query?: Q) => Array<AdditionalFilter<T>>;
@@ -32,34 +29,4 @@ export interface AbstractRepository<
   saveAll: (entity: T[]) => Promise<void>;
 
   close: () => void;
-}
-
-export type Sort = Array<{ field: string; order: "ASC" | "DESC" }>;
-
-export interface Pagination {
-  size: number;
-  startFrom: "FIRST" | "LAST";
-  after?: string;
-  before?: string;
-}
-
-export interface PageResult<V> {
-  pageInfo: PageInfo;
-  pageItems: Array<{ cursor: string; data: V }>;
-}
-
-export interface PageInfo {
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  startCursor?: string;
-  endCursor?: string;
-}
-
-export interface KeywordValue {
-  fields?: string[];
-  value: string;
-}
-
-export interface QueryFullTextValue {
-  readonly keyword: KeywordValue;
 }

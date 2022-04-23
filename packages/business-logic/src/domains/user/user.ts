@@ -1,16 +1,10 @@
+import { Role, TYPE_USER, UserValue } from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
-import type { UserValue } from "./user-value";
 
 export interface UserCreateOptions {
   name: string;
   role: Role;
   authIds?: Map<string, string>;
-}
-
-export enum Role {
-  USER,
-  ADMIN,
-  OWNER,
 }
 
 const MIN_LENGTH_NAME = 6;
@@ -19,17 +13,15 @@ const MAX_LENGTH_NAME = 50;
 
 const MAX_LENGTH_AUTH_IDS = 6;
 
-export const TYPE = "User";
-
-export class User extends AbstractEntity<User, UserValue, typeof TYPE> {
+export class User extends AbstractEntity<User, UserValue> {
   #name: string;
 
   role: Role;
 
   #authIds: Map<string, string>;
 
-  get entityType(): typeof TYPE {
-    return TYPE;
+  get entityType(): symbol {
+    return TYPE_USER;
   }
 
   constructor({ name, role, authIds }: UserCreateOptions) {

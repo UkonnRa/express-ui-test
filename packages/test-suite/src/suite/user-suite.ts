@@ -1,10 +1,7 @@
 import {
-  Role,
-  TYPE_USER,
   User,
   UserCommand,
   UserQuery,
-  UserValue,
   UserCommandCreate,
   UserQueryFullText,
   UserCommandUpdate,
@@ -21,6 +18,7 @@ import {
   AccountRepository,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
+import { Role, TYPE_USER, UserValue } from "@white-rabbit/type-bridge";
 import {
   ReadTask,
   ReadTaskPageSuccess,

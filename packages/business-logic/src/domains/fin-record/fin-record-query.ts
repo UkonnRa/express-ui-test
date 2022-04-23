@@ -1,4 +1,4 @@
-import { QueryFullTextValue } from "../../shared/abstract-repository";
+import { QueryFullTextValue } from "@white-rabbit/type-bridge";
 
 interface FinRecordQueryBase {
   readonly journal: string;

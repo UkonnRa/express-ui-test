@@ -4,12 +4,12 @@ import { Logger } from "winston";
 import { app, BrowserWindow, ipcMain } from "electron";
 import isDev from "electron-is-dev";
 import {
-  Role,
   User,
   AuthUser,
   JournalRepository,
   JournalService,
 } from "@white-rabbit/business-logic";
+import { Role } from "@white-rabbit/type-bridge";
 
 @singleton()
 export default class App {

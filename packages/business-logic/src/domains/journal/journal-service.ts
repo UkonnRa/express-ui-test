@@ -1,18 +1,20 @@
 import { inject, singleton } from "tsyringe";
-import { AuthUser } from "../../shared/auth-user";
-import AbstractService from "../../shared/abstract-service";
-import { GroupRepository, JournalRepository, UserRepository } from "../index";
-import { TYPE_USER } from "../user";
-import { Journal, TYPE, AccessList } from "./journal";
 import {
+  AccessItemValue,
   JournalCommand,
   JournalCommandCreate,
   JournalCommandDelete,
   JournalCommandUpdate,
-} from "./journal-command";
-import { JournalValue } from "./journal-value";
-import { JournalQuery } from "./journal-query";
-import { AccessItemValue } from "./index";
+  JournalQuery,
+  JournalValue,
+  TYPE_GROUP,
+  TYPE_JOURNAL,
+  TYPE_USER,
+} from "@white-rabbit/type-bridge";
+import { AuthUser } from "../../shared/auth-user";
+import AbstractService from "../../shared/abstract-service";
+import { GroupRepository, JournalRepository, UserRepository } from "../index";
+import { Journal, AccessList } from "./journal";
 
 @singleton()
 export default class JournalService extends AbstractService<
@@ -28,7 +30,7 @@ export default class JournalService extends AbstractService<
     @inject("UserRepository") private readonly userRepository: UserRepository,
     @inject("GroupRepository") private readonly groupRepository: GroupRepository
   ) {
-    super(TYPE, "journals:read", "journals:write", repository);
+    super(TYPE_JOURNAL, "journals:read", "journals:write", repository);
   }
 
   private async getAccessList(values: AccessItemValue[]): Promise<AccessList> {
@@ -37,7 +39,7 @@ export default class JournalService extends AbstractService<
     for (const v of values) {
       if (v.type === TYPE_USER) {
         userIds.push(v.id);
-      } else {
+      } else if (v.type === TYPE_GROUP) {
         groupIds.push(v.id);
       }
     }

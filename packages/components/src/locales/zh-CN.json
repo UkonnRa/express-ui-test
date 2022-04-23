@@ -1,7 +1,11 @@
 {
-  "actions": {
-    "delete": "删除",
-    "update": "更新",
-    "visit": "浏览"
+  "delete": "删除",
+  "update": "更新",
+  "visit": "浏览",
+  "about": "关于",
+  "toggleTheme": "主题转换",
+  "includeArchived": {
+    "label": "包含已归档",
+    "title": "如果为真，则同时展示活动中的和已归档的记账本"
   }
 }

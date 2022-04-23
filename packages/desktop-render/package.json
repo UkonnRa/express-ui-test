@@ -24,7 +24,7 @@
     "uuid": "^8.3.2",
     "vue": "^3.2.33",
     "vue-i18n": "9.1.9",
-    "vuetify": "npm:@vuetify/nightly@^3.0.0-next-20220421.0",
+    "vuetify": "^3.0.0-beta.1",
     "webfontloader": "^1.6.28"
   }
 }

@@ -5,7 +5,6 @@ import {
   Account,
   AccountCreateOptions,
   AccountRepository,
-  AccountType,
   AuthId,
   AuthUser,
   Group,
@@ -14,19 +13,22 @@ import {
   Journal,
   JournalCreateOptions,
   JournalRepository,
-  Pagination,
-  Role,
-  Strategy,
   User,
   UserCreateOptions,
   UserRepository,
 } from "@white-rabbit/business-logic";
 import each from "jest-each";
 import dayjs from "dayjs";
+import {
+  AccountType,
+  Pagination,
+  Role,
+  Strategy,
+} from "@white-rabbit/type-bridge";
 import { ReadTask, WriteTask } from "../task";
 
 export abstract class AbstractSuite<
-  T extends AbstractEntity<T, V, unknown>,
+  T extends AbstractEntity<T, V>,
   R extends AbstractRepository<T, V, Q>,
   S extends AbstractService<T, R, V, Q, C>,
   V,
@@ -39,7 +41,7 @@ export abstract class AbstractSuite<
   protected readonly accountRepository: AccountRepository;
 
   protected constructor(
-    readonly type: string,
+    readonly type: symbol,
     readonly repository: R,
     readonly service: S
   ) {}
@@ -285,7 +287,7 @@ export abstract class AbstractSuite<
     });
 
     each(this.readTasks).test(
-      `Read task for ${this.type}: $name`,
+      `Read task for ${this.type.toString()}: $name`,
       async (task: ReadTask<T, Q, V>) => {
         const authUser = task.authUserHandler();
         if (task.readType === "Single") {
@@ -365,7 +367,7 @@ export abstract class AbstractSuite<
     );
 
     each(this.writeTasks).test(
-      `Write task for ${this.type}: $name`,
+      `Write task for ${this.type.toString()}: $name`,
       async (task: WriteTask<C, T>) => {
         await this.prepareData();
         if (task.setup !== undefined) {

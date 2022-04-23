@@ -1,10 +1,14 @@
 import { inject, singleton } from "tsyringe";
+import {
+  FinItemValue,
+  FinRecordValue,
+  TYPE_FIN_RECORD,
+} from "@white-rabbit/type-bridge";
 import AbstractService from "../../shared/abstract-service";
 import { AccountRepository, FinRecordRepository } from "../index";
 import { AuthUser } from "../../shared/auth-user";
 import JournalService from "../journal/journal-service";
-import { FinItemValue, FinRecordValue } from "./fin-record-value";
-import { FinRecord, TYPE } from "./fin-record";
+import { FinRecord } from "./fin-record";
 import { FinRecordQuery } from "./fin-record-query";
 import {
   FinRecordCommand,
@@ -29,7 +33,7 @@ export default class FinRecordService extends AbstractService<
     @inject("AccountRepository")
     private readonly accountRepository: AccountRepository
   ) {
-    super(TYPE, "finRecords:read", "finRecords:write", repository);
+    super(TYPE_FIN_RECORD, "finRecords:read", "finRecords:write", repository);
   }
 
   private async getItems(

@@ -8,6 +8,7 @@ import JournalViewApiImpl from "../api/JournalViewApiImpl";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { JOURNAL_API_KEY } from "@white-rabbit/components";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -36,4 +37,4 @@ app.use(
 );
 app.use(vueI18nConfig);
 
-app.provide("JournalViewApi", new JournalViewApiImpl());
+app.provide(JOURNAL_API_KEY, new JournalViewApiImpl());

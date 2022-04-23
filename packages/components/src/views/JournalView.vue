@@ -1,54 +1,59 @@
 <template>
   <app-scaffold>
     <div class="mb-2">
-      <v-row>
-        <v-col cols="4">
+      <div class="d-flex mb-2">
+        <v-text-field
+          v-model="keyword"
+          density="compact"
+          :label="t('keyword')"
+          hide-details="auto"
+          class="mr-2"
+        ></v-text-field>
+        <v-tooltip anchor="bottom">
+          <span>{{ t("includeArchived.title") }}</span>
+          <template #activator="{ props }">
+            <div v-bind="props">
+              <v-switch
+                v-model="includeDeactivated"
+                density="compact"
+                :label="t('includeArchived.label')"
+                color="primary"
+                hide-details="auto"
+              >
+              </v-switch>
+            </div>
+          </template>
+        </v-tooltip>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" prepend-icon="mdi-magnify">Search</v-btn>
+      </div>
+      <template v-if="expandAdvancedSearch">
+        <div class="d-flex">
           <v-text-field
-            v-model="keyword"
+            v-model="startTime"
+            type="date"
             density="compact"
-            label="Keywords"
+            label="Start Time"
+            hide-details="auto"
+            class="mr-2"
+            :lang="locale"
+          ></v-text-field>
+          <v-text-field
+            v-model="endTime"
+            type="date"
+            density="compact"
+            label="End Time"
+            hide-details="auto"
+            class="mr-2"
+            :lang="locale"
+          ></v-text-field>
+          <v-text-field
+            v-model="targetAccessItem"
+            density="compact"
+            label="Target Access Item"
             hide-details="auto"
           ></v-text-field>
-        </v-col>
-        <v-col cols="2">
-          <v-checkbox
-            v-model="includeDeactivated"
-            density="compact"
-            label="Include Deactivated"
-            hide-details="auto"
-          ></v-checkbox>
-        </v-col>
-        <v-col cols="6" class="d-flex justify-end">
-          <v-btn variant="text" prepend-icon="mdi-magnify">Search</v-btn>
-        </v-col>
-      </v-row>
-      <template v-if="expandAdvancedSearch">
-        <v-row>
-          <v-col cols="4">
-            <v-text-field
-              v-model="startTime"
-              density="compact"
-              label="Start Time"
-              hide-details="auto"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="endTime"
-              density="compact"
-              label="End Time"
-              hide-details="auto"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              v-model="targetAccessItem"
-              density="compact"
-              label="Target Access Item"
-              hide-details="auto"
-            ></v-text-field>
-          </v-col>
-        </v-row>
+        </div>
         <v-btn
           block
           variant="plain"
@@ -94,29 +99,63 @@
         <v-expansion-panel v-for="item of state.pageItems" :key="item.cursor">
           <v-expansion-panel-title>
             <div class="title-content d-flex flex-column align-start">
-              <h3 class="pb-2" :title="item.data.name">{{ item.data.name }}</h3>
-              <h5>ID: {{ item.data.id }}</h5>
+              <div class="title-content-name d-flex w-100">
+                <v-chip
+                  v-if="item.data.archived"
+                  color="error"
+                  size="x-small"
+                  class="mr-2"
+                >
+                  {{ t("archived") }}
+                </v-chip>
+                <h3 class="pb-2" :title="item.data.name">
+                  {{ item.data.name }}
+                </h3>
+              </div>
+              <h5 class="pb-2">{{ item.data.id }}</h5>
+              <div class="d-flex">
+                <div>
+                  <span class="font-italic">
+                    {{
+                      item.data.startDate?.toLocaleDateString(
+                        locale,
+                        FORMAT_OPTION
+                      )
+                    }}
+                  </span>
+                  -
+                  <span class="font-italic">
+                    {{
+                      item.data.endDate?.toLocaleDateString(
+                        locale,
+                        FORMAT_OPTION
+                      )
+                    }}
+                  </span>
+                </div>
+              </div>
             </div>
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <div>
+              <h4>Description</h4>
               <p class="text-start">{{ item.data.description }}</p>
             </div>
             <div class="mb-2">
-              <h3>Admins</h3>
+              <h4>Admins</h4>
               <journal-view-access-list
                 :items="item.data.admins"
               ></journal-view-access-list>
             </div>
             <div>
-              <h3>Members</h3>
+              <h4>Members</h4>
               <journal-view-access-list
                 :items="item.data.members"
               ></journal-view-access-list>
             </div>
             <div class="mt-1">
               <v-btn color="primary" variant="outlined" class="mr-1">
-                {{ t("actions.visit") }}
+                {{ t("visit") }}
               </v-btn>
               <v-btn
                 color="secondary"
@@ -124,7 +163,7 @@
                 class="mr-1"
                 @click="onUpdateJournal(item.data)"
               >
-                {{ t("actions.update") }}
+                {{ t("update") }}
                 <v-dialog v-model="updateJournalDialog">
                   <v-card v-if="!updateJournal"> Not Found </v-card>
                   <journal-view-update-dialog
@@ -134,7 +173,7 @@
                 </v-dialog>
               </v-btn>
               <v-btn color="warning" variant="outlined">
-                {{ t("actions.delete") }}
+                {{ t("delete") }}
               </v-btn>
             </div>
           </v-expansion-panel-text>
@@ -147,7 +186,6 @@
 
 <script setup lang="ts">
 import { inject, ref } from "vue";
-import type { AccessItem, Journal, JournalViewApi } from "../api";
 import { useAsyncState } from "@vueuse/core";
 import {
   AppScaffold,
@@ -155,6 +193,15 @@ import {
   JournalViewAccessList,
 } from "../components";
 import { useI18n } from "vue-i18n";
+import type { AccessItemValue, JournalValue } from "@white-rabbit/type-bridge";
+import type { JournalApi } from "../api";
+import { JOURNAL_API_KEY } from "../api";
+
+const FORMAT_OPTION: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
 
 type OrderBy = "Start Date ASC" | "Start Date DESC";
 
@@ -162,30 +209,30 @@ const expandAdvancedSearch = ref(false);
 
 const keyword = ref("");
 const includeDeactivated = ref(false);
-const startTime = ref<string | null>(null);
-const endTime = ref<string | null>(null);
-const targetAccessItem = ref<AccessItem | null>(null);
+const startTime = ref<string>();
+const endTime = ref<string>();
+const targetAccessItem = ref<AccessItemValue>();
 const orderBy = ref<OrderBy>("Start Date DESC");
 const onOrderByChanged = (data: OrderBy) => {
   console.log("onOrderByChanged: ", data);
 };
 
 const updateJournalDialog = ref(false);
-const updateJournal = ref<Journal | null>(null);
+const updateJournal = ref<JournalValue>();
 
-const api = inject<JournalViewApi>("JournalViewApi");
+const api = inject<JournalApi>(JOURNAL_API_KEY);
 if (!api) {
   throw new Error("JournalViewApi not found");
 }
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const { state, isLoading } = useAsyncState(
   api.findAll(keyword.value, includeDeactivated.value),
   null
 );
 
-const onUpdateJournal = (journal: Journal) => {
+const onUpdateJournal = (journal: JournalValue) => {
   updateJournalDialog.value = true;
   updateJournal.value = journal;
 };
@@ -195,11 +242,14 @@ const onUpdateJournal = (journal: Journal) => {
 .v-expansion-panel-title .title-content {
   white-space: nowrap;
   max-width: 95%;
-  h3,
+  .title-content-name h3,
   h5 {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .title-content-name .v-chip {
+    flex: none;
   }
 }
 
@@ -207,5 +257,9 @@ const onUpdateJournal = (journal: Journal) => {
   border: dashed gray;
   text-align: center;
   color: gray;
+}
+
+.v-text-field {
+  max-width: 300px;
 }
 </style>

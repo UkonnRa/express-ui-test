@@ -1,36 +1,38 @@
 import {
   Journal,
-  JournalValue,
-  JournalQuery,
-  AccessItemValue,
   AccessList,
   FinRecord,
   FinRecordQuery,
-  FinRecordValue,
   Group,
   GroupQuery,
-  GroupValue,
-  TYPE_GROUP,
-  TYPE_USER,
   User,
   UserQuery,
-  UserValue,
   FieldNotQueryableError,
   InvalidSortFieldError,
   Account,
-  AccountQuery,
-  AccountValue,
-  TYPE_ACCOUNT,
   AccountRepository,
   FinRecordRepository,
   GroupRepository,
   JournalRepository,
   UserRepository,
-  JournalQueryFuzzySearch,
-  TYPE_JOURNAL,
 } from "@white-rabbit/business-logic";
 import { container } from "tsyringe";
 import dayjs from "dayjs";
+import {
+  AccessItemValue,
+  AccountQuery,
+  AccountValue,
+  FinRecordValue,
+  GroupValue,
+  JournalQuery,
+  JournalQueryFuzzySearch,
+  JournalValue,
+  TYPE_ACCOUNT,
+  TYPE_GROUP,
+  TYPE_JOURNAL,
+  TYPE_USER,
+  UserValue,
+} from "@white-rabbit/type-bridge";
 import MemoryRepository from "./memory-repository";
 
 export class MemoryAccountRepository

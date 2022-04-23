@@ -1,9 +1,9 @@
+import { FinItemValue, TYPE_FIN_ITEM } from "@white-rabbit/type-bridge";
 import AbstractEntity from "../../shared/abstract-entity";
 import { Account } from "../account";
 import { User } from "../user";
 import { FieldValidationZeroError } from "../../shared/errors";
 import { FinRecord } from "./fin-record";
-import { FinItemValue } from "./fin-record-value";
 
 export interface FinItemCreateOptions {
   account: Account;
@@ -19,13 +19,7 @@ const MAX_LENGTH_UNIT = 50;
 
 const MAX_LENGTH_NOTE = 400;
 
-export const TYPE = "FinItem" as const;
-
-export class FinItem extends AbstractEntity<
-  FinItem,
-  FinItemValue,
-  typeof TYPE
-> {
+export class FinItem extends AbstractEntity<FinItem, FinItemValue> {
   readonly account: Account;
 
   #amount: number;
@@ -115,7 +109,7 @@ export class FinItem extends AbstractEntity<
     };
   }
 
-  get entityType(): typeof TYPE {
-    return TYPE;
+  get entityType(): symbol {
+    return TYPE_FIN_ITEM;
   }
 }

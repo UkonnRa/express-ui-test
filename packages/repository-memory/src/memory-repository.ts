@@ -1,16 +1,15 @@
 import {
   AbstractRepository,
   AdditionalFilter,
-  PageResult,
-  Pagination,
-  Sort,
   AbstractEntity,
   cursorToId,
 } from "@white-rabbit/business-logic";
+import { PageResult, Pagination, Sort } from "@white-rabbit/type-bridge";
 
-async function filtersAllMatching<
-  T extends AbstractEntity<T, unknown, unknown>
->(entities: T[], additionalFilters: Array<AdditionalFilter<T>>): Promise<T[]> {
+async function filtersAllMatching<T extends AbstractEntity<T, unknown>>(
+  entities: T[],
+  additionalFilters: Array<AdditionalFilter<T>>
+): Promise<T[]> {
   let result = [...entities];
 
   for (const f of additionalFilters) {
@@ -22,7 +21,7 @@ async function filtersAllMatching<
 }
 
 export default abstract class MemoryRepository<
-  T extends AbstractEntity<T, V, unknown>,
+  T extends AbstractEntity<T, V>,
   V,
   Q
 > implements AbstractRepository<T, V, Q>

@@ -15,6 +15,6 @@ export {
 } from "./read-single-task";
 export { WriteTaskSuccess, WriteTaskFailure, WriteTask } from "./write-task";
 
-export type ReadTask<T extends AbstractEntity<T, V, unknown>, Q, V> =
+export type ReadTask<T extends AbstractEntity<T, V>, Q, V> =
   | ReadTaskPage<T, Q, V>
   | ReadTaskSingle<V>;
