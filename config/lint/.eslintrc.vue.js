@@ -11,6 +11,7 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
     "@vue/eslint-config-prettier",
+    ".eslintrc-auto-import.json",
   ],
   env: {
     "vue/setup-compiler-macros": true,

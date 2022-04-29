@@ -17,13 +17,15 @@
     "preview:storybook": "serve storybook-static -p 5020"
   },
   "peerDependencies": {
-    "@mdi/font": "*",
     "@vueuse/components": "*",
     "@vueuse/core": "*",
     "@white-rabbit/type-bridge": "workspace:^",
+    "ant-design-vue": "*",
     "pinia": "*",
     "uuid": "*",
-    "vue-i18n": "9",
-    "vuetify": "*"
+    "vue-i18n": "*"
+  },
+  "dependencies": {
+    "@zougt/vite-plugin-theme-preprocessor": "^1.4.5"
   }
 }

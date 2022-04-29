@@ -1,18 +1,19 @@
+/* eslint-disable import/no-unresolved */
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import vuetify from "@vuetify/vite-plugin";
 import visualizer from "rollup-plugin-visualizer";
 import { vueI18n } from "@intlify/vite-plugin-vue-i18n";
 import path from "path";
+import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
+import Components from "unplugin-vue-components/vite";
+import AutoImport from "unplugin-auto-import/vite";
 
 export default defineConfig((env) => ({
   plugins: [
     vue(),
-    vuetify({
-      autoImport: env.mode !== "test",
-      styles: env.mode === "test" ? "none" : undefined,
-    }),
     visualizer({
+      gzipSize: true,
+      brotliSize: true,
       openOptions: {
         wait: false,
       },
@@ -20,10 +21,30 @@ export default defineConfig((env) => ({
     vueI18n({
       include: path.resolve(__dirname, "../components/src/locales/**"),
     }),
+    Components({
+      resolvers: [
+        AntDesignVueResolver({
+          importStyle: env.mode === "test" ? false : undefined,
+          cjs: env.mode === "test" ? true : undefined,
+        }),
+      ],
+    }),
+    AutoImport({
+      imports: [
+        "@vueuse/core",
+        "@vueuse/head",
+        "pinia",
+        "vue-i18n",
+        "vue-router",
+        "vue",
+      ],
+    }),
   ],
-  resolve: {
-    alias: {
-      "vue-i18n": "vue-i18n/dist/vue-i18n.runtime.esm-bundler.js",
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
     },
   },
   test: {

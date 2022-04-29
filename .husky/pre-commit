@@ -2,6 +2,6 @@
 . "$(dirname "$0")/_/husky.sh"
 
 export NODE_ENV="development"
-yarn lint
 yarn test
+yarn lint:fix
 yarn build

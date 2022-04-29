@@ -1,14 +1,8 @@
 import { app } from "@storybook/vue3";
-import {
-  vueI18nConfig,
-  vuetifyOptions,
-} from "@white-rabbit/components/src/plugins";
-import "@mdi/font/css/materialdesignicons.css";
+import { vueI18nConfig } from "@white-rabbit/components/src/plugins";
 import JournalViewApiImpl from "../api/JournalViewApiImpl";
-import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
 import { JOURNAL_API_KEY } from "@white-rabbit/components";
+import "ant-design-vue/dist/antd.variable.less";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -20,21 +14,13 @@ export const parameters = {
   },
 };
 
-// wrap all stories in `v-app`
 export const decorators = [
   (story: unknown) => ({
     components: { story },
-    template: "<v-app><story /></v-app>",
+    template: "<story />",
   }),
 ];
 
-app.use(
-  createVuetify({
-    ...vuetifyOptions,
-    components,
-    directives,
-  })
-);
 app.use(vueI18nConfig);
 
 app.provide(JOURNAL_API_KEY, new JournalViewApiImpl());
