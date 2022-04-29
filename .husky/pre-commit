@@ -3,5 +3,6 @@
 
 export NODE_ENV="development"
 yarn test
-yarn lint:fix
+yarn lint:prettier --write
 yarn build
+yarn lint:prettier --write
