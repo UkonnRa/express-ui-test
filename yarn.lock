@@ -22631,9 +22631,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^28.0.0-next.2":
-  version: 28.0.0-next.2
-  resolution: "ts-jest@npm:28.0.0-next.2"
+"ts-jest@npm:^28.0.0-next.3":
+  version: 28.0.0-next.3
+  resolution: "ts-jest@npm:28.0.0-next.3"
   dependencies:
     bs-logger: 0.x
     fast-json-stable-stringify: 2.x
@@ -22660,7 +22660,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 50ade2a9a70404f73b0d65a0fdeb5ae340b440da3caee4f6b00525d16859b17f951308573dd6437007cbf9f29f85dda87a04f51698094054328316d41e0d5be9
+  checksum: 51efe1efc3c0a11f55648cc6d8518e4b02e197f879134f2c969eda7fc9968c34e24940c8ea2892ab5feeaeaa102e2f524eab499104a2bc69f97f1c993bcd3869
   languageName: node
   linkType: hard
 
@@ -24385,7 +24385,7 @@ __metadata:
     serve: ^13.0.2
     start-server-and-test: ^1.14.0
     tree-kill: ^1.2.2
-    ts-jest: ^28.0.0-next.2
+    ts-jest: ^28.0.0-next.3
     ts-node: ^10.7.0
     typescript: ^4.6.4
     unplugin-auto-import: ^0.7.1

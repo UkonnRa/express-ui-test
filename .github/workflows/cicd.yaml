@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 16.x
       - name: Lint and test
-        run: yarn && yarn test && yarn build && yarn test:e2e
+        run: yarn && yarn test && yarn lint:prettier --write && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -56,7 +56,7 @@ jobs:
           python-version: '3.x'
       - name: Build Project
         run: yarn && yarn build
-      - name: Perpare Tools
+      - name: Prepare Tools
         run: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install jq -y
       - name: Build Docker Image
         run: >-
