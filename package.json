@@ -6,6 +6,7 @@
     "node": ">=16",
     "yarn": ">=3"
   },
+  "private": true,
   "scripts": {
     "prepare": "husky install",
     "clean": "yarn workspaces foreach -pit run clean",
