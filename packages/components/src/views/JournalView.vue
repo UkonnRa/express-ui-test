@@ -1,26 +1,41 @@
 <template>
-  <a-button type="primary" @click="onThemeChanged">WhiteRabbit</a-button>
-  <a-button>Default Button</a-button>
-  <a-button type="dashed">Dashed Button</a-button>
-  <a-button type="text">Text Button</a-button>
-  <a-button type="link">Link Button</a-button>
-  Count: {{ cnt }}
+  <app-default-layout
+    :breadcrumbs="breadcrumbs"
+    :side-menu-items="sideMenuItems"
+  >
+    <a-button type="primary">WhiteRabbit</a-button>
+    <a-button>Default Button</a-button>
+    <a-button type="dashed">Dashed Button</a-button>
+    <a-button type="text">Text Button</a-button>
+    <a-button type="link">Link Button</a-button>
+  </app-default-layout>
 </template>
 
 <script setup lang="ts">
-import { ConfigProvider } from "ant-design-vue";
+import AppDefaultLayout from "../layouts/AppDefaultLayout.vue";
+import {
+  AccountBookOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons-vue";
+import { ROUTE_JOURNALS_VIEW } from "../routes";
 
-const cnt = ref(0);
-const theme = ["#25b864", "#ff0000", "#00ff00"];
+const breadcrumbs = [
+  { name: "Journals", route: ROUTE_JOURNALS_VIEW },
+  { name: "test" },
+];
 
-const onThemeChanged = () => {
-  cnt.value++;
-  ConfigProvider.config({
-    theme: {
-      primaryColor: theme[cnt.value % theme.length],
-    },
-  });
-};
+const sideMenuItems = [
+  [
+    { name: "Journals", route: ROUTE_JOURNALS_VIEW, icon: AccountBookOutlined },
+    { name: "Groups", route: ROUTE_JOURNALS_VIEW, icon: TeamOutlined },
+  ],
+  [
+    { name: "Settings", route: ROUTE_JOURNALS_VIEW, icon: SettingOutlined },
+    { name: "About", route: ROUTE_JOURNALS_VIEW, icon: QuestionCircleOutlined },
+  ],
+];
 </script>
 
 <style scoped lang="less"></style>

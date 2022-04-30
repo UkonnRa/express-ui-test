@@ -12,4 +12,4 @@ export const vueI18nOptions: I18nOptions = {
   },
 };
 
-export default createI18n(vueI18nOptions);
+export const vueI18n = createI18n(vueI18nOptions);

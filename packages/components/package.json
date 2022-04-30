@@ -23,9 +23,7 @@
     "ant-design-vue": "*",
     "pinia": "*",
     "uuid": "*",
-    "vue-i18n": "*"
-  },
-  "dependencies": {
-    "@zougt/vite-plugin-theme-preprocessor": "^1.4.5"
+    "vue-i18n": "*",
+    "vue-router": "*"
   }
 }

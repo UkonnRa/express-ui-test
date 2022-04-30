@@ -19,10 +19,8 @@
     "@vueuse/core": "^8.3.1",
     "@white-rabbit/components": "workspace:^",
     "pinia": "^2.0.13",
-    "roboto-fontface": "^0.10.0",
     "uuid": "^8.3.2",
     "vue": "^3.2.33",
-    "vue-i18n": "9.1.9",
-    "webfontloader": "^1.6.28"
+    "vue-i18n": "9.1.9"
   }
 }

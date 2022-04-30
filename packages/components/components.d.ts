@@ -5,7 +5,21 @@ import "@vue/runtime-core";
 
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
+    ABreadcrumb: typeof import("ant-design-vue/lib")["Breadcrumb"];
+    ABreadcrumbItem: typeof import("ant-design-vue/lib")["BreadcrumbItem"];
     AButton: typeof import("ant-design-vue/lib")["Button"];
+    ADivider: typeof import("ant-design-vue/lib")["Divider"];
+    ALayout: typeof import("ant-design-vue/lib")["Layout"];
+    ALayoutContent: typeof import("ant-design-vue/lib")["LayoutContent"];
+    ALayoutFooter: typeof import("ant-design-vue/lib")["LayoutFooter"];
+    ALayoutHeader: typeof import("ant-design-vue/lib")["LayoutHeader"];
+    ALayoutSider: typeof import("ant-design-vue/lib")["LayoutSider"];
+    AMenu: typeof import("ant-design-vue/lib")["Menu"];
+    AMenuItem: typeof import("ant-design-vue/lib")["MenuItem"];
+    AppMenuItemsOutsideJournal: typeof import("./src/components/AppMenuItemsOutsideJournal.vue")["default"];
+    ASubMenu: typeof import("ant-design-vue/lib")["SubMenu"];
+    RouterLink: typeof import("vue-router")["RouterLink"];
+    RouterView: typeof import("vue-router")["RouterView"];
   }
 }
 
