@@ -95,7 +95,7 @@ export class Journal extends AbstractEntity<Journal, JournalValue> {
   }
 
   private static getAccessItemId(item: User | Group): string {
-    return `${item.entityType.toString()}${item.id}`;
+    return `${String(item.entityType.description)}${item.id}`;
   }
 
   private static accessListContains(

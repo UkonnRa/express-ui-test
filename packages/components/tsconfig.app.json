@@ -10,6 +10,7 @@
   "exclude": ["src/**/*.spec.ts", "src/**/*.stories.ts"],
   "compilerOptions": {
     "composite": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   }
 }

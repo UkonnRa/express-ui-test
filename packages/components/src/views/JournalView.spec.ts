@@ -5,6 +5,6 @@ import JournalView from "./JournalView.vue";
 describe("journal-list", () => {
   it("can be mounted", () => {
     const wrapper = mount(JournalView);
-    expect(wrapper.text()).toContain("WhiteRabbit");
+    expect(wrapper.find(".app-header--logo").text()).toContain("WhiteRabbit");
   });
 });

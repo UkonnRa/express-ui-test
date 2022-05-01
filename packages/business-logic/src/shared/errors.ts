@@ -30,9 +30,9 @@ export class NoAuthError extends AbstractError {
     super(
       `User[${String(
         operatorId
-      )}] has no authorization for operations on Type[${type.toString()}] with Id[${String(
-        id
-      )}] on Field[${String(field)}]`
+      )}] has no authorization for operations on Type[${String(
+        type.description
+      )}] with Id[${String(id)}] on Field[${String(field)}]`
     );
   }
 }
@@ -43,7 +43,7 @@ export class NotFoundError extends AbstractError {
   override readonly code = 404;
 
   constructor(readonly type: symbol, readonly id: string) {
-    super(`Type[${type.toString()}] with Id[${id}] is not found`);
+    super(`Type[${String(type.description)}] with Id[${id}] is not found`);
   }
 }
 
@@ -59,9 +59,9 @@ export class FieldValidationLengthError extends AbstractError {
     readonly max?: number
   ) {
     super(
-      `Field[${field}] in Type[${type.toString()}] should be between ${String(
-        min
-      )} and ${String(max)}`
+      `Field[${field}] in Type[${String(
+        type.description
+      )}] should be between ${String(min)} and ${String(max)}`
     );
   }
 }
@@ -85,7 +85,9 @@ export class FieldValidationZeroError extends AbstractError {
     } else if (!isPositive && orZero) {
       range = "non-positive";
     }
-    super(`Field[${field}] in Type[${type.toString()}] should be ${range}`);
+    super(
+      `Field[${field}] in Type[${String(type.description)}] should be ${range}`
+    );
   }
 }
 
@@ -104,7 +106,9 @@ export class FieldStartEndDateMismatchError extends AbstractError {
     super(
       `StartField[${startField}, value=${dayjs(
         startValue
-      ).format()}] in Type[${type.toString()}] should strictly before EndField[${endField}, value=${dayjs(
+      ).format()}] in Type[${String(
+        type.description
+      )}] should strictly before EndField[${endField}, value=${dayjs(
         endValue
       ).format()}]`
     );
@@ -137,7 +141,9 @@ export class InvalidSortFieldError extends AbstractError {
   override readonly code = 401;
 
   constructor(readonly type: symbol, readonly field: string) {
-    super(`Field[${field}] is not sortable in Type[${type.toString()}]`);
+    super(
+      `Field[${field}] is not sortable in Type[${String(type.description)}]`
+    );
   }
 }
 
@@ -147,7 +153,9 @@ export class FieldNotQueryableError extends AbstractError {
   override readonly code = 401;
 
   constructor(readonly type: symbol, readonly field: string) {
-    super(`Field[${field}] is not queryable in Type[${type.toString()}]`);
+    super(
+      `Field[${field}] is not queryable in Type[${String(type.description)}]`
+    );
   }
 }
 
@@ -162,7 +170,9 @@ export class InvalidTextError extends AbstractError {
     readonly text: string
   ) {
     super(
-      `Text[${text}] is not valid for Field[${field}] in Type[${type.toString()}]`
+      `Text[${text}] is not valid for Field[${field}] in Type[${String(
+        type.description
+      )}]`
     );
   }
 }
