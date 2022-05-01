@@ -1,11 +1,28 @@
 {
-  "delete": "Delete",
+  "keyword": "Keyword",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+  "groupsOrUsers": "Groups Or Users",
+  "search": "Search",
+  "clear": "Clear",
   "update": "Update",
-  "visit": "Visit",
+  "delete": "Delete",
+  "loadMore": "Load More",
+  "archived": "Archived",
+  "dateRange": "Date Range",
+  "description": "Description",
+  "journals": "Journals",
+  "groups": "Groups",
+  "settings": "Settings",
   "about": "About",
-  "toggleTheme": "Toggle Theme",
-  "includeArchived": {
-    "label": "Include Archived",
-    "title": "If true, both active journals and archived ones will be included"
-  }
+  "searchUsersOrGroups": "Search users or groups by keywords",
+  "nullValue": "Null",
+  "updateJournal": "Update Journal",
+  "createJournal": "Create Journal",
+  "name": "Name",
+  "admins": "Admins",
+  "members": "Members",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "messageRequireField": "Field['{0}'] is required"
 }
