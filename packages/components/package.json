@@ -21,6 +21,7 @@
     "@vueuse/core": "*",
     "@white-rabbit/type-bridge": "workspace:^",
     "ant-design-vue": "*",
+    "lodash-es": "*",
     "pinia": "*",
     "uuid": "*",
     "vue-i18n": "*",

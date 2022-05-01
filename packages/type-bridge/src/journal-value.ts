@@ -1,3 +1,6 @@
+import type { TYPE_USER } from "./user-value";
+import type { TYPE_GROUP } from "./group-value";
+
 export const TYPE_JOURNAL = Symbol("Journal");
 
 export interface JournalValue {
@@ -11,7 +14,10 @@ export interface JournalValue {
   readonly archived: boolean;
 }
 
+export type AccessItemType = typeof TYPE_USER | typeof TYPE_GROUP;
+
 export interface AccessItemValue {
-  readonly type: symbol;
+  readonly type: AccessItemType;
   readonly id: string;
+  readonly name: string;
 }

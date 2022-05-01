@@ -121,7 +121,7 @@ export class Group extends AbstractEntity<Group, GroupValue> {
     };
   }
 
-  get entityType(): symbol {
+  get entityType(): typeof TYPE_GROUP {
     return TYPE_GROUP;
   }
 }

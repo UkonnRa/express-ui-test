@@ -1,3 +1,4 @@
+export * from "./access-item-query";
 export * from "./account-command";
 export * from "./account-query";
 export * from "./account-value";

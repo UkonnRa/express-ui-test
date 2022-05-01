@@ -287,7 +287,7 @@ export abstract class AbstractSuite<
     });
 
     each(this.readTasks).test(
-      `Read task for ${this.type.toString()}: $name`,
+      `Read task for ${String(this.type.description)}: $name`,
       async (task: ReadTask<T, Q, V>) => {
         const authUser = task.authUserHandler();
         if (task.readType === "Single") {
@@ -367,7 +367,7 @@ export abstract class AbstractSuite<
     );
 
     each(this.writeTasks).test(
-      `Write task for ${this.type.toString()}: $name`,
+      `Write task for ${String(this.type.description)}: $name`,
       async (task: WriteTask<C, T>) => {
         await this.prepareData();
         if (task.setup !== undefined) {

@@ -231,12 +231,14 @@ export class JournalSuite extends AbstractSuite<
           {
             type: TYPE_USER,
             id: this.users[2].id,
+            name: this.users[2].name,
           },
         ],
         members: [
           {
             type: TYPE_GROUP,
             id: this.groups[1].id,
+            name: this.groups[1].name,
           },
         ],
         startDate: dayjs("2020-01-01").toDate(),
@@ -248,6 +250,7 @@ export class JournalSuite extends AbstractSuite<
             {
               type: TYPE_USER,
               id: this.users[3].id,
+              name: this.users[3].name,
             },
           ],
         })
@@ -266,11 +269,12 @@ export class JournalSuite extends AbstractSuite<
           description: "New Description",
           admins: this.users
             .filter((u) => u.isReadable())
-            .map((u) => ({ type: TYPE_USER, id: u.id })),
+            .map((u) => ({ type: TYPE_USER, id: u.id, name: u.name })),
           members: [
             {
               type: TYPE_GROUP,
               id: this.groups[1].id,
+              name: this.groups[1].name,
             },
           ],
         };
@@ -300,12 +304,14 @@ export class JournalSuite extends AbstractSuite<
           {
             type: TYPE_USER,
             id: this.users[2].id,
+            name: this.users[2].name,
           },
         ],
         members: [
           {
             type: TYPE_GROUP,
             id: this.groups[1].id,
+            name: this.groups[1].name,
           },
         ],
       }),
@@ -326,12 +332,14 @@ export class JournalSuite extends AbstractSuite<
           {
             type: TYPE_USER,
             id: this.users[2].id,
+            name: this.users[2].name,
           },
         ],
         members: [
           {
             type: TYPE_GROUP,
             id: this.groups[1].id,
+            name: this.groups[1].name,
           },
         ],
       }),
@@ -352,12 +360,14 @@ export class JournalSuite extends AbstractSuite<
           {
             type: TYPE_USER,
             id: this.users[2].id,
+            name: this.users[2].name,
           },
         ],
         members: [
           {
             type: TYPE_GROUP,
             id: this.groups[1].id,
+            name: this.groups[1].name,
           },
         ],
         startDate: dayjs("2020-02-01").toDate(),
@@ -383,12 +393,14 @@ export class JournalSuite extends AbstractSuite<
           {
             type: TYPE_USER,
             id: this.users[2].id,
+            name: this.users[2].name,
           },
         ],
         members: [
           {
             type: TYPE_GROUP,
             id: this.groups[1].id,
+            name: this.groups[1].name,
           },
         ],
         startDate: {

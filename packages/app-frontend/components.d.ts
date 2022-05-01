@@ -5,17 +5,35 @@ import "@vue/runtime-core";
 
 declare module "@vue/runtime-core" {
   export interface GlobalComponents {
-    ABreadcrumb: typeof import("ant-design-vue/es")["Breadcrumb"];
-    ABreadcrumbItem: typeof import("ant-design-vue/es")["BreadcrumbItem"];
-    AButton: typeof import("ant-design-vue/es")["Button"];
-    ADivider: typeof import("ant-design-vue/es")["Divider"];
-    ALayout: typeof import("ant-design-vue/es")["Layout"];
-    ALayoutContent: typeof import("ant-design-vue/es")["LayoutContent"];
-    ALayoutFooter: typeof import("ant-design-vue/es")["LayoutFooter"];
-    ALayoutHeader: typeof import("ant-design-vue/es")["LayoutHeader"];
-    ALayoutSider: typeof import("ant-design-vue/es")["LayoutSider"];
-    AMenu: typeof import("ant-design-vue/es")["Menu"];
-    AMenuItem: typeof import("ant-design-vue/es")["MenuItem"];
+    ABreadcrumb: typeof import("ant-design-vue/lib")["Breadcrumb"];
+    ABreadcrumbItem: typeof import("ant-design-vue/lib")["BreadcrumbItem"];
+    AButton: typeof import("ant-design-vue/lib")["Button"];
+    AConfigProvider: typeof import("ant-design-vue/lib")["ConfigProvider"];
+    ADatePicker: typeof import("ant-design-vue/lib")["DatePicker"];
+    ADivider: typeof import("ant-design-vue/lib")["Divider"];
+    ADropdown: typeof import("ant-design-vue/lib")["Dropdown"];
+    AForm: typeof import("ant-design-vue/lib")["Form"];
+    AFormItem: typeof import("ant-design-vue/lib")["FormItem"];
+    AInput: typeof import("ant-design-vue/lib")["Input"];
+    ALayout: typeof import("ant-design-vue/lib")["Layout"];
+    ALayoutContent: typeof import("ant-design-vue/lib")["LayoutContent"];
+    ALayoutFooter: typeof import("ant-design-vue/lib")["LayoutFooter"];
+    ALayoutHeader: typeof import("ant-design-vue/lib")["LayoutHeader"];
+    ALayoutSider: typeof import("ant-design-vue/lib")["LayoutSider"];
+    AList: typeof import("ant-design-vue/lib")["List"];
+    AListItem: typeof import("ant-design-vue/lib")["ListItem"];
+    AListItemMeta: typeof import("ant-design-vue/lib")["ListItemMeta"];
+    AMenu: typeof import("ant-design-vue/lib")["Menu"];
+    AMenuItem: typeof import("ant-design-vue/lib")["MenuItem"];
+    AModal: typeof import("ant-design-vue/lib")["Modal"];
+    ASelect: typeof import("ant-design-vue/lib")["Select"];
+    ASpace: typeof import("ant-design-vue/lib")["Space"];
+    ASpin: typeof import("ant-design-vue/lib")["Spin"];
+    ASwitch: typeof import("ant-design-vue/lib")["Switch"];
+    ATag: typeof import("ant-design-vue/lib")["Tag"];
+    ATextarea: typeof import("ant-design-vue/lib")["Textarea"];
+    ATypographyParagraph: typeof import("ant-design-vue/lib")["TypographyParagraph"];
+    ATypographyText: typeof import("ant-design-vue/lib")["TypographyText"];
     RouterLink: typeof import("vue-router")["RouterLink"];
     RouterView: typeof import("vue-router")["RouterView"];
   }

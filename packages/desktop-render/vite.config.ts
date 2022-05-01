@@ -17,7 +17,7 @@ export default defineConfig((env) => ({
       resolvers: [
         AntDesignVueResolver({
           importStyle: env.mode === "test" ? false : undefined,
-          cjs: env.mode === "test" ? true : undefined,
+          cjs: true,
         }),
       ],
     }),

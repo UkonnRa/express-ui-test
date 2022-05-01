@@ -20,7 +20,7 @@ export class User extends AbstractEntity<User, UserValue> {
 
   #authIds: Map<string, string>;
 
-  get entityType(): symbol {
+  get entityType(): typeof TYPE_USER {
     return TYPE_USER;
   }
 
