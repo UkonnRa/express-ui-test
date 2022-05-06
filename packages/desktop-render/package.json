@@ -15,7 +15,7 @@
     "build-storybook": "build-storybook -c ../../config/storybook"
   },
   "dependencies": {
-    "@vueuse/components": "^8.4.1",
+    "@vueuse/components": "^8.4.2",
     "@vueuse/core": "^8.4.1",
     "@white-rabbit/components": "workspace:^",
     "lodash-es": "^4.17.21",
