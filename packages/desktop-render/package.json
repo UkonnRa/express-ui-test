@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@vueuse/components": "^8.4.1",
-    "@vueuse/core": "^8.4.1",
+    "@vueuse/core": "^8.4.2",
     "@white-rabbit/components": "workspace:^",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.13",
