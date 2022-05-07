@@ -76,7 +76,6 @@ import type { MenuProps } from "ant-design-vue";
 import dayjs from "dayjs";
 import enUS from "ant-design-vue/es/locale/en_US";
 import zhCN from "ant-design-vue/es/locale/zh_CN";
-import "dayjs/locale/zh-cn";
 import { LOCALE_EN_US, LOCALE_ZH_CN } from "../plugins";
 
 const { t, locale, availableLocales } = useI18n();
@@ -94,11 +93,13 @@ const antdLocale = computed(() => {
     return enUS;
   }
 });
+
 const onLocaleSelected: MenuProps["onClick"] = (e) => {
   const selected = String(e.key);
   locale.value = selected;
   dayjs.locale(selected.toLowerCase());
 };
+
 const localeName = (value: string) => {
   if (value === LOCALE_ZH_CN) {
     return "简体中文";

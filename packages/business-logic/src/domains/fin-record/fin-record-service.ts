@@ -1,6 +1,11 @@
 import { inject, singleton } from "tsyringe";
 import {
   FinItemValue,
+  FinRecordCommand,
+  FinRecordCommandCreate,
+  FinRecordCommandDelete,
+  FinRecordCommandUpdate,
+  FinRecordQuery,
   FinRecordValue,
   TYPE_FIN_RECORD,
 } from "@white-rabbit/type-bridge";
@@ -9,13 +14,6 @@ import { AccountRepository, FinRecordRepository } from "../index";
 import { AuthUser } from "../../shared/auth-user";
 import JournalService from "../journal/journal-service";
 import { FinRecord } from "./fin-record";
-import { FinRecordQuery } from "./fin-record-query";
-import {
-  FinRecordCommand,
-  FinRecordCommandCreate,
-  FinRecordCommandDelete,
-  FinRecordCommandUpdate,
-} from "./fin-record-command";
 import { FinItemCreateOptions } from "./fin-item";
 
 @singleton()

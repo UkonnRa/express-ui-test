@@ -1,4 +1,4 @@
-import { Role } from "@white-rabbit/type-bridge";
+import type { Role } from "./user-value";
 
 export interface UserCommandCreate {
   type: "UserCommandCreate";

@@ -1,12 +1,5 @@
 import {
   User,
-  UserCommand,
-  UserQuery,
-  UserCommandCreate,
-  UserQueryFullText,
-  UserCommandUpdate,
-  UserCommandRebindAuthProvider,
-  UserCommandDelete,
   GroupRepository,
   JournalRepository,
   UserRepository,
@@ -18,7 +11,18 @@ import {
   AccountRepository,
 } from "@white-rabbit/business-logic";
 import { inject, singleton } from "tsyringe";
-import { Role, TYPE_USER, UserValue } from "@white-rabbit/type-bridge";
+import {
+  Role,
+  TYPE_USER,
+  UserValue,
+  UserQuery,
+  UserCommand,
+  UserQueryFullText,
+  UserCommandCreate,
+  UserCommandUpdate,
+  UserCommandRebindAuthProvider,
+  UserCommandDelete,
+} from "@white-rabbit/type-bridge";
 import {
   ReadTask,
   ReadTaskPageSuccess,
@@ -510,7 +514,7 @@ function check<CC extends UserCommand>(
         ...options,
       });
     } else {
-      fail(`User[${command.id}] failed to update`);
+      fail(`User failed to update`);
     }
   }
 }

@@ -7,7 +7,7 @@
     @ok="onUpdated"
     @cancel="onCancelled"
   >
-    <a-form :label-col="{ span: 4 }" :model="value">
+    <a-form :label-col="{ span: 4 }" :model="state">
       <a-form-item
         :label="t('name')"
         name="name"
@@ -15,31 +15,31 @@
           { required: true, message: t('messageRequireField', [t('name')]) },
         ]"
       >
-        <a-input v-model:value="value.name" />
+        <a-input v-model:value="state.name" />
       </a-form-item>
       <a-form-item :label="t('description')" name="description">
-        <a-textarea v-model:value="value.description" :rows="4" />
+        <a-textarea v-model:value="state.description" :rows="4" />
       </a-form-item>
       <a-form-item :label="t('startDate')" name="startDate">
         <a-date-picker
-          v-model:value="value.startDate"
+          v-model:value="state.startDate"
           :disabled-date="disabledStartDate"
         />
       </a-form-item>
       <a-form-item :label="t('endDate')" name="endDate">
         <a-date-picker
-          v-model:value="value.endDate"
+          v-model:value="state.endDate"
           :disabled-date="disabledEndDate"
         />
       </a-form-item>
       <a-form-item :label="t('admins')" name="admins">
-        <app-access-items v-model="value.admins"></app-access-items>
+        <app-access-items v-model="state.admins"></app-access-items>
       </a-form-item>
       <a-form-item :label="t('members')" name="members">
-        <app-access-items v-model="value.members"></app-access-items>
+        <app-access-items v-model="state.members"></app-access-items>
       </a-form-item>
       <a-form-item :label="t('archived')" name="archived">
-        <a-switch v-model:checked="value.archived" />
+        <a-switch v-model:checked="state.archived" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -69,7 +69,7 @@ const title = computed(() =>
 const onCancelled = () => emit("update:visible", false);
 const onUpdated = () => emit("update:visible", false);
 
-const value = reactive<{
+const state = reactive<{
   name?: string;
   description?: string;
   startDate?: Dayjs;
@@ -77,30 +77,26 @@ const value = reactive<{
   admins?: AccessItemValue[];
   members?: AccessItemValue[];
   archived?: boolean;
-}>({
-  ...props.value,
-  startDate: props.value?.startDate ? dayjs(props.value.startDate) : undefined,
-  endDate: props.value?.endDate ? dayjs(props.value.endDate) : undefined,
-});
+}>({});
 
 watchEffect(() => {
-  value.name = props.value?.name;
-  value.description = props.value?.description;
-  value.startDate = props.value?.startDate
+  state.name = props.value?.name;
+  state.description = props.value?.description;
+  state.startDate = props.value?.startDate
     ? dayjs(props.value.startDate)
     : undefined;
-  value.endDate = props.value?.endDate ? dayjs(props.value.endDate) : undefined;
-  value.admins = props.value?.admins;
-  value.members = props.value?.members;
-  value.archived = props.value?.archived;
+  state.endDate = props.value?.endDate ? dayjs(props.value.endDate) : undefined;
+  state.admins = props.value?.admins;
+  state.members = props.value?.members;
+  state.archived = props.value?.archived;
 });
 
 const disabledStartDate = (current: Dayjs) => {
-  return (value.endDate && current >= value.endDate.startOf("day")) || false;
+  return (state.endDate && current >= state.endDate.startOf("day")) || false;
 };
 
 const disabledEndDate = (current: Dayjs) => {
-  return (value.startDate && current <= value.startDate.endOf("day")) || false;
+  return (state.startDate && current <= state.startDate.endOf("day")) || false;
 };
 </script>
 

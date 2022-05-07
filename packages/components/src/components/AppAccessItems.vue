@@ -23,6 +23,20 @@
     auto-clear-search-value
     @search="onSearch"
   >
+    <template #dropdownRender="{ menuNode: menu }">
+      <component :is="menu" />
+      <a-divider style="margin: 4px 0" />
+      <a-button
+        type="link"
+        block
+        :disabled="searching"
+        @mousedown="(e) => e.preventDefault()"
+        @click="onLoadMoreOptionsClicked"
+      >
+        <sync-outlined :spin="searching" />
+        Load More
+      </a-button>
+    </template>
     <template v-if="searching" #notFoundContent>
       <a-spin size="small" />
     </template>
@@ -57,9 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { TeamOutlined, UserOutlined } from "@ant-design/icons-vue";
+import {
+  TeamOutlined,
+  UserOutlined,
+  SyncOutlined,
+} from "@ant-design/icons-vue";
 import type { SelectProps } from "ant-design-vue";
-
 import { TYPE_USER, TYPE_GROUP } from "@white-rabbit/type-bridge";
 import type { PageResult, AccessItemValue } from "@white-rabbit/type-bridge";
 import { debounce } from "lodash-es";
@@ -78,6 +95,9 @@ const emit = defineEmits<{
 }>();
 
 const accessItemApi = inject<AccessItemApi>(ACCESS_ITEM_API_KEY);
+if (!accessItemApi) {
+  throw new Error("accessItemApi not injected");
+}
 
 const selectedValues = computed({
   get: () =>
@@ -111,7 +131,7 @@ const selectedValues = computed({
   },
 });
 
-const pageItems = ref<PageResult<AccessItemValue>["pageItems"]>();
+const pageItems = ref<PageResult<AccessItemValue>["pageItems"]>([]);
 
 const options = computed<SelectProps["options"]>(() => {
   return pageItems.value
@@ -121,15 +141,18 @@ const options = computed<SelectProps["options"]>(() => {
 
 const searching = ref(false);
 
+const searchKeyword = ref<string>("");
+
 const onSearch = debounce(async (keyword: string) => {
-  pageItems.value = undefined;
+  pageItems.value = [];
   if (keyword.length === 0) {
     searching.value = false;
     return;
   }
+  searchKeyword.value = keyword;
   searching.value = true;
   pageItems.value = await accessItemApi
-    ?.findAll({
+    .findAll({
       sort: [{ field: "name", order: "ASC" }],
       pagination: { size: 10, startFrom: "FIRST" },
       query: { type: "AccessItemQuery", keyword },
@@ -137,6 +160,23 @@ const onSearch = debounce(async (keyword: string) => {
     .then((result) => result.pageItems);
   searching.value = false;
 }, 300);
+
+const onLoadMoreOptionsClicked = async () => {
+  searching.value = true;
+  const items = await accessItemApi
+    .findAll({
+      sort: [{ field: "name", order: "ASC" }],
+      pagination: {
+        size: 10,
+        startFrom: "FIRST",
+        after: pageItems.value[pageItems.value.length - 1].cursor,
+      },
+      query: { type: "AccessItemQuery", keyword: searchKeyword.value },
+    })
+    .then((result) => result.pageItems);
+  pageItems.value = [...pageItems.value, ...items];
+  searching.value = false;
+};
 </script>
 
 <style scoped lang="less"></style>
