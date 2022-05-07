@@ -10,7 +10,6 @@
   },
   "peerDependencies": {
     "@white-rabbit/business-logic": "workspace:^*",
-    "dayjs": "*",
     "tsyringe": "*"
   }
 }

@@ -5,6 +5,16 @@ import {
   JournalRepository,
   UserRepository,
   Group,
+  FieldValidationLengthError,
+  NoExpectedScopeError,
+  NotFoundError,
+  NoAuthError,
+  AccountRepository,
+} from "@white-rabbit/business-logic";
+import {
+  GroupValue,
+  TYPE_GROUP,
+  TYPE_USER,
   GroupQuery,
   GroupCommand,
   GroupCommandCreate,
@@ -12,13 +22,7 @@ import {
   GroupCommandDelete,
   GroupQueryFullText,
   GroupQueryByUser,
-  FieldValidationLengthError,
-  NoExpectedScopeError,
-  NotFoundError,
-  NoAuthError,
-  AccountRepository,
-} from "@white-rabbit/business-logic";
-import { GroupValue, TYPE_GROUP, TYPE_USER } from "@white-rabbit/type-bridge";
+} from "@white-rabbit/type-bridge";
 import {
   ReadTask,
   ReadTaskPageSuccess,
@@ -397,7 +401,7 @@ function check<CC extends GroupCommand>(
         ...options,
       });
     } else {
-      fail(`Group[${command.id}] failed to update`);
+      fail(`Group failed to update`);
     }
   }
 }

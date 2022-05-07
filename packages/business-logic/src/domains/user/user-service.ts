@@ -1,18 +1,20 @@
 import { inject, singleton } from "tsyringe";
-import { Role, TYPE_USER, UserValue } from "@white-rabbit/type-bridge";
-import AbstractService from "../../shared/abstract-service";
-import { AuthUser } from "../../shared/auth-user";
-import { NoAuthError, NoExpectedScopeError } from "../../shared/errors";
-import { UserRepository } from "../index";
-import { UserQuery } from "./user-query";
-import { User } from "./user";
 import {
+  Role,
+  TYPE_USER,
   UserCommand,
   UserCommandCreate,
   UserCommandDelete,
   UserCommandRebindAuthProvider,
   UserCommandUpdate,
-} from "./user-command";
+  UserQuery,
+  UserValue,
+} from "@white-rabbit/type-bridge";
+import AbstractService from "../../shared/abstract-service";
+import { AuthUser } from "../../shared/auth-user";
+import { NoAuthError, NoExpectedScopeError } from "../../shared/errors";
+import { UserRepository } from "../index";
+import { User } from "./user";
 
 @singleton()
 export default class UserService extends AbstractService<

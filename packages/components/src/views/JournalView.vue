@@ -241,13 +241,11 @@ const formatDate = (date?: Date): string => {
   return t("nullValue");
 };
 
-interface EditState {
+const editState = reactive<{
   visible: boolean;
   type: "Update" | "Create";
   value?: JournalValue;
-}
-
-const editState = reactive<EditState>({
+}>({
   visible: false,
   type: "Create",
 });

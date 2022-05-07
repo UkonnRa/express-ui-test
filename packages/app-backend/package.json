@@ -19,7 +19,6 @@
     "@white-rabbit/business-logic": "workspace:^",
     "@white-rabbit/repository-memory": "workspace:^",
     "@white-rabbit/repository-sequelize": "workspace:^",
-    "dayjs": "^1.11.2",
     "express": "^4.18.1",
     "js-base64": "^3.7.2",
     "reflect-metadata": "^0.1.13",

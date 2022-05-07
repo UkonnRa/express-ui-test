@@ -1,17 +1,20 @@
 import {
   AccountQuery,
   AccountValue,
+  FinRecordQuery,
   FinRecordValue,
+  GroupQuery,
   GroupValue,
   JournalQuery,
   JournalValue,
+  UserQuery,
   UserValue,
 } from "@white-rabbit/type-bridge";
 import { AbstractRepository } from "../shared/abstract-repository";
-import { User, UserQuery } from "./user";
+import { User } from "./user";
 import { Journal } from "./journal";
-import { Group, GroupQuery } from "./group";
-import { FinRecord, FinRecordQuery } from "./fin-record";
+import { Group } from "./group";
+import { FinRecord } from "./fin-record";
 import { Account } from "./account";
 
 export { default as AccountService } from "./account/account-service";

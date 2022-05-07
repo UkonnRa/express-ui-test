@@ -1,4 +1,4 @@
-import { AccessItemApi } from "@white-rabbit/components/src/api/AccessItemApi";
+import { AccessItemApi } from "@white-rabbit/components/src/api";
 import {
   AccessItemQuery,
   AccessItemValue,
@@ -16,7 +16,7 @@ export default class AccessItemApiImpl implements AccessItemApi {
     let items: AccessItemValue[] = [];
     if (query.query?.type === "AccessItemQuery") {
       const startIdx = query.pagination.after
-        ? Number(query.pagination.after)
+        ? Number(query.pagination.after) + 1
         : 0;
       items = Array.from({ length: query.pagination.size }, (_, idx) => {
         const id = idx + startIdx;

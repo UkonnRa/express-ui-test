@@ -19,7 +19,6 @@
   },
   "peerDependencies": {
     "@white-rabbit/business-logic": "workspace:^*",
-    "dayjs": "*",
     "js-base64": "*",
     "tsyringe": "*",
     "uuid": "*",
