@@ -16,7 +16,7 @@ export class WriteTaskSuccess<C, T, CC extends C = any>
   constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => CC,
+    readonly inputHandler: (authUser: AuthUser) => CC,
     readonly handler: (context: ContextSuccess<CC, T>) => void,
     readonly setup?: () => Promise<void>
   ) {}
@@ -39,7 +39,7 @@ export class WriteTaskFailure<
   constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => CC,
+    readonly inputHandler: (authUser: AuthUser) => CC,
     readonly errorHandler: (context: ContextFailure<CC>) => Partial<E>,
     readonly setup?: () => Promise<void>
   ) {}

@@ -14,18 +14,15 @@ import {
   JournalCreateOptions,
   JournalRepository,
   User,
-  UserCreateOptions,
   UserRepository,
 } from "@white-rabbit/business-logic";
 import each from "jest-each";
 import dayjs from "dayjs";
-import {
-  AccountType,
-  Pagination,
-  Role,
-  Strategy,
-} from "@white-rabbit/type-bridge";
+import { AccountType, Pagination, Strategy } from "@white-rabbit/type-bridge";
+import faker from "@faker-js/faker";
 import { ReadTask, WriteTask } from "../task";
+import { generateUsers } from "../data/generate-user";
+import { UserMatcher } from "./index";
 
 export abstract class AbstractSuite<
   T extends AbstractEntity<T, V>,
@@ -64,96 +61,33 @@ export abstract class AbstractSuite<
     this.journalRepository.close();
     this.accountRepository.close();
 
-    const users: User[] = [
-      {
-        name: "0: Owner 1",
-        role: Role.OWNER,
-        authIds: new Map([
-          ["Provider 1", "AuthId 1-0"],
-          ["Provider 2", "AuthId 2-0"],
-        ]),
-      },
-      {
-        name: "1: Owner 2",
-        role: Role.OWNER,
-        authIds: new Map([
-          ["Provider 3", "AuthId 3-1"],
-          ["Provider 2", "AuthId 2-1"],
-        ]),
-      },
-      {
-        name: "2: Admin 1",
-        role: Role.ADMIN,
-        authIds: new Map([
-          ["Provider 1", "AuthId 1-2"],
-          ["Provider 6", "AuthId 6-2"],
-        ]),
-      },
-      {
-        name: "3: Admin 2",
-        role: Role.ADMIN,
-        authIds: new Map([
-          ["Provider 4", "AuthId 4-3"],
-          ["Provider 5", "AuthId 5-3"],
-        ]),
-      },
-      {
-        name: "4: User 1",
-        role: Role.USER,
-        authIds: new Map([
-          ["Provider 3", "AuthId 3-4"],
-          ["Provider 4", "AuthId 4-4"],
-        ]),
-      },
-      {
-        name: "5: User 2",
-        role: Role.USER,
-        authIds: new Map([
-          ["Provider 2", "AuthId 2-5"],
-          ["Provider 4", "AuthId 4-5"],
-        ]),
-      },
-      {
-        name: "6: User Deleted",
-        role: Role.USER,
-        authIds: new Map([
-          ["Provider 2", "AuthId 2-6"],
-          ["Provider 4", "AuthId 4-6"],
-        ]),
-      },
-    ].map((options: UserCreateOptions, idx) => {
-      const user = new User(options);
-      user.id = `user-id-${idx}`;
-      return user;
-    });
-    users[6].deleted = true;
-    await this.userRepository.saveAll(users);
-    this.users = users;
+    this.users = generateUsers(20);
+    await this.userRepository.saveAll(this.users);
 
     const groups: Group[] = [
       {
         name: "Group 1",
         description: "Group 1 Description - foo, bar",
-        admins: [users[3], users[4]],
-        members: [users[0], users[1]],
+        admins: [this.users[3], this.users[4]],
+        members: [this.users[0], this.users[1]],
       },
       {
         name: "Group 2",
         description: "Group 2 Description - bar, baz",
-        admins: [users[4], users[5]],
-        members: [users[2], users[3]],
+        admins: [this.users[4], this.users[5]],
+        members: [this.users[2], this.users[3]],
       },
       {
         name: "Group 3",
         description: "Group 3 Description - baz, foo",
-        admins: [users[0], users[2]],
-        members: [users[1], users[5]],
+        admins: [this.users[0], this.users[2]],
+        members: [this.users[1], this.users[5]],
       },
       {
         name: "Group 4",
         description: "Group 4 Description - bar, foo",
-        admins: [users[1], users[5]],
-        members: [users[3], users[4]],
+        admins: [this.users[1], this.users[5]],
+        members: [this.users[3], this.users[4]],
       },
     ].map((options: GroupCreateOptions, idx) => {
       const group = new Group(options);
@@ -168,7 +102,7 @@ export abstract class AbstractSuite<
         {
           name: "Journal 1",
           description: "Journal 1 Description",
-          admins: [users[0], users[1]],
+          admins: [this.users[0], this.users[1]],
           members: [groups[0]],
           startDate: dayjs("2020-01-01"),
           endDate: dayjs("2020-02-01"),
@@ -176,13 +110,13 @@ export abstract class AbstractSuite<
         {
           name: "Journal 2",
           description: "Journal 2 Description",
-          admins: [users[0], users[1]],
-          members: [users[2], users[3]],
+          admins: [this.users[0], this.users[1]],
+          members: [this.users[2], this.users[3]],
         },
         {
           name: "Journal 3",
           description: "Journal 3 Description",
-          admins: [users[1], groups[1]],
+          admins: [this.users[1], groups[1]],
           members: [groups[0]],
           startDate: dayjs("2020-01-15"),
           endDate: dayjs("2020-02-15"),
@@ -190,7 +124,7 @@ export abstract class AbstractSuite<
         {
           name: "Journal 4",
           description: "Journal 4 Description",
-          admins: [users[1]],
+          admins: [this.users[1]],
           members: [groups[0]],
           startDate: dayjs("2020-01-15"),
           archived: true,
@@ -265,129 +199,149 @@ export abstract class AbstractSuite<
   }
 
   protected getAuthUser(
-    ident: number | AuthId,
+    query: UserMatcher | AuthId = {},
     scopes: string[] = [this.service.readScope, this.service.writeScope]
   ): AuthUser {
     let authId: AuthId;
     let user: User | undefined;
-    if (typeof ident === "number") {
-      user = this.users[ident];
-      const auth = [...user.authIds][0];
-      authId = { provider: auth[0], id: auth[1] };
+
+    if ("provider" in query && "id" in query) {
+      authId = query;
     } else {
-      authId = ident;
+      user = faker.helpers.arrayElement(this.queryUsers(query));
+      const [provider, id] = faker.helpers.arrayElement([...user.authIds]);
+      authId = { provider, id };
     }
 
     return new AuthUser(authId, scopes, user);
   }
 
+  protected queryUsers = (query: UserMatcher): User[] =>
+    this.users.filter(
+      (u) =>
+        (query.authId != null
+          ? u.authIds.get(query.authId.id) === query.authId.provider
+          : true) &&
+        (query.role != null ? u.role === query.role : true) &&
+        (query.containDeleted === true ? true : !u.deleted)
+    );
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   start(): void {
+    if (this.readTasks.length <= 0 && this.writeTasks.length <= 0) {
+      return;
+    }
+
     beforeAll(async () => {
       await this.prepareData();
     });
 
-    each(this.readTasks).test(
-      `Read task for ${String(this.type.description)}: $name`,
-      async (task: ReadTask<T, Q, V>) => {
-        const authUser = task.authUserHandler();
-        if (task.readType === "Single") {
-          const input = task.inputHandler();
-          if (task.type === "Success") {
-            const result = await this.service.findValueById(authUser, input);
-            task.handler({ input, authUser, result });
-          } else {
-            await expect(async () =>
-              this.service.findValueById(authUser, input)
-            ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
-          }
-        } else {
-          const input = task.inputHandler();
-          if (task.type === "Success") {
-            const result = await this.service.findAllValues(
-              authUser,
-              input.sort,
-              input.pagination,
-              input.query
-            );
-            task.handler({
-              input,
-              authUser,
-              result: { page: result, position: "current" },
-            });
-            if (task.expectedResult.previous !== undefined) {
-              const p: Pagination = {
-                size: input.pagination.size,
-                before: result.pageInfo.startCursor,
-                startFrom: "LAST",
-              };
-              const i = { ...input, pagination: p };
-              const prevResult = await this.service.findAllValues(
-                authUser,
-                i.sort,
-                i.pagination,
-                i.query
-              );
-              task.handler({
-                input: i,
-                authUser,
-                result: { page: prevResult, position: "previous" },
-              });
-            }
-            if (task.expectedResult.next !== undefined) {
-              const p: Pagination = {
-                size: input.pagination.size,
-                after: result.pageInfo.endCursor,
-                startFrom: "FIRST",
-              };
-              const i = { ...input, pagination: p };
-              const nextResult = await this.service.findAllValues(
-                authUser,
-                i.sort,
-                i.pagination,
-                i.query
-              );
-              task.handler({
-                input: i,
-                authUser,
-                result: { page: nextResult, position: "next" },
-              });
+    if (this.readTasks.length > 0) {
+      each(this.readTasks).test(
+        `Read task for ${String(this.type.description)}: $name`,
+        async (task: ReadTask<T, Q, V>) => {
+          const authUser = task.authUserHandler();
+          if (task.readType === "Single") {
+            const input = task.inputHandler(authUser);
+            if (task.type === "Success") {
+              const result = await this.service.findValueById(authUser, input);
+              task.handler({ input, authUser, result });
+            } else {
+              await expect(async () =>
+                this.service.findValueById(authUser, input)
+              ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
             }
           } else {
-            await expect(async () =>
-              this.service.findAllValues(
+            const input = task.inputHandler(authUser);
+            if (task.type === "Success") {
+              const result = await this.service.findAllValues(
                 authUser,
                 input.sort,
                 input.pagination,
                 input.query
-              )
-            ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
+              );
+              task.handler({
+                input,
+                authUser,
+                result: { page: result, position: "current" },
+              });
+              if (task.expectedResult.previous !== undefined) {
+                const p: Pagination = {
+                  size: input.pagination.size,
+                  before: result.pageInfo.startCursor,
+                  startFrom: "LAST",
+                };
+                const i = { ...input, pagination: p };
+                const prevResult = await this.service.findAllValues(
+                  authUser,
+                  i.sort,
+                  i.pagination,
+                  i.query
+                );
+                task.handler({
+                  input: i,
+                  authUser,
+                  result: { page: prevResult, position: "previous" },
+                });
+              }
+              if (task.expectedResult.next !== undefined) {
+                const p: Pagination = {
+                  size: input.pagination.size,
+                  after: result.pageInfo.endCursor,
+                  startFrom: "FIRST",
+                };
+                const i = { ...input, pagination: p };
+                const nextResult = await this.service.findAllValues(
+                  authUser,
+                  i.sort,
+                  i.pagination,
+                  i.query
+                );
+                task.handler({
+                  input: i,
+                  authUser,
+                  result: { page: nextResult, position: "next" },
+                });
+              }
+            } else {
+              await expect(async () =>
+                this.service.findAllValues(
+                  authUser,
+                  input.sort,
+                  input.pagination,
+                  input.query
+                )
+              ).rejects.toMatchObject(task.errorHandler({ input, authUser }));
+            }
           }
         }
-      }
-    );
+      );
+    }
 
-    each(this.writeTasks).test(
-      `Write task for ${String(this.type.description)}: $name`,
-      async (task: WriteTask<C, T>) => {
-        await this.prepareData();
-        if (task.setup !== undefined) {
-          await task.setup();
-        }
-        const authUser = task.authUserHandler();
-        const command = task.inputHandler();
-        if (task.type === "Success") {
-          const id = await this.service.handle(authUser, command);
-          const result = await this.repository.findById(id);
-          task.handler({ command, authUser, result });
-        } else {
-          await expect(async () =>
-            this.service.handle(authUser, command)
-          ).rejects.toMatchObject(task.errorHandler({ command, authUser }));
-        }
-        if (task.setup !== undefined) {
+    if (this.writeTasks.length > 0) {
+      each(this.writeTasks).test(
+        `Write task for ${String(this.type.description)}: $name`,
+        async (task: WriteTask<C, T>) => {
           await this.prepareData();
+          if (task.setup !== undefined) {
+            await task.setup();
+          }
+          const authUser = task.authUserHandler();
+          const command = task.inputHandler(authUser);
+          if (task.type === "Success") {
+            const id = await this.service.handle(authUser, command);
+            const result = await this.repository.findById(id);
+            task.handler({ command, authUser, result });
+          } else {
+            await expect(async () =>
+              this.service.handle(authUser, command)
+            ).rejects.toMatchObject(task.errorHandler({ command, authUser }));
+          }
+          if (task.setup !== undefined) {
+            await this.prepareData();
+          }
         }
-      }
-    );
+      );
+    }
   }
 }

@@ -16,7 +16,7 @@ export class ReadTaskSingleSuccess<V> extends AbstractReadTaskSuccess<
   constructor(
     override readonly name: string,
     override readonly authUserHandler: () => AuthUser,
-    override readonly inputHandler: () => string,
+    override readonly inputHandler: (authUser: AuthUser) => string,
     override readonly handler: (context: ReadContextSuccess<string, V>) => void
   ) {
     super(name, authUserHandler, inputHandler);
@@ -31,7 +31,7 @@ export class ReadTaskSingleFailure<
   constructor(
     override readonly name: string,
     override readonly authUserHandler: () => AuthUser,
-    override readonly inputHandler: () => string,
+    override readonly inputHandler: (authUser: AuthUser) => string,
     override readonly errorHandler: (
       context: ReadContextFailure<string>
     ) => Partial<E>

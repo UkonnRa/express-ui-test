@@ -11,10 +11,16 @@ import {
   ReadContextSuccess,
 } from "./read-task";
 
-interface ExpectedResult {
-  current: number[];
-  previous?: number[];
-  next?: number[];
+interface ExpectedResult<Q, V> {
+  current: (result: ReadContextSuccess<Q | undefined, PageResult<V>>) => void;
+  previous?: (
+    result: ReadContextSuccess<Q | undefined, PageResult<V>>,
+    originalResult: PageResult<V>
+  ) => void;
+  next?: (
+    result: ReadContextSuccess<Q | undefined, PageResult<V>>,
+    originalResult: PageResult<V>
+  ) => void;
 }
 
 interface ActualResult<V> {
@@ -34,9 +40,8 @@ export class ReadTaskPageSuccess<
   constructor(
     override readonly name: string,
     override readonly authUserHandler: () => AuthUser,
-    override readonly inputHandler: () => QueryType<QQ>,
-    private readonly entitiesHandler: () => T[],
-    readonly expectedResult: ExpectedResult
+    override readonly inputHandler: (authUser: AuthUser) => QueryType<QQ>,
+    readonly expectedResult: ExpectedResult<QQ, V>
   ) {
     super(name, authUserHandler, inputHandler);
   }
@@ -45,18 +50,15 @@ export class ReadTaskPageSuccess<
     context: ReadContextSuccess<QueryType<QQ>, ActualResult<V>>
   ): void => {
     const { page, position } = context.result;
-    const entities = this.entitiesHandler();
-    const items = this.expectedResult[position];
-    if (items == null) {
+    const itemsFunc = this.expectedResult[position];
+    if (itemsFunc == null) {
       fail(`Position[${position}] does not exist`);
       return;
     }
-    const data = items.map((i) => entities[i]);
-    expect(page.pageItems).toStrictEqual(
-      data.map((e) => ({
-        cursor: e?.toCursor(),
-        data: e?.toValue(),
-      }))
+
+    itemsFunc(
+      { input: context.input.query, authUser: context.authUser, result: page },
+      context.result.page
     );
   };
 }
