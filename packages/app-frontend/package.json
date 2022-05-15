@@ -14,14 +14,14 @@
     "build-storybook": "build-storybook -c ../../config/storybook"
   },
   "dependencies": {
-    "@vueuse/components": "^8.4.2",
-    "@vueuse/core": "^8.4.2",
+    "@vueuse/components": "^8.5.0",
+    "@vueuse/core": "^8.5.0",
     "@white-rabbit/components": "workspace:^",
-    "ant-design-vue": "^3.2.3",
+    "ant-design-vue": "^3.2.4",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.14",
     "uuid": "^8.3.2",
-    "vue": "^3.2.33",
+    "vue": "^3.2.36",
     "vue-i18n": "9.1.10",
     "vue-router": "^4.0.15"
   }

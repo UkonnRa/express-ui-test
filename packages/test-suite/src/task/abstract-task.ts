@@ -7,5 +7,5 @@ export interface AbstractTask<I> {
 
   readonly authUserHandler: () => AuthUser;
 
-  readonly inputHandler: () => I;
+  readonly inputHandler: (authUser: AuthUser) => I;
 }

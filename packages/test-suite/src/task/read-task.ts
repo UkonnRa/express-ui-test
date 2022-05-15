@@ -26,7 +26,7 @@ export abstract class AbstractReadTaskSuccess<I, V, T extends ReadType>
   protected constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => I
+    readonly inputHandler: (authUser: AuthUser) => I
   ) {}
 }
 
@@ -50,6 +50,6 @@ export abstract class AbstractReadTaskFailure<
   protected constructor(
     readonly name: string,
     readonly authUserHandler: () => AuthUser,
-    readonly inputHandler: () => I
+    readonly inputHandler: (authUser: AuthUser) => I
   ) {}
 }
