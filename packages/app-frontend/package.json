@@ -14,7 +14,7 @@
     "build-storybook": "build-storybook -c ../../config/storybook"
   },
   "dependencies": {
-    "@vueuse/components": "^8.4.2",
+    "@vueuse/components": "^8.5.0",
     "@vueuse/core": "^8.4.2",
     "@white-rabbit/components": "workspace:^",
     "ant-design-vue": "^3.2.3",
