@@ -29,7 +29,7 @@ jobs:
       - name: Lint and test
         run: yarn && yarn test && yarn lint:prettier --write && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: SonarCloud Scan
