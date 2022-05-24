@@ -25,7 +25,7 @@ jobs:
       - name: Configure Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Lint and test
         run: yarn && yarn test && yarn lint:prettier --write && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
@@ -50,7 +50,7 @@ jobs:
       - name: Configure Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - uses: actions/setup-python@v3
         with:
           python-version: '3.x'
@@ -86,7 +86,7 @@ jobs:
       - name: Configure Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: Build Project
         run: yarn && yarn build
       - name: Archive Windows Desktop

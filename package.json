@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.2.1",
   "version": "0.0.1",
   "engines": {
-    "node": ">=16",
+    "node": ">=18",
     "yarn": ">=3"
   },
   "private": true,
