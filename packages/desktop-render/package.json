@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/desktop-render",
-  "packageManager": "yarn@3.2.0",
+  "packageManager": "yarn@3.2.1",
   "version": "0.0.1",
   "scripts": {
     "dev": "vite --port 5030",
