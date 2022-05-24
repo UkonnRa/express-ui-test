@@ -1,5 +1,10 @@
 {
-  "extends": [
-    "config:base"
+  "extends": ["config:base", ":preserveSemverRanges"],
+  "semanticCommits": "enabled",
+  "packageRules": [
+    {
+      "matchPaths": ["docs/**"],
+      "ignoreDeps": ["rehype-katex", "remark-math", "@mdx-js/react"]
+    }
   ]
 }
