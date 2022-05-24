@@ -1,3 +1,5 @@
+# === From https://blog.alphasmanifesto.com/2021/11/07/yarn-2-dependabot/ ===
+#
 # Automatically save updated `yarn.lock` file for dependabot PRs.
 # This is necessary because dependabot doesn't support Yarn v2 yet:
 # https://github.com/dependabot/dependabot-core/issues/1297
@@ -27,7 +29,7 @@ jobs:
       YARN_ENABLE_SCRIPTS: false
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # Using a Personal Access Token here is required to trigger workflows on our new commit.
           # The default GitHub token doesn't trigger any workflows.
@@ -38,9 +40,9 @@ jobs:
       - run: git lfs pull --include .yarn/
 
       - name: Configure Node.js
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v3
         with:
-          node-version: 15.x
+          node-version: 16
 
       - name: Restore cache
         uses: actions/cache@v2.1.4

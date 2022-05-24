@@ -21,15 +21,15 @@ jobs:
       WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
       WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup node v16
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 16
       - name: Lint and test
         run: yarn && yarn test && yarn lint:prettier --write && yarn build && yarn test:e2e
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: SonarCloud Scan
@@ -46,12 +46,12 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup node v16
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-      - uses: actions/setup-python@v2
+          node-version: 16
+      - uses: actions/setup-python@v3
         with:
           python-version: '3.x'
       - name: Build Project
@@ -82,11 +82,11 @@ jobs:
     env:
       NODE_ENV: production
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup node v16
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 16
       - name: Build Project
         run: yarn && yarn build
       - name: Archive Windows Desktop

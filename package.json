@@ -111,6 +111,7 @@
   "resolutions": {
     "async": "^3.2.2",
     "minimist": "^1.2.6",
-    "trim": "^0.0.3"
+    "trim": "^0.0.3",
+    "trim-newlines": "^3.0.1"
   }
 }

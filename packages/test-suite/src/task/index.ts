@@ -1,5 +1,5 @@
 import { AbstractEntity, AuthUser } from "@white-rabbit/business-logic";
-import { QueryType } from "@white-rabbit/type-bridge/dist";
+import { QueryType } from "@white-rabbit/type-bridge";
 import { UserMatcher } from "../suite";
 import { ReadTaskPage } from "./read-page-task";
 import { ReadTaskSingle } from "./read-single-task";
