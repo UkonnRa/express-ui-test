@@ -95,7 +95,7 @@
     "unplugin-auto-import": "^0.8.1",
     "unplugin-vue-components": "^0.19.5",
     "vite": "^2.9.9",
-    "vitest": "^0.12.9",
+    "vitest": "^0.13.0",
     "vscode-languageserver-protocol": "^3.17.1",
     "vue": "^3.2.36",
     "vue-loader": "^17.0.0",
