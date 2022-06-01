@@ -1,0 +1,782 @@
+openapi: 3.0.3
+info:
+  title: Wonderland RabbitHole Example Application
+  description: Wonderland RabbitHole Example Application
+  version: 1.0.0
+servers:
+  - url: https://localhost:8080
+paths:
+  /articles:
+    get:
+      operationId: getArticles
+      parameters:
+        - name: include
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fields
+          in: query
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        - name: sort
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: page
+          in: query
+          schema:
+            type: object
+        - name: filter
+          in: query
+          schema:
+            type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ArticleTopLevelDataArray'
+    post:
+      operationId: createArticle
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/ArticleCommandCreate'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ArticleTopLevelDataSingle'
+  /articles/{id}:
+    get:
+      operationId: getArticle
+      parameters:
+        - name: include
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fields
+          in: query
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ArticleTopLevelDataSingle'
+    delete:
+      operationId: deleteArticle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+    patch:
+      operationId: updateArticle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/ArticleCommandUpdate'
+      responses:
+        "204":
+          description: No Content
+  /users:
+    get:
+      operationId: getUsers
+      parameters:
+        - name: include
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fields
+          in: query
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        - name: sort
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: page
+          in: query
+          schema:
+            type: object
+        - name: filter
+          in: query
+          schema:
+            type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/UserTopLevelDataArray'
+    post:
+      operationId: createUser
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/UserCommandCreate'
+      responses:
+        "201":
+          description: Created
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/UserTopLevelDataSingle'
+  /users/{id}:
+    get:
+      operationId: getUser
+      parameters:
+        - name: include
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fields
+          in: query
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/UserTopLevelDataSingle'
+    delete:
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+    patch:
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/UserCommandUpdate'
+      responses:
+        "204":
+          description: No Content
+components:
+  schemas:
+    Relationship:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ResourceLinkage'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            related:
+              $ref: '#/components/schemas/Link'
+        meta:
+          type: object
+    ResourceLinkage:
+      oneOf:
+        - $ref: '#/components/schemas/ResourceIdentifier'
+        - type: array
+          items:
+            $ref: '#/components/schemas/ResourceIdentifier'
+    ResourceIdentifier:
+      required:
+        - id
+        - type
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+    JsonapiError:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            about:
+              $ref: '#/components/schemas/Link'
+        title:
+          type: string
+        meta:
+          type: object
+        status:
+          type: string
+        detail:
+          type: string
+        code:
+          type: string
+        source:
+          type: object
+          properties:
+            pointer:
+              type: string
+            parameter:
+              type: string
+        id:
+          type: string
+    Jsonapi:
+      required:
+        - version
+      type: object
+      properties:
+        version:
+          type: string
+        meta:
+          type: object
+    PaginationMeta:
+      type: object
+      properties:
+        rangeTruncated:
+          type: integer
+          format: int32
+    Resource:
+      required:
+        - type
+        - id
+      type: object
+      properties:
+        type:
+          type: string
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+        relationships:
+          type: object
+          additionalProperties:
+            oneOf:
+              - $ref: '#/components/schemas/Relationship'
+              - type: array
+                items:
+                  $ref: '#/components/schemas/Relationship'
+        meta:
+          type: object
+        attributes:
+          type: object
+        id:
+          type: string
+    Link:
+      oneOf:
+        - type: string
+        - required:
+            - href
+          type: object
+          properties:
+            href:
+              type: string
+            meta:
+              type: object
+    ArticleAttributes:
+      required:
+        - count
+        - ranks
+        - state
+        - tags
+      type: object
+      properties:
+        ranks:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        count:
+          type: integer
+          format: int32
+        state:
+          $ref: '#/components/schemas/ArticleState'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+      additionalProperties: false
+    ArticleRelationships:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/UserResourceIdentifier'
+      additionalProperties: false
+    ArticleResource:
+      required:
+        - type
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - articles
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+        relationships:
+          $ref: '#/components/schemas/ArticleRelationships'
+        attributes:
+          $ref: '#/components/schemas/ArticleAttributes'
+      additionalProperties: false
+    ArticleResourceIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - articles
+      additionalProperties: false
+    ArticleTopLevelDataArray:
+      required:
+        - data
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            next:
+              $ref: '#/components/schemas/Link'
+            first:
+              $ref: '#/components/schemas/Link'
+            self:
+              $ref: '#/components/schemas/Link'
+            related:
+              $ref: '#/components/schemas/Link'
+            last:
+              $ref: '#/components/schemas/Link'
+            prev:
+              $ref: '#/components/schemas/Link'
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        meta:
+          type: object
+          properties:
+            page:
+              $ref: '#/components/schemas/PaginationMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleResource'
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    ArticleTopLevelDataSingle:
+      required:
+        - data
+      type: object
+      properties:
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        data:
+          $ref: '#/components/schemas/ArticleResource'
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            related:
+              $ref: '#/components/schemas/Link'
+      additionalProperties: false
+    ArticleCommandDelete:
+      type: object
+      properties:
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    ArticleCommandUpdate:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          required:
+            - attributes
+          type: object
+          properties:
+            attributes:
+              discriminator:
+                propertyName: type
+              oneOf:
+                - required:
+                    - type
+                    - data
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                          format: int32
+                        state:
+                          $ref: '#/components/schemas/ArticleState'
+                    type:
+                      type: string
+                      enum:
+                        - ArticleCommandUpdate
+                  additionalProperties: false
+                - required:
+                    - type
+                    - data
+                  type: object
+                  properties:
+                    data:
+                      required:
+                        - authorId
+                      type: object
+                      properties:
+                        authorId:
+                          type: string
+                    type:
+                      type: string
+                      enum:
+                        - ArticleCommandUpdateAuthor
+                  additionalProperties: false
+          additionalProperties: false
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    ArticleCommandCreate:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          required:
+            - attributes
+          type: object
+          properties:
+            attributes:
+              required:
+                - count
+              type: object
+              properties:
+                count:
+                  type: integer
+                  format: int32
+                authorId:
+                  type: string
+          additionalProperties: false
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    UserAttributes:
+      required:
+        - createAt
+        - numbers
+        - password
+      type: object
+      properties:
+        password:
+          $ref: '#/components/schemas/Password'
+        name:
+          type: string
+        numbers:
+          type: array
+          items:
+            type: integer
+            format: int32
+        createAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    UserRelationships:
+      required:
+        - articles
+      type: object
+      properties:
+        manager:
+          $ref: '#/components/schemas/UserResourceIdentifier'
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArticleResourceIdentifier'
+      additionalProperties: false
+    UserResource:
+      required:
+        - type
+        - id
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - users
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+        relationships:
+          $ref: '#/components/schemas/UserRelationships'
+        attributes:
+          $ref: '#/components/schemas/UserAttributes'
+      additionalProperties: false
+    UserResourceIdentifier:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - users
+      additionalProperties: false
+    UserTopLevelDataArray:
+      required:
+        - data
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            next:
+              $ref: '#/components/schemas/Link'
+            first:
+              $ref: '#/components/schemas/Link'
+            self:
+              $ref: '#/components/schemas/Link'
+            related:
+              $ref: '#/components/schemas/Link'
+            last:
+              $ref: '#/components/schemas/Link'
+            prev:
+              $ref: '#/components/schemas/Link'
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        meta:
+          type: object
+          properties:
+            page:
+              $ref: '#/components/schemas/PaginationMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResource'
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    UserTopLevelDataSingle:
+      required:
+        - data
+      type: object
+      properties:
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+        data:
+          $ref: '#/components/schemas/UserResource'
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+        links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/Link'
+            related:
+              $ref: '#/components/schemas/Link'
+      additionalProperties: false
+    UserCommandDelete:
+      type: object
+      properties:
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    UserCommandUpdate:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          required:
+            - attributes
+          type: object
+          properties:
+            attributes:
+              required:
+                - name
+              type: object
+              properties:
+                name:
+                  type: string
+          additionalProperties: false
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    UserCommandCreate:
+      required:
+        - data
+      type: object
+      properties:
+        data:
+          required:
+            - attributes
+          type: object
+          properties:
+            attributes:
+              required:
+                - articleIds
+                - name
+                - password
+                - userId
+              type: object
+              properties:
+                password:
+                  type: string
+                articleIds:
+                  type: array
+                  items:
+                    type: string
+                name:
+                  type: string
+                userId:
+                  type: string
+          additionalProperties: false
+        jsonapi:
+          $ref: '#/components/schemas/Jsonapi'
+      additionalProperties: false
+    Password:
+      required:
+        - type
+        - data
+      discriminator:
+        propertyName: type
+      oneOf:
+        - type: object
+          properties:
+            data:
+              required:
+                - createAt
+              type: object
+              properties:
+                createAt:
+                  type: string
+                  format: date-time
+            type:
+              type: string
+              enum:
+                - PasswordHanging
+        - type: object
+          properties:
+            data:
+              required:
+                - value
+              type: object
+              properties:
+                value:
+                  type: string
+            type:
+              type: string
+              enum:
+                - PasswordNormal
+    ArticleState:
+      type: string
+      enum:
+        - IN
+        - OUT
+    Tag:
+      required:
+        - number
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+        id:
+          type: string
