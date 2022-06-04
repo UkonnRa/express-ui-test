@@ -5,6 +5,7 @@ import App from "../App.vue";
 describe("App.vue", () => {
   it("can be mounted", () => {
     const wrapper = mount(App);
-    expect(wrapper.find(".app-header--logo").text()).toContain("WhiteRabbit");
+    expect(wrapper.text()).toContain("User");
+    expect(wrapper.text()).toContain("Hello");
   });
 });

@@ -1,42 +1,30 @@
+import {
+  BaseEntity,
+  Entity,
+  Filter,
+  PrimaryKey,
+  Property,
+} from "@mikro-orm/core";
 import { v4 } from "uuid";
-import { Base64 } from "js-base64";
-import type { User } from "../domains/user";
-import { FieldValidationLengthError } from "./errors";
 
+@Entity({ abstract: true })
+@Filter({
+  name: "excludeDeleted",
+  default: true,
+  cond: { deletedAt: { $not: null } },
+})
 export default abstract class AbstractEntity<
-  T extends AbstractEntity<T, V>,
-  V
-> {
+  E extends AbstractEntity<E>
+> extends BaseEntity<E, "id"> {
+  @PrimaryKey({ type: "string" })
   id = v4();
 
-  deleted = false;
+  @Property({ type: Date })
+  createdAt: Date = new Date();
 
-  abstract isReadable(user: User): boolean;
+  @Property({ type: Date, version: true })
+  updatedAt: Date = new Date();
 
-  abstract isWritable(user: User): boolean;
-
-  abstract toValue(): V;
-
-  abstract get entityType(): symbol;
-
-  toCursor(): string {
-    return Base64.encodeURL(this.id);
-  }
-
-  checkLength(
-    value: number,
-    field: string,
-    options: { min?: number; max?: number }
-  ): void {
-    const underflow = options.min === undefined ? false : value < options.min;
-    const overflow = options.max === undefined ? false : value > options.max;
-    if (underflow || overflow) {
-      throw new FieldValidationLengthError(
-        this.entityType,
-        field.toString(),
-        options.min,
-        options.max
-      );
-    }
-  }
+  @Property({ type: Date, nullable: true })
+  deletedAt?: Date;
 }

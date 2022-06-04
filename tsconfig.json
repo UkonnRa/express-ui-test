@@ -8,7 +8,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -17,8 +16,7 @@
     "sourceMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "baseUrl": "."
+    "experimentalDecorators": true
   },
   "exclude": ["node_modules"]
 }

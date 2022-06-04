@@ -1,27 +1,19 @@
 {
   "name": "@white-rabbit/desktop-render",
   "packageManager": "yarn@3.2.1",
-  "version": "0.0.1",
   "scripts": {
-    "dev": "vite --port 5030",
+    "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview --port 5030",
-    "lint": "yarn lint:typecheck && eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
-    "lint:fix": "yarn lint --fix",
-    "lint:typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "test": "cross-env NODE_ENV=test vitest run --coverage",
-    "test:e2e": "start-server-and-test preview http://127.0.0.1:5030/ 'cypress run'",
-    "storybook": "start-storybook -p 5031 -c ../../config/storybook",
-    "build-storybook": "build-storybook -c ../../config/storybook"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@vueuse/components": "^8.5.0",
-    "@vueuse/core": "^8.5.0",
-    "@white-rabbit/components": "workspace:^",
-    "lodash-es": "^4.17.21",
+    "@white-rabbit/frontend-api": "workspace:^",
+    "@white-rabbit/frontend-api-local": "workspace:^",
     "pinia": "^2.0.14",
     "uuid": "^8.3.2",
     "vue": "^3.2.36",
-    "vue-i18n": "9.1.10"
+    "vue-i18n": "9.1.10",
+    "vue-router": "^4.0.15",
+    "vuetify": "^3.0.0-beta.3"
   }
 }

@@ -1,0 +1,119 @@
+import {
+  build as doBuild,
+  analyzeMetafile,
+  BuildOptions,
+  BuildIncremental,
+} from "esbuild";
+import { watch } from "chokidar";
+import path from "path";
+import { ChildProcess, execFile } from "child_process";
+
+const afterBuildSuccess = async (
+  packageName: string,
+  { metafile }: BuildIncremental
+) => {
+  console.log(`[${packageName}] Build successfully`);
+  if (metafile && process.argv.includes("--analyze")) {
+    console.log(
+      `[${packageName}] Dependencies analyzed: `,
+      await analyzeMetafile(metafile)
+    );
+  }
+};
+
+export type Tsconfig = {
+  references?: { path: string }[];
+};
+
+export type ExecOptions = {
+  start: () => ChildProcess;
+  stop: (process: ChildProcess) => void;
+};
+
+const start = (packageName: string) => (): ChildProcess => {
+  return execFile("node", ["./dist/index.js"], (err) => {
+    if (err != null) {
+      if (err.signal === "SIGTERM") {
+        console.log(`[${packageName}] Killed index.js`);
+      } else {
+        console.error(`[${packageName}] Error when running index.js: `, err);
+      }
+    }
+  });
+};
+
+const stop = (packageName: string) => (process: ChildProcess) => {
+  console.log(`[${packageName}] Kill node process`);
+  process.stdout?.destroy();
+  process.stderr?.destroy();
+  process.kill();
+};
+
+export const build = async (
+  tsconfig: Tsconfig,
+  options?: BuildOptions,
+  execOptions?: ExecOptions,
+  processEndDirectly: boolean = true
+) => {
+  const packageJson = require(path.resolve(
+    process.cwd(),
+    "package.json"
+  )) as Record<string, unknown>;
+  const packageName = packageJson.name as string;
+  const result = (await doBuild({
+    entryPoints: ["src/index.ts"],
+    bundle: true,
+    platform: "node",
+    target: ["node16"],
+    outdir: "dist",
+    metafile: true,
+    sourcemap: true,
+    minify: process.env.NODE_ENV === "production",
+    minifyWhitespace: process.env.NODE_ENV === "production",
+    minifyIdentifiers: process.env.NODE_ENV === "production",
+    minifySyntax: process.env.NODE_ENV === "production",
+    incremental: true,
+    ...options,
+  })) as BuildIncremental;
+  await afterBuildSuccess(packageName, result);
+  if (process.argv.includes("--watch")) {
+    const dependencies =
+      tsconfig.references?.map((ref) => `${ref.path}/src`) ?? [];
+    console.log(
+      `[${packageName}] Start watching files in the project **src** and Dependencies:`
+    );
+    dependencies.forEach((dependency) => console.log(`  * ${dependency}`));
+    const startFunc = execOptions?.start ?? start(packageName);
+    let process = startFunc();
+    process.stdout?.on("data", (data) => {
+      if (data.length > 0) {
+        console.log(`[${packageName}] Stdout:`, data);
+      }
+    });
+    process.stderr?.on("data", (data) => {
+      if (data.length > 0) {
+        console.log(`[${packageName}] Stderr:`, data);
+      }
+    });
+    watch(["./src", ...dependencies], { ignoreInitial: true }).on(
+      "all",
+      async (event, file) => {
+        try {
+          const stopFunc = execOptions?.stop ?? stop(packageName);
+          if (process) {
+            stopFunc(process);
+          }
+          console.log(
+            `[${packageName}] Rebuild due to File[${file}] with Event[${event}]`
+          );
+          await afterBuildSuccess(packageName, await result.rebuild());
+          process = startFunc();
+        } catch (e) {
+          console.error(`[${packageName}] Rebuild error: `, e);
+        }
+      }
+    );
+  } else if (processEndDirectly) {
+    process.exit();
+  }
+};

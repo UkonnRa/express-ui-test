@@ -1,17 +1,17 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.vite-config.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.vitest.json"
-    },
-    {
-      "path": "../components"
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "useDefineForClassFields": true,
+    "module": "esnext",
+    "jsx": "preserve",
+    "isolatedModules": true,
+    "lib": ["esnext", "dom"],
+    "compilerOptions": {
+      "paths": {
+        "@/*": ["./src/*"]
+      }
     }
-  ]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

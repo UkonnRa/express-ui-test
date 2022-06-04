@@ -1,9 +1,9 @@
-<template>
-  <journal-view></journal-view>
-</template>
-
 <script setup lang="ts">
-import { JournalView } from "@white-rabbit/components";
+import Users from "@/components/Users.vue";
+import { Hello } from "@white-rabbit/components";
 </script>
 
-<style scoped></style>
+<template>
+  <Users></Users>
+  <Hello></Hello>
+</template>

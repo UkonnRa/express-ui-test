@@ -7,23 +7,20 @@
 
 # Swap the comments on the following lines if you don't wish to use zero-installs
 # Documentation here: https://yarnpkg.com/features/zero-installs
-!.yarn/cache
+#!.yarn/cache
 #.pnp.*
 node_modules
 
 packages/app-desktop/app/.yarn
-docs/.yarn
 
 # Build results
 dist
 release
 tsconfig.tsbuildinfo
-docs/build
 storybook-static
 stats.html
 
 # Generated files
-.docusaurus
 .cache-loader
 
 #Test results
@@ -33,3 +30,6 @@ packages/**/cypress/screenshots
 
 #IDE
 .idea
+
+#Dev Env
+*.local
