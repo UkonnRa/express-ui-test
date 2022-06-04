@@ -1,28 +1,26 @@
 {
   "name": "@white-rabbit/app-frontend",
   "packageManager": "yarn@3.2.1",
-  "version": "0.0.1",
+  "main": "src/main.ts",
   "scripts": {
-    "dev": "vite --port 5010",
-    "build": "vue-tsc --noEmit && cross-env NODE_ENV=production vite build",
-    "preview": "vite preview --port 5010",
-    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.gitignore",
-    "lint:fix": "yarn lint --fix",
-    "test": "cross-env NODE_ENV=test vitest run --coverage",
-    "test:e2e": "start-server-and-test preview http://127.0.0.1:5010/ 'cypress run'",
-    "storybook": "start-storybook -p 5011 -c ../../config/storybook",
-    "build-storybook": "build-storybook -c ../../config/storybook"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@vueuse/components": "^8.5.0",
-    "@vueuse/core": "^8.5.0",
     "@white-rabbit/components": "workspace:^",
-    "ant-design-vue": "^3.2.4",
-    "lodash-es": "^4.17.21",
+    "@white-rabbit/frontend-api": "workspace:^",
     "pinia": "^2.0.14",
     "uuid": "^8.3.2",
     "vue": "^3.2.36",
     "vue-i18n": "9.1.10",
-    "vue-router": "^4.0.15"
+    "vue-router": "^4.0.15",
+    "vuetify": "^3.0.0-beta.3"
+  },
+  "peerDependencies": {
+    "@white-rabbit/frontend-api-graphql": "workspace:^",
+    "@white-rabbit/frontend-api-grpc": "workspace:^",
+    "@white-rabbit/frontend-api-local": "workspace:^"
   }
 }

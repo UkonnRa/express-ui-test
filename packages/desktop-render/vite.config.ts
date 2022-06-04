@@ -1,50 +1,15 @@
-/* eslint-disable import/no-unresolved */
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { vueI18n } from "@intlify/vite-plugin-vue-i18n";
 import path from "path";
-import { AntDesignVueResolver } from "unplugin-vue-components/resolvers";
-import Components from "unplugin-vue-components/vite";
-import AutoImport from "unplugin-auto-import/vite";
+import { fileURLToPath } from "url";
+import { visualizer } from "rollup-plugin-visualizer";
 
-export default defineConfig((env) => ({
-  plugins: [
-    vue(),
-    vueI18n({
-      include: path.resolve(__dirname, "../components/src/locales/**"),
-    }),
-    Components({
-      resolvers: [
-        AntDesignVueResolver({
-          importStyle: env.mode === "test" ? false : undefined,
-          cjs: env.mode === "test",
-        }),
-      ],
-    }),
-    AutoImport({
-      imports: [
-        "@vueuse/core",
-        "@vueuse/head",
-        "pinia",
-        "vue-i18n",
-        "vue-router",
-        "vue",
-      ],
-    }),
-  ],
-  css: {
-    preprocessorOptions: {
-      less: {
-        javascriptEnabled: true,
-      },
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue(), visualizer()],
+  resolve: {
+    alias: {
+      "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src"),
     },
   },
-  test: {
-    environment: "jsdom",
-    coverage: {
-      reporter: ["lcov", "html"],
-    },
-    setupFiles: ["../../config/test/vitest.setup.ts"],
-  },
-  base: "",
-}));
+});

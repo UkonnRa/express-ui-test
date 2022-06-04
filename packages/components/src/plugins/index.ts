@@ -1,3 +1,1 @@
-import "./dayjs";
-export * from "./i18n";
-export * from "./router";
+export { default as vuetifyPlugin } from "./vuetify.plugin";

@@ -1,18 +1,5 @@
 {
   "name": "@white-rabbit/test-suite",
   "packageManager": "yarn@3.2.1",
-  "version": "0.0.1",
-  "main": "src/index.ts",
-  "scripts": {
-    "lint": "eslint . --ext .js,.ts --ignore-path ../../.gitignore",
-    "lint:fix": "yarn lint --fix"
-  },
-  "devDependencies": {
-    "@faker-js/faker": "^7.0.1"
-  },
-  "peerDependencies": {
-    "@white-rabbit/business-logic": "workspace:^*",
-    "@white-rabbit/type-bridge": "workspace:^*",
-    "tsyringe": "*"
-  }
+  "main": "src/index.ts"
 }

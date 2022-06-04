@@ -1,4 +1,4 @@
 /**
  * @type {import('@types/eslint').Linter.Config}
  */
-module.exports = require("../../config/lint/.eslintrc.backend.js");
+module.exports = require("../../.eslintrc.backend.js");
