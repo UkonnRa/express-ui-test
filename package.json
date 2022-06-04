@@ -97,5 +97,10 @@
     "commitizen": {
       "path": "./node_modules/@digitalroute/cz-conventional-changelog-for-jira"
     }
+  },
+  "resolutions": {
+    "minimist": "^1.2.6",
+    "trim": "^0.0.3",
+    "trim-newlines": "^3.0.1"
   }
 }
