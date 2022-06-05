@@ -15,8 +15,9 @@
     "lint:style": "stylelint \"**/*.{vue,scss,css}\"",
     "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/**/*.md",
     "lint:prettier": "prettier --no-config --check \"./**/*.{ts,vue,js,json}\"",
-    "lint": "yarn lint:markdown && yarn lint:style && yarn lint:prettier && yarn workspaces foreach -pit run lint",
-    "lint:fix": "yarn lint:markdown --fix && yarn lint:prettier --write && yarn lint:style --fix && yarn workspaces foreach -pit run lint:fix",
+    "lint:eslint": "eslint .eslintrc.backend.js .eslintrc.js .eslintrc.vue.js commitlint.config.js esbuild.config.ts jest.config.ts vitest.setup.ts",
+    "lint": "yarn lint:eslint && yarn lint:markdown && yarn lint:style && yarn lint:prettier && yarn workspaces foreach -pit run lint",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:markdown --fix && yarn lint:prettier --write && yarn lint:style --fix && yarn workspaces foreach -pit run lint:fix",
     "test": "yarn workspaces foreach -pit run test",
     "test:e2e": "yarn workspaces foreach -it run test:e2e"
   },

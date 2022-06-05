@@ -4,7 +4,7 @@ import Users from "@/components/Users.vue";
 
 <template>
   <suspense>
-    <users></users>
+    <Users></Users>
     <template #fallback> Loading... </template>
   </suspense>
 </template>

@@ -21,7 +21,4 @@ module.exports = {
       extends: ["plugin:cypress/recommended"],
     },
   ],
-  rules: {
-    "vue/prefer-import-from-vue": 0,
-  },
 };

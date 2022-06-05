@@ -5,15 +5,15 @@ import {
   BuildIncremental,
 } from "esbuild";
 import { watch } from "chokidar";
-import path from "path";
+import * as path from "path";
 import { ChildProcess, execFile } from "child_process";
 
 const afterBuildSuccess = async (
   packageName: string,
   { metafile }: BuildIncremental
-) => {
+): Promise<void> => {
   console.log(`[${packageName}] Build successfully`);
-  if (metafile && process.argv.includes("--analyze")) {
+  if (metafile != null && process.argv.includes("--analyze")) {
     console.log(
       `[${packageName}] Dependencies analyzed: `,
       await analyzeMetafile(metafile)
@@ -21,14 +21,14 @@ const afterBuildSuccess = async (
   }
 };
 
-export type Tsconfig = {
-  references?: { path: string }[];
-};
+export interface Tsconfig {
+  references?: Array<{ path: string }>;
+}
 
-export type ExecOptions = {
+export interface ExecOptions {
   start: () => ChildProcess;
   stop: (process: ChildProcess) => void;
-};
+}
 
 const start = (packageName: string) => (): ChildProcess => {
   return execFile("node", ["./dist/index.js"], (err) => {
@@ -54,7 +54,9 @@ export const build = async (
   options?: BuildOptions,
   execOptions?: ExecOptions,
   processEndDirectly: boolean = true
-) => {
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const packageJson = require(path.resolve(
     process.cwd(),
     "package.json"
@@ -97,20 +99,22 @@ export const build = async (
     });
     watch(["./src", ...dependencies], { ignoreInitial: true }).on(
       "all",
-      async (event, file) => {
-        try {
-          const stopFunc = execOptions?.stop ?? stop(packageName);
-          if (process) {
-            stopFunc(process);
+      (event, file) => {
+        void (async () => {
+          try {
+            const stopFunc = execOptions?.stop ?? stop(packageName);
+            if (process != null) {
+              stopFunc(process);
+            }
+            console.log(
+              `[${packageName}] Rebuild due to File[${file}] with Event[${event}]`
+            );
+            await afterBuildSuccess(packageName, await result.rebuild());
+            process = startFunc();
+          } catch (e) {
+            console.error(`[${packageName}] Rebuild error: `, e);
           }
-          console.log(
-            `[${packageName}] Rebuild due to File[${file}] with Event[${event}]`
-          );
-          await afterBuildSuccess(packageName, await result.rebuild());
-          process = startFunc();
-        } catch (e) {
-          console.error(`[${packageName}] Rebuild error: `, e);
-        }
+        })();
       }
     );
   } else if (processEndDirectly) {
