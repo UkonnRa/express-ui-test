@@ -7,9 +7,9 @@ import {
 } from "@mikro-orm/core";
 import { AbstractEntity } from "../shared";
 import { UserEntity } from "../user";
-import { CreateGroupInput } from "./index";
+import CreateGroupInput from "./create-group.input";
 
-@Entity()
+@Entity({ collection: "group" })
 export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @Property({ type: "string" })
   @Unique()

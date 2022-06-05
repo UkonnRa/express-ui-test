@@ -1,5 +1,15 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src", ".eslintrc.js", "jest.config.ts", "mikro-orm.config.ts"],
-  "exclude": []
+  "include": [
+    "src/",
+    "seeders/",
+    ".eslintrc.js",
+    "jest.config.ts",
+    "mikro-orm.config.ts"
+  ],
+  "exclude": [],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDirs": ["./src", "./seeders"]
+  }
 }

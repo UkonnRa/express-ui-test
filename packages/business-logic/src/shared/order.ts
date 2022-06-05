@@ -1,6 +1,3 @@
-enum Order {
-  ASC,
-  DESC,
-}
+import { QueryOrderNumeric } from "@mikro-orm/core";
 
-export default Order;
+export default QueryOrderNumeric;

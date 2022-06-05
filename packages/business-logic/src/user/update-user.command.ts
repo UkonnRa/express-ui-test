@@ -1,4 +1,6 @@
-import { AuthIdValue, RoleValue, UserCommand } from "./index";
+import RoleValue from "./role.value";
+import AuthIdValue from "./auth-id.value";
+import UserCommand from "./user.command";
 
 export default interface UpdateUserCommand extends UserCommand {
   readonly type: "UpdateUserCommand";

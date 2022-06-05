@@ -1,7 +1,8 @@
-import { AbstractEntity, AuthUser } from "./index";
-import { FilterQuery } from "@mikro-orm/core";
+import { ObjectQuery } from "@mikro-orm/core";
+import AbstractEntity from "./abstract-entity";
+import AuthUser from "./auth-user";
 
 export default interface FindOneInput<E extends AbstractEntity<E>> {
   readonly authUser?: AuthUser;
-  readonly query?: FilterQuery<E>;
+  readonly query?: ObjectQuery<E>;
 }

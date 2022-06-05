@@ -1,13 +1,23 @@
 import {
-  AbstractEntity,
-  AuthUser,
-  FindAllInput,
-  FindOneInput,
-  Page,
-} from "./index";
-import { EntityManager, MikroORM, EntityName } from "@mikro-orm/core";
+  EntityManager,
+  EntityName,
+  FilterQuery,
+  MikroORM,
+  QueryOrderMap,
+  ObjectQuery,
+} from "@mikro-orm/core";
+import { decode, encodeURL } from "js-base64";
+import Cursor from "./cursor";
+import AbstractEntity from "./abstract-entity";
+import AuthUser from "./auth-user";
+import Sort from "./sort";
+import Order from "./order";
+import FindAllInput from "./find-all.input";
+import Page from "./page";
+import PageItem from "./page-item";
+import FindOneInput from "./find-one.input";
 
-// type Matcher<E> = (item: E) => Promise<boolean>;
+type CursorAndObject = [Cursor, Record<string, unknown>];
 
 export default abstract class ReadService<E extends AbstractEntity<E>, V> {
   protected constructor(
@@ -16,62 +26,186 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
     readonly entityType: EntityName<E>
   ) {}
 
-  // private decodeCursor(cursor: string): Cursor {
-  //   return JSON.parse(decode(cursor));
-  // }
-  //
-  // private encodeCursor(cursor: Cursor): string {
-  //   return encode(JSON.stringify(cursor));
-  // }
-  //
-  // private async findAllUntil(
-  //   filter: FilterQuery<E>,
-  //   matchers: Array<Matcher<E>>,
-  //   size: number,
-  //   offset: number,
-  //   em: EntityManager
-  // ): Promise<E[]> {
-  //   const result = [];
-  //   const cnt = 0;
-  //   // We should fetch at least `size + 1` entities to make sure we can find the prev/next link
-  //   while (result.length < size + 1) {
-  //     const items = await em.find(this.entityType, filter, {
-  //       limit: size,
-  //       offset: offset + cnt * size,
-  //     });
-  //     for (const item of items) {
-  //       const allMatched = (
-  //         await Promise.all(matchers.map(async (m) => await m(item)))
-  //       ).every((b) => b);
-  //       if (allMatched) {
-  //         result.push(item);
-  //       }
-  //     }
-  //   }
-  //   return result;
-  // }
-  //
-  // private createOrderBy(
-  //   sort: Sort[],
-  //   reverse: boolean = false
-  // ): QueryOrderMap<E> {
-  //   return Object.fromEntries(
-  //     sort.map(({ field, order }) => [
-  //       field,
-  //       order === Order.ASC || reverse ? QueryOrder.ASC : QueryOrder.DESC,
-  //     ])
-  //   ) as QueryOrderMap<E>;
-  // }
+  private static decodeCursor(cursor: string): Cursor {
+    return JSON.parse(decode(cursor));
+  }
 
-  abstract findAll(
-    query: FindAllInput<E>,
-    em?: EntityManager
-  ): Promise<Page<V>>;
+  private static encodeCursor(cursor: Cursor): string {
+    return encodeURL(JSON.stringify(cursor));
+  }
 
-  abstract findOne(
-    query: FindOneInput<E>,
-    em?: EntityManager
-  ): Promise<V | null>;
+  abstract toValue(entity: E): V;
 
   abstract isReadable(entity: E, authUser?: AuthUser): boolean;
+
+  private createNormalizedSort(
+    sort: Sort[],
+    reverse: boolean = false
+  ): [Array<[string, Order]>, Order] {
+    const getOrder = (order: Order): Order => {
+      if (!reverse) return order;
+      else return order === Order.ASC ? Order.DESC : Order.ASC;
+    };
+    return [
+      sort.map(({ field, order }) => [field, getOrder(order)]),
+      getOrder(Order.ASC),
+    ];
+  }
+
+  private async getCursorAndEntity(
+    cursor: string | undefined,
+    em: EntityManager
+  ): Promise<CursorAndObject | null> {
+    if (cursor == null) {
+      return null;
+    }
+    const cursorObj = ReadService.decodeCursor(cursor);
+    const entity = await em.findOne(
+      this.entityType,
+      cursorObj.id as FilterQuery<E>
+    );
+    if (entity == null) {
+      return null;
+    }
+    return [cursorObj, entity.toObject()];
+  }
+
+  private static queryWhenDifferentSortValue<E extends AbstractEntity<E>>(
+    sort: Sort[],
+    after?: Record<string, unknown>,
+    before?: Record<string, unknown>
+  ): ObjectQuery<E> {
+    return Object.fromEntries(
+      sort
+        .map(({ field, order }) => {
+          const query: Record<string, unknown> = {};
+          if (after?.[field] != null) {
+            query[order === Order.ASC ? "$gt" : "$lt"] = after[field];
+          }
+          if (before?.[field] != null) {
+            query[order === Order.ASC ? "$lt" : "$gt"] = before[field];
+          }
+
+          return [field, query];
+        })
+        .filter(([_, query]) => Object.keys(query).length > 0)
+    );
+  }
+
+  private async createCursorRelatedQueryAndSort(
+    sort: Sort[],
+    after: CursorAndObject | null,
+    before: CursorAndObject | null
+  ): Promise<[ObjectQuery<E> | null, QueryOrderMap<E>, boolean]> {
+    const reversed = before != null && after == null;
+    const [normedSort, idOrder] = this.createNormalizedSort(sort, reversed);
+    const queryWhenDifferentSortValue = ReadService.queryWhenDifferentSortValue(
+      sort,
+      after?.[1],
+      before?.[1]
+    );
+
+    const additionalQuery: { $or: unknown[] } = {
+      $or: [],
+    };
+
+    if (Object.keys(queryWhenDifferentSortValue).length > 0) {
+      additionalQuery.$or.push(queryWhenDifferentSortValue);
+    }
+
+    if (after != null) {
+      additionalQuery.$or.push({
+        $and: [
+          Object.fromEntries(
+            normedSort
+              .map(([field]) => [field, after[1][field]])
+              .filter(([_, query]) => query != null)
+          ),
+          { id: { [idOrder === Order.ASC ? "$gt" : "$lt"]: after[1].id } },
+        ],
+      });
+    }
+
+    return [
+      additionalQuery.$or.length === 0
+        ? null
+        : (additionalQuery as ObjectQuery<E>),
+      Object.fromEntries([...normedSort, ["id", idOrder]]) as QueryOrderMap<E>,
+      reversed,
+    ];
+  }
+
+  // TODO: find a way to handler external filters, like non-SQL FullText search, filter out not readable instances, etc
+  async findAll(query: FindAllInput<E>, em?: EntityManager): Promise<Page<V>> {
+    const emInst = em ?? this.orm.em.fork();
+    const after = await this.getCursorAndEntity(query.pagination.after, emInst);
+    const before = await this.getCursorAndEntity(
+      query.pagination.before,
+      emInst
+    );
+    const [additionalQuery, sort, reversed] =
+      await this.createCursorRelatedQueryAndSort(query.sort, after, before);
+
+    const filterQuery = {
+      ...(query.query ?? {}),
+      ...(additionalQuery ?? {}),
+    } as ObjectQuery<E>;
+
+    const entities = await emInst.find(this.entityType, filterQuery, {
+      orderBy: sort,
+      offset: query.pagination.offset,
+      limit: query.pagination.size + 1,
+    });
+    let hasPreviousPage = false;
+    let hasNextPage = false;
+    const exceeded = entities.length > query.pagination.size;
+
+    if (reversed) {
+      if (exceeded) {
+        hasPreviousPage = true;
+      }
+      if (before != null) {
+        hasNextPage = true;
+      }
+    } else {
+      if (exceeded) {
+        hasNextPage = true;
+      }
+      if (after != null) {
+        hasPreviousPage = true;
+      }
+    }
+
+    let pageItems = entities
+      .slice(0, exceeded ? query.pagination.size : entities.length)
+      .map<PageItem<V>>((e) => ({
+        cursor: ReadService.encodeCursor({ id: e.id }),
+        data: this.toValue(e),
+      }));
+    if (reversed) {
+      pageItems = pageItems.reverse();
+    }
+
+    return {
+      items: pageItems,
+      pageInfo: {
+        hasPreviousPage,
+        hasNextPage,
+        startCursor: pageItems[0]?.cursor,
+        endCursor: pageItems[pageItems.length - 1]?.cursor,
+      },
+    };
+  }
+
+  async findOne(query: FindOneInput<E>, em?: EntityManager): Promise<V | null> {
+    const emInst = em ?? this.orm.em.fork();
+    const entity = await emInst.findOne(
+      this.entityType,
+      query.query ?? ({} as ObjectQuery<E>)
+    );
+    if (entity == null) {
+      return null;
+    }
+    return this.toValue(entity);
+  }
 }

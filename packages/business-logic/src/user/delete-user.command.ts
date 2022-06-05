@@ -1,4 +1,4 @@
-import { UserCommand } from "./index";
+import UserCommand from "./user.command";
 
 export default interface DeleteUserCommand extends UserCommand {
   readonly type: "DeleteUserCommand";

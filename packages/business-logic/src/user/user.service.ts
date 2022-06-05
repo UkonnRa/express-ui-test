@@ -1,8 +1,10 @@
 import { AuthUser, Service } from "../shared";
-import { UserCommand, UserEntity, UserValue } from "./index";
 import { MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
+import UserEntity from "./user.entity";
+import UserValue from "./user.value";
+import UserCommand from "./user.command";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
 export const USER_WRITE_SCOPE =
@@ -24,6 +26,15 @@ export default class UserService extends Service<
 
   override handleAll(): Array<UserEntity | null> {
     return [];
+  }
+
+  override toValue(entity: UserEntity): UserValue {
+    return {
+      id: entity.id,
+      name: entity.name,
+      role: entity.role,
+      authIds: entity.authIds,
+    };
   }
 
   isReadable(entity: UserEntity, authUser?: AuthUser): boolean {

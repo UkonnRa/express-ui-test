@@ -5,7 +5,8 @@
   "scripts": {
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
     "lint:fix": "yarn lint --fix",
-    "orm:seed": "mikro-orm schema:create --seed -r"
+    "orm:seed": "mikro-orm schema:create --seed -r",
+    "test": "jest --coverage"
   },
   "dependencies": {
     "@mikro-orm/core": "^5.1.5",

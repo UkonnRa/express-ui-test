@@ -1,4 +1,4 @@
-import { Order } from "./index";
+import Order from "./order";
 
 export default interface Sort {
   readonly field: string;

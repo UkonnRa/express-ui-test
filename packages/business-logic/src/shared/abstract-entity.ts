@@ -11,7 +11,7 @@ import { v4 } from "uuid";
 @Filter({
   name: "excludeDeleted",
   default: true,
-  cond: { deletedAt: { $not: null } },
+  cond: { deletedAt: null },
 })
 export default abstract class AbstractEntity<
   E extends AbstractEntity<E>

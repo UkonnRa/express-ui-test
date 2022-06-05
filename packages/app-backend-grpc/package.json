@@ -7,7 +7,6 @@
     "clean": "rimraf src/proto/** dist",
     "compile:proto": "yarn clean; yarn compile:proto:ts",
     "compile:proto:ts": "protoc --ts_opt eslint_disable,ts_nocheck,server_generic,client_none,optimize_code_size --ts_out src/proto --proto_path ../types/proto ../types/proto/*.proto",
-    "build": "yarn compile:proto && ts-node esbuild.config.ts",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
     "lint:fix": "yarn lint --fix"
   },

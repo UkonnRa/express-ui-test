@@ -1,21 +1,18 @@
-import {
-  AbstractEntity,
-  AuthUser,
-  Command,
-  CommandInput,
-  ReadService,
-  WriteService,
-} from "./index";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { EntityName } from "@mikro-orm/core/typings";
+import AbstractEntity from "./abstract-entity";
+import Command from "./command";
+import ReadService from "./read-service";
+import WriteService from "./write-service";
+import CommandInput from "./command.input";
+import AuthUser from "./auth-user";
 
 export default abstract class Service<
     E extends AbstractEntity<E>,
     V,
-    C extends Command,
-    Q = object
+    C extends Command
   >
-  extends ReadService<E, V, Q>
+  extends ReadService<E, V>
   implements WriteService<E, C>
 {
   protected constructor(

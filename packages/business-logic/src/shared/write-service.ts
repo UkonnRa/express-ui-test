@@ -5,11 +5,11 @@ export default interface WriteService<
   E extends AbstractEntity<E>,
   C extends Command
 > {
-  writeScope: string;
-  handle: (command: CommandInput<C>, em?: EntityManager) => E | null;
-  handleAll: (
+  readonly writeScope: string;
+  readonly handle: (command: CommandInput<C>, em?: EntityManager) => E | null;
+  readonly handleAll: (
     commands: Array<CommandInput<C>>,
     em?: EntityManager
   ) => Array<E | null>;
-  isWriteable: (entity: E, authUser?: AuthUser) => boolean;
+  readonly isWriteable: (entity: E, authUser?: AuthUser) => boolean;
 }

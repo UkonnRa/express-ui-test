@@ -3,7 +3,6 @@
   "packageManager": "yarn@3.2.1",
   "scripts": {
     "clean": "rimraf dist release app/.yarn app/dist app/node_modules",
-    "build": "yarn clean && ts-node esbuild.config.ts",
     "dev:electron": "electron .",
     "dev": "yarn build --watch",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
