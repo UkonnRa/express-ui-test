@@ -1,0 +1,19 @@
+{
+  "name": "@white-rabbit/doc",
+  "packageManager": "yarn@3.2.1",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "serve": "vitepress serve docs"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^12.2.3",
+    "@types/markdown-it-plantuml": "^1.4.1",
+    "@vueuse/core": "^8.6.0",
+    "vitepress": "^1.0.0-alpha.1"
+  },
+  "dependencies": {
+    "markdown-it-mathjax3": "^4.3.1",
+    "markdown-it-plantuml": "^1.4.1"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@white-rabbit/app-frontend",
+  "packageManager": "yarn@3.2.1",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@white-rabbit/components": "workspace:^",
+    "@white-rabbit/frontend-api": "workspace:^",
+    "pinia": "^2.0.14",
+    "uuid": "^8.3.2",
+    "vue": "^3.2.36",
+    "vue-i18n": "9.1.10",
+    "vue-router": "^4.0.15",
+    "vuetify": "^3.0.0-beta.3"
+  },
+  "peerDependencies": {
+    "@white-rabbit/frontend-api-graphql": "workspace:^",
+    "@white-rabbit/frontend-api-grpc": "workspace:^",
+    "@white-rabbit/frontend-api-local": "workspace:^"
+  }
+}

@@ -1,0 +1,153 @@
+name: cicd
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    env:
+      WHITERABBIT_DEBUG: true
+      WHITERABBIT_DATABASE_URL: ${{ secrets.WHITERABBIT_DATABASE_URL }}
+      WHITERABBIT_DATABASE_USERNAME: ${{ secrets.WHITERABBIT_DATABASE_USERNAME }}
+      WHITERABBIT_DATABASE_PASSWORD: ${{ secrets.WHITERABBIT_DATABASE_PASSWORD }}
+      WHITERABBIT_AUTH_CLIENTID: ${{ secrets.WHITERABBIT_AUTH_CLIENTID }}
+      WHITERABBIT_AUTH_CLIENTSECRET: ${{ secrets.WHITERABBIT_AUTH_CLIENTSECRET }}
+      WHITERABBIT_AUTH_SITE: ${{ secrets.WHITERABBIT_AUTH_SITE }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # cache node_modules
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('**/yarn.lock') }}
+
+      # install dependencies if the cache did not hit
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Test
+        run: yarn test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build-linux:
+    name: Build Docker Image and Desktop on Linux
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    if: github.ref == 'refs/heads/develop' || startswith(github.ref, 'refs/heads/feature') || startswith(github.ref, 'refs/heads/release') || startswith(github.ref, 'refs/heads/hotfix') || startswith(github.ref, 'refs/heads/bugfix')
+    env:
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Configure Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+
+      # cache node_modules
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('**/yarn.lock') }}
+
+      # install dependencies if the cache did not hit
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Build Project
+        run: yarn build
+
+  #      - name: Prepare Tools
+  #        run: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install jq -y
+  #
+  #      - name: Build Docker Image
+  #        run: >-
+  #          PACKAGE_VERSION=$(cat package.json | jq ".version" --raw-output) &&
+  #          IMAGE_TAG=$(./scripts/parse-branch.py ${{ github.ref }} $PACKAGE_VERSION) &&
+  #          echo "Image Tag: $IMAGE_TAG" &&
+  #          docker build packages/app-backend-graphql -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-graphql:$IMAGE_TAG &&
+  #          docker build packages/app-backend-grpc -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG &&
+  #          docker build packages/app-frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
+  #          echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
+  #          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-graphql:$IMAGE_TAG &&
+  #          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG &&
+  #          docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG
+  #      - name: Archive Linux Desktop
+  #        uses: actions/upload-artifact@v3
+  #        with:
+  #          name: desktop-linux
+  #          path: packages/app-desktop/release/white-rabbit-*.AppImage
+  #
+  build-win:
+    name: Build Desktop on Windows
+    runs-on: windows-latest
+    needs:
+      - test
+    if: github.ref == 'refs/heads/develop' || startswith(github.ref, 'refs/heads/feature') || startswith(github.ref, 'refs/heads/release') || startswith(github.ref, 'refs/heads/hotfix') || startswith(github.ref, 'refs/heads/bugfix')
+    env:
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Configure Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # cache node_modules
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-yarn2-${{ hashFiles('**/yarn.lock') }}
+
+      # install dependencies if the cache did not hit
+      - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Build Project
+        run: yarn build
+
+#
+#      - name: Archive Windows Desktop
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: desktop-windows
+#          path: packages/app-desktop/release/white-rabbit-*.zip

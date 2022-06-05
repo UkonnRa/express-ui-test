@@ -1,0 +1,23 @@
+{
+  "name": "@white-rabbit/app-backend-grpc",
+  "packageManager": "yarn@3.2.1",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "cross-env PORT=5000 yarn build --watch",
+    "clean": "rimraf src/proto/** dist",
+    "compile:proto": "yarn clean; yarn compile:proto:ts",
+    "compile:proto:ts": "protoc --ts_opt eslint_disable,ts_nocheck,server_generic,client_none,optimize_code_size --ts_out src/proto --proto_path ../types/proto ../types/proto/*.proto",
+    "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
+    "lint:fix": "yarn lint --fix"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.7",
+    "@protobuf-ts/grpc-backend": "^2.6.0",
+    "@protobuf-ts/plugin": "^2.6.0",
+    "@protobuf-ts/protoc": "^2.6.0",
+    "@protobuf-ts/runtime": "^2.6.0",
+    "@protobuf-ts/runtime-rpc": "^2.6.0",
+    "@white-rabbit/business-logic": "workspace:^",
+    "@white-rabbit/types": "workspace:^"
+  }
+}

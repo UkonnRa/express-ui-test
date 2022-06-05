@@ -1,0 +1,36 @@
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Swap the comments on the following lines if you don't wish to use zero-installs
+# Documentation here: https://yarnpkg.com/features/zero-installs
+#!.yarn/cache
+#.pnp.*
+node_modules
+
+packages/app-desktop/app/.yarn
+
+# Build results
+dist
+release
+tsconfig.tsbuildinfo
+storybook-static
+stats.html
+
+# Generated files
+.cache-loader
+
+#Test results
+coverage
+packages/**/cypress/videos
+packages/**/cypress/screenshots
+
+#IDE
+.idea
+
+#Dev Env
+*.local
+*.sqlite
