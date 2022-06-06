@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Users from "@/components/Users.vue";
-import { Hello } from "@white-rabbit/components";
+import UserCard from "@/components/UserCard.vue";
+import { HelloCounter } from "@white-rabbit/components";
 </script>
 
 <template>
-  <Users></Users>
-  <Hello></Hello>
+  <UserCard></UserCard>
+  <HelloCounter></HelloCounter>
 </template>

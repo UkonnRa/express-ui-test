@@ -3,8 +3,10 @@
   "packageManager": "yarn@3.2.1",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "vue-tsc --noEmit && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
+    "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
     "@white-rabbit/frontend-api": "workspace:^",

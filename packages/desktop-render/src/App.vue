@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Users from "@/components/Users.vue";
+import UserCard from "@/components/UserCard.vue";
 </script>
 
 <template>
   <suspense>
-    <Users></Users>
+    <UserCard></UserCard>
     <template #fallback> Loading... </template>
   </suspense>
 </template>

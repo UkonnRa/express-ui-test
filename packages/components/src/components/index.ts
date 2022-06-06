@@ -1,1 +1,1 @@
-export { default as Hello } from "./Hello.vue";
+export { default as HelloCounter } from "./HelloCounter.vue";

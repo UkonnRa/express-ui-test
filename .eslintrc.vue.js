@@ -3,14 +3,14 @@
  */
 module.exports = {
   root: true,
+  parser: "vue-eslint-parser",
+  parserOptions: {
+    parser: "@typescript-eslint/parser",
+  },
   extends: [
-    "plugin:vue/vue3-recommended",
     "plugin:sonarjs/recommended",
-    "eslint:recommended",
-    "@vue/eslint-config-typescript/recommended",
-    "plugin:import/recommended",
-    "plugin:import/typescript",
-    "@vue/eslint-config-prettier",
+    "plugin:vue/vue3-recommended",
+    "prettier",
   ],
   env: {
     "vue/setup-compiler-macros": true,

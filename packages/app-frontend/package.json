@@ -4,9 +4,11 @@
   "main": "src/main.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "lint": "vue-tsc --noEmit && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
+    "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
     "@white-rabbit/components": "workspace:^",

@@ -2,16 +2,17 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "useDefineForClassFields": true,
-    "module": "esnext",
-    "jsx": "preserve",
+    "module": "ESNext",
     "isolatedModules": true,
     "lib": ["esnext", "dom"],
-    "compilerOptions": {
-      "paths": {
-        "@/*": ["./src/*"]
-      }
-    }
+    "outDir": "dist"
+    //    "compilerOptions": {
+    //      "paths": {
+    //        "@/*": ["./src/*"]
+    //      }
+    //    }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src/"],
+  "exclude": ["src/**/*.spec.ts"],
+  "references": [{ "path": "./tsconfig.dev.json" }]
 }

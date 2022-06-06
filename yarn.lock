@@ -22557,7 +22557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-eslint-parser@npm:^9.0.1":
+"vue-eslint-parser@npm:^9.0.1, vue-eslint-parser@npm:^9.0.2":
   version: 9.0.2
   resolution: "vue-eslint-parser@npm:9.0.2"
   dependencies:
@@ -23094,6 +23094,7 @@ __metadata:
     vite: ^2.9.9
     vite-plugin-vuetify: ^1.0.0-alpha.11
     vitest: ^0.14.0
+    vue-eslint-parser: ^9.0.2
     vue-tsc: ^0.36.1
   languageName: unknown
   linkType: soft
