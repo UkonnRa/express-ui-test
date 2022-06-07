@@ -144,7 +144,7 @@ jobs:
         run: yarn install
 
       - name: Build Project
-        run: yarn build
+        run: yarn add -D esbuild && yarn build
 
 #
 #      - name: Archive Windows Desktop

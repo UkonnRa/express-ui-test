@@ -12,10 +12,11 @@ import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
 import Sort from "./sort";
 import Order from "./order";
-import FindAllInput from "./find-all.input";
+import FindAllInput, { AdditionalQuery } from "./find-all.input";
 import Page from "./page";
 import PageItem from "./page-item";
 import FindOneInput from "./find-one.input";
+import Pagination from "./pagination";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 
@@ -37,6 +38,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
   abstract toValue(entity: E): V;
 
   abstract isReadable(entity: E, authUser?: AuthUser): boolean;
+
+  abstract handleAdditionalQueries(
+    entities: E[],
+    additionalQueries: AdditionalQuery[]
+  ): Promise<E[]>;
 
   private createNormalizedSort(
     sort: Sort[],
@@ -93,10 +99,10 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
   }
 
   private async createCursorRelatedQueryAndSort(
-    sort: Sort[],
+    { query, sort }: FindAllInput<E>,
     after: CursorAndObject | null,
     before: CursorAndObject | null
-  ): Promise<[ObjectQuery<E> | null, QueryOrderMap<E>, boolean]> {
+  ): Promise<[ObjectQuery<E>, QueryOrderMap<E>, boolean]> {
     const reversed = before != null && after == null;
     const [normedSort, idOrder] = this.createNormalizedSort(sort, reversed);
     const queryWhenDifferentSortValue = ReadService.queryWhenDifferentSortValue(
@@ -119,23 +125,60 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
           Object.fromEntries(
             normedSort
               .map(([field]) => [field, after[1][field]])
-              .filter(([_, query]) => query != null)
+              .filter(([_, q]) => q != null)
           ),
           { id: { [idOrder === Order.ASC ? "$gt" : "$lt"]: after[1].id } },
         ],
       });
     }
 
-    return [
+    const additionalFilterQuery =
       additionalQuery.$or.length === 0
         ? null
-        : (additionalQuery as ObjectQuery<E>),
+        : (additionalQuery as ObjectQuery<E>);
+
+    return [
+      {
+        ...(query ?? {}),
+        ...(additionalFilterQuery ?? {}),
+      } as ObjectQuery<E>,
       Object.fromEntries([...normedSort, ["id", idOrder]]) as QueryOrderMap<E>,
       reversed,
     ];
   }
 
-  // TODO: find a way to handler external filters, like non-SQL FullText search, filter out not readable instances, etc
+  private async doFindAll(
+    filterQuery: FilterQuery<E>,
+    sort: QueryOrderMap<E>,
+    pagination: Pagination,
+    additionalQueries: AdditionalQuery[],
+    externalQueries: Array<(entity: E) => boolean>,
+    em: EntityManager
+  ): Promise<E[]> {
+    let cnt = 0;
+    const result: E[] = [];
+    const limit = pagination.size + 1;
+    while (true) {
+      let entities = await em.find(this.entityType, filterQuery, {
+        orderBy: sort,
+        offset: (pagination.offset ?? 0) + cnt * limit,
+        limit: limit,
+      });
+      cnt += 1;
+      if (entities.length === 0) {
+        break;
+      }
+      entities = entities.filter((e) => externalQueries.every((q) => q(e)));
+      result.push(
+        ...(await this.handleAdditionalQueries(entities, additionalQueries))
+      );
+      if (result.length >= limit) {
+        break;
+      }
+    }
+    return result;
+  }
+
   async findAll(query: FindAllInput<E>, em?: EntityManager): Promise<Page<V>> {
     const emInst = em ?? this.orm.em.fork();
     const after = await this.getCursorAndEntity(query.pagination.after, emInst);
@@ -143,19 +186,24 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
       query.pagination.before,
       emInst
     );
-    const [additionalQuery, sort, reversed] =
-      await this.createCursorRelatedQueryAndSort(query.sort, after, before);
+    const [filterQuery, sort, reversed] =
+      await this.createCursorRelatedQueryAndSort(query, after, before);
+    const additionalQueries = [];
+    if (query.query?.$additional != null) {
+      additionalQueries.push(...query.query.$additional);
+      delete query.query.$additional;
+    }
 
-    const filterQuery = {
-      ...(query.query ?? {}),
-      ...(additionalQuery ?? {}),
-    } as ObjectQuery<E>;
+    const externalQueries = [(e: E) => this.isReadable(e, query.authUser)];
 
-    const entities = await emInst.find(this.entityType, filterQuery, {
-      orderBy: sort,
-      offset: query.pagination.offset,
-      limit: query.pagination.size + 1,
-    });
+    const entities = await this.doFindAll(
+      filterQuery,
+      sort,
+      query.pagination,
+      additionalQueries,
+      externalQueries,
+      emInst
+    );
     let hasPreviousPage = false;
     let hasNextPage = false;
     const exceeded = entities.length > query.pagination.size;

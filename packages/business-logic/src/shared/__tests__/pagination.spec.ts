@@ -3,9 +3,10 @@ import { MikroORM } from "@mikro-orm/core";
 import { config } from "../../../mikro-orm.config";
 import DefaultSeeder from "../../../seeders/default.seeder";
 import { container } from "tsyringe";
-import { RoleValue, UserService, UserValue } from "../../user";
+import { RoleValue, UserEntity, UserService, UserValue } from "../../user";
 import Order from "../order";
 import PageItem from "../page-item";
+import { USER_READ_SCOPE } from "../../user/user.service";
 
 beforeAll(async () => {
   const orm = await MikroORM.init({
@@ -20,6 +21,8 @@ beforeAll(async () => {
 });
 
 test("Find first 3 admins", async () => {
+  const orm = container.resolve(MikroORM);
+  const em = orm.em.fork();
   const userService = container.resolve(UserService);
 
   const doCheckItems = (items: Array<PageItem<UserValue>>): void => {
@@ -34,6 +37,10 @@ test("Find first 3 admins", async () => {
   };
 
   const page = await userService.findAll({
+    authUser: {
+      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
+      scopes: [USER_READ_SCOPE],
+    },
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3 },
     sort: [{ field: "name", order: Order.ASC }],
@@ -44,6 +51,10 @@ test("Find first 3 admins", async () => {
   expect(page.pageInfo.hasNextPage).toBeTruthy();
   expect(page.items.length).toBe(3);
   const nextPage = await userService.findAll({
+    authUser: {
+      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
+      scopes: [USER_READ_SCOPE],
+    },
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3, after: page.pageInfo.endCursor },
     sort: [{ field: "name", order: Order.ASC }],
@@ -51,6 +62,10 @@ test("Find first 3 admins", async () => {
   doCheckItems([...page.items, ...nextPage.items]);
 
   const nextPagePrevious = await userService.findAll({
+    authUser: {
+      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
+      scopes: [USER_READ_SCOPE],
+    },
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3, before: nextPage.pageInfo.startCursor },
     sort: [{ field: "name", order: Order.ASC }],

@@ -49,4 +49,8 @@ export default class UserService extends Service<
   isWriteable(entity: UserEntity, authUser?: AuthUser): boolean {
     return authUser?.user != null && authUser.user.role > entity.role;
   }
+
+  async handleAdditionalQueries(entities: UserEntity[]): Promise<UserEntity[]> {
+    return entities;
+  }
 }
