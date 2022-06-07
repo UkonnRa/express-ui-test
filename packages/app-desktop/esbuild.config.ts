@@ -1,25 +1,22 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { promises as fs } from "fs";
 import { ChildProcess, exec } from "child_process";
 import { build as electronBuild, Platform } from "electron-builder";
-import treeKill from "tree-kill";
+import * as treeKill from "tree-kill";
 import { build as esbuild } from "../../esbuild.config";
-import tsconfig from "./tsconfig.json";
-import appPackage from "./package.json";
-import knexPackage from "knex/package.json";
-import mikroCorePackage from "@mikro-orm/core/package.json";
 
-const prodModules = [...Object.keys(appPackage.dependencies)];
+const prodModules = Object.keys(require("./package.json").dependencies);
 
 const optionalModules = Array.from(
   new Set([
-    ...Object.keys(knexPackage.browser),
-    ...Object.keys(mikroCorePackage.peerDependencies),
+    ...Object.keys(require("knex/package.json").browser),
+    ...Object.keys(require("@mikro-orm/core/package.json").peerDependencies),
   ])
 ).filter((dep) => !prodModules.includes(dep));
 
 const main = async (): Promise<void> => {
   await esbuild(
-    tsconfig,
+    require("./tsconfig.json"),
     {
       external: [...optionalModules, "electron"],
       entryPoints: ["src/index.ts", "src/preload.ts"],

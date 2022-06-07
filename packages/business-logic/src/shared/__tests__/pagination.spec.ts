@@ -10,7 +10,7 @@ import PageItem from "../page-item";
 beforeAll(async () => {
   const orm = await MikroORM.init({
     ...config,
-    type: "sqlite",
+    type: "better-sqlite",
     dbName: "test.sqlite",
   });
   container.registerInstance(MikroORM, orm);

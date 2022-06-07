@@ -10,6 +10,7 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
+    "@mikro-orm/postgresql": "^5.1.5",
     "@white-rabbit/business-logic": "workspace:^",
     "@white-rabbit/types": "workspace:^",
     "apollo-server": "^3.8.2",

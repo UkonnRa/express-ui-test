@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "@mikro-orm/core": "^5.1.5",
-    "@mikro-orm/sqlite": "^5.1.5",
     "js-base64": "^3.7.2",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@mikro-orm/better-sqlite": "^5.1.5",
     "@mikro-orm/cli": "^5.1.5",
     "@mikro-orm/reflection": "^5.1.5",
     "@mikro-orm/seeder": "^5.1.5",

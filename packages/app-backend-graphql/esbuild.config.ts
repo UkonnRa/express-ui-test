@@ -1,18 +1,15 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { build } from "../../esbuild.config";
-import tsconfig from "./tsconfig.json";
-import appPackage from "./package.json";
-import knexPackage from "knex/package.json";
-import mikroCorePackage from "@mikro-orm/core/package.json";
 
-const prodModules = [...Object.keys(appPackage.dependencies)];
+const prodModules = Object.keys(require("./package.json").dependencies);
 
 const optionalModules = Array.from(
   new Set([
-    ...Object.keys(knexPackage.browser),
-    ...Object.keys(mikroCorePackage.peerDependencies),
+    ...Object.keys(require("knex/package.json").browser),
+    ...Object.keys(require("@mikro-orm/core/package.json").peerDependencies),
   ])
 ).filter((dep) => !prodModules.includes(dep));
 
-void build(tsconfig, {
+void build(require("./tsconfig.json"), {
   external: [...optionalModules],
 });

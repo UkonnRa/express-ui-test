@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
+    "@mikro-orm/postgresql": "^5.1.5",
     "@protobuf-ts/grpc-backend": "^2.6.0",
     "@protobuf-ts/plugin": "^2.6.0",
     "@protobuf-ts/protoc": "^2.6.0",
