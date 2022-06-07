@@ -5,6 +5,7 @@ import {
   MikroORM,
   QueryOrderMap,
   ObjectQuery,
+  EntityDTO,
 } from "@mikro-orm/core";
 import { decode, encodeURL } from "js-base64";
 import Cursor from "./cursor";
@@ -12,15 +13,17 @@ import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
 import Sort from "./sort";
 import Order from "./order";
-import FindAllInput, { AdditionalQuery } from "./find-all.input";
+import FindAllInput from "./find-all.input";
 import Page from "./page";
 import PageItem from "./page-item";
 import FindOneInput from "./find-one.input";
 import Pagination from "./pagination";
+import AdditionalQuery from "./additional-query";
+import { filterAsync } from "../utils";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 
-export default abstract class ReadService<E extends AbstractEntity<E>, V> {
+export default abstract class ReadService<E extends AbstractEntity<E>> {
   protected constructor(
     readonly orm: MikroORM,
     readonly readScope: string,
@@ -35,9 +38,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
     return encodeURL(JSON.stringify(cursor));
   }
 
-  abstract toValue(entity: E): V;
-
-  abstract isReadable(entity: E, authUser?: AuthUser): boolean;
+  abstract isReadable(entity: E, authUser?: AuthUser): Promise<boolean>;
 
   abstract handleAdditionalQueries(
     entities: E[],
@@ -152,7 +153,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
     sort: QueryOrderMap<E>,
     pagination: Pagination,
     additionalQueries: AdditionalQuery[],
-    externalQueries: Array<(entity: E) => boolean>,
+    externalQueries: Array<(entity: E) => Promise<boolean>>,
     em: EntityManager
   ): Promise<E[]> {
     let cnt = 0;
@@ -168,7 +169,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
       if (entities.length === 0) {
         break;
       }
-      entities = entities.filter((e) => externalQueries.every((q) => q(e)));
+      entities = await filterAsync(entities, async (e) =>
+        Promise.all(externalQueries.map(async (q) => q(e))).then((bs) =>
+          bs.every((b) => b)
+        )
+      );
       result.push(
         ...(await this.handleAdditionalQueries(entities, additionalQueries))
       );
@@ -179,7 +184,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
     return result;
   }
 
-  async findAll(query: FindAllInput<E>, em?: EntityManager): Promise<Page<V>> {
+  async findAll(query: FindAllInput<E>, em?: EntityManager): Promise<Page<E>> {
     const emInst = em ?? this.orm.em.fork();
     const after = await this.getCursorAndEntity(query.pagination.after, emInst);
     const before = await this.getCursorAndEntity(
@@ -194,7 +199,9 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
       delete query.query.$additional;
     }
 
-    const externalQueries = [(e: E) => this.isReadable(e, query.authUser)];
+    const externalQueries = [
+      async (e: E) => this.isReadable(e, query.authUser),
+    ];
 
     const entities = await this.doFindAll(
       filterQuery,
@@ -226,9 +233,9 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
 
     let pageItems = entities
       .slice(0, exceeded ? query.pagination.size : entities.length)
-      .map<PageItem<V>>((e) => ({
+      .map<PageItem<E>>((e) => ({
         cursor: ReadService.encodeCursor({ id: e.id }),
-        data: this.toValue(e),
+        data: e.toObject(),
       }));
     if (reversed) {
       pageItems = pageItems.reverse();
@@ -245,15 +252,18 @@ export default abstract class ReadService<E extends AbstractEntity<E>, V> {
     };
   }
 
-  async findOne(query: FindOneInput<E>, em?: EntityManager): Promise<V | null> {
+  async findOne(
+    query: FindOneInput<E>,
+    em?: EntityManager
+  ): Promise<EntityDTO<E> | null> {
     const emInst = em ?? this.orm.em.fork();
     const entity = await emInst.findOne(
       this.entityType,
       query.query ?? ({} as ObjectQuery<E>)
     );
-    if (entity == null) {
+    if (entity == null || !(await this.isReadable(entity, query.authUser))) {
       return null;
     }
-    return this.toValue(entity);
+    return entity.toObject();
   }
 }

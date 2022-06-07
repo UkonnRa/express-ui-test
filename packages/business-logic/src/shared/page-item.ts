@@ -1,4 +1,6 @@
-export default interface PageItem<V> {
+import { EntityDTO } from "@mikro-orm/core";
+
+export default interface PageItem<E> {
   readonly cursor: string;
-  readonly data: V;
+  readonly data: EntityDTO<E>;
 }

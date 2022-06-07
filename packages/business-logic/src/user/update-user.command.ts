@@ -1,8 +1,8 @@
 import RoleValue from "./role.value";
 import AuthIdValue from "./auth-id.value";
-import UserCommand from "./user.command";
+import { Command } from "../shared";
 
-export default interface UpdateUserCommand extends UserCommand {
+export default interface UpdateUserCommand extends Command {
   readonly type: "UpdateUserCommand";
   readonly targetId: string;
 

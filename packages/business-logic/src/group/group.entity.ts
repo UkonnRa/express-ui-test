@@ -7,7 +7,6 @@ import {
 } from "@mikro-orm/core";
 import { AbstractEntity } from "../shared";
 import { UserEntity } from "../user";
-import CreateGroupInput from "./create-group.input";
 
 @Entity({ collection: "group" })
 export default class GroupEntity extends AbstractEntity<GroupEntity> {
@@ -24,11 +23,19 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @ManyToMany(() => UserEntity)
   members: Collection<UserEntity> = new Collection<UserEntity>(this);
 
-  constructor({ name, description, admins, members }: CreateGroupInput) {
+  constructor(name: string, description: string | undefined) {
     super();
     this.name = name;
     this.description = description;
-    this.admins.set(admins);
-    this.members.set(members);
+  }
+
+  setAdmins(values: UserEntity[]): void {
+    this.admins.set(values);
+    this.members.remove(...values);
+  }
+
+  setMembers(values: UserEntity[]): void {
+    this.members.set(values);
+    this.admins.remove(...values);
   }
 }

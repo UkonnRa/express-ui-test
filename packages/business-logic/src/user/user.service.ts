@@ -1,52 +1,148 @@
 import { AuthUser, Service } from "../shared";
-import { MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
 import UserEntity from "./user.entity";
-import UserValue from "./user.value";
 import UserCommand from "./user.command";
+import CommandInput from "../shared/command.input";
+import CreateUserCommand from "./create-user.command";
+import UpdateUserCommand from "./update-user.command";
+import DeleteUserCommand from "./delete-user.command";
+import { NoPermissionError, NotFoundError } from "../error";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
 export const USER_WRITE_SCOPE =
   "urn:alices-wonderland:white-rabbit:users:write";
 
 @singleton()
-export default class UserService extends Service<
-  UserEntity,
-  UserValue,
-  UserCommand
-> {
+export default class UserService extends Service<UserEntity, UserCommand> {
   constructor(orm: MikroORM) {
     super(orm, USER_READ_SCOPE, USER_WRITE_SCOPE, UserEntity);
   }
 
-  override handle(): UserEntity | null {
-    return null;
+  private async createUser(
+    authUser: AuthUser,
+    command: CreateUserCommand,
+    em: EntityManager
+  ): Promise<UserEntity> {
+    const entity = new UserEntity(
+      command.name,
+      command.role ?? RoleValue.USER,
+      command.authIds ?? [authUser.authId]
+    );
+    if (!(await this.isWriteable(entity, authUser))) {
+      throw new NoPermissionError(UserEntity, "WRITE");
+    }
+    em.persist(entity);
+    return entity;
   }
 
-  override handleAll(): Array<UserEntity | null> {
+  private async updateUser(
+    authUser: AuthUser,
+    command: UpdateUserCommand,
+    em: EntityManager
+  ): Promise<UserEntity> {
+    const entity = await em.findOneOrFail(
+      UserEntity,
+      { id: command.targetId },
+      { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
+    );
+    if (!(await this.isWriteable(entity, authUser))) {
+      throw new NoPermissionError(UserEntity, "WRITE");
+    }
+
+    if (
+      command.name == null &&
+      command.role == null &&
+      command.authIds == null
+    ) {
+      return entity;
+    }
+
+    if (command.role != null) {
+      // If the role of authUser is smaller than either of the command or the existing entity, throw error
+      if (
+        authUser.user?.role == null ||
+        authUser.user.role <= command.role ||
+        authUser.user.role <= entity.role
+      ) {
+        throw new NoPermissionError(UserEntity, "WRITE");
+      }
+      entity.role = command.role;
+    }
+
+    if (command.name != null) {
+      entity.name = command.name;
+    }
+
+    if (command.authIds != null) {
+      // Users cannot modify authIds themselves
+      if (
+        authUser.user?.role == null ||
+        authUser.user.role === RoleValue.USER
+      ) {
+        throw new NoPermissionError(UserEntity, "WRITE");
+      }
+      entity.authIds = command.authIds;
+    }
+
+    em.persist(entity);
+    return entity;
+  }
+
+  private async deleteUser(
+    authUser: AuthUser,
+    command: DeleteUserCommand,
+    em: EntityManager
+  ): Promise<void> {
+    const entity = await em.findOneOrFail(
+      UserEntity,
+      { id: command.targetId },
+      { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
+    );
+    if (!(await this.isWriteable(entity, authUser))) {
+      throw new NoPermissionError(UserEntity, "WRITE");
+    }
+
+    entity.deletedAt = new Date();
+    em.persist(entity);
+  }
+
+  override async handle(
+    { command, authUser }: CommandInput<UserCommand>,
+    em?: EntityManager
+  ): Promise<UserEntity | null> {
+    const emInst = em ?? this.orm.em.fork();
+    switch (command.type) {
+      case "CreateUserCommand":
+        return this.createUser(authUser, command, emInst);
+      case "UpdateUserCommand":
+        return this.updateUser(authUser, command, emInst);
+      case "DeleteUserCommand":
+        return this.deleteUser(authUser, command, emInst).then(() => null);
+    }
+  }
+
+  override async handleAll(): Promise<Array<UserEntity | null>> {
     return [];
   }
 
-  override toValue(entity: UserEntity): UserValue {
-    return {
-      id: entity.id,
-      name: entity.name,
-      role: entity.role,
-      authIds: entity.authIds,
-    };
+  async isReadable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
+    // User can read all users
+    return this.isScopeIncluded(this.readScope, entity, authUser);
   }
 
-  isReadable(entity: UserEntity, authUser?: AuthUser): boolean {
-    if (authUser == null || !authUser.scopes.includes(this.readScope)) {
+  async isWriteable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
+    if (!this.isScopeIncluded(this.writeScope, entity, authUser)) {
       return false;
-    } else if (entity.deletedAt != null) {
-      return (authUser.user?.role ?? RoleValue.USER) > RoleValue.USER;
     }
-    return true;
-  }
 
-  isWriteable(entity: UserEntity, authUser?: AuthUser): boolean {
+    // User can update himself
+    if (entity.id === authUser?.user?.id) {
+      return true;
+    }
+
+    // User can update others whose role is smaller than him
     return authUser?.user != null && authUser.user.role > entity.role;
   }
 

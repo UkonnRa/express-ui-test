@@ -6,10 +6,13 @@ export default interface WriteService<
   C extends Command
 > {
   readonly writeScope: string;
-  readonly handle: (command: CommandInput<C>, em?: EntityManager) => E | null;
+  readonly handle: (
+    command: CommandInput<C>,
+    em?: EntityManager
+  ) => Promise<E | null>;
   readonly handleAll: (
     commands: Array<CommandInput<C>>,
     em?: EntityManager
-  ) => Array<E | null>;
-  readonly isWriteable: (entity: E, authUser?: AuthUser) => boolean;
+  ) => Promise<Array<E | null>>;
+  readonly isWriteable: (entity: E, authUser?: AuthUser) => Promise<boolean>;
 }

@@ -7,6 +7,5 @@ export { default as CreateUserCommand } from "./create-user.command";
 export { default as UpdateUserCommand } from "./update-user.command";
 export { default as DeleteUserCommand } from "./delete-user.command";
 
-export { default as UserValue } from "./user.value";
 export { default as AuthIdValue } from "./auth-id.value";
 export { default as RoleValue } from "./role.value";

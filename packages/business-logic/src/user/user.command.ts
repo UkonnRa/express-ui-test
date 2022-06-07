@@ -1,8 +1,7 @@
-import { Command } from "../shared";
+import CreateUserCommand from "./create-user.command";
+import UpdateUserCommand from "./update-user.command";
+import DeleteUserCommand from "./delete-user.command";
 
-export default interface UserCommand extends Command {
-  readonly type:
-    | "CreateUserCommand"
-    | "UpdateUserCommand"
-    | "DeleteUserCommand";
-}
+type UserCommand = CreateUserCommand | UpdateUserCommand | DeleteUserCommand;
+
+export default UserCommand;

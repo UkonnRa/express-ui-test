@@ -3,10 +3,11 @@ import { MikroORM } from "@mikro-orm/core";
 import { config } from "../../../mikro-orm.config";
 import DefaultSeeder from "../../../seeders/default.seeder";
 import { container } from "tsyringe";
-import { RoleValue, UserEntity, UserService, UserValue } from "../../user";
+import { RoleValue, UserEntity, UserService } from "../../user";
 import Order from "../order";
 import PageItem from "../page-item";
 import { USER_READ_SCOPE } from "../../user/user.service";
+import AuthUser from "../auth-user";
 
 beforeAll(async () => {
   const orm = await MikroORM.init({
@@ -24,8 +25,16 @@ test("Find first 3 admins", async () => {
   const orm = container.resolve(MikroORM);
   const em = orm.em.fork();
   const userService = container.resolve(UserService);
+  const authUserValue = await em.findOneOrFail(UserEntity, {
+    role: RoleValue.OWNER,
+  });
+  const authUser: AuthUser = {
+    authId: authUserValue.authIds[0],
+    user: authUserValue,
+    scopes: [USER_READ_SCOPE],
+  };
 
-  const doCheckItems = (items: Array<PageItem<UserValue>>): void => {
+  const doCheckItems = (items: Array<PageItem<UserEntity>>): void => {
     let prevName: string | null = null;
     for (const admin of items) {
       expect(admin.data.role).toBe(RoleValue.ADMIN);
@@ -37,10 +46,7 @@ test("Find first 3 admins", async () => {
   };
 
   const page = await userService.findAll({
-    authUser: {
-      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
-      scopes: [USER_READ_SCOPE],
-    },
+    authUser,
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3 },
     sort: [{ field: "name", order: Order.ASC }],
@@ -51,10 +57,7 @@ test("Find first 3 admins", async () => {
   expect(page.pageInfo.hasNextPage).toBeTruthy();
   expect(page.items.length).toBe(3);
   const nextPage = await userService.findAll({
-    authUser: {
-      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
-      scopes: [USER_READ_SCOPE],
-    },
+    authUser,
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3, after: page.pageInfo.endCursor },
     sort: [{ field: "name", order: Order.ASC }],
@@ -62,10 +65,7 @@ test("Find first 3 admins", async () => {
   doCheckItems([...page.items, ...nextPage.items]);
 
   const nextPagePrevious = await userService.findAll({
-    authUser: {
-      user: await em.findOneOrFail(UserEntity, { role: RoleValue.OWNER }),
-      scopes: [USER_READ_SCOPE],
-    },
+    authUser,
     query: { role: RoleValue.ADMIN },
     pagination: { size: 3, before: nextPage.pageInfo.startCursor },
     sort: [{ field: "name", order: Order.ASC }],
