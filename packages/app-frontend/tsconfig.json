@@ -12,6 +12,10 @@
       }
     }
   },
+  "vueCompilerOptions": {
+    "experimentalDisableTemplateSupport": true,
+    "jsx": "preserve"
+  },
   "include": ["src/"],
   "exclude": ["src/**/*.spec.ts"],
   "references": [{ "path": "./tsconfig.dev.json" }]
