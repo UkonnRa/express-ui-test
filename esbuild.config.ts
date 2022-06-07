@@ -1,23 +1,17 @@
-import {
-  build as doBuild,
-  analyzeMetafile,
-  BuildOptions,
-  BuildIncremental,
-} from "esbuild";
+import { build as doBuild, BuildOptions, BuildIncremental } from "esbuild";
 import { watch } from "chokidar";
 import * as path from "path";
 import { ChildProcess, execFile } from "child_process";
+import { visualizer } from "esbuild-visualizer/dist/plugin";
+import { promises as fs } from "fs";
 
 const afterBuildSuccess = async (
   packageName: string,
-  { metafile }: BuildIncremental
+  result: BuildIncremental
 ): Promise<void> => {
   console.log(`[${packageName}] Build successfully`);
-  if (metafile != null && process.argv.includes("--analyze")) {
-    console.log(
-      `[${packageName}] Dependencies analyzed: `,
-      await analyzeMetafile(metafile)
-    );
+  if (result.metafile != null) {
+    await fs.writeFile("stats.html", await visualizer(result.metafile));
   }
 };
 
