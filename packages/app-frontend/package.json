@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run --coverage",
-    "lint": "vue-tsc --noEmit && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
+    "lint": "vue-tsc --noEmit --skipLibCheck && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
