@@ -1,4 +1,4 @@
-import { AuthUser, Service } from "../shared";
+import { AuthUser, CommandsInput, Service } from "../shared";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
@@ -9,6 +9,7 @@ import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
 import { NoPermissionError, NotFoundError } from "../error";
+import RequiredFieldError from "../error/required-field.error";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
 export const USER_WRITE_SCOPE =
@@ -123,8 +124,34 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     }
   }
 
-  override async handleAll(): Promise<Array<UserEntity | null>> {
-    return [];
+  override async handleAll(
+    { authUser, commands }: CommandsInput<UserCommand>,
+    em?: EntityManager
+  ): Promise<Array<UserEntity | null>> {
+    const emInst = em ?? this.orm.em.fork();
+    const idMap: Record<string, string> = {};
+    const results = [];
+    for (const command of commands) {
+      if (command.type === "CreateUserCommand" && command.targetId != null) {
+        const result = await this.handle({ authUser, command }, emInst);
+        results.push(result);
+        if (result != null) {
+          idMap[command.targetId] = result.id;
+        }
+      } else if (command.targetId != null && idMap[command.targetId] != null) {
+        const result = await this.handle(
+          {
+            authUser,
+            command: { ...command, targetId: idMap[command.targetId] },
+          },
+          emInst
+        );
+        results.push(result);
+      } else {
+        throw new RequiredFieldError(command.type, "id");
+      }
+    }
+    return results;
   }
 
   async isReadable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {

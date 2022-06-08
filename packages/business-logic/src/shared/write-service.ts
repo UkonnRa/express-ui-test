@@ -1,4 +1,10 @@
-import { AbstractEntity, AuthUser, Command, CommandInput } from "./index";
+import {
+  AbstractEntity,
+  AuthUser,
+  Command,
+  CommandInput,
+  CommandsInput,
+} from "./index";
 import { EntityManager } from "@mikro-orm/core";
 
 export default interface WriteService<
@@ -11,7 +17,7 @@ export default interface WriteService<
     em?: EntityManager
   ) => Promise<E | null>;
   readonly handleAll: (
-    commands: Array<CommandInput<C>>,
+    commands: CommandsInput<C>,
     em?: EntityManager
   ) => Promise<Array<E | null>>;
   readonly isWriteable: (entity: E, authUser?: AuthUser) => Promise<boolean>;

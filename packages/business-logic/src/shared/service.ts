@@ -7,6 +7,7 @@ import WriteService from "./write-service";
 import CommandInput from "./command.input";
 import AuthUser from "./auth-user";
 import RoleValue from "../user/role.value";
+import CommandsInput from "./commands.input";
 
 export default abstract class Service<
     E extends AbstractEntity<E>,
@@ -31,7 +32,7 @@ export default abstract class Service<
   ): Promise<E | null>;
 
   abstract handleAll(
-    commands: Array<CommandInput<C>>,
+    commands: CommandsInput<C>,
     em?: EntityManager
   ): Promise<Array<E | null>>;
 
