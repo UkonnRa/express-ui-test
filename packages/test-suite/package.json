@@ -2,9 +2,13 @@
   "name": "@white-rabbit/test-suite",
   "packageManager": "yarn@3.2.1",
   "main": "src/index.ts",
+  "devDependencies": {
+    "@types/uuid": "^8.3.4"
+  },
   "dependencies": {
     "@mikro-orm/core": "^5.1.5",
     "@white-rabbit/business-logic": "workspace:^",
-    "tsyringe": "^4.7.0"
+    "tsyringe": "^4.7.0",
+    "uuid": "^8.3.2"
   }
 }

@@ -7,7 +7,6 @@ import {
   ObjectQuery,
   QueryOrderMap,
 } from "@mikro-orm/core";
-import { decode, encodeURL } from "js-base64";
 import Cursor from "./cursor";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
@@ -19,7 +18,7 @@ import PageItem from "./page-item";
 import FindOneInput from "./find-one.input";
 import Pagination from "./pagination";
 import { AdditionalQuery, Query } from "./query";
-import { filterAsync } from "../utils";
+import { decodeCursor, encodeCursor, filterAsync } from "../utils";
 import { NoPermissionError } from "../error";
 import { RoleValue } from "../user";
 
@@ -33,18 +32,14 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     readonly type: string
   ) {}
 
-  private static decodeCursor(cursor: string): Cursor {
-    return JSON.parse(decode(cursor));
-  }
-
-  private static encodeCursor(cursor: Cursor): string {
-    return encodeURL(JSON.stringify(cursor));
-  }
-
   abstract isReadable(entity: E, authUser: AuthUser): Promise<boolean>;
 
   checkPermission(authUser: AuthUser, query?: Query<E>): void {
     if (!authUser.scopes.includes(this.readScope)) {
+      throw new NoPermissionError(this.type, "READ");
+    }
+
+    if (authUser.user?.deletedAt != null) {
       throw new NoPermissionError(this.type, "READ");
     }
 
@@ -84,7 +79,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     if (cursor == null) {
       return null;
     }
-    const cursorObj = ReadService.decodeCursor(cursor);
+    const cursorObj = decodeCursor(cursor);
     const entity = await em.findOne(
       this.entityType,
       cursorObj.id as FilterQuery<E>,
@@ -163,7 +158,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
         ...(query ?? {}),
         ...(additionalFilterQuery ?? {}),
       } as ObjectQuery<E>,
-      Object.fromEntries([...normedSort, ["id", idOrder]]) as QueryOrderMap<E>,
+      Object.fromEntries(
+        normedSort.some(([k]) => k === "id")
+          ? normedSort
+          : [...normedSort, ["id", idOrder]]
+      ) as QueryOrderMap<E>,
       reversed,
     ];
   }
@@ -273,7 +272,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     let pageItems = entities
       .slice(0, exceeded ? input.pagination.size : entities.length)
       .map<PageItem<E>>((e) => ({
-        cursor: ReadService.encodeCursor({ id: e.id }),
+        cursor: encodeCursor({ id: e.id }),
         data: e.toObject(),
       }));
     if (reversed) {
@@ -311,7 +310,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
 
     const entities = await this.doFindAll(
       mikroQuery,
-      [{ field: "id", order: Order.ASC }],
+      [{ id: Order.ASC }],
       { size: 5 },
       additionalQueries,
       externalQueries,

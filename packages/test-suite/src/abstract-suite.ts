@@ -3,11 +3,18 @@ import {
   AuthUser,
   Command,
   FindAllInput,
+  FindOneInput,
   Service,
   UserEntity,
 } from "@white-rabbit/business-logic";
-import { Task, FindAllTask, FindAllExceptionTask } from "./task";
-import { MikroORM } from "@mikro-orm/core";
+import {
+  Task,
+  FindAllTask,
+  FindAllExceptionTask,
+  FindOneTask,
+  FindOneExceptionTask,
+} from "./task";
+import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { AuthUserInput } from "./task/abstract-task";
 
 export default abstract class AbstractSuite<
@@ -36,7 +43,9 @@ export default abstract class AbstractSuite<
     let userValue: UserEntity | undefined;
     if (user != null) {
       const em = this.orm.em.fork();
-      userValue = await em.findOneOrFail(UserEntity, user);
+      userValue = await em.findOneOrFail(UserEntity, user, {
+        filters: { excludeDeleted: user.deletedAt == null },
+      });
     }
 
     let authIdValue = authId;
@@ -57,18 +66,11 @@ export default abstract class AbstractSuite<
     };
   }
 
-  private async runFindAllTask({
-    input,
-    checker,
-    expectNextPage,
-    expectPreviousPage,
-  }: FindAllTask<E>): Promise<void> {
-    const em = this.orm.em.fork();
-    const inputValue: FindAllInput<E> = {
-      ...input,
-      authUser: await this.getAuthUser(input.authUser),
-    };
-
+  private async runFindAllTask<V>(
+    { checker, expectNextPage, expectPreviousPage }: FindAllTask<E, V>,
+    inputValue: FindAllInput<E>,
+    em: EntityManager
+  ): Promise<void> {
     const page = await this.service.findAll(inputValue, em);
     checker(page.items);
 
@@ -79,6 +81,7 @@ export default abstract class AbstractSuite<
         ...inputValue,
         pagination: {
           ...inputValue.pagination,
+          before: undefined,
           after: page.pageInfo.endCursor,
         },
       });
@@ -89,6 +92,7 @@ export default abstract class AbstractSuite<
         ...inputValue,
         pagination: {
           ...inputValue.pagination,
+          after: undefined,
           before: nextPage.pageInfo.startCursor,
         },
       });
@@ -100,6 +104,7 @@ export default abstract class AbstractSuite<
           ...inputValue,
           pagination: {
             ...inputValue.pagination,
+            before: undefined,
             after: page.pageInfo.endCursor,
           },
         });
@@ -113,6 +118,7 @@ export default abstract class AbstractSuite<
         ...inputValue,
         pagination: {
           ...inputValue.pagination,
+          after: undefined,
           before: page.pageInfo.startCursor,
         },
       });
@@ -123,6 +129,7 @@ export default abstract class AbstractSuite<
         ...inputValue,
         pagination: {
           ...inputValue.pagination,
+          before: undefined,
           after: previousPage.pageInfo.endCursor,
         },
       });
@@ -134,6 +141,7 @@ export default abstract class AbstractSuite<
           ...inputValue,
           pagination: {
             ...inputValue.pagination,
+            after: undefined,
             before: page.pageInfo.startCursor,
           },
         });
@@ -142,29 +150,75 @@ export default abstract class AbstractSuite<
     }
   }
 
-  private async runFindAllExceptionTask({
-    input,
-    expected,
-  }: FindAllExceptionTask<E>): Promise<void> {
-    const em = this.orm.em.fork();
-    const inputValue: FindAllInput<E> = {
-      ...input,
-      authUser: await this.getAuthUser(input.authUser),
-    };
-
+  private async runFindAllExceptionTask<V>(
+    { expected }: FindAllExceptionTask<E, V>,
+    inputValue: FindAllInput<E>,
+    em: EntityManager
+  ): Promise<void> {
     await expect(() =>
       this.service.findAll(inputValue, em)
     ).rejects.toThrowError(expect.objectContaining(expected));
   }
 
-  async runTask(task: Task<E>): Promise<void> {
-    await task.setup?.();
+  private async runFindOneTask<V>(
+    { checker }: FindOneTask<E, V>,
+    inputValue: FindOneInput<E>,
+    em: EntityManager
+  ): Promise<void> {
+    const item = await this.service.findOne(inputValue, em);
+    checker(item);
+  }
+
+  private async runFindOneExceptionTask<V>(
+    { expected }: FindOneExceptionTask<E, V>,
+    inputValue: FindOneInput<E>,
+    em: EntityManager
+  ): Promise<void> {
+    await expect(() =>
+      this.service.findOne(inputValue, em)
+    ).rejects.toThrowError(expect.objectContaining(expected));
+  }
+
+  async runTask<V>(task: Task<E, V>): Promise<void> {
+    const em = this.orm.em.fork();
+    const setupResult = task.setup != null ? await task.setup(em) : undefined;
+    let inputResult: typeof task.input;
+
+    if (task.input instanceof Function) {
+      if (setupResult == null) {
+        throw new Error("setup() cannot be null while the input is a function");
+      } else {
+        inputResult = await task.input(setupResult);
+      }
+    } else {
+      inputResult = task.input;
+    }
+
+    const inputValue = {
+      ...inputResult,
+      authUser: await this.getAuthUser(inputResult.authUser),
+    };
+
     switch (task.type) {
       case "FindAllTask":
-        await this.runFindAllTask(task);
+        await this.runFindAllTask(task, inputValue as FindAllInput<E>, em);
         break;
       case "FindAllExceptionTask":
-        await this.runFindAllExceptionTask(task);
+        await this.runFindAllExceptionTask(
+          task,
+          inputValue as FindAllInput<E>,
+          em
+        );
+        break;
+      case "FindOneTask":
+        await this.runFindOneTask(task, inputValue as FindOneInput<E>, em);
+        break;
+      case "FindOneExceptionTask":
+        await this.runFindOneExceptionTask(
+          task,
+          inputValue as FindOneInput<E>,
+          em
+        );
         break;
     }
   }

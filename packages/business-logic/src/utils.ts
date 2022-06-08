@@ -1,3 +1,6 @@
+import Cursor from "./shared/cursor";
+import { decode, encodeURL } from "js-base64";
+
 export async function mapAsync<T, U>(
   array: T[],
   callbackfn: (value: T, index: number, array: T[]) => Promise<U>
@@ -11,4 +14,12 @@ export async function filterAsync<T>(
 ): Promise<T[]> {
   const filterMap = await mapAsync(array, callbackfn);
   return array.filter((_, index) => filterMap[index]);
+}
+
+export function decodeCursor(cursor: string): Cursor {
+  return JSON.parse(decode(cursor));
+}
+
+export function encodeCursor(cursor: Cursor): string {
+  return encodeURL(JSON.stringify(cursor));
 }

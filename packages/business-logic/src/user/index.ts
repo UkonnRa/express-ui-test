@@ -4,7 +4,11 @@ export {
   USER_TYPE_PLURAL,
 } from "./user.entity";
 
-export { default as UserService } from "./user.service";
+export {
+  default as UserService,
+  USER_WRITE_SCOPE,
+  USER_READ_SCOPE,
+} from "./user.service";
 
 export { default as UserCommand } from "./user.command";
 export { default as CreateUserCommand } from "./create-user.command";

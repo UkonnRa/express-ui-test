@@ -6577,8 +6577,10 @@ __metadata:
   resolution: "@white-rabbit/test-suite@workspace:packages/test-suite"
   dependencies:
     "@mikro-orm/core": ^5.1.5
+    "@types/uuid": ^8.3.4
     "@white-rabbit/business-logic": "workspace:^"
     tsyringe: ^4.7.0
+    uuid: ^8.3.2
   languageName: unknown
   linkType: soft
 
