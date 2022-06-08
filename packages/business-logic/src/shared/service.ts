@@ -19,9 +19,10 @@ export default abstract class Service<
     override readonly orm: MikroORM,
     override readonly readScope: string,
     readonly writeScope: string,
-    override entityType: EntityName<E>
+    override entityType: EntityName<E>,
+    override type: string
   ) {
-    super(orm, readScope, entityType);
+    super(orm, readScope, entityType, type);
   }
 
   abstract handle(
@@ -36,12 +37,23 @@ export default abstract class Service<
 
   abstract isWriteable(entity: E, authUser?: AuthUser): Promise<boolean>;
 
-  isScopeIncluded(scope: string, entity: E, authUser?: AuthUser): boolean {
+  doGeneralPermissionCheck(
+    scope: string,
+    entity: E,
+    authUser?: AuthUser
+  ): boolean {
     if (authUser == null || !authUser.scopes.includes(scope)) {
       return false;
-    } else if (entity.deletedAt != null) {
+    }
+
+    if (authUser.user?.deletedAt != null) {
+      return false;
+    }
+
+    if (entity.deletedAt != null) {
       return (authUser.user?.role ?? RoleValue.USER) > RoleValue.USER;
     }
+
     return true;
   }
 }

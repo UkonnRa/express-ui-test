@@ -3,7 +3,11 @@ import { AbstractEntity } from "../shared";
 import RoleValue from "./role.value";
 import AuthIdValue from "./auth-id.value";
 
-@Entity({ collection: "user" })
+export const USER_TYPE = "user";
+
+export const USER_TYPE_PLURAL = "users";
+
+@Entity({ collection: USER_TYPE })
 export default class UserEntity extends AbstractEntity<UserEntity> {
   @Property({ type: "string" })
   @Unique()

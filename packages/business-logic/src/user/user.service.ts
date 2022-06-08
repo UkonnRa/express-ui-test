@@ -2,7 +2,7 @@ import { AuthUser, Service } from "../shared";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
-import UserEntity from "./user.entity";
+import UserEntity, { USER_TYPE } from "./user.entity";
 import UserCommand from "./user.command";
 import CommandInput from "../shared/command.input";
 import CreateUserCommand from "./create-user.command";
@@ -17,7 +17,7 @@ export const USER_WRITE_SCOPE =
 @singleton()
 export default class UserService extends Service<UserEntity, UserCommand> {
   constructor(orm: MikroORM) {
-    super(orm, USER_READ_SCOPE, USER_WRITE_SCOPE, UserEntity);
+    super(orm, USER_READ_SCOPE, USER_WRITE_SCOPE, UserEntity, USER_TYPE);
   }
 
   private async createUser(
@@ -31,7 +31,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
       command.authIds ?? [authUser.authId]
     );
     if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(UserEntity, "WRITE");
+      throw new NoPermissionError(this.type, "WRITE");
     }
     em.persist(entity);
     return entity;
@@ -48,7 +48,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
       { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
     );
     if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(UserEntity, "WRITE");
+      throw new NoPermissionError(this.type, "WRITE");
     }
 
     if (
@@ -66,7 +66,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
         authUser.user.role <= command.role ||
         authUser.user.role <= entity.role
       ) {
-        throw new NoPermissionError(UserEntity, "WRITE");
+        throw new NoPermissionError(this.type, "WRITE");
       }
       entity.role = command.role;
     }
@@ -81,7 +81,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
         authUser.user?.role == null ||
         authUser.user.role === RoleValue.USER
       ) {
-        throw new NoPermissionError(UserEntity, "WRITE");
+        throw new NoPermissionError(this.type, "WRITE");
       }
       entity.authIds = command.authIds;
     }
@@ -101,7 +101,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
       { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
     );
     if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(UserEntity, "WRITE");
+      throw new NoPermissionError(this.type, "WRITE");
     }
 
     entity.deletedAt = new Date();
@@ -129,11 +129,11 @@ export default class UserService extends Service<UserEntity, UserCommand> {
 
   async isReadable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
     // User can read all users
-    return this.isScopeIncluded(this.readScope, entity, authUser);
+    return this.doGeneralPermissionCheck(this.readScope, entity, authUser);
   }
 
   async isWriteable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
-    if (!this.isScopeIncluded(this.writeScope, entity, authUser)) {
+    if (!this.doGeneralPermissionCheck(this.writeScope, entity, authUser)) {
       return false;
     }
 
@@ -144,9 +144,5 @@ export default class UserService extends Service<UserEntity, UserCommand> {
 
     // User can update others whose role is smaller than him
     return authUser?.user != null && authUser.user.role > entity.role;
-  }
-
-  async handleAdditionalQueries(entities: UserEntity[]): Promise<UserEntity[]> {
-    return entities;
   }
 }

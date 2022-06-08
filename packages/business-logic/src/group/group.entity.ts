@@ -8,7 +8,11 @@ import {
 import { AbstractEntity } from "../shared";
 import { UserEntity } from "../user";
 
-@Entity({ collection: "group" })
+export const GROUP_TYPE = "group";
+
+export const GROUP_TYPE_PLURAL = "groups";
+
+@Entity({ collection: GROUP_TYPE })
 export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @Property({ type: "string" })
   @Unique()

@@ -1,4 +1,4 @@
-import { AbstractError } from "./abstract-error";
+import AbstractError from "./abstract-error";
 import { EntityName } from "@mikro-orm/core";
 
 export default class NotFoundError extends AbstractError {

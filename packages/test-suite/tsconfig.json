@@ -3,10 +3,10 @@
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
-    "rootDir": "src/",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "rootDir": "src/"
+    //    "paths": {
+    //      "@/*": ["./src/*"]
+    //    }
   },
   "references": [{ "path": "../types" }]
 }

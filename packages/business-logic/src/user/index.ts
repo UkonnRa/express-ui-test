@@ -1,4 +1,8 @@
-export { default as UserEntity } from "./user.entity";
+export {
+  default as UserEntity,
+  USER_TYPE,
+  USER_TYPE_PLURAL,
+} from "./user.entity";
 
 export { default as UserService } from "./user.service";
 

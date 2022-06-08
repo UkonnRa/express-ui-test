@@ -20,6 +20,9 @@ export default class DefaultSeeder extends Seeder {
         role: RoleValue.USER,
         deletedAt: undefined,
       }),
+      new UserFactory(em).create(5, {
+        deletedAt: faker.date.recent(10),
+      }),
       new UserFactory(em).create(21),
     ]).then((nested) => nested.flatMap((xs) => xs));
 

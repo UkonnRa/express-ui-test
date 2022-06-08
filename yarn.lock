@@ -6498,6 +6498,7 @@ __metadata:
     "@mikro-orm/reflection": ^5.1.5
     "@mikro-orm/seeder": ^5.1.5
     "@types/uuid": ^8.3.4
+    "@white-rabbit/test-suite": "workspace:^"
     js-base64: ^3.7.2
     reflect-metadata: ^0.1.13
     tsyringe: ^4.7.0
@@ -6571,9 +6572,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@white-rabbit/test-suite@workspace:packages/test-suite":
+"@white-rabbit/test-suite@workspace:^, @white-rabbit/test-suite@workspace:packages/test-suite":
   version: 0.0.0-use.local
   resolution: "@white-rabbit/test-suite@workspace:packages/test-suite"
+  dependencies:
+    "@mikro-orm/core": ^5.1.5
+    "@white-rabbit/business-logic": "workspace:^"
+    tsyringe: ^4.7.0
   languageName: unknown
   linkType: soft
 

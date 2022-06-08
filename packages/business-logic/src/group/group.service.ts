@@ -1,8 +1,9 @@
 import { AuthUser, Service } from "../shared";
-import GroupEntity from "./group.entity";
+import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
 import { singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
+import { RoleValue } from "../user";
 
 export const GROUP_READ_SCOPE =
   "urn:alices-wonderland:white-rabbit:groups:read";
@@ -12,7 +13,7 @@ export const GROUP_WRITE_SCOPE =
 @singleton()
 export default class GroupService extends Service<GroupEntity, GroupCommand> {
   constructor(orm: MikroORM) {
-    super(orm, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, GroupEntity);
+    super(orm, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, GroupEntity, GROUP_TYPE);
   }
 
   async handle(): Promise<GroupEntity | null> {
@@ -23,13 +24,13 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     return [];
   }
 
-  async handleAdditionalQueries(): Promise<GroupEntity[]> {
-    return [];
-  }
-
   async isReadable(entity: GroupEntity, authUser?: AuthUser): Promise<boolean> {
-    if (!this.isScopeIncluded(this.readScope, entity, authUser)) {
+    if (!this.doGeneralPermissionCheck(this.readScope, entity, authUser)) {
       return false;
+    }
+
+    if ((authUser?.user?.role ?? RoleValue.USER) > RoleValue.USER) {
+      return true;
     }
 
     if (!entity.admins.isInitialized()) {
@@ -51,8 +52,12 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     entity: GroupEntity,
     authUser?: AuthUser
   ): Promise<boolean> {
-    if (!this.isScopeIncluded(this.writeScope, entity, authUser)) {
+    if (!this.doGeneralPermissionCheck(this.writeScope, entity, authUser)) {
       return false;
+    }
+
+    if ((authUser?.user?.role ?? RoleValue.USER) > RoleValue.USER) {
+      return true;
     }
 
     if (!entity.admins.isInitialized()) {
