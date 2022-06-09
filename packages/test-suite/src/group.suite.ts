@@ -11,7 +11,7 @@ import { MikroORM } from "@mikro-orm/core";
 import { Task } from "./task";
 import each from "jest-each";
 
-const TASKS: Array<Task<GroupEntity>> = [
+const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
   {
     type: "FindAllTask",
     name: "Find all groups",

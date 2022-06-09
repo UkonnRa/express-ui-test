@@ -3,7 +3,7 @@ import AbstractError from "./abstract-error";
 type PermissionType = "READ" | "WRITE";
 
 export default class NoPermissionError extends AbstractError {
-  protected readonly type: string = "NoPermissionError";
+  readonly type: string = "NoPermissionError";
 
   constructor(
     readonly entityType: string,

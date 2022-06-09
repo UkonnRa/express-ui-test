@@ -1,4 +1,4 @@
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import { EntityName } from "@mikro-orm/core/typings";
 import AbstractEntity from "./abstract-entity";
 import Command from "./command";
@@ -29,12 +29,12 @@ export default abstract class Service<
   abstract handle(
     command: CommandInput<C>,
     em?: EntityManager
-  ): Promise<E | null>;
+  ): Promise<EntityDTO<E> | null>;
 
   abstract handleAll(
     commands: CommandsInput<C>,
     em?: EntityManager
-  ): Promise<Array<E | null>>;
+  ): Promise<Array<EntityDTO<E> | null>>;
 
   abstract isWriteable(entity: E, authUser?: AuthUser): Promise<boolean>;
 

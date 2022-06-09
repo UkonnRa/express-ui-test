@@ -2,7 +2,7 @@ import { AuthUser, Service } from "../shared";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
 import { singleton } from "tsyringe";
-import { MikroORM } from "@mikro-orm/core";
+import { EntityDTO, MikroORM } from "@mikro-orm/core";
 import { RoleValue } from "../user";
 
 export const GROUP_READ_SCOPE =
@@ -16,11 +16,11 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     super(orm, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, GroupEntity, GROUP_TYPE);
   }
 
-  async handle(): Promise<GroupEntity | null> {
+  async handle(): Promise<EntityDTO<GroupEntity> | null> {
     return null;
   }
 
-  async handleAll(): Promise<Array<GroupEntity | null>> {
+  async handleAll(): Promise<Array<EntityDTO<GroupEntity> | null>> {
     return [];
   }
 

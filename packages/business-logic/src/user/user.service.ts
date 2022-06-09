@@ -1,5 +1,5 @@
 import { AuthUser, CommandsInput, Service } from "../shared";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
 import UserEntity, { USER_TYPE } from "./user.entity";
@@ -26,14 +26,21 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     command: CreateUserCommand,
     em: EntityManager
   ): Promise<UserEntity> {
+    const role = command.role ?? RoleValue.USER;
+
+    if (authUser.user == null && role !== RoleValue.USER) {
+      throw new NoPermissionError(this.type, "WRITE");
+    }
+    if (authUser.user != null && authUser.user.role <= role) {
+      throw new NoPermissionError(this.type, "WRITE");
+    }
+
     const entity = new UserEntity(
       command.name,
       command.role ?? RoleValue.USER,
-      command.authIds ?? [authUser.authId]
+      authUser.user == null ? [authUser.authId] : command.authIds ?? []
     );
-    if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
+
     em.persist(entity);
     return entity;
   }
@@ -46,7 +53,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     const entity = await em.findOneOrFail(
       UserEntity,
       { id: command.targetId },
-      { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
+      { failHandler: () => new NotFoundError(this.type, command.targetId) }
     );
     if (!(await this.isWriteable(entity, authUser))) {
       throw new NoPermissionError(this.type, "WRITE");
@@ -99,7 +106,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     const entity = await em.findOneOrFail(
       UserEntity,
       { id: command.targetId },
-      { failHandler: () => new NotFoundError(UserEntity, command.targetId) }
+      { failHandler: () => new NotFoundError(this.type, command.targetId) }
     );
     if (!(await this.isWriteable(entity, authUser))) {
       throw new NoPermissionError(this.type, "WRITE");
@@ -112,13 +119,17 @@ export default class UserService extends Service<UserEntity, UserCommand> {
   override async handle(
     { command, authUser }: CommandInput<UserCommand>,
     em?: EntityManager
-  ): Promise<UserEntity | null> {
+  ): Promise<EntityDTO<UserEntity> | null> {
     const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateUserCommand":
-        return this.createUser(authUser, command, emInst);
+        return this.createUser(authUser, command, emInst).then((u) =>
+          u.toObject()
+        );
       case "UpdateUserCommand":
-        return this.updateUser(authUser, command, emInst);
+        return this.updateUser(authUser, command, emInst).then((u) =>
+          u.toObject()
+        );
       case "DeleteUserCommand":
         return this.deleteUser(authUser, command, emInst).then(() => null);
     }
@@ -127,31 +138,35 @@ export default class UserService extends Service<UserEntity, UserCommand> {
   override async handleAll(
     { authUser, commands }: CommandsInput<UserCommand>,
     em?: EntityManager
-  ): Promise<Array<UserEntity | null>> {
-    const emInst = em ?? this.orm.em.fork();
-    const idMap: Record<string, string> = {};
-    const results = [];
-    for (const command of commands) {
-      if (command.type === "CreateUserCommand" && command.targetId != null) {
-        const result = await this.handle({ authUser, command }, emInst);
-        results.push(result);
-        if (result != null) {
-          idMap[command.targetId] = result.id;
+  ): Promise<Array<EntityDTO<UserEntity> | null>> {
+    return (em ?? this.orm.em.fork()).transactional(async (emInst) => {
+      const idMap: Record<string, string> = {};
+      const results = [];
+      for (const command of commands) {
+        if (command.type === "CreateUserCommand") {
+          const result = await this.handle({ authUser, command }, emInst);
+          results.push(result);
+          if (result != null && command.targetId != null) {
+            idMap[command.targetId] = result.id;
+          }
+        } else if (command.targetId != null) {
+          const result = await this.handle(
+            {
+              authUser,
+              command: {
+                ...command,
+                targetId: idMap[command.targetId] ?? command.targetId,
+              },
+            },
+            emInst
+          );
+          results.push(result);
+        } else {
+          throw new RequiredFieldError(command.type, "id");
         }
-      } else if (command.targetId != null && idMap[command.targetId] != null) {
-        const result = await this.handle(
-          {
-            authUser,
-            command: { ...command, targetId: idMap[command.targetId] },
-          },
-          emInst
-        );
-        results.push(result);
-      } else {
-        throw new RequiredFieldError(command.type, "id");
       }
-    }
-    return results;
+      return results;
+    });
   }
 
   async isReadable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {

@@ -2,6 +2,8 @@ import {
   AbstractEntity,
   AuthUser,
   Command,
+  CommandInput,
+  CommandsInput,
   FindAllInput,
   FindOneInput,
   Service,
@@ -13,6 +15,10 @@ import {
   FindAllExceptionTask,
   FindOneTask,
   FindOneExceptionTask,
+  HandleCommandTask,
+  HandleCommandExceptionTask,
+  HandleCommandsTask,
+  HandleCommandsExceptionTask,
 } from "./task";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { AuthUserInput } from "./task/abstract-task";
@@ -22,7 +28,7 @@ export default abstract class AbstractSuite<
   C extends Command,
   S extends Service<E, C>
 > {
-  readonly tasks: Array<Task<E>>;
+  readonly tasks: Array<Task<E, C>>;
 
   protected constructor(
     private readonly orm: MikroORM,
@@ -68,10 +74,9 @@ export default abstract class AbstractSuite<
 
   private async runFindAllTask<V>(
     { checker, expectNextPage, expectPreviousPage }: FindAllTask<E, V>,
-    inputValue: FindAllInput<E>,
-    em: EntityManager
+    inputValue: FindAllInput<E>
   ): Promise<void> {
-    const page = await this.service.findAll(inputValue, em);
+    const page = await this.service.findAll(inputValue);
     checker(page.items);
 
     if (expectNextPage === true) {
@@ -152,34 +157,87 @@ export default abstract class AbstractSuite<
 
   private async runFindAllExceptionTask<V>(
     { expected }: FindAllExceptionTask<E, V>,
-    inputValue: FindAllInput<E>,
-    em: EntityManager
+    inputValue: FindAllInput<E>
   ): Promise<void> {
-    await expect(() =>
-      this.service.findAll(inputValue, em)
-    ).rejects.toThrowError(expect.objectContaining(expected));
+    await expect(() => this.service.findAll(inputValue)).rejects.toThrowError(
+      expect.objectContaining(expected)
+    );
   }
 
   private async runFindOneTask<V>(
     { checker }: FindOneTask<E, V>,
-    inputValue: FindOneInput<E>,
-    em: EntityManager
+    inputValue: FindOneInput<E>
   ): Promise<void> {
-    const item = await this.service.findOne(inputValue, em);
+    const item = await this.service.findOne(inputValue);
     checker(item);
   }
 
   private async runFindOneExceptionTask<V>(
     { expected }: FindOneExceptionTask<E, V>,
-    inputValue: FindOneInput<E>,
-    em: EntityManager
+    inputValue: FindOneInput<E>
   ): Promise<void> {
-    await expect(() =>
-      this.service.findOne(inputValue, em)
-    ).rejects.toThrowError(expect.objectContaining(expected));
+    await expect(() => this.service.findOne(inputValue)).rejects.toThrowError(
+      expect.objectContaining(expected)
+    );
   }
 
-  async runTask<V>(task: Task<E, V>): Promise<void> {
+  private async runHandleCommandTask<CC extends C, V>(
+    { checker }: HandleCommandTask<E, C, CC, V>,
+    inputValue: CommandInput<CC>,
+    em: EntityManager
+  ): Promise<void> {
+    const item = await this.service.handle(inputValue, em);
+    checker({
+      item,
+      command: inputValue.command,
+      authUser: inputValue.authUser,
+    });
+  }
+
+  private async runHandleCommandExceptionTask<CC extends C, V>(
+    { expected }: HandleCommandExceptionTask<C, V>,
+    inputValue: CommandInput<CC>
+  ): Promise<void> {
+    const expectedValue =
+      expected instanceof Function ? await expected(inputValue) : expected;
+    await expect(() => this.service.handle(inputValue)).rejects.toThrowError(
+      expect.objectContaining(expectedValue)
+    );
+  }
+
+  private async runHandleCommandsTask<V>(
+    { checker }: HandleCommandsTask<E, C, V>,
+    inputValue: CommandsInput<C>,
+    em: EntityManager
+  ): Promise<void> {
+    const items = await this.service.handleAll(inputValue, em);
+    checker({
+      items,
+      commands: inputValue.commands,
+      authUser: inputValue.authUser,
+    });
+  }
+
+  private async runHandleCommandsExceptionTask<CC extends C, V>(
+    { expected, checker }: HandleCommandsExceptionTask<E, C, V>,
+    inputValue: CommandsInput<CC>
+  ): Promise<void> {
+    const expectedValue =
+      expected instanceof Function ? await expected(inputValue) : expected;
+    await expect(() => this.service.handleAll(inputValue)).rejects.toThrowError(
+      expect.objectContaining(expectedValue)
+    );
+    await checker(
+      {
+        items: [],
+        commands: inputValue.commands,
+        authUser: inputValue.authUser,
+      },
+      this.orm.em.fork()
+    );
+  }
+
+  async runTask<V>(task: Task<E, C, V>): Promise<void> {
     const em = this.orm.em.fork();
     const setupResult = task.setup != null ? await task.setup(em) : undefined;
     let inputResult: typeof task.input;
@@ -201,23 +259,41 @@ export default abstract class AbstractSuite<
 
     switch (task.type) {
       case "FindAllTask":
-        await this.runFindAllTask(task, inputValue as FindAllInput<E>, em);
+        await this.runFindAllTask(task, inputValue as FindAllInput<E>);
         break;
       case "FindAllExceptionTask":
-        await this.runFindAllExceptionTask(
+        await this.runFindAllExceptionTask(task, inputValue as FindAllInput<E>);
+        break;
+      case "FindOneTask":
+        await this.runFindOneTask(task, inputValue as FindOneInput<E>);
+        break;
+      case "FindOneExceptionTask":
+        await this.runFindOneExceptionTask(task, inputValue as FindOneInput<E>);
+        break;
+      case "HandleCommandTask":
+        await this.runHandleCommandTask(
           task,
-          inputValue as FindAllInput<E>,
+          inputValue as CommandInput<C>,
           em
         );
         break;
-      case "FindOneTask":
-        await this.runFindOneTask(task, inputValue as FindOneInput<E>, em);
-        break;
-      case "FindOneExceptionTask":
-        await this.runFindOneExceptionTask(
+      case "HandleCommandExceptionTask":
+        await this.runHandleCommandExceptionTask(
           task,
-          inputValue as FindOneInput<E>,
+          inputValue as CommandInput<C>
+        );
+        break;
+      case "HandleCommandsTask":
+        await this.runHandleCommandsTask(
+          task,
+          inputValue as CommandsInput<C>,
           em
+        );
+        break;
+      case "HandleCommandsExceptionTask":
+        await this.runHandleCommandsExceptionTask(
+          task,
+          inputValue as CommandsInput<C>
         );
         break;
     }
