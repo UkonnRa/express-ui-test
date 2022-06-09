@@ -11,3 +11,6 @@ export {
 } from "./group.service";
 
 export { default as GroupCommand } from "./group.command";
+export { default as CreateGroupCommand } from "./create-group.command";
+export { default as UpdateGroupCommand } from "./update-group.command";
+export { default as DeleteGroupCommand } from "./delete-group.command";

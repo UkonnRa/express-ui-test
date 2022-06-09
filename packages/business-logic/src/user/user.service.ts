@@ -8,7 +8,7 @@ import CommandInput from "../shared/command.input";
 import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
-import { NoPermissionError, NotFoundError } from "../error";
+import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import RequiredFieldError from "../error/required-field.error";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
@@ -35,6 +35,10 @@ export default class UserService extends Service<UserEntity, UserCommand> {
       throw new NoPermissionError(this.type, "WRITE");
     }
 
+    if ((await em.findOne(this.entityType, { name: command.name })) != null) {
+      throw new AlreadyExistError(this.type, "name", command.name);
+    }
+
     const entity = new UserEntity(
       command.name,
       command.role ?? RoleValue.USER,
@@ -51,7 +55,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     em: EntityManager
   ): Promise<UserEntity> {
     const entity = await em.findOneOrFail(
-      UserEntity,
+      this.entityType,
       { id: command.targetId },
       { failHandler: () => new NotFoundError(this.type, command.targetId) }
     );
@@ -104,7 +108,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     em: EntityManager
   ): Promise<void> {
     const entity = await em.findOneOrFail(
-      UserEntity,
+      this.entityType,
       { id: command.targetId },
       { failHandler: () => new NotFoundError(this.type, command.targetId) }
     );
@@ -113,6 +117,7 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     }
 
     entity.deletedAt = new Date();
+    entity.name = entity.name + new Date().toUTCString();
     em.persist(entity);
   }
 

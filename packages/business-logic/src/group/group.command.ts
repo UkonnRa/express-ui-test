@@ -1,8 +1,10 @@
-import { Command } from "../shared";
+import CreateGroupCommand from "./create-group.command";
+import UpdateGroupCommand from "./update-group.command";
+import DeleteGroupCommand from "./delete-group.command";
 
-export default interface GroupCommand extends Command {
-  readonly type:
-    | "CreateGroupCommand"
-    | "UpdateGroupCommand"
-    | "DeleteGroupCommand";
-}
+type GroupCommand =
+  | CreateGroupCommand
+  | UpdateGroupCommand
+  | DeleteGroupCommand;
+
+export default GroupCommand;
