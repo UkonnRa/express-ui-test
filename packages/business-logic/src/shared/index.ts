@@ -1,8 +1,7 @@
 export { default as AbstractEntity } from "./abstract-entity";
-export { default as Service } from "./service";
 export { default as AuthUser } from "./auth-user";
 
-export { default as WriteService } from "./write-service";
+export { default as WriteService, checkCreate } from "./write-service";
 export { default as Command } from "./command";
 export { default as CommandInput } from "./command.input";
 export { default as CommandsInput } from "./commands.input";

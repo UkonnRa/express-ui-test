@@ -1,4 +1,4 @@
-import { AuthUser, CommandsInput, Service } from "../shared";
+import { AuthUser, checkCreate, WriteService } from "../shared";
 import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
@@ -8,17 +8,19 @@ import CommandInput from "../shared/command.input";
 import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
-import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
-import RequiredFieldError from "../error/required-field.error";
+import { NoPermissionError } from "../error";
+import InvalidCommandError from "../error/invalid-command.error";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
 export const USER_WRITE_SCOPE =
   "urn:alices-wonderland:white-rabbit:users:write";
 
 @singleton()
-export default class UserService extends Service<UserEntity, UserCommand> {
+export default class UserService extends WriteService<UserEntity, UserCommand> {
   constructor(orm: MikroORM) {
-    super(orm, USER_READ_SCOPE, USER_WRITE_SCOPE, UserEntity, USER_TYPE);
+    super(orm, USER_TYPE, UserEntity, USER_READ_SCOPE, USER_WRITE_SCOPE, [
+      "CreateUserCommand",
+    ]);
   }
 
   private async createUser(
@@ -26,17 +28,23 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     command: CreateUserCommand,
     em: EntityManager
   ): Promise<UserEntity> {
-    const role = command.role ?? RoleValue.USER;
+    await checkCreate(
+      this.type,
+      this.entityName,
+      authUser,
+      this.writeScope,
+      {
+        name: command.name,
+      },
+      em
+    );
 
-    if (authUser.user == null && role !== RoleValue.USER) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
-    if (authUser.user != null && authUser.user.role <= role) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
-
-    if ((await em.findOne(this.entityType, { name: command.name })) != null) {
-      throw new AlreadyExistError(this.type, "name", command.name);
+    if (
+      authUser.user == null &&
+      command.role != null &&
+      command.role !== RoleValue.USER
+    ) {
+      throw new InvalidCommandError();
     }
 
     const entity = new UserEntity(
@@ -54,14 +62,11 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     command: UpdateUserCommand,
     em: EntityManager
   ): Promise<UserEntity> {
-    const entity = await em.findOneOrFail(
-      this.entityType,
-      { id: command.targetId },
-      { failHandler: () => new NotFoundError(this.type, command.targetId) }
+    const entity = await this.getWriteableEntity(
+      authUser,
+      command.targetId,
+      em
     );
-    if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
 
     if (
       command.name == null &&
@@ -107,14 +112,11 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     command: DeleteUserCommand,
     em: EntityManager
   ): Promise<void> {
-    const entity = await em.findOneOrFail(
-      this.entityType,
-      { id: command.targetId },
-      { failHandler: () => new NotFoundError(this.type, command.targetId) }
+    const entity = await this.getWriteableEntity(
+      authUser,
+      command.targetId,
+      em
     );
-    if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
 
     entity.deletedAt = new Date();
     entity.name = entity.name + new Date().toUTCString();
@@ -140,56 +142,17 @@ export default class UserService extends Service<UserEntity, UserCommand> {
     }
   }
 
-  override async handleAll(
-    { authUser, commands }: CommandsInput<UserCommand>,
-    em?: EntityManager
-  ): Promise<Array<EntityDTO<UserEntity> | null>> {
-    return (em ?? this.orm.em.fork()).transactional(async (emInst) => {
-      const idMap: Record<string, string> = {};
-      const results = [];
-      for (const command of commands) {
-        if (command.type === "CreateUserCommand") {
-          const result = await this.handle({ authUser, command }, emInst);
-          results.push(result);
-          if (result != null && command.targetId != null) {
-            idMap[command.targetId] = result.id;
-          }
-        } else if (command.targetId != null) {
-          const result = await this.handle(
-            {
-              authUser,
-              command: {
-                ...command,
-                targetId: idMap[command.targetId] ?? command.targetId,
-              },
-            },
-            emInst
-          );
-          results.push(result);
-        } else {
-          throw new RequiredFieldError(command.type, "id");
-        }
-      }
-      return results;
-    });
-  }
-
-  async isReadable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
-    // User can read all users
-    return this.doGeneralPermissionCheck(this.readScope, entity, authUser);
-  }
-
-  async isWriteable(entity: UserEntity, authUser?: AuthUser): Promise<boolean> {
-    if (!this.doGeneralPermissionCheck(this.writeScope, entity, authUser)) {
-      return false;
+  override async checkWriteable(
+    entity: UserEntity,
+    authUser: AuthUser
+  ): Promise<void> {
+    await super.checkWriteable(entity, authUser);
+    if (
+      authUser.user != null &&
+      entity.id !== authUser.user.id &&
+      authUser.user.role <= entity.role
+    ) {
+      throw new NoPermissionError(this.type, "WRITE");
     }
-
-    // User can update himself
-    if (entity.id === authUser?.user?.id) {
-      return true;
-    }
-
-    // User can update others whose role is smaller than him
-    return authUser?.user != null && authUser.user.role > entity.role;
   }
 }

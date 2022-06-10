@@ -1,14 +1,14 @@
-import { AuthUser, CommandInput, Service } from "../shared";
+import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
 import { singleton } from "tsyringe";
 import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import { RoleValue, UserEntity, UserService } from "../user";
 import CreateGroupCommand from "./create-group.command";
-import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import { filterAsync } from "../utils";
 import UpdateGroupCommand from "./update-group.command";
 import DeleteGroupCommand from "./delete-group.command";
+import { NoPermissionError } from "../error";
 
 export const GROUP_READ_SCOPE =
   "urn:alices-wonderland:white-rabbit:groups:read";
@@ -16,9 +16,14 @@ export const GROUP_WRITE_SCOPE =
   "urn:alices-wonderland:white-rabbit:groups:write";
 
 @singleton()
-export default class GroupService extends Service<GroupEntity, GroupCommand> {
+export default class GroupService extends WriteService<
+  GroupEntity,
+  GroupCommand
+> {
   constructor(orm: MikroORM, private readonly userService: UserService) {
-    super(orm, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, GroupEntity, GROUP_TYPE);
+    super(orm, GROUP_TYPE, GroupEntity, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, [
+      "CreateGroupCommand",
+    ]);
   }
 
   private async createGroup(
@@ -26,24 +31,24 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     command: CreateGroupCommand,
     em: EntityManager
   ): Promise<GroupEntity> {
-    if (
-      authUser == null ||
-      !authUser.scopes.includes(this.writeScope) ||
-      authUser.user == null
-    ) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
-
-    if (authUser.user?.deletedAt != null) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
-
-    if ((await em.findOne(this.entityType, { name: command.name })) != null) {
-      throw new AlreadyExistError(this.type, "name", command.name);
-    }
+    await checkCreate(
+      this.type,
+      this.entityName,
+      authUser,
+      this.writeScope,
+      {
+        name: command.name,
+      },
+      em
+    );
 
     const admins = await em.find(UserEntity, {
-      id: { $in: [...command.admins, authUser.user.id] },
+      id: {
+        $in:
+          authUser.user != null
+            ? [...command.admins, authUser.user.id]
+            : command.admins,
+      },
     });
     const members = await em.find(UserEntity, { id: { $in: command.members } });
     const entity = new GroupEntity(command.name, command.description);
@@ -66,14 +71,11 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     command: UpdateGroupCommand,
     em: EntityManager
   ): Promise<GroupEntity> {
-    const entity = await em.findOneOrFail(
-      this.entityType,
-      { id: command.targetId },
-      { failHandler: () => new NotFoundError(this.type, command.targetId) }
+    const entity = await this.getWriteableEntity(
+      authUser,
+      command.targetId,
+      em
     );
-    if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
 
     if (
       command.name == null &&
@@ -121,21 +123,18 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     command: DeleteGroupCommand,
     em: EntityManager
   ): Promise<void> {
-    const entity = await em.findOneOrFail(
-      this.entityType,
-      { id: command.targetId },
-      { failHandler: () => new NotFoundError(this.type, command.targetId) }
+    const entity = await this.getWriteableEntity(
+      authUser,
+      command.targetId,
+      em
     );
-    if (!(await this.isWriteable(entity, authUser))) {
-      throw new NoPermissionError(this.type, "WRITE");
-    }
 
     entity.deletedAt = new Date();
     entity.name = entity.name + new Date().toUTCString();
     em.persist(entity);
   }
 
-  async handle(
+  override async handle(
     { command, authUser }: CommandInput<GroupCommand>,
     em?: EntityManager
   ): Promise<EntityDTO<GroupEntity> | null> {
@@ -154,12 +153,8 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     }
   }
 
-  async handleAll(): Promise<Array<EntityDTO<GroupEntity> | null>> {
-    return [];
-  }
-
-  async isReadable(entity: GroupEntity, authUser?: AuthUser): Promise<boolean> {
-    if (!this.doGeneralPermissionCheck(this.readScope, entity, authUser)) {
+  async isReadable(entity: GroupEntity, authUser: AuthUser): Promise<boolean> {
+    if (!(await super.isReadable(entity, authUser))) {
       return false;
     }
 
@@ -182,22 +177,15 @@ export default class GroupService extends Service<GroupEntity, GroupCommand> {
     );
   }
 
-  async isWriteable(
-    entity: GroupEntity,
-    authUser?: AuthUser
-  ): Promise<boolean> {
-    if (!this.doGeneralPermissionCheck(this.writeScope, entity, authUser)) {
-      return false;
-    }
-
-    if ((authUser?.user?.role ?? RoleValue.USER) > RoleValue.USER) {
-      return true;
-    }
+  async checkWriteable(entity: GroupEntity, authUser: AuthUser): Promise<void> {
+    await super.checkWriteable(entity, authUser);
 
     if (!entity.admins.isInitialized()) {
       await entity.admins.init();
     }
 
-    return authUser?.user != null && entity.admins.contains(authUser.user);
+    if (authUser.user == null || entity.admins.contains(authUser.user)) {
+      throw new NoPermissionError(this.type, "WRITE");
+    }
   }
 }

@@ -3,6 +3,7 @@ import {
   CreateUserCommand,
   DeleteUserCommand,
   encodeCursor,
+  InvalidCommandError,
   NoPermissionError,
   NotFoundError,
   Order,
@@ -169,7 +170,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       authUser: { user: {} },
       query: { role: RoleValue.ADMIN },
     },
-    checker: (item) => {
+    checker: async ({ item }) => {
       expect(item?.role).toBe(RoleValue.ADMIN);
     },
   },
@@ -183,7 +184,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         $additional: [{ type: "IncludeDeletedQuery" }],
       },
     },
-    checker: (item) => {
+    checker: async ({ item }) => {
       expect(item?.deletedAt).toBeTruthy();
     },
   },
@@ -194,7 +195,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       authUser: { user: {} },
       query: { id: v4() },
     },
-    checker: (item) => {
+    checker: async ({ item }) => {
       expect(item).toBeFalsy();
     },
   },
@@ -247,11 +248,11 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       authUser: { user: { deletedAt: { $ne: null } } },
       query: { role: RoleValue.USER },
     },
-    expected: {
-      type: "NoPermissionError",
+    expected: async ({ authUser }): Promise<Partial<NotFoundError>> => ({
+      type: "NotFoundError",
       entityType: USER_TYPE,
-      permission: "READ",
-    } as Partial<NoPermissionError>,
+      id: authUser.user?.id,
+    }),
   },
 
   {
@@ -303,10 +304,8 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       },
     },
     expected: {
-      type: "NoPermissionError",
-      entityType: USER_TYPE,
-      permission: "WRITE",
-    } as Partial<NoPermissionError>,
+      type: "InvalidCommandError",
+    } as Partial<InvalidCommandError>,
   },
 
   {

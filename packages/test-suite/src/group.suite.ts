@@ -8,7 +8,7 @@ import {
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
-import { Task } from "./task";
+import { FindOneTask, Task } from "./task";
 import each from "jest-each";
 
 const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
@@ -33,6 +33,22 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
     },
     expectNextPage: true,
   },
+  {
+    type: "FindOneTask",
+    name: "Find a group based on an admin",
+    setup: async (em) => {
+      return em.findOneOrFail(GroupEntity, {}, { populate: ["admins"] });
+    },
+    input: async (group) => ({
+      authUser: { user: { role: RoleValue.OWNER } },
+      query: { admins: group.admins.toArray()[0].id },
+    }),
+    checker: async ({ item, input }) => {
+      expect(await item?.admins?.loadItems()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: input?.admins })])
+      );
+    },
+  } as FindOneTask<GroupEntity, GroupEntity>,
 ];
 
 @singleton()

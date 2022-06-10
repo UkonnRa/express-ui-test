@@ -6,8 +6,8 @@ import {
   CommandsInput,
   FindAllInput,
   FindOneInput,
-  Service,
   UserEntity,
+  WriteService,
 } from "@white-rabbit/business-logic";
 import {
   Task,
@@ -26,7 +26,7 @@ import { AuthUserInput } from "./task/abstract-task";
 export default abstract class AbstractSuite<
   E extends AbstractEntity<E>,
   C extends Command,
-  S extends Service<E, C>
+  S extends WriteService<E, C>
 > {
   readonly tasks: Array<Task<E, C>>;
 
@@ -159,9 +159,11 @@ export default abstract class AbstractSuite<
     { expected }: FindAllExceptionTask<E, V>,
     inputValue: FindAllInput<E>
   ): Promise<void> {
-    await expect(() => this.service.findAll(inputValue)).rejects.toThrowError(
-      expect.objectContaining(expected)
-    );
+    const expectedValue =
+      expected instanceof Function ? await expected(inputValue) : expected;
+    await expect(async () =>
+      this.service.findAll(inputValue)
+    ).rejects.toThrowError(expect.objectContaining(expectedValue));
   }
 
   private async runFindOneTask<V>(
@@ -169,16 +171,22 @@ export default abstract class AbstractSuite<
     inputValue: FindOneInput<E>
   ): Promise<void> {
     const item = await this.service.findOne(inputValue);
-    checker(item);
+    await checker({
+      item,
+      input: inputValue.query,
+      authUser: inputValue.authUser,
+    });
   }
 
   private async runFindOneExceptionTask<V>(
     { expected }: FindOneExceptionTask<E, V>,
     inputValue: FindOneInput<E>
   ): Promise<void> {
-    await expect(() => this.service.findOne(inputValue)).rejects.toThrowError(
-      expect.objectContaining(expected)
-    );
+    const expectedValue =
+      expected instanceof Function ? await expected(inputValue) : expected;
+    await expect(async () =>
+      this.service.findOne(inputValue)
+    ).rejects.toThrowError(expect.objectContaining(expectedValue));
   }
 
   private async runHandleCommandTask<CC extends C, V>(
@@ -200,9 +208,9 @@ export default abstract class AbstractSuite<
   ): Promise<void> {
     const expectedValue =
       expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(() => this.service.handle(inputValue)).rejects.toThrowError(
-      expect.objectContaining(expectedValue)
-    );
+    await expect(async () =>
+      this.service.handle(inputValue)
+    ).rejects.toThrowError(expect.objectContaining(expectedValue));
   }
 
   private async runHandleCommandsTask<V>(
@@ -224,9 +232,9 @@ export default abstract class AbstractSuite<
   ): Promise<void> {
     const expectedValue =
       expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(() => this.service.handleAll(inputValue)).rejects.toThrowError(
-      expect.objectContaining(expectedValue)
-    );
+    await expect(async () =>
+      this.service.handleAll(inputValue)
+    ).rejects.toThrowError(expect.objectContaining(expectedValue));
     await checker(
       {
         items: [],
