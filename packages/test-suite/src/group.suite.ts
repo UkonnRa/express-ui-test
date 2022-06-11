@@ -8,7 +8,7 @@ import {
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
-import { FindOneTask, Task } from "./task";
+import { Task } from "./task";
 import each from "jest-each";
 
 const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
@@ -21,9 +21,9 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
     },
-    checker: (items) => {
+    checker: async ({ item }) => {
       let prevName: string | null = null;
-      for (const { data } of items) {
+      for (const { data } of item) {
         expect(data.deletedAt).toBeFalsy();
         if (prevName != null) {
           expect(data.name.localeCompare(prevName)).toBeGreaterThan(0);
@@ -36,19 +36,25 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
   {
     type: "FindOneTask",
     name: "Find a group based on an admin",
-    setup: async (em) => {
-      return em.findOneOrFail(GroupEntity, {}, { populate: ["admins"] });
+    input: async (em) => {
+      const group = await em.findOneOrFail(
+        GroupEntity,
+        {},
+        { populate: ["admins"] }
+      );
+      return {
+        authUser: { user: { role: RoleValue.OWNER } },
+        query: { admins: group.admins.toArray()[0].id },
+      };
     },
-    input: async (group) => ({
-      authUser: { user: { role: RoleValue.OWNER } },
-      query: { admins: group.admins.toArray()[0].id },
-    }),
     checker: async ({ item, input }) => {
       expect(await item?.admins?.loadItems()).toEqual(
-        expect.arrayContaining([expect.objectContaining({ id: input?.admins })])
+        expect.arrayContaining([
+          expect.objectContaining({ id: input.query?.admins }),
+        ])
       );
     },
-  } as FindOneTask<GroupEntity, GroupEntity>,
+  },
 ];
 
 @singleton()

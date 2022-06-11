@@ -2,7 +2,7 @@ import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
 import { singleton } from "tsyringe";
-import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { RoleValue, UserEntity, UserService } from "../user";
 import CreateGroupCommand from "./create-group.command";
 import { filterAsync } from "../utils";
@@ -137,17 +137,13 @@ export default class GroupService extends WriteService<
   override async handle(
     { command, authUser }: CommandInput<GroupCommand>,
     em?: EntityManager
-  ): Promise<EntityDTO<GroupEntity> | null> {
+  ): Promise<GroupEntity | null> {
     const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateGroupCommand":
-        return this.createGroup(authUser, command, emInst).then((e) =>
-          e.toObject()
-        );
+        return this.createGroup(authUser, command, emInst);
       case "UpdateGroupCommand":
-        return this.updateGroup(authUser, command, emInst).then((e) =>
-          e.toObject()
-        );
+        return this.updateGroup(authUser, command, emInst);
       case "DeleteGroupCommand":
         return this.deleteGroup(authUser, command, emInst).then(() => null);
     }

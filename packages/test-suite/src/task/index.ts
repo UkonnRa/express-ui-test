@@ -8,15 +8,15 @@ import HandleCommandExceptionTask from "./handle-command.exception.task";
 import HandleCommandsTask from "./handle-commands.task";
 import HandleCommandsExceptionTask from "./handle-commands.exception.task";
 
-type Task<E extends AbstractEntity<E>, C extends Command, V = any> =
-  | FindAllTask<E, V>
-  | FindAllExceptionTask<E, V>
-  | FindOneTask<E, V>
-  | FindOneExceptionTask<E, V>
-  | HandleCommandTask<E, C, any, V>
-  | HandleCommandExceptionTask<C, V>
-  | HandleCommandsTask<E, C, V>
-  | HandleCommandsExceptionTask<E, C, V>;
+type Task<E extends AbstractEntity<E>, C extends Command> =
+  | FindAllTask<E>
+  | FindAllExceptionTask<E>
+  | FindOneTask<E>
+  | FindOneExceptionTask<E>
+  | HandleCommandTask<E, C>
+  | HandleCommandExceptionTask<E, C>
+  | HandleCommandsTask<E, C>
+  | HandleCommandsExceptionTask<E, C>;
 
 export {
   Task,

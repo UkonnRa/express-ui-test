@@ -1,15 +1,27 @@
 import { EntityManager, ObjectQuery } from "@mikro-orm/core";
-import { AuthUser, UserEntity } from "@white-rabbit/business-logic";
+import {
+  AbstractEntity,
+  AuthUser,
+  UserEntity,
+} from "@white-rabbit/business-logic";
 
 export type AuthUserInput = Partial<Omit<AuthUser, "user">> & {
   user?: ObjectQuery<UserEntity>;
 };
 
-type Input<I> = Omit<I, "authUser"> & { authUser: AuthUserInput };
+export type Input<I> = Omit<I, "authUser"> & { authUser: AuthUserInput };
 
-export default interface AbstractTask<I, V> {
+export interface CheckerInput<E extends AbstractEntity<E>, I, R> {
+  readonly input: I;
+  readonly item: R;
+}
+
+export default interface AbstractTask<E extends AbstractEntity<E>, I, R> {
   readonly type: string;
   readonly name: string;
-  readonly input: Input<I> | ((data: V) => Promise<Input<I>>);
-  readonly setup?: (em: EntityManager) => Promise<V>;
+  readonly input: Input<I> | ((em: EntityManager) => Promise<Input<I>>);
+  readonly checker?: (
+    input: CheckerInput<E, I, R>,
+    em: EntityManager
+  ) => Promise<void>;
 }

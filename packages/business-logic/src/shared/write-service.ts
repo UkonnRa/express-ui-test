@@ -75,7 +75,7 @@ export default abstract class WriteService<
   abstract handle(
     command: CommandInput<C>,
     em?: EntityManager
-  ): Promise<EntityDTO<E> | null>;
+  ): Promise<E | null>;
 
   readonly handleAll = async (
     { authUser, commands }: CommandsInput<C>,
@@ -87,7 +87,7 @@ export default abstract class WriteService<
       for (const command of commands) {
         if (this.createCommands.includes(command.type)) {
           const result = await this.handle({ authUser, command }, emInst);
-          results.push(result);
+          results.push(result?.toObject() ?? null);
           if (result != null && command.targetId != null) {
             idMap[command.targetId] = (result as any).id;
           }
@@ -102,7 +102,7 @@ export default abstract class WriteService<
             },
             emInst
           );
-          results.push(result);
+          results.push(result?.toObject() ?? null);
         } else {
           throw new RequiredFieldError(command.type, "id");
         }

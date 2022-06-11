@@ -9,19 +9,10 @@ import {
   UserEntity,
   WriteService,
 } from "@white-rabbit/business-logic";
-import {
-  Task,
-  FindAllTask,
-  FindAllExceptionTask,
-  FindOneTask,
-  FindOneExceptionTask,
-  HandleCommandTask,
-  HandleCommandExceptionTask,
-  HandleCommandsTask,
-  HandleCommandsExceptionTask,
-} from "./task";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
-import { AuthUserInput } from "./task/abstract-task";
+import { Task, FindAllTask } from "./task";
+import { MikroORM } from "@mikro-orm/core";
+import AbstractTask, { AuthUserInput } from "./task/abstract-task";
+import AbstractExceptionTask from "./task/abstract-exception-task";
 
 export default abstract class AbstractSuite<
   E extends AbstractEntity<E>,
@@ -72,31 +63,44 @@ export default abstract class AbstractSuite<
     };
   }
 
-  private async runFindAllTask<V>(
-    { checker, expectNextPage, expectPreviousPage }: FindAllTask<E, V>,
-    inputValue: FindAllInput<E>
+  private async runFindAllTask(
+    { checker, expectNextPage, expectPreviousPage }: FindAllTask<E>,
+    input: FindAllInput<E>
   ): Promise<void> {
-    const page = await this.service.findAll(inputValue);
-    checker(page.items);
+    const em = this.orm.em.fork();
+    const page = await this.service.findAll(input);
+    await checker?.(
+      {
+        input,
+        item: page.items,
+      },
+      em
+    );
 
     if (expectNextPage === true) {
       expect(page.pageInfo.hasNextPage).toBeTruthy();
-      expect(page.items.length).toBe(inputValue.pagination.size);
+      expect(page.items.length).toBe(input.pagination.size);
       const nextPage = await this.service.findAll({
-        ...inputValue,
+        ...input,
         pagination: {
-          ...inputValue.pagination,
+          ...input.pagination,
           before: undefined,
           after: page.pageInfo.endCursor,
         },
       });
-      checker([...page.items, ...nextPage.items]);
+      await checker?.(
+        {
+          input,
+          item: [...page.items, ...nextPage.items],
+        },
+        em
+      );
       expect(nextPage.pageInfo.hasPreviousPage).toBeTruthy();
 
       const nextPagePrevious = await this.service.findAll({
-        ...inputValue,
+        ...input,
         pagination: {
-          ...inputValue.pagination,
+          ...input.pagination,
           after: undefined,
           before: nextPage.pageInfo.startCursor,
         },
@@ -106,9 +110,9 @@ export default abstract class AbstractSuite<
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
         const nextPage = await this.service.findAll({
-          ...inputValue,
+          ...input,
           pagination: {
-            ...inputValue.pagination,
+            ...input.pagination,
             before: undefined,
             after: page.pageInfo.endCursor,
           },
@@ -120,20 +124,26 @@ export default abstract class AbstractSuite<
     if (expectPreviousPage === true) {
       expect(page.pageInfo.hasPreviousPage).toBe(true);
       const previousPage = await this.service.findAll({
-        ...inputValue,
+        ...input,
         pagination: {
-          ...inputValue.pagination,
+          ...input.pagination,
           after: undefined,
           before: page.pageInfo.startCursor,
         },
       });
-      checker([...previousPage.items, ...page.items]);
+      await checker?.(
+        {
+          input,
+          item: [...previousPage.items, ...page.items],
+        },
+        em
+      );
       expect(previousPage.pageInfo.hasNextPage).toBeTruthy();
 
       const previousPageNext = await this.service.findAll({
-        ...inputValue,
+        ...input,
         pagination: {
-          ...inputValue.pagination,
+          ...input.pagination,
           before: undefined,
           after: previousPage.pageInfo.endCursor,
         },
@@ -143,9 +153,9 @@ export default abstract class AbstractSuite<
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {
         const previousPage = await this.service.findAll({
-          ...inputValue,
+          ...input,
           pagination: {
-            ...inputValue.pagination,
+            ...input.pagination,
             after: undefined,
             before: page.pageInfo.startCursor,
           },
@@ -155,107 +165,45 @@ export default abstract class AbstractSuite<
     }
   }
 
-  private async runFindAllExceptionTask<V>(
-    { expected }: FindAllExceptionTask<E, V>,
-    inputValue: FindAllInput<E>
+  private async runExceptionTask<I>(
+    { expected, checker }: AbstractExceptionTask<E, I, any>,
+    input: I,
+    func: () => Promise<unknown>
   ): Promise<void> {
     const expectedValue =
-      expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(async () =>
-      this.service.findAll(inputValue)
-    ).rejects.toThrowError(expect.objectContaining(expectedValue));
-  }
-
-  private async runFindOneTask<V>(
-    { checker }: FindOneTask<E, V>,
-    inputValue: FindOneInput<E>
-  ): Promise<void> {
-    const item = await this.service.findOne(inputValue);
-    await checker({
-      item,
-      input: inputValue.query,
-      authUser: inputValue.authUser,
-    });
-  }
-
-  private async runFindOneExceptionTask<V>(
-    { expected }: FindOneExceptionTask<E, V>,
-    inputValue: FindOneInput<E>
-  ): Promise<void> {
-    const expectedValue =
-      expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(async () =>
-      this.service.findOne(inputValue)
-    ).rejects.toThrowError(expect.objectContaining(expectedValue));
-  }
-
-  private async runHandleCommandTask<CC extends C, V>(
-    { checker }: HandleCommandTask<E, C, CC, V>,
-    inputValue: CommandInput<CC>,
-    em: EntityManager
-  ): Promise<void> {
-    const item = await this.service.handle(inputValue, em);
-    checker({
-      item,
-      command: inputValue.command,
-      authUser: inputValue.authUser,
-    });
-  }
-
-  private async runHandleCommandExceptionTask<CC extends C, V>(
-    { expected }: HandleCommandExceptionTask<C, V>,
-    inputValue: CommandInput<CC>
-  ): Promise<void> {
-    const expectedValue =
-      expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(async () =>
-      this.service.handle(inputValue)
-    ).rejects.toThrowError(expect.objectContaining(expectedValue));
-  }
-
-  private async runHandleCommandsTask<V>(
-    { checker }: HandleCommandsTask<E, C, V>,
-    inputValue: CommandsInput<C>,
-    em: EntityManager
-  ): Promise<void> {
-    const items = await this.service.handleAll(inputValue, em);
-    checker({
-      items,
-      commands: inputValue.commands,
-      authUser: inputValue.authUser,
-    });
-  }
-
-  private async runHandleCommandsExceptionTask<CC extends C, V>(
-    { expected, checker }: HandleCommandsExceptionTask<E, C, V>,
-    inputValue: CommandsInput<CC>
-  ): Promise<void> {
-    const expectedValue =
-      expected instanceof Function ? await expected(inputValue) : expected;
-    await expect(async () =>
-      this.service.handleAll(inputValue)
-    ).rejects.toThrowError(expect.objectContaining(expectedValue));
-    await checker(
+      expected instanceof Function ? await expected(input) : expected;
+    await expect(async () => func()).rejects.toThrowError(
+      expect.objectContaining(expectedValue)
+    );
+    await checker?.(
       {
-        items: [],
-        commands: inputValue.commands,
-        authUser: inputValue.authUser,
+        input,
+        item: [],
       },
       this.orm.em.fork()
     );
   }
 
-  async runTask<V>(task: Task<E, C, V>): Promise<void> {
+  private async doRunTask<I, R>(
+    { checker }: AbstractTask<E, any, R>,
+    input: I,
+    func: () => Promise<R>
+  ): Promise<void> {
+    await checker?.(
+      {
+        input,
+        item: await func(),
+      },
+      this.orm.em.fork()
+    );
+  }
+
+  async runTask(task: Task<E, C>): Promise<void> {
     const em = this.orm.em.fork();
-    const setupResult = task.setup != null ? await task.setup(em) : undefined;
     let inputResult: typeof task.input;
 
     if (task.input instanceof Function) {
-      if (setupResult == null) {
-        throw new Error("setup() cannot be null while the input is a function");
-      } else {
-        inputResult = await task.input(setupResult);
-      }
+      inputResult = await task.input(em);
     } else {
       inputResult = task.input;
     }
@@ -270,38 +218,46 @@ export default abstract class AbstractSuite<
         await this.runFindAllTask(task, inputValue as FindAllInput<E>);
         break;
       case "FindAllExceptionTask":
-        await this.runFindAllExceptionTask(task, inputValue as FindAllInput<E>);
+        await this.runExceptionTask(
+          task,
+          inputValue as FindAllInput<E>,
+          async () => this.service.findAll(inputValue as FindAllInput<E>)
+        );
         break;
       case "FindOneTask":
-        await this.runFindOneTask(task, inputValue as FindOneInput<E>);
+        await this.doRunTask(task, inputValue as FindOneInput<E>, async () =>
+          this.service.findOne(inputValue as FindOneInput<E>)
+        );
         break;
       case "FindOneExceptionTask":
-        await this.runFindOneExceptionTask(task, inputValue as FindOneInput<E>);
+        await this.runExceptionTask(
+          task,
+          inputValue as FindOneInput<E>,
+          async () => this.service.findOne(inputValue as FindOneInput<E>)
+        );
         break;
       case "HandleCommandTask":
-        await this.runHandleCommandTask(
-          task,
-          inputValue as CommandInput<C>,
-          em
+        await this.doRunTask(task, inputValue as CommandInput<C>, async () =>
+          this.service.handle(inputValue as CommandInput<C>)
         );
         break;
       case "HandleCommandExceptionTask":
-        await this.runHandleCommandExceptionTask(
+        await this.runExceptionTask(
           task,
-          inputValue as CommandInput<C>
+          inputValue as CommandInput<C>,
+          async () => this.service.handle(inputValue as CommandInput<C>)
         );
         break;
       case "HandleCommandsTask":
-        await this.runHandleCommandsTask(
-          task,
-          inputValue as CommandsInput<C>,
-          em
+        await this.doRunTask(task, inputValue as CommandsInput<C>, async () =>
+          this.service.handleAll(inputValue as CommandsInput<C>)
         );
         break;
       case "HandleCommandsExceptionTask":
-        await this.runHandleCommandsExceptionTask(
+        await this.runExceptionTask(
           task,
-          inputValue as CommandsInput<C>
+          inputValue as CommandsInput<C>,
+          async () => this.service.handleAll(inputValue as CommandsInput<C>)
         );
         break;
     }

@@ -1,7 +1,14 @@
-import { Command, CommandInput } from "@white-rabbit/business-logic";
+import {
+  AbstractEntity,
+  Command,
+  CommandInput,
+} from "@white-rabbit/business-logic";
 import AbstractExceptionTask from "./abstract-exception-task";
 
-export default interface HandleCommandExceptionTask<C extends Command, V = any>
-  extends AbstractExceptionTask<CommandInput<C>, V> {
+export default interface HandleCommandExceptionTask<
+  E extends AbstractEntity<E>,
+  C extends Command,
+  CC extends C = any
+> extends AbstractExceptionTask<E, CommandInput<CC>, E | null> {
   readonly type: "HandleCommandExceptionTask";
 }

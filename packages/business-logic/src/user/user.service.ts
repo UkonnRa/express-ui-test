@@ -1,5 +1,5 @@
 import { AuthUser, checkCreate, WriteService } from "../shared";
-import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { singleton } from "tsyringe";
 import RoleValue from "./role.value";
 import UserEntity, { USER_TYPE } from "./user.entity";
@@ -126,17 +126,13 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
   override async handle(
     { command, authUser }: CommandInput<UserCommand>,
     em?: EntityManager
-  ): Promise<EntityDTO<UserEntity> | null> {
+  ): Promise<UserEntity | null> {
     const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateUserCommand":
-        return this.createUser(authUser, command, emInst).then((u) =>
-          u.toObject()
-        );
+        return this.createUser(authUser, command, emInst);
       case "UpdateUserCommand":
-        return this.updateUser(authUser, command, emInst).then((u) =>
-          u.toObject()
-        );
+        return this.updateUser(authUser, command, emInst);
       case "DeleteUserCommand":
         return this.deleteUser(authUser, command, emInst).then(() => null);
     }

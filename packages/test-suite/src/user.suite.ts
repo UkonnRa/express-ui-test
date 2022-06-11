@@ -1,14 +1,10 @@
 import AbstractSuite from "./abstract-suite";
 import {
-  CreateUserCommand,
-  DeleteUserCommand,
   encodeCursor,
-  InvalidCommandError,
   NoPermissionError,
   NotFoundError,
   Order,
   RoleValue,
-  UpdateUserCommand,
   USER_TYPE,
   USER_WRITE_SCOPE,
   UserCommand,
@@ -16,14 +12,8 @@ import {
   UserService,
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
-import {
-  FindAllTask,
-  HandleCommandsExceptionTask,
-  HandleCommandsTask,
-  HandleCommandTask,
-  Task,
-} from "./task";
+import { MikroORM } from "@mikro-orm/core";
+import { Task } from "./task";
 import each from "jest-each";
 import { v4 } from "uuid";
 import { faker } from "@faker-js/faker";
@@ -38,9 +28,9 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
     },
-    checker: (items) => {
+    checker: async ({ item }) => {
       let prevName: string | null = null;
-      for (const { data } of items) {
+      for (const { data } of item) {
         expect(data.role).toBe(RoleValue.ADMIN);
         if (prevName != null) {
           expect(data.name.localeCompare(prevName)).toBeGreaterThan(0);
@@ -54,15 +44,15 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "FindAllTask",
     name: "User[ANY] can find backward",
-    async setup(em: EntityManager) {
+
+    async input(em) {
       const users = await em.find(
         UserEntity,
         { role: RoleValue.USER },
         { orderBy: { name: Order.DESC }, limit: 5 }
       );
-      return users[users.length - 1];
-    },
-    async input(data) {
+      const data = users[users.length - 1];
+
       return {
         authUser: { user: {} },
         query: { role: RoleValue.USER },
@@ -70,9 +60,9 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         sort: [{ field: "name", order: Order.DESC }],
       };
     },
-    checker: (items) => {
+    checker: async ({ item }) => {
       let prevName: string | null = null;
-      for (const { data } of items) {
+      for (const { data } of item) {
         expect(data.role).toBe(RoleValue.USER);
         if (prevName != null) {
           expect(data.name.localeCompare(prevName)).toBeLessThan(0);
@@ -82,7 +72,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     },
     expectNextPage: true,
     expectPreviousPage: true,
-  } as FindAllTask<UserEntity, UserEntity>,
+  },
   {
     type: "FindAllTask",
     name: "User[ADMIN] can find deleted users",
@@ -95,10 +85,10 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
     },
-    checker: (items) => {
-      expect(items.length).toBeGreaterThan(0);
-      for (const item of items) {
-        expect(item.data.deletedAt).toBeTruthy();
+    checker: async ({ item }) => {
+      expect(item.length).toBeGreaterThan(0);
+      for (const { data } of item) {
+        expect(data.deletedAt).toBeTruthy();
       }
     },
     expectNextPage: true,
@@ -117,9 +107,9 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       },
       sort: [{ field: "id", order: Order.DESC }],
     },
-    checker: (items) => {
+    checker: async ({ item }) => {
       let prev: string | null = null;
-      for (const { data } of items) {
+      for (const { data } of item) {
         if (prev != null) {
           expect(data.id.localeCompare(prev)).toBeLessThan(0);
         }
@@ -266,12 +256,12 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         role: RoleValue.USER,
       },
     },
-    checker: ({ command, item }) => {
-      expect(item?.name).toBe(command.name);
+    checker: async ({ input, item }) => {
+      expect(item?.name).toBe(input.command.name);
       expect(item?.role).toBe(RoleValue.USER);
       expect(item?.authIds?.length).toBe(0);
     },
-  } as HandleCommandTask<UserEntity, UserCommand, CreateUserCommand>,
+  },
   {
     type: "HandleCommandTask",
     name: "User can add self if not in system yet",
@@ -284,12 +274,12 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         name: faker.name.findName(),
       },
     },
-    checker: ({ authUser, command, item }) => {
+    checker: async ({ input, item }) => {
       expect(item?.role).toBe(RoleValue.USER);
-      expect(item?.name).toBe(command.name);
-      expect(item?.authIds).toEqual([authUser.authId]);
+      expect(item?.name).toBe(input.command.name);
+      expect(item?.authIds).toEqual([input.authUser.authId]);
     },
-  } as HandleCommandTask<UserEntity, UserCommand, CreateUserCommand>,
+  },
   {
     type: "HandleCommandExceptionTask",
     name: "User cannot create self other than User[USER]",
@@ -305,78 +295,63 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     },
     expected: {
       type: "InvalidCommandError",
-    } as Partial<InvalidCommandError>,
+    },
   },
 
   {
     type: "HandleCommandTask",
     name: "User[ADMIN] can update any User[USER]",
-    setup: async (em) => {
-      return em.findOneOrFail(UserEntity, { role: RoleValue.USER });
+    input: async (em) => {
+      const user = await em.findOneOrFail(UserEntity, { role: RoleValue.USER });
+      return {
+        authUser: { user: { role: RoleValue.ADMIN } },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: user.id,
+          name: faker.name.findName(),
+        },
+      };
     },
-    input: async (user) => ({
-      authUser: { user: { role: RoleValue.ADMIN } },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: user.id,
-        name: faker.name.findName(),
-      },
-    }),
-    checker: ({ command, item }) => {
-      expect(item?.name).toBe(command.name);
+    checker: async ({ input, item }) => {
+      expect(item?.name).toBe(input.command.name);
       expect(item?.role).toBe(RoleValue.USER);
     },
-  } as HandleCommandTask<
-    UserEntity,
-    UserCommand,
-    UpdateUserCommand,
-    UserEntity
-  >,
+  },
   {
     type: "HandleCommandTask",
     name: "User[ANY] can update self",
-    setup: async (em) => {
-      return em.findOneOrFail(UserEntity, {});
+    input: async (em) => {
+      const user = await em.findOneOrFail(UserEntity, {});
+      return {
+        authUser: { user },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: user.id,
+          name: faker.name.findName(),
+        },
+      };
     },
-    input: async (user) => ({
-      authUser: { user },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: user.id,
-        name: faker.name.findName(),
-      },
-    }),
-    checker: ({ command, item }) => {
-      expect(item?.name).toBe(command.name);
+    checker: async ({ input, item }) => {
+      expect(item?.name).toBe(input.command.name);
     },
-  } as HandleCommandTask<
-    UserEntity,
-    UserCommand,
-    UpdateUserCommand,
-    UserEntity
-  >,
+  },
   {
     type: "HandleCommandTask",
     name: "User can update nothing",
-    setup: async (em) => {
-      return em.findOneOrFail(UserEntity, {});
+    input: async (em) => {
+      const user = await em.findOneOrFail(UserEntity, {});
+      return {
+        authUser: { user },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: user.id,
+        },
+      };
     },
-    input: async (user) => ({
-      authUser: { user },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: user.id,
-      },
-    }),
-    checker: ({ command, item }) => {
-      expect(item?.id).toBe(command.targetId);
+    checker: async ({ input, item }) => {
+      expect(item?.id).toBe(input.command.targetId);
     },
-  } as HandleCommandTask<
-    UserEntity,
-    UserCommand,
-    UpdateUserCommand,
-    UserEntity
-  >,
+  },
   {
     type: "HandleCommandExceptionTask",
     name: "User cannot update non-existing User",
@@ -398,7 +373,8 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "HandleCommandExceptionTask",
     name: "User[USER] cannot update other Users",
-    setup: async (em) => {
+
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.USER,
       });
@@ -406,16 +382,17 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         role: RoleValue.USER,
         id: { $ne: authUser.id },
       });
-      return [authUser, targetUser];
+      return {
+        authUser: {
+          user: authUser,
+        },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: targetUser.id,
+          name: faker.name.findName(),
+        },
+      };
     },
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: targetUser.id,
-        name: faker.name.findName(),
-      },
-    }),
     // eslint-disable-next-line sonarjs/no-identical-functions
     expected: {
       type: "NoPermissionError",
@@ -426,7 +403,8 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update User[role >= ADMIN]",
-    setup: async (em) => {
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.ADMIN,
       });
@@ -434,17 +412,15 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         role: RoleValue.ADMIN,
         id: { $ne: authUser.id },
       });
-      return [authUser, targetUser];
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: targetUser.id,
+          name: faker.name.findName(),
+        },
+      };
     },
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: targetUser.id,
-        name: faker.name.findName(),
-      },
-    }),
     // eslint-disable-next-line sonarjs/no-identical-functions
     expected: {
       type: "NoPermissionError",
@@ -455,24 +431,24 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update others to Role >= ADMIN",
-    setup: async (em) => {
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.ADMIN,
       });
       const targetUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.USER,
       });
-      return [authUser, targetUser];
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: targetUser.id,
+          role: RoleValue.ADMIN,
+        },
+      };
     },
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: targetUser.id,
-        role: RoleValue.ADMIN,
-      },
-    }),
     // eslint-disable-next-line sonarjs/no-identical-functions
     expected: {
       type: "NoPermissionError",
@@ -483,24 +459,23 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update User[OWNER]",
-    setup: async (em) => {
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.ADMIN,
       });
       const targetUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.OWNER,
       });
-      return [authUser, targetUser];
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "UpdateUserCommand",
+          targetId: targetUser.id,
+          name: faker.name.findName(),
+        },
+      };
     },
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "UpdateUserCommand",
-        targetId: targetUser.id,
-        name: faker.name.findName(),
-      },
-    }),
     // eslint-disable-next-line sonarjs/no-identical-functions
     expected: {
       type: "NoPermissionError",
@@ -512,46 +487,40 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
     type: "HandleCommandTask",
     name: "User[ANY] can delete self",
-    setup: async (em) => {
-      return em.findOneOrFail(UserEntity, {});
+    input: async (em) => {
+      const user = await em.findOneOrFail(UserEntity, {});
+      return {
+        authUser: { user },
+        command: {
+          type: "DeleteUserCommand",
+          targetId: user.id,
+        },
+      };
     },
-    input: async (user) => ({
-      authUser: { user },
-      command: {
-        type: "DeleteUserCommand",
-        targetId: user.id,
-      },
-    }),
-    checker: ({ item }) => {
+    checker: async ({ item }) => {
       expect(item).toBeFalsy();
     },
-  } as HandleCommandTask<
-    UserEntity,
-    UserCommand,
-    DeleteUserCommand,
-    UserEntity
-  >,
+  },
   {
     type: "HandleCommandTask",
     name: "User[ADMIN] can delete User[USER]",
     // eslint-disable-next-line sonarjs/no-identical-functions
-    setup: async (em) => {
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.ADMIN,
       });
       const targetUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.USER,
       });
-      return [authUser, targetUser];
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "DeleteUserCommand",
+          targetId: targetUser.id,
+        },
+      };
     },
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "DeleteUserCommand",
-        targetId: targetUser.id,
-      },
-    }),
-    checker: ({ item }) => {
+    checker: async ({ item }) => {
       expect(item).toBeFalsy();
     },
   },
@@ -559,7 +528,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "HandleCommandExceptionTask",
     name: "User[USER] can delete other users",
     // eslint-disable-next-line sonarjs/no-identical-functions
-    setup: async (em) => {
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.USER,
       });
@@ -567,16 +536,15 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         role: RoleValue.USER,
         id: { $ne: authUser.id },
       });
-      return [authUser, targetUser];
+
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "DeleteUserCommand",
+          targetId: targetUser.id,
+        },
+      };
     },
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "DeleteUserCommand",
-        targetId: targetUser.id,
-      },
-    }),
     expected: {
       type: "NoPermissionError",
       entityType: USER_TYPE,
@@ -587,7 +555,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] can delete other User[role >= ADMIN]",
     // eslint-disable-next-line sonarjs/no-identical-functions
-    setup: async (em) => {
+    input: async (em) => {
       const authUser = await em.findOneOrFail(UserEntity, {
         role: RoleValue.ADMIN,
       });
@@ -595,16 +563,14 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         role: RoleValue.ADMIN,
         id: { $ne: authUser.id },
       });
-      return [authUser, targetUser];
+      return {
+        authUser: { user: authUser },
+        command: {
+          type: "DeleteUserCommand",
+          targetId: targetUser.id,
+        },
+      };
     },
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    input: async ([authUser, targetUser]) => ({
-      authUser: { user: authUser },
-      command: {
-        type: "DeleteUserCommand",
-        targetId: targetUser.id,
-      },
-    }),
     expected: {
       type: "NoPermissionError",
       entityType: USER_TYPE,
@@ -652,22 +618,23 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         },
       ],
     },
-    checker: ({ commands, items }) => {
-      if (items[0] != null && commands[0].type === "CreateUserCommand") {
-        expect(items[0].name).toBe(commands[0].name);
-        expect(items[0].role).toBe(commands[0].role);
-        expect(items[0].authIds).toEqual(commands[0].authIds);
+    checker: async ({ input, item }) => {
+      const { commands } = input;
+      if (item[0] != null && commands[0].type === "CreateUserCommand") {
+        expect(item[0].name).toBe(commands[0].name);
+        expect(item[0].role).toBe(commands[0].role);
+        expect(item[0].authIds).toEqual(commands[0].authIds);
       } else {
         throw new Error(
           "item[0] should not be null, commands[0] should be CreateUserCommand"
         );
       }
 
-      if (items[1] != null && commands[1].type === "UpdateUserCommand") {
-        expect(items[1].id).toBe(items[0].id);
-        expect(items[1].name).toBe(commands[1].name);
-        expect(items[1].role).toBe(commands[0].role);
-        expect(items[1].authIds).toEqual(commands[0].authIds);
+      if (item[1] != null && commands[1].type === "UpdateUserCommand") {
+        expect(item[1].id).toBe(item[0].id);
+        expect(item[1].name).toBe(commands[1].name);
+        expect(item[1].role).toBe(commands[0].role);
+        expect(item[1].authIds).toEqual(commands[0].authIds);
       } else {
         throw new Error(
           "item[1] should not be null, commands[1] should be UpdateUserCommand"
@@ -675,12 +642,12 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       }
 
       if (commands[2].type === "DeleteUserCommand") {
-        expect(items[2]).toBeFalsy();
+        expect(item[2]).toBeFalsy();
       } else {
         throw new Error("commands[2] should be DeleteUserCommand");
       }
     },
-  } as HandleCommandsTask<UserEntity, UserCommand>,
+  },
   {
     type: "HandleCommandsExceptionTask",
     name: "If meet any error, the batch should be reverted",
@@ -705,7 +672,8 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       id: commands[1].targetId,
     }),
-    checker: async ({ commands }, em) => {
+    checker: async ({ input }, em) => {
+      const { commands } = input;
       if (commands[0].type === "CreateUserCommand") {
         const result = await em.findOne(UserEntity, {
           name: commands[0].name,
@@ -715,7 +683,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         throw new Error("commands[0] should be CreateUserCommand");
       }
     },
-  } as HandleCommandsExceptionTask<UserEntity, UserCommand>,
+  },
 ];
 
 @singleton()
