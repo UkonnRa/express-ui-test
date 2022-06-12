@@ -21,11 +21,11 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @Property({ type: "string", nullable: true })
   description?: string;
 
-  @ManyToMany(() => UserEntity)
-  admins: Collection<UserEntity> = new Collection<UserEntity>(this);
+  @ManyToMany(() => UserEntity, (user) => user.adminInGroups, { owner: true })
+  admins = new Collection<UserEntity>(this);
 
-  @ManyToMany(() => UserEntity)
-  members: Collection<UserEntity> = new Collection<UserEntity>(this);
+  @ManyToMany(() => UserEntity, (user) => user.memberInGroups, { owner: true })
+  members = new Collection<UserEntity>(this);
 
   constructor(name: string, description: string | undefined) {
     super();

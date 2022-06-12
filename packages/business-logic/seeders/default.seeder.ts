@@ -1,9 +1,9 @@
 import { Seeder } from "@mikro-orm/seeder";
 import { EntityManager } from "@mikro-orm/core";
-import UserFactory from "./user.factory";
-import { RoleValue } from "../src/user";
-import GroupFactory from "./group.factory";
 import { faker } from "@faker-js/faker";
+import { RoleValue } from "../src";
+import UserFactory from "./user.factory";
+import GroupFactory from "./group.factory";
 
 export default class DefaultSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {

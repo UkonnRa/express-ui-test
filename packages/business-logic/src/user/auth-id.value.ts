@@ -2,10 +2,10 @@ import { Embeddable, Property } from "@mikro-orm/core";
 
 @Embeddable()
 export default class AuthIdValue {
-  @Property()
+  @Property({ type: "string" })
   provider: string;
 
-  @Property()
+  @Property({ type: "string" })
   value: string;
 
   constructor(provider: string, value: string) {

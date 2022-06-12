@@ -1,9 +1,9 @@
-import { build as doBuild, BuildOptions, BuildIncremental } from "esbuild";
-import { watch } from "chokidar";
 import * as path from "path";
 import { ChildProcess, execFile } from "child_process";
-import { visualizer } from "esbuild-visualizer/dist/plugin";
 import { promises as fs } from "fs";
+import { build as doBuild, BuildOptions, BuildIncremental } from "esbuild";
+import { watch } from "chokidar";
+import { visualizer } from "esbuild-visualizer/dist/plugin";
 
 const afterBuildSuccess = async (
   packageName: string,
@@ -60,14 +60,12 @@ export const build = async (
     entryPoints: ["src/index.ts"],
     bundle: true,
     platform: "node",
-    target: ["node16"],
+    target: ["node18"],
     outdir: "dist",
     metafile: true,
     sourcemap: true,
     minify: process.env.NODE_ENV === "production",
-    minifyWhitespace: process.env.NODE_ENV === "production",
-    minifyIdentifiers: process.env.NODE_ENV === "production",
-    minifySyntax: process.env.NODE_ENV === "production",
+    keepNames: true,
     incremental: true,
     ...options,
   })) as BuildIncremental;

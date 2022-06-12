@@ -6,6 +6,8 @@ import {
   ObjectQuery,
   QueryOrderMap,
 } from "@mikro-orm/core";
+import { decodeCursor, encodeCursor, filterAsync } from "../utils";
+import { NoPermissionError, NotFoundError } from "../error";
 import Cursor from "./cursor";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
@@ -17,9 +19,7 @@ import PageItem from "./page-item";
 import FindOneInput from "./find-one.input";
 import Pagination from "./pagination";
 import { AdditionalQuery, Query } from "./query";
-import { decodeCursor, encodeCursor, filterAsync } from "../utils";
-import { NoPermissionError, NotFoundError } from "../error";
-import { RoleValue } from "../user";
+import RoleValue from "./role.value";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 

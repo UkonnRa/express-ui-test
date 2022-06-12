@@ -1,5 +1,5 @@
-import Cursor from "./shared/cursor";
 import { decode, encodeURL } from "js-base64";
+import Cursor from "./shared/cursor";
 
 export async function mapAsync<T, U>(
   array: T[],

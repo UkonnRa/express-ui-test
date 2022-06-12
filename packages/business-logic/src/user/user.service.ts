@@ -1,15 +1,20 @@
-import { AuthUser, checkCreate, WriteService } from "../shared";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
-import { singleton } from "tsyringe";
-import RoleValue from "./role.value";
+import { inject, singleton } from "tsyringe";
+import {
+  AuthUser,
+  checkCreate,
+  WriteService,
+  RoleValue,
+  compareRole,
+} from "../shared";
+import CommandInput from "../shared/command.input";
+import { NoPermissionError } from "../error";
+import InvalidCommandError from "../error/invalid-command.error";
 import UserEntity, { USER_TYPE } from "./user.entity";
 import UserCommand from "./user.command";
-import CommandInput from "../shared/command.input";
 import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
-import { NoPermissionError } from "../error";
-import InvalidCommandError from "../error/invalid-command.error";
 
 export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
 export const USER_WRITE_SCOPE =
@@ -17,7 +22,7 @@ export const USER_WRITE_SCOPE =
 
 @singleton()
 export default class UserService extends WriteService<UserEntity, UserCommand> {
-  constructor(orm: MikroORM) {
+  constructor(@inject(MikroORM) readonly orm: MikroORM) {
     super(orm, USER_TYPE, UserEntity, USER_READ_SCOPE, USER_WRITE_SCOPE, [
       "CreateUserCommand",
     ]);
@@ -80,8 +85,8 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
       // If the role of authUser is smaller than either of the command or the existing entity, throw error
       if (
         authUser.user?.role == null ||
-        authUser.user.role <= command.role ||
-        authUser.user.role <= entity.role
+        compareRole(authUser.user.role, command.role) <= 0 ||
+        compareRole(authUser.user.role, entity.role) <= 0
       ) {
         throw new NoPermissionError(this.type, "WRITE");
       }
@@ -146,7 +151,7 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
     if (
       authUser.user != null &&
       entity.id !== authUser.user.id &&
-      authUser.user.role <= entity.role
+      compareRole(authUser.user.role, entity.role) <= 0
     ) {
       throw new NoPermissionError(this.type, "WRITE");
     }

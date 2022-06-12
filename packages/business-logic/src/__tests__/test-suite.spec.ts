@@ -1,8 +1,8 @@
 import { MikroORM } from "@mikro-orm/core";
 import { container } from "tsyringe";
+import { GroupSuite, UserSuite, initBeforeAll } from "@white-rabbit/test-suite";
 import { config } from "../../mikro-orm.config";
 import DefaultSeeder from "../../seeders/default.seeder";
-import { GroupSuite, UserSuite, initBeforeAll } from "@white-rabbit/test-suite";
 
 beforeAll(async () => {
   const orm = await MikroORM.init({

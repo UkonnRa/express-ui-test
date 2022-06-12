@@ -1,14 +1,20 @@
-import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
+import { inject, singleton } from "tsyringe";
+import { EntityManager, MikroORM } from "@mikro-orm/core";
+import {
+  AuthUser,
+  CommandInput,
+  checkCreate,
+  WriteService,
+  RoleValue,
+} from "../shared";
+import { UserEntity, UserService } from "../user";
+import { filterAsync } from "../utils";
+import { NoPermissionError } from "../error";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
-import { singleton } from "tsyringe";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
-import { RoleValue, UserEntity, UserService } from "../user";
 import CreateGroupCommand from "./create-group.command";
-import { filterAsync } from "../utils";
 import UpdateGroupCommand from "./update-group.command";
 import DeleteGroupCommand from "./delete-group.command";
-import { NoPermissionError } from "../error";
 
 export const GROUP_READ_SCOPE =
   "urn:alices-wonderland:white-rabbit:groups:read";
@@ -20,7 +26,10 @@ export default class GroupService extends WriteService<
   GroupEntity,
   GroupCommand
 > {
-  constructor(orm: MikroORM, private readonly userService: UserService) {
+  constructor(
+    @inject(MikroORM) readonly orm: MikroORM,
+    @inject(UserService) private readonly userService: UserService
+  ) {
     super(orm, GROUP_TYPE, GroupEntity, GROUP_READ_SCOPE, GROUP_WRITE_SCOPE, [
       "CreateGroupCommand",
     ]);
@@ -154,7 +163,7 @@ export default class GroupService extends WriteService<
       return false;
     }
 
-    if ((authUser?.user?.role ?? RoleValue.USER) > RoleValue.USER) {
+    if ((authUser?.user?.role ?? RoleValue.USER) !== RoleValue.USER) {
       return true;
     }
 

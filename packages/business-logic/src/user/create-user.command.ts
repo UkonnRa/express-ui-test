@@ -1,6 +1,5 @@
-import RoleValue from "./role.value";
+import { Command, RoleValue } from "../shared";
 import AuthIdValue from "./auth-id.value";
-import { Command } from "../shared";
 
 export default interface CreateUserCommand extends Command {
   readonly type: "CreateUserCommand";

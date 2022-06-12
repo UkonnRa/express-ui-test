@@ -1,6 +1,14 @@
-import { Embedded, Entity, Enum, Property, Unique } from "@mikro-orm/core";
-import { AbstractEntity } from "../shared";
-import RoleValue from "./role.value";
+import {
+  Collection,
+  Embedded,
+  Entity,
+  Enum,
+  ManyToMany,
+  Property,
+  Unique,
+} from "@mikro-orm/core";
+import { AbstractEntity, RoleValue } from "../shared";
+import { type GroupEntity } from "../group";
 import AuthIdValue from "./auth-id.value";
 
 export const USER_TYPE = "user";
@@ -13,11 +21,17 @@ export default class UserEntity extends AbstractEntity<UserEntity> {
   @Unique()
   name: string;
 
-  @Enum(() => RoleValue)
+  @Enum({ type: "string", items: () => RoleValue })
   role: RoleValue;
 
   @Embedded(() => AuthIdValue, { array: true })
   authIds: AuthIdValue[] = [];
+
+  @ManyToMany("GroupEntity", (group: GroupEntity) => group.admins)
+  adminInGroups = new Collection<GroupEntity>(this);
+
+  @ManyToMany("GroupEntity", (group: GroupEntity) => group.members)
+  memberInGroups = new Collection<GroupEntity>(this);
 
   constructor(name: string, role: RoleValue, authIds: AuthIdValue[]) {
     super();

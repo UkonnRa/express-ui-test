@@ -1,7 +1,7 @@
 import { Factory, Faker } from "@mikro-orm/seeder";
-import { RoleValue, UserEntity } from "../src/user";
 import { Constructor, EntityData } from "@mikro-orm/core";
 import { v4 } from "uuid";
+import { RoleValue, UserEntity } from "../src";
 
 const AUTH_PROVIDERS = ["Auth0", "Authing", "GitHub", "Google"];
 

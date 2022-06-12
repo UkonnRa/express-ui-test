@@ -1,10 +1,12 @@
 import AbstractSuite from "./abstract-suite";
 import {
+  DeleteUserCommand,
   encodeCursor,
   NoPermissionError,
   NotFoundError,
   Order,
   RoleValue,
+  UpdateUserCommand,
   USER_TYPE,
   USER_WRITE_SCOPE,
   UserCommand,
@@ -13,7 +15,7 @@ import {
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
-import { Task } from "./task";
+import { HandleCommandExceptionTask, HandleCommandTask, Task } from "./task";
 import each from "jest-each";
 import { v4 } from "uuid";
 import { faker } from "@faker-js/faker";
@@ -316,14 +318,14 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       expect(item?.name).toBe(input.command.name);
       expect(item?.role).toBe(RoleValue.USER);
     },
-  },
+  } as HandleCommandTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandTask",
     name: "User[ANY] can update self",
     input: async (em) => {
       const user = await em.findOneOrFail(UserEntity, {});
       return {
-        authUser: { user },
+        authUser: { user: { id: user.id } },
         command: {
           type: "UpdateUserCommand",
           targetId: user.id,
@@ -334,7 +336,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ input, item }) => {
       expect(item?.name).toBe(input.command.name);
     },
-  },
+  } as HandleCommandTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandTask",
     name: "User can update nothing",
@@ -351,7 +353,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ input, item }) => {
       expect(item?.id).toBe(input.command.targetId);
     },
-  },
+  } as HandleCommandTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User cannot update non-existing User",
@@ -369,7 +371,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       id: command.targetId,
     }),
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[USER] cannot update other Users",
@@ -399,7 +401,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     } as Partial<NoPermissionError>,
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update User[role >= ADMIN]",
@@ -427,7 +429,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     } as Partial<NoPermissionError>,
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update others to Role >= ADMIN",
@@ -455,7 +457,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     } as Partial<NoPermissionError>,
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, UpdateUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] cannot update User[OWNER]",
@@ -482,7 +484,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     } as Partial<NoPermissionError>,
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, UpdateUserCommand>,
 
   {
     type: "HandleCommandTask",
@@ -500,7 +502,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ item }) => {
       expect(item).toBeFalsy();
     },
-  },
+  } as HandleCommandTask<UserEntity, UserCommand, DeleteUserCommand>,
   {
     type: "HandleCommandTask",
     name: "User[ADMIN] can delete User[USER]",
@@ -523,7 +525,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ item }) => {
       expect(item).toBeFalsy();
     },
-  },
+  } as HandleCommandTask<UserEntity, UserCommand, DeleteUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[USER] can delete other users",
@@ -550,7 +552,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     },
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, DeleteUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User[ADMIN] can delete other User[role >= ADMIN]",
@@ -576,7 +578,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "WRITE",
     },
-  },
+  } as HandleCommandExceptionTask<UserEntity, UserCommand, DeleteUserCommand>,
   {
     type: "HandleCommandExceptionTask",
     name: "User cannot delete non-existing users",

@@ -4,6 +4,7 @@ export {
   USER_TYPE_PLURAL,
 } from "./user.entity";
 
+// eslint-disable-next-line import/no-cycle
 export {
   default as UserService,
   USER_WRITE_SCOPE,
@@ -16,4 +17,3 @@ export { default as UpdateUserCommand } from "./update-user.command";
 export { default as DeleteUserCommand } from "./delete-user.command";
 
 export { default as AuthIdValue } from "./auth-id.value";
-export { default as RoleValue } from "./role.value";

@@ -1,22 +1,20 @@
 import {
-  AbstractEntity,
-  AuthUser,
-  Command,
-  CommandInput,
-  CommandsInput,
-} from "./index";
-import {
   EntityDTO,
   EntityManager,
   FilterQuery,
   MikroORM,
   ObjectQuery,
 } from "@mikro-orm/core";
-import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import { EntityName } from "@mikro-orm/core/typings";
-import { RoleValue } from "../user";
-import ReadService from "./read-service";
+import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import RequiredFieldError from "../error/required-field.error";
+import RoleValue from "./role.value";
+import ReadService from "./read-service";
+import AbstractEntity from "./abstract-entity";
+import AuthUser from "./auth-user";
+import Command from "./command";
+import CommandInput from "./command.input";
+import CommandsInput from "./commands.input";
 
 function checkPermission<E extends AbstractEntity<E>>(
   entityType: string,

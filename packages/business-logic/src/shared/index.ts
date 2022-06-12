@@ -18,3 +18,4 @@ export { default as Page } from "./page";
 export { default as PageInfo } from "./page-info";
 export { default as PageItem } from "./page-item";
 export { default as Pagination } from "./pagination";
+export { default as RoleValue, compareRole } from "./role.value";

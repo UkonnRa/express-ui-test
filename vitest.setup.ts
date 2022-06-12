@@ -1,4 +1,4 @@
-/* eslint-disable import/first */
+/* eslint-disable import/first,import/no-unresolved */
 (global as any).CSS = { supports: () => false };
 
 import { beforeAll, beforeEach } from "vitest";

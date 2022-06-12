@@ -1,5 +1,5 @@
-import { config as mikroConfig } from "./src/mikro-orm.config";
 import { Options } from "@mikro-orm/core";
+import { config as mikroConfig } from "./src/mikro-orm.config";
 
 export const config: Options = {
   ...mikroConfig,
