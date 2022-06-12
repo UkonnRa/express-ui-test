@@ -7,7 +7,8 @@
     "clean": "rimraf dist",
     "build": "yarn clean && ts-node esbuild.config.ts",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
-    "lint:fix": "yarn lint --fix"
+    "lint:fix": "yarn lint --fix",
+    "orm:seed": "ts-node seed.ts"
   },
   "dependencies": {
     "@graphql-tools/utils": "^8.6.13",
@@ -16,14 +17,23 @@
     "@white-rabbit/business-logic": "workspace:^",
     "@white-rabbit/types": "workspace:^",
     "apollo-server": "^3.8.2",
+    "dotenv": "^16.0.1",
     "graphql": "^16.5.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {
-    "@mikro-orm/better-sqlite": "^5.1.5",
+    "@mikro-orm/cli": "^5.1.5",
+    "@mikro-orm/reflection": "^5.1.5",
+    "@mikro-orm/seeder": "^5.1.5",
     "cross-env": "^7.0.3",
     "rimraf": "^3.0.2",
     "ts-node": "^10.8.1"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./mikro-orm.config.ts"
+    ]
   }
 }

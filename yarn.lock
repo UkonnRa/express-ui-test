@@ -6471,13 +6471,16 @@ __metadata:
   resolution: "@white-rabbit/app-backend-graphql@workspace:packages/app-backend-graphql"
   dependencies:
     "@graphql-tools/utils": ^8.6.13
-    "@mikro-orm/better-sqlite": ^5.1.5
+    "@mikro-orm/cli": ^5.1.5
     "@mikro-orm/core": ^5.1.5
     "@mikro-orm/postgresql": ^5.1.5
+    "@mikro-orm/reflection": ^5.1.5
+    "@mikro-orm/seeder": ^5.1.5
     "@white-rabbit/business-logic": "workspace:^"
     "@white-rabbit/types": "workspace:^"
     apollo-server: ^3.8.2
     cross-env: ^7.0.3
+    dotenv: ^16.0.1
     graphql: ^16.5.0
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
@@ -6532,6 +6535,7 @@ __metadata:
     "@mikro-orm/seeder": ^5.1.5
     "@types/uuid": ^8.3.4
     "@white-rabbit/test-suite": "workspace:^"
+    dotenv: ^16.0.1
     js-base64: ^3.7.2
     reflect-metadata: ^0.1.13
     tsyringe: ^4.7.0
@@ -10681,7 +10685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:16.0.1":
+"dotenv@npm:16.0.1, dotenv@npm:^16.0.1":
   version: 16.0.1
   resolution: "dotenv@npm:16.0.1"
   checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792

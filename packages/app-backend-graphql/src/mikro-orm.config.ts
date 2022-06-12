@@ -1,8 +1,9 @@
+import "dotenv/config";
 import { config as mikroConfig } from "@white-rabbit/business-logic";
 import { Options } from "@mikro-orm/core";
 
 export const config: Options = {
   ...mikroConfig,
-  type: "better-sqlite",
-  dbName: "test.sqlite",
+  type: "postgresql",
+  dbName: "white-rabbit",
 };

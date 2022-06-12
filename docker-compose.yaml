@@ -8,3 +8,13 @@ services:
       - "9901:9901"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+
+  app-backend-graphql:
+    build: "./packages/app-backend-graphql"
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - MIKRO_ORM_USER=postgres
+      - MIKRO_ORM_PASSWORD=test1234
+      - MIKRO_ORM_HOST=host.docker.internal
