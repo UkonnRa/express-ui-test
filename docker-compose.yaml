@@ -18,3 +18,9 @@ services:
       - MIKRO_ORM_USER=postgres
       - MIKRO_ORM_PASSWORD=test1234
       - MIKRO_ORM_HOST=host.docker.internal
+
+  app-frontend:
+    build: "./packages/app-frontend"
+    restart: always
+    ports:
+      - "4010:80"
