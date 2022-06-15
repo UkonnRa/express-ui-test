@@ -8,21 +8,26 @@ import {
   ServerReflectionService,
 } from "nice-grpc-server-reflection";
 import { errorDetailsServerMiddleware } from "nice-grpc-error-details";
-import { UserService } from "./service";
+import { GroupService, UserService } from "./service";
 import { UserServiceDefinition } from "./proto/user";
+import { GroupServiceDefinition } from "./proto/group";
 
 @singleton()
 export default class Server {
   private readonly server: GrpcServer;
 
-  constructor(@inject(UserService) userService: UserService) {
+  constructor(
+    @inject(UserService) userService: UserService,
+    @inject(GroupService) groupService: GroupService
+  ) {
     this.server = createServer().use(errorDetailsServerMiddleware);
     this.server.add(UserServiceDefinition, userService as any);
+    this.server.add(GroupServiceDefinition, groupService as any);
     this.server.add(
       ServerReflectionService,
       ServerReflection(
         fs.readFileSync(path.join(process.cwd(), "protoset.bin")),
-        [UserServiceDefinition.fullName]
+        [UserServiceDefinition.fullName, GroupServiceDefinition.fullName]
       )
     );
   }

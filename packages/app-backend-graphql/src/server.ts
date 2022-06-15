@@ -45,7 +45,7 @@ export default class Server {
   }
 
   async start(): Promise<void> {
-    const { url } = await this.server.listen();
+    const { url } = await this.server.listen({ port: process.env.PORT });
     console.log(`WhiteRabbit GraphQL server ready at ${url}`);
   }
 }

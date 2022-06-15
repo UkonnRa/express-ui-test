@@ -102,11 +102,11 @@ jobs:
           echo "Image Tag: $IMAGE_TAG" &&
           docker build packages/app-frontend -t ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
           docker build packages/app-backend-graphql -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-graphql:$IMAGE_TAG &&
+          docker build packages/app-backend-grpc -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG &&
           echo ${{ secrets.DOCKER_TOKEN }} | docker login --username ukonnra --password-stdin &&
           docker push ukonnra/${GITHUB_REPOSITORY#*/}-frontend:$IMAGE_TAG &&
-          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-graphql:$IMAGE_TAG
-  #          docker build packages/app-backend-grpc -t ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG &&
-  #          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG &&
+          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-graphql:$IMAGE_TAG &&
+          docker push ukonnra/${GITHUB_REPOSITORY#*/}-backend-grpc:$IMAGE_TAG
   #      - name: Archive Linux Desktop
   #        uses: actions/upload-artifact@v3
   #        with:

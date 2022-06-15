@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.2.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "cross-env PORT=5000 yarn build --watch",
+    "dev": "ts-node src/index.ts",
     "clean": "rimraf dist",
     "build": "yarn clean && ts-node esbuild.config.ts",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",

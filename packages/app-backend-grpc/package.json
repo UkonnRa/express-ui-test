@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.2.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "cross-env PORT=5000 yarn build --watch",
+    "dev": "ts-node src/index.ts",
     "clean": "rimraf src/proto dist protoset.bin",
     "build": "yarn compile:proto && ts-node esbuild.config.ts",
     "preview": "cross-env PORT=5000 node dist/index.js",
