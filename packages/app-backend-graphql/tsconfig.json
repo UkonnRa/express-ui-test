@@ -5,5 +5,5 @@
   "compilerOptions": {
     "rootDir": "src/"
   },
-  "references": [{ "path": "../business-logic" }, { "path": "../types" }]
+  "references": [{ "path": "../business-logic" }]
 }

@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.2.1",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "cross-env PORT=5000 ts-node src/index.ts",
+    "dev": "cross-env PORT=5000 yarn build --watch",
     "clean": "rimraf dist",
     "build": "yarn clean && ts-node esbuild.config.ts",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
@@ -15,7 +15,6 @@
     "@mikro-orm/core": "^5.1.5",
     "@mikro-orm/postgresql": "^5.1.5",
     "@white-rabbit/business-logic": "workspace:^",
-    "@white-rabbit/types": "workspace:^",
     "apollo-server": "^3.8.2",
     "dotenv": "^16.0.1",
     "graphql": "^16.5.0",
@@ -29,11 +28,5 @@
     "cross-env": "^7.0.3",
     "rimraf": "^3.0.2",
     "ts-node": "^10.8.1"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./mikro-orm.config.ts"
-    ]
   }
 }

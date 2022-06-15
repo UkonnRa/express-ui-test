@@ -7,7 +7,6 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
-    "@white-rabbit/types": "workspace:^",
     "pinia": "^2.0.14",
     "uuid": "^8.3.2",
     "vue": "^3.2.37",

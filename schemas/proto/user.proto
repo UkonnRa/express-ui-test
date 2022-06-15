@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package whiterabbit;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "shared.proto";
+
+message User {
+  string id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+  google.protobuf.Timestamp deletedAt = 4;
+  string name = 5;
+  Role role = 6;
+  repeated AuthId authIds = 7;
+}
+
+enum Role {
+  USER = 0;
+  ADMIN = 1;
+  OWNER = 2;
+}
+
+message AuthId {
+  string provider = 1;
+  string value = 2;
+}
+
+message UserPage {
+  PageInfo pageInfo = 1;
+  repeated UserItem items = 2;
+}
+
+message UserItem {
+  string cursor = 1;
+  User data = 2;
+}
+
+message UserResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc findOne(google.protobuf.StringValue) returns (UserResponse);
+  rpc findAll(FindAllRequest) returns (UserPage);
+}
