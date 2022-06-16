@@ -1,0 +1,30 @@
+type UserConnection {
+  pageInfo: PageInfo!
+  edges: [UserEdge!]!
+}
+
+type UserEdge {
+  node: User!
+  cursor: String!
+}
+
+type User {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  deletedAt: String
+  name: String!
+  role: Role!
+  authIds: [AuthId!]!
+}
+
+enum Role {
+  USER
+  ADMIN
+  OWNER
+}
+
+type AuthId {
+  provider: String!
+  value: String!
+}

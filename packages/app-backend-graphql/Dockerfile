@@ -10,6 +10,7 @@ WORKDIR /home/node/app
 USER node
 
 COPY dist/index.js index.js
+COPY schema schema
 
 RUN npm i pg
 

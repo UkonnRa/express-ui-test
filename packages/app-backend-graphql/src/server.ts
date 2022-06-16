@@ -1,7 +1,8 @@
+import path from "path";
 import { inject, singleton } from "tsyringe";
 import { ApolloServer } from "apollo-server";
+import { loadFilesSync } from "@graphql-tools/load-files";
 import { QueryResolver, GroupResolver } from "./resolver";
-import SCHEMAS from "./schema";
 
 @singleton()
 export default class Server {
@@ -13,7 +14,7 @@ export default class Server {
   ) {
     this.server = new ApolloServer({
       cache: "bounded",
-      typeDefs: SCHEMAS,
+      typeDefs: loadFilesSync(path.join(process.cwd(), "schema/*.graphql")),
       resolvers: {
         Query: {
           users: async (source, args, context) =>
