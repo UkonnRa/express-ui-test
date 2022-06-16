@@ -20,25 +20,9 @@ const GROUP_GRAPHQL_SCHEMA = gql`
     name: String!
     description: String
 
-    admins(
-      query: String
-      first: Int
-      after: String
-      last: Int
-      before: String
-      offset: Int
-      sort: [Sort!]!
-    ): UserConnection!
+    admins: [User!]!
 
-    members(
-      query: String
-      first: Int
-      after: String
-      last: Int
-      before: String
-      offset: Int
-      sort: [Sort!]!
-    ): UserConnection!
+    members: [User!]!
   }
 `;
 

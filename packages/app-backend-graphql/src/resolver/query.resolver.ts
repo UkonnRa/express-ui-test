@@ -25,12 +25,21 @@ export default class QueryResolver {
     args: { query: string },
     context: { authUser: AuthUser }
   ): Promise<EntityDTO<UserEntity> | null> {
+    if (context.authUser == null) {
+      const user = (await this.orm.em
+        .fork()
+        .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      context.authUser = {
+        authId: user.authIds[0],
+        user: user,
+        scopes: [this.userService.readScope, this.groupService.readScope],
+      };
+    }
+
     const query: Query<UserEntity> = JSON.parse(args.query);
     const entity = await this.userService.findOne({
       query,
-      authUser: context.authUser ?? {
-        scopes: [this.userService.readScope, this.groupService.readScope],
-      },
+      authUser: context.authUser,
     });
     return entity == null ? null : entity.toObject();
   }
@@ -40,12 +49,21 @@ export default class QueryResolver {
     args: FindPage,
     context: { authUser: AuthUser }
   ): Promise<Connection<UserEntity>> {
+    if (context.authUser == null) {
+      const user = (await this.orm.em
+        .fork()
+        .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      context.authUser = {
+        authId: user.authIds[0],
+        user: user,
+        scopes: [this.userService.readScope, this.groupService.readScope],
+      };
+    }
+
     const input = createFindPage<UserEntity>(args);
     const page = await this.userService.findPage({
       ...input,
-      authUser: context.authUser ?? {
-        scopes: [this.userService.readScope, this.groupService.readScope],
-      },
+      authUser: context.authUser,
     });
     return createConnection(page);
   }
@@ -55,12 +73,21 @@ export default class QueryResolver {
     args: { query: string },
     context: { authUser: AuthUser }
   ): Promise<EntityDTO<GroupEntity> | null> {
+    if (context.authUser == null) {
+      const user = (await this.orm.em
+        .fork()
+        .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      context.authUser = {
+        authId: user.authIds[0],
+        user: user,
+        scopes: [this.userService.readScope, this.groupService.readScope],
+      };
+    }
+
     const query: Query<GroupEntity> = JSON.parse(args.query);
     const entity = await this.groupService.findOne({
       query,
-      authUser: context.authUser ?? {
-        scopes: [this.userService.readScope, this.groupService.readScope],
-      },
+      authUser: context.authUser,
     });
     return entity == null ? null : entity.toObject();
   }

@@ -12,6 +12,7 @@ export default class Server {
     @inject(GroupResolver) groupResolver: GroupResolver
   ) {
     this.server = new ApolloServer({
+      cache: "bounded",
       typeDefs: SCHEMAS,
       resolvers: {
         Query: {
