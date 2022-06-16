@@ -20,7 +20,7 @@ Briefly speaking, when using Cursor-Based Pagination on a entity list, you need:
 To point at an entity, the easiest way is ID. Say an API:
 
 ```typescript
-function findAll(query: Query, sort: Sort, cursor: IDString, direction: "forward" | "backward", size: number): Page<Entity>
+function findPage(query: Query, sort: Sort, cursor: IDString, direction: "forward" | "backward", size: number): Page<Entity>
 ```
 
 Beside the provided `query`, `sort`, `cursor` and `direction` can be thought as **additional queries** too.
@@ -63,7 +63,7 @@ In fact, the page-based pagination is a special case of the cursor-based paginat
 So our pagination strategy can support it by an additional field: `offset`:
 
 ```typescript
-function findAll(query: Query, sort: Sort, cursor: IDString, direction: "forward" | "backward", size: number, offset: number): Page<Entity>
+function findPage(query: Query, sort: Sort, cursor: IDString, direction: "forward" | "backward", size: number, offset: number): Page<Entity>
 ```
 
 In the cursor-based context, the field `offset` can be explained as: when fetching the result, skip the first N entities.
@@ -78,7 +78,7 @@ the cursor as well. So instead of a bare ID, the cursor becomes `{id: <Entity ID
 And the API will become:
 
 ```typescript
-function findAll(cursor: Cursor, direction: "forward" | "backward", size: number, offset: number, query?: Query, sort?: Sort): Page<Entity>
+function findPage(cursor: Cursor, direction: "forward" | "backward", size: number, offset: number, query?: Query, sort?: Sort): Page<Entity>
 ```
 
 Here `query` and `sort` is optional and should be null **unless the cursor is not provided**.

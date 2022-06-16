@@ -6,6 +6,7 @@
     "dev": "ts-node src/index.ts",
     "clean": "rimraf dist",
     "build": "yarn clean && ts-node esbuild.config.ts",
+    "preview": "node dist/index.js",
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
     "lint:fix": "yarn lint --fix",
     "orm:seed": "ts-node seed.ts"

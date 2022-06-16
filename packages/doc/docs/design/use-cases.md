@@ -180,7 +180,7 @@ Users can find one entity based on filters.
 @startuml
 start
 
-:Call findAll function, with size = 1;
+:Call findPage function, with size = 1;
 if (Result size == 0) then (yes)
   :return null;
 else

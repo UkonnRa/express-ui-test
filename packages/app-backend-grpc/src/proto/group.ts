@@ -3,7 +3,7 @@ import Long from "long";
 import * as _m0 from "protobufjs/minimal";
 import { CallContext, CallOptions } from "nice-grpc-common";
 import { Timestamp } from "./google/protobuf/timestamp";
-import { PageInfo, FindAllRequest, RelationshipRequest } from "./shared";
+import { PageInfo, FindPageRequest, RelationshipRequest } from "./shared";
 import { StringValue } from "./google/protobuf/wrappers";
 import { UserPage } from "./user";
 
@@ -375,9 +375,9 @@ export const GroupServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    findAll: {
-      name: "findAll",
-      requestType: FindAllRequest,
+    findPage: {
+      name: "findPage",
+      requestType: FindPageRequest,
       requestStream: false,
       responseType: GroupPage,
       responseStream: false,
@@ -407,8 +407,8 @@ export interface GroupServiceServiceImplementation<CallContextExt = {}> {
     request: StringValue,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<GroupResponse>>;
-  findAll(
-    request: FindAllRequest,
+  findPage(
+    request: FindPageRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<GroupPage>>;
   admins(
@@ -426,8 +426,8 @@ export interface GroupServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<StringValue>,
     options?: CallOptions & CallOptionsExt
   ): Promise<GroupResponse>;
-  findAll(
-    request: DeepPartial<FindAllRequest>,
+  findPage(
+    request: DeepPartial<FindPageRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<GroupPage>;
   admins(

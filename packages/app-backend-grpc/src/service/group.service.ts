@@ -9,7 +9,7 @@ import {
   GroupEntity,
 } from "@white-rabbit/business-logic";
 import { MikroORM } from "@mikro-orm/core";
-import { FindAllRequest, Order, RelationshipRequest } from "../proto/shared";
+import { FindPageRequest, Order, RelationshipRequest } from "../proto/shared";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import { DeepPartial, UserPage } from "../proto/user";
 import {
@@ -34,7 +34,7 @@ export default class GroupService implements GroupServiceServiceImplementation {
     input,
   }: RelationshipRequest): Promise<DeepPartial<UserPage>> {
     const query = input?.query != null ? JSON.parse(input.query) : {};
-    return this.grpcUserService.findAll({
+    return this.grpcUserService.findPage({
       query: JSON.stringify({
         ...query,
         adminInGroups: id,
@@ -44,7 +44,7 @@ export default class GroupService implements GroupServiceServiceImplementation {
     });
   }
 
-  async findAll(request: FindAllRequest): Promise<DeepPartial<GroupPage>> {
+  async findPage(request: FindPageRequest): Promise<DeepPartial<GroupPage>> {
     const query: Query<GroupEntity> =
       request.query != null ? JSON.parse(request.query) : {};
     const user = (await this.orm.em
@@ -55,7 +55,7 @@ export default class GroupService implements GroupServiceServiceImplementation {
       user: user,
       scopes: [this.userService.readScope, this.groupService.readScope],
     };
-    const page = await this.groupService.findAll({
+    const page = await this.groupService.findPage({
       query,
       authUser,
       pagination: request.pagination ?? { size: 5 },
@@ -92,7 +92,7 @@ export default class GroupService implements GroupServiceServiceImplementation {
     input,
   }: RelationshipRequest): Promise<DeepPartial<UserPage>> {
     const query = input?.query != null ? JSON.parse(input.query) : {};
-    return this.grpcUserService.findAll({
+    return this.grpcUserService.findPage({
       query: JSON.stringify({
         ...query,
         memberInGroups: id,

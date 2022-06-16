@@ -28,7 +28,7 @@ message Pagination {
   optional uint32 offset = 4;
 }
 
-message FindAllRequest {
+message FindPageRequest {
   optional string query = 1;
   Pagination pagination = 2;
   repeated Sort sort = 3;
@@ -36,5 +36,5 @@ message FindAllRequest {
 
 message RelationshipRequest {
   string id = 1;
-  FindAllRequest input = 2;
+  FindPageRequest input = 2;
 }

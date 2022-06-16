@@ -13,7 +13,7 @@ import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
 import Sort from "./sort";
 import Order from "./order";
-import FindAllInput from "./find-all.input";
+import FindPageInput from "./find-page.input";
 import Page from "./page";
 import PageItem from "./page-item";
 import FindOneInput from "./find-one.input";
@@ -180,7 +180,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     return [cursorObj, entity.toObject()];
   }
 
-  private async doFindAll(
+  private async doFindPage(
     filterQuery: ObjectQuery<E>,
     sort: QueryOrderMap<E>,
     pagination: Pagination,
@@ -224,8 +224,8 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     return result;
   }
 
-  readonly findAll = async (
-    input: FindAllInput<E>,
+  readonly findPage = async (
+    input: FindPageInput<E>,
     em?: EntityManager
   ): Promise<Page<E>> => {
     this.checkPermission(input.authUser, input.query);
@@ -256,7 +256,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
       async (e: E) => this.isReadable(e, input.authUser),
     ];
 
-    const entities = await this.doFindAll(
+    const entities = await this.doFindPage(
       filterQuery,
       sort,
       input.pagination,
@@ -323,7 +323,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
 
     const externalQueries = [async (e: E) => this.isReadable(e, authUser)];
 
-    const entities = await this.doFindAll(
+    const entities = await this.doFindPage(
       mikroQuery,
       [{ id: Order.ASC }],
       { size: 1 },

@@ -7,7 +7,7 @@ import {
   UserService as CoreUserService,
 } from "@white-rabbit/business-logic";
 import { MikroORM } from "@mikro-orm/core";
-import { FindAllRequest, Order } from "../proto/shared";
+import { FindPageRequest, Order } from "../proto/shared";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import {
   DeepPartial,
@@ -24,7 +24,7 @@ export default class UserService implements UserServiceServiceImplementation {
     @inject(CoreUserService) private readonly userService: CoreUserService
   ) {}
 
-  async findAll(request: FindAllRequest): Promise<DeepPartial<UserPage>> {
+  async findPage(request: FindPageRequest): Promise<DeepPartial<UserPage>> {
     const query: Query<UserEntity> =
       request.query != null ? JSON.parse(request.query) : {};
     const user = (await this.orm.em
@@ -35,7 +35,7 @@ export default class UserService implements UserServiceServiceImplementation {
       user: user,
       scopes: [this.userService.readScope],
     };
-    const page = await this.userService.findAll({
+    const page = await this.userService.findPage({
       query,
       authUser,
       pagination: request.pagination ?? { size: 5 },

@@ -43,5 +43,5 @@ message UserResponse {
 
 service UserService {
   rpc findOne(google.protobuf.StringValue) returns (UserResponse);
-  rpc findAll(FindAllRequest) returns (UserPage);
+  rpc findPage(FindPageRequest) returns (UserPage);
 }

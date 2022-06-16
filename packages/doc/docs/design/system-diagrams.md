@@ -18,7 +18,7 @@ package shared {
   }
 
   interface ReadService<E extends Entity, Q = object> {
-    findAll(query: FindAllInput<Q>): Page<E>
+    findPage(query: FindPageInput<Q>): Page<E>
     findOne(query: FindOneInput<Q>): E | null
   }
 
@@ -35,9 +35,9 @@ package shared {
     + scopes: string[]
   }
 
-  FindAllInput *-- Pagination
-  FindAllInput *-- AuthUser
-  interface FindAllInput<Q = object> {
+  FindPageInput *-- Pagination
+  FindPageInput *-- AuthUser
+  interface FindPageInput<Q = object> {
     + authUser?: AuthUser
     + query?: Q
     + pagination: Pagination

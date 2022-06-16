@@ -1,6 +1,6 @@
 import { Sort } from "@white-rabbit/business-logic";
 
-export default interface FindAll {
+export default interface FindPage {
   readonly query?: string;
   readonly first?: number;
   readonly after?: string;

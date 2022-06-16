@@ -1,4 +1,3 @@
-import AbstractSuite from "./abstract-suite";
 import {
   GroupCommand,
   GroupEntity,
@@ -8,13 +7,14 @@ import {
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
-import { Task } from "./task";
 import each from "jest-each";
+import { Task } from "./task";
+import AbstractSuite from "./abstract-suite";
 
 const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
   {
-    type: "FindAllTask",
-    name: "Find all groups",
+    type: "FindPageTask",
+    name: "Find group page",
     input: {
       authUser: { user: { role: RoleValue.OWNER } },
       query: {},

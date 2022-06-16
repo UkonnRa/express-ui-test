@@ -4,12 +4,12 @@ import {
   Command,
   CommandInput,
   CommandsInput,
-  FindAllInput,
+  FindPageInput,
   FindOneInput,
   UserEntity,
   WriteService,
 } from "@white-rabbit/business-logic";
-import { Task, FindAllTask } from "./task";
+import { Task, FindPageTask } from "./task";
 import { MikroORM } from "@mikro-orm/core";
 import AbstractTask, { AuthUserInput } from "./task/abstract-task";
 import AbstractExceptionTask from "./task/abstract-exception-task";
@@ -63,12 +63,12 @@ export default abstract class AbstractSuite<
     };
   }
 
-  private async runFindAllTask(
-    { checker, expectNextPage, expectPreviousPage }: FindAllTask<E>,
-    input: FindAllInput<E>
+  private async runFindPageTask(
+    { checker, expectNextPage, expectPreviousPage }: FindPageTask<E>,
+    input: FindPageInput<E>
   ): Promise<void> {
     const em = this.orm.em.fork();
-    const page = await this.service.findAll(input);
+    const page = await this.service.findPage(input);
     await checker?.(
       {
         input,
@@ -80,7 +80,7 @@ export default abstract class AbstractSuite<
     if (expectNextPage === true) {
       expect(page.pageInfo.hasNextPage).toBeTruthy();
       expect(page.items.length).toBe(input.pagination.size);
-      const nextPage = await this.service.findAll({
+      const nextPage = await this.service.findPage({
         ...input,
         pagination: {
           ...input.pagination,
@@ -97,7 +97,7 @@ export default abstract class AbstractSuite<
       );
       expect(nextPage.pageInfo.hasPreviousPage).toBeTruthy();
 
-      const nextPagePrevious = await this.service.findAll({
+      const nextPagePrevious = await this.service.findPage({
         ...input,
         pagination: {
           ...input.pagination,
@@ -109,7 +109,7 @@ export default abstract class AbstractSuite<
     } else if (expectNextPage === false) {
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
-        const nextPage = await this.service.findAll({
+        const nextPage = await this.service.findPage({
           ...input,
           pagination: {
             ...input.pagination,
@@ -123,7 +123,7 @@ export default abstract class AbstractSuite<
 
     if (expectPreviousPage === true) {
       expect(page.pageInfo.hasPreviousPage).toBe(true);
-      const previousPage = await this.service.findAll({
+      const previousPage = await this.service.findPage({
         ...input,
         pagination: {
           ...input.pagination,
@@ -140,7 +140,7 @@ export default abstract class AbstractSuite<
       );
       expect(previousPage.pageInfo.hasNextPage).toBeTruthy();
 
-      const previousPageNext = await this.service.findAll({
+      const previousPageNext = await this.service.findPage({
         ...input,
         pagination: {
           ...input.pagination,
@@ -152,7 +152,7 @@ export default abstract class AbstractSuite<
     } else if (expectPreviousPage === false) {
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {
-        const previousPage = await this.service.findAll({
+        const previousPage = await this.service.findPage({
           ...input,
           pagination: {
             ...input.pagination,
@@ -214,14 +214,14 @@ export default abstract class AbstractSuite<
     };
 
     switch (task.type) {
-      case "FindAllTask":
-        await this.runFindAllTask(task, inputValue as FindAllInput<E>);
+      case "FindPageTask":
+        await this.runFindPageTask(task, inputValue as FindPageInput<E>);
         break;
-      case "FindAllExceptionTask":
+      case "FindPageExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindAllInput<E>,
-          async () => this.service.findAll(inputValue as FindAllInput<E>)
+          inputValue as FindPageInput<E>,
+          async () => this.service.findPage(inputValue as FindPageInput<E>)
         );
         break;
       case "FindOneTask":

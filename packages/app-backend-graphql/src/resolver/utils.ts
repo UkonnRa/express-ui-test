@@ -1,14 +1,14 @@
 import {
   AbstractEntity,
-  FindAllInput,
+  FindPageInput,
   Page,
 } from "@white-rabbit/business-logic";
-import { Connection, Edge, FindAll } from "../model";
+import { Connection, Edge, FindPage } from "../model";
 import { EitherFirstOrLastError } from "../error";
 
-export function createFindAll<E extends AbstractEntity<E>>(
-  model: FindAll
-): Omit<FindAllInput<E>, "authUser"> {
+export function createFindPage<E extends AbstractEntity<E>>(
+  model: FindPage
+): Omit<FindPageInput<E>, "authUser"> {
   if (model.last != null && model.first != null) {
     throw new EitherFirstOrLastError();
   }

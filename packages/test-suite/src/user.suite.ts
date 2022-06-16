@@ -1,4 +1,3 @@
-import AbstractSuite from "./abstract-suite";
 import {
   DeleteUserCommand,
   encodeCursor,
@@ -15,14 +14,15 @@ import {
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
-import { HandleCommandExceptionTask, HandleCommandTask, Task } from "./task";
 import each from "jest-each";
 import { v4 } from "uuid";
 import { faker } from "@faker-js/faker";
+import { HandleCommandExceptionTask, HandleCommandTask, Task } from "./task";
+import AbstractSuite from "./abstract-suite";
 
 const TASKS: Array<Task<UserEntity, UserCommand>> = [
   {
-    type: "FindAllTask",
+    type: "FindPageTask",
     name: "User[ANY] can find all active users",
     input: {
       authUser: { user: {} },
@@ -44,7 +44,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     expectPreviousPage: false,
   },
   {
-    type: "FindAllTask",
+    type: "FindPageTask",
     name: "User[ANY] can find backward",
 
     async input(em) {
@@ -76,7 +76,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     expectPreviousPage: true,
   },
   {
-    type: "FindAllTask",
+    type: "FindPageTask",
     name: "User[ADMIN] can find deleted users",
     input: {
       authUser: { user: { role: RoleValue.ADMIN } },
@@ -97,7 +97,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     expectPreviousPage: false,
   },
   {
-    type: "FindAllTask",
+    type: "FindPageTask",
     name: "User[ANY] starts at the beginning if Cursor[after] and Cursor[before] are not found",
     input: {
       authUser: { user: {} },
@@ -122,7 +122,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     expectPreviousPage: false,
   },
   {
-    type: "FindAllExceptionTask",
+    type: "FindPageExceptionTask",
     name: "User[USER] cannot use Query[IncludeDeletedQuery]",
     input: {
       authUser: { user: { role: RoleValue.USER } },
@@ -140,7 +140,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     } as Partial<NoPermissionError>,
   },
   {
-    type: "FindAllExceptionTask",
+    type: "FindPageExceptionTask",
     name: "User cannot find anything if no read scope",
     input: {
       authUser: { user: { role: RoleValue.ADMIN }, scopes: [] },

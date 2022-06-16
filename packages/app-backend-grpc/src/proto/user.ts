@@ -3,7 +3,7 @@ import Long from "long";
 import * as _m0 from "protobufjs/minimal";
 import { CallContext, CallOptions } from "nice-grpc-common";
 import { Timestamp } from "./google/protobuf/timestamp";
-import { PageInfo, FindAllRequest } from "./shared";
+import { PageInfo, FindPageRequest } from "./shared";
 import { StringValue } from "./google/protobuf/wrappers";
 
 export const protobufPackage = "whiterabbit";
@@ -493,9 +493,9 @@ export const UserServiceDefinition = {
       responseStream: false,
       options: {},
     },
-    findAll: {
-      name: "findAll",
-      requestType: FindAllRequest,
+    findPage: {
+      name: "findPage",
+      requestType: FindPageRequest,
       requestStream: false,
       responseType: UserPage,
       responseStream: false,
@@ -509,8 +509,8 @@ export interface UserServiceServiceImplementation<CallContextExt = {}> {
     request: StringValue,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<UserResponse>>;
-  findAll(
-    request: FindAllRequest,
+  findPage(
+    request: FindPageRequest,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<UserPage>>;
 }
@@ -520,8 +520,8 @@ export interface UserServiceClient<CallOptionsExt = {}> {
     request: DeepPartial<StringValue>,
     options?: CallOptions & CallOptionsExt
   ): Promise<UserResponse>;
-  findAll(
-    request: DeepPartial<FindAllRequest>,
+  findPage(
+    request: DeepPartial<FindPageRequest>,
     options?: CallOptions & CallOptionsExt
   ): Promise<UserPage>;
 }

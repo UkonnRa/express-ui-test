@@ -57,7 +57,7 @@ export interface Pagination {
   offset?: number | undefined;
 }
 
-export interface FindAllRequest {
+export interface FindPageRequest {
   query?: string | undefined;
   pagination: Pagination | undefined;
   sort: Sort[];
@@ -65,7 +65,7 @@ export interface FindAllRequest {
 
 export interface RelationshipRequest {
   id: string;
-  input: FindAllRequest | undefined;
+  input: FindPageRequest | undefined;
 }
 
 function createBasePageInfo(): PageInfo {
@@ -309,13 +309,13 @@ export const Pagination = {
   },
 };
 
-function createBaseFindAllRequest(): FindAllRequest {
+function createBaseFindPageRequest(): FindPageRequest {
   return { query: undefined, pagination: undefined, sort: [] };
 }
 
-export const FindAllRequest = {
+export const FindPageRequest = {
   encode(
-    message: FindAllRequest,
+    message: FindPageRequest,
     writer: _m0.Writer = _m0.Writer.create()
   ): _m0.Writer {
     if (message.query !== undefined) {
@@ -330,10 +330,10 @@ export const FindAllRequest = {
     return writer;
   },
 
-  decode(input: _m0.Reader | Uint8Array, length?: number): FindAllRequest {
+  decode(input: _m0.Reader | Uint8Array, length?: number): FindPageRequest {
     const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseFindAllRequest();
+    const message = createBaseFindPageRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -354,7 +354,7 @@ export const FindAllRequest = {
     return message;
   },
 
-  fromJSON(object: any): FindAllRequest {
+  fromJSON(object: any): FindPageRequest {
     return {
       query: isSet(object.query) ? String(object.query) : undefined,
       pagination: isSet(object.pagination)
@@ -366,7 +366,7 @@ export const FindAllRequest = {
     };
   },
 
-  toJSON(message: FindAllRequest): unknown {
+  toJSON(message: FindPageRequest): unknown {
     const obj: any = {};
     message.query !== undefined && (obj.query = message.query);
     message.pagination !== undefined &&
@@ -381,10 +381,10 @@ export const FindAllRequest = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<FindAllRequest>, I>>(
+  fromPartial<I extends Exact<DeepPartial<FindPageRequest>, I>>(
     object: I
-  ): FindAllRequest {
-    const message = createBaseFindAllRequest();
+  ): FindPageRequest {
+    const message = createBaseFindPageRequest();
     message.query = object.query ?? undefined;
     message.pagination =
       object.pagination !== undefined && object.pagination !== null
@@ -408,7 +408,7 @@ export const RelationshipRequest = {
       writer.uint32(10).string(message.id);
     }
     if (message.input !== undefined) {
-      FindAllRequest.encode(message.input, writer.uint32(18).fork()).ldelim();
+      FindPageRequest.encode(message.input, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -424,7 +424,7 @@ export const RelationshipRequest = {
           message.id = reader.string();
           break;
         case 2:
-          message.input = FindAllRequest.decode(reader, reader.uint32());
+          message.input = FindPageRequest.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -438,7 +438,7 @@ export const RelationshipRequest = {
     return {
       id: isSet(object.id) ? String(object.id) : "",
       input: isSet(object.input)
-        ? FindAllRequest.fromJSON(object.input)
+        ? FindPageRequest.fromJSON(object.input)
         : undefined,
     };
   },
@@ -448,7 +448,7 @@ export const RelationshipRequest = {
     message.id !== undefined && (obj.id = message.id);
     message.input !== undefined &&
       (obj.input = message.input
-        ? FindAllRequest.toJSON(message.input)
+        ? FindPageRequest.toJSON(message.input)
         : undefined);
     return obj;
   },
@@ -460,7 +460,7 @@ export const RelationshipRequest = {
     message.id = object.id ?? "";
     message.input =
       object.input !== undefined && object.input !== null
-        ? FindAllRequest.fromPartial(object.input)
+        ? FindPageRequest.fromPartial(object.input)
         : undefined;
     return message;
   },

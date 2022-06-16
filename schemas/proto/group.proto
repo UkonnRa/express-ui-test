@@ -33,7 +33,7 @@ message GroupResponse {
 
 service GroupService {
   rpc findOne(google.protobuf.StringValue) returns (GroupResponse);
-  rpc findAll(FindAllRequest) returns (GroupPage);
+  rpc findPage(FindPageRequest) returns (GroupPage);
   rpc admins(RelationshipRequest) returns (UserPage);
   rpc members(RelationshipRequest) returns (UserPage);
 }

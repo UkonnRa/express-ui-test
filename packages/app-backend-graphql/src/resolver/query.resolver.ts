@@ -9,8 +9,8 @@ import {
   UserService,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
-import { Connection, FindAll } from "../model";
-import { createFindAll, createConnection } from "./utils";
+import { Connection, FindPage } from "../model";
+import { createFindPage, createConnection } from "./utils";
 
 @singleton()
 export default class QueryResolver {
@@ -37,11 +37,11 @@ export default class QueryResolver {
 
   async users(
     _: any,
-    args: FindAll,
+    args: FindPage,
     context: { authUser: AuthUser }
   ): Promise<Connection<UserEntity>> {
-    const input = createFindAll<UserEntity>(args);
-    const page = await this.userService.findAll({
+    const input = createFindPage<UserEntity>(args);
+    const page = await this.userService.findPage({
       ...input,
       authUser: context.authUser ?? {
         scopes: [this.userService.readScope, this.groupService.readScope],
@@ -67,10 +67,10 @@ export default class QueryResolver {
 
   async groups(
     _: any,
-    args: FindAll,
+    args: FindPage,
     context: { authUser?: AuthUser }
   ): Promise<Connection<GroupEntity>> {
-    const input = createFindAll<GroupEntity>(args);
+    const input = createFindPage<GroupEntity>(args);
     if (context.authUser == null) {
       const user = (await this.orm.em
         .fork()
@@ -81,7 +81,7 @@ export default class QueryResolver {
         scopes: [this.userService.readScope, this.groupService.readScope],
       };
     }
-    const page = await this.groupService.findAll({
+    const page = await this.groupService.findPage({
       ...input,
       authUser: context.authUser,
     });

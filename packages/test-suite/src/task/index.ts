@@ -1,5 +1,5 @@
-import FindAllTask from "./find-all.task";
-import FindAllExceptionTask from "./find-all.exception.task";
+import FindPageTask from "./find-page.task";
+import FindPageExceptionTask from "./find-page.exception.task";
 import { AbstractEntity, Command } from "@white-rabbit/business-logic";
 import FindOneTask from "./find-one.task";
 import FindOneExceptionTask from "./find-one.exception.task";
@@ -9,8 +9,8 @@ import HandleCommandsTask from "./handle-commands.task";
 import HandleCommandsExceptionTask from "./handle-commands.exception.task";
 
 type Task<E extends AbstractEntity<E>, C extends Command> =
-  | FindAllTask<E>
-  | FindAllExceptionTask<E>
+  | FindPageTask<E>
+  | FindPageExceptionTask<E>
   | FindOneTask<E>
   | FindOneExceptionTask<E>
   | HandleCommandTask<E, C>
@@ -20,8 +20,8 @@ type Task<E extends AbstractEntity<E>, C extends Command> =
 
 export {
   Task,
-  FindAllTask,
-  FindAllExceptionTask,
+  FindPageTask,
+  FindPageExceptionTask,
   FindOneTask,
   FindOneExceptionTask,
   HandleCommandTask,
