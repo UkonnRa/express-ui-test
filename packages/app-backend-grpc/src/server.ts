@@ -1,16 +1,11 @@
-import fs from "fs";
-import path from "path";
 import { inject, singleton } from "tsyringe";
-import { ServerCredentials } from "@grpc/grpc-js";
-import { createServer, Server as GrpcServer } from "nice-grpc";
-import {
-  ServerReflection,
-  ServerReflectionService,
-} from "nice-grpc-server-reflection";
-import { errorDetailsServerMiddleware } from "nice-grpc-error-details";
+import { ServerCredentials, Server as GrpcServer } from "@grpc/grpc-js";
+import { adaptService } from "@protobuf-ts/grpc-backend";
 import { GroupService, UserService } from "./service";
-import { UserServiceDefinition } from "./proto/user";
-import { GroupServiceDefinition } from "./proto/group";
+import {
+  UserService as UserServiceDef,
+  GroupService as GroupServiceDef,
+} from "./proto/app";
 
 @singleton()
 export default class Server {
@@ -20,21 +15,24 @@ export default class Server {
     @inject(UserService) userService: UserService,
     @inject(GroupService) groupService: GroupService
   ) {
-    this.server = createServer().use(errorDetailsServerMiddleware);
-    this.server.add(UserServiceDefinition, userService as any);
-    this.server.add(GroupServiceDefinition, groupService as any);
-    this.server.add(
-      ServerReflectionService,
-      ServerReflection(
-        fs.readFileSync(path.join(process.cwd(), "protoset.bin")),
-        [UserServiceDefinition.fullName, GroupServiceDefinition.fullName]
-      )
-    );
+    this.server = new GrpcServer();
+    this.server.addService(...adaptService(UserServiceDef, userService));
+    this.server.addService(...adaptService(GroupServiceDef, groupService));
   }
 
   async start(): Promise<void> {
     const url = `0.0.0.0:${process.env.PORT ?? 80}`;
-    await this.server.listen(url, ServerCredentials.createInsecure());
-    console.log(`Start server at ${url}`);
+    await this.server.bindAsync(
+      url,
+      ServerCredentials.createInsecure(),
+      (err: Error | null, port: number) => {
+        if (err != null) {
+          console.error(`Server error: ${err.message}`);
+        } else {
+          console.log(`Server bound on port: ${port}`);
+          this.server.start();
+        }
+      }
+    );
   }
 }

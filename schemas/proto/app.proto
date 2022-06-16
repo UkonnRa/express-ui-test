@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package whiterabbit;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+message PageInfo {
+  bool hasPreviousPage = 1;
+  bool hasNextPage = 2;
+  optional string startCursor = 3;
+  optional string endCursor = 4;
+}
+
+message Sort {
+  string field = 1;
+  Order order = 2;
+}
+
+enum Order {
+  ASC = 0;
+  DESC = 1;
+}
+
+message Pagination {
+  optional string after = 1;
+  optional string before = 2;
+  uint32 size = 3;
+  optional uint32 offset = 4;
+}
+
+message FindPageRequest {
+  optional string query = 1;
+  Pagination pagination = 2;
+  repeated Sort sort = 3;
+}
+
+message Group {
+  string id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+  google.protobuf.Timestamp deletedAt = 4;
+
+  string name = 5;
+  optional string description = 6;
+}
+
+message GroupPage {
+  PageInfo pageInfo = 1;
+  repeated GroupItem items = 2;
+}
+
+message GroupItem {
+  string cursor = 1;
+  Group data = 2;
+}
+
+message GroupResponse {
+  Group group = 1;
+}
+
+service GroupService {
+  rpc findOne(google.protobuf.StringValue) returns (GroupResponse);
+  rpc findPage(FindPageRequest) returns (GroupPage);
+  rpc admins(google.protobuf.StringValue) returns (stream User);
+  rpc members(google.protobuf.StringValue) returns (stream User);
+}
+
+message User {
+  string id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+  google.protobuf.Timestamp deletedAt = 4;
+  string name = 5;
+  Role role = 6;
+  repeated AuthId authIds = 7;
+}
+
+enum Role {
+  USER = 0;
+  ADMIN = 1;
+  OWNER = 2;
+}
+
+message AuthId {
+  string provider = 1;
+  string value = 2;
+}
+
+message UserPage {
+  PageInfo pageInfo = 1;
+  repeated UserItem items = 2;
+}
+
+message UserItem {
+  string cursor = 1;
+  User data = 2;
+}
+
+message UserResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc findOne(google.protobuf.StringValue) returns (UserResponse);
+  rpc findPage(FindPageRequest) returns (UserPage);
+}

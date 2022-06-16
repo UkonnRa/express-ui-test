@@ -7,24 +7,24 @@ import {
   UserService as CoreUserService,
 } from "@white-rabbit/business-logic";
 import { MikroORM } from "@mikro-orm/core";
-import { FindPageRequest, Order } from "../proto/shared";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import {
-  DeepPartial,
+  FindPageRequest,
+  Order,
   User,
   UserPage,
   UserResponse,
-  UserServiceServiceImplementation,
-} from "../proto/user";
+} from "../proto/app";
+import { IUserService } from "../proto/app.server";
 
 @singleton()
-export default class UserService implements UserServiceServiceImplementation {
+export default class UserService implements IUserService {
   constructor(
     @inject(MikroORM) private readonly orm: MikroORM,
     @inject(CoreUserService) private readonly userService: CoreUserService
   ) {}
 
-  async findPage(request: FindPageRequest): Promise<DeepPartial<UserPage>> {
+  async findPage(request: FindPageRequest): Promise<UserPage> {
     const query: Query<UserEntity> =
       request.query != null ? JSON.parse(request.query) : {};
     const user = (await this.orm.em
@@ -45,10 +45,10 @@ export default class UserService implements UserServiceServiceImplementation {
       })),
     });
 
-    return UserPage.fromJSON(page);
+    return UserPage.fromJsonString(JSON.stringify(page));
   }
 
-  async findOne(request: StringValue): Promise<DeepPartial<UserResponse>> {
+  async findOne(request: StringValue): Promise<UserResponse> {
     const query: Query<UserEntity> = JSON.parse(request.value);
     const user = (await this.orm.em
       .fork()
@@ -64,6 +64,11 @@ export default class UserService implements UserServiceServiceImplementation {
       authUser,
     });
 
-    return { user: entity != null ? User.fromJSON(entity) : undefined };
+    return {
+      user:
+        entity != null
+          ? User.fromJsonString(JSON.stringify(entity))
+          : undefined,
+    };
   }
 }

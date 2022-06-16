@@ -66,7 +66,7 @@
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.2.2",
+    "eslint-plugin-n": "^15.2.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
@@ -80,7 +80,7 @@
     "mkdirp": "^1.0.4",
     "postcss": "^8.4.14",
     "postcss-html": "^1.4.1",
-    "prettier": "^2.7.0",
+    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "rollup-plugin-visualizer": "^5.6.0",
     "sass": "^1.52.3",
@@ -97,7 +97,7 @@
     "vite-plugin-vuetify": "^1.0.0-alpha.11",
     "vitest": "^0.15.1",
     "vue-eslint-parser": "^9.0.2",
-    "vue-tsc": "^0.37.8"
+    "vue-tsc": "^0.37.9"
   },
   "config": {
     "commitizen": {

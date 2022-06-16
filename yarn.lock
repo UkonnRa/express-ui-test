@@ -2327,7 +2327,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:^1.6.1, @grpc/grpc-js@npm:^1.6.7":
+"@grpc/grpc-js@npm:^1.6.7":
   version: 1.6.7
   resolution: "@grpc/grpc-js@npm:1.6.7"
   dependencies:
@@ -2897,25 +2897,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/node-pre-gyp@npm:^1.0.5":
-  version: 1.0.9
-  resolution: "@mapbox/node-pre-gyp@npm:1.0.9"
-  dependencies:
-    detect-libc: ^2.0.0
-    https-proxy-agent: ^5.0.0
-    make-dir: ^3.1.0
-    node-fetch: ^2.6.7
-    nopt: ^5.0.0
-    npmlog: ^5.0.1
-    rimraf: ^3.0.2
-    semver: ^7.3.5
-    tar: ^6.1.11
-  bin:
-    node-pre-gyp: bin/node-pre-gyp
-  checksum: 1b9c4c87a68d200daa13151d0fe033aa7aa8f7b26f3585255424dd8dfee2ec672c3e9bea4071c624469bc0aebbbcde08f8a300c8a958db52c50abadd5fb56920
-  languageName: node
-  linkType: hard
-
 "@mdx-js/mdx@npm:^1.6.22":
   version: 1.6.22
   resolution: "@mdx-js/mdx@npm:1.6.22"
@@ -3248,6 +3229,69 @@ __metadata:
     mkdirp: ^1.0.4
     rimraf: ^3.0.2
   checksum: 1388777b507b0c592d53f41b9d182e1a8de7763bc625fc07999b8edbc22325f074e5b3ec90af79c89d6987fdb2325bc66d59f483258543c14a43661621f841b0
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/grpc-backend@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/grpc-backend@npm:2.7.0"
+  dependencies:
+    "@protobuf-ts/runtime": ^2.7.0
+    "@protobuf-ts/runtime-rpc": ^2.7.0
+  peerDependencies:
+    "@grpc/grpc-js": ^1.2.2
+  checksum: 5e79cf0d2ab0a34810c7f6ae98cb5c04ff7fd81530eeed4c50c8f9eea740b25d35a5dc6c685370eaf54606cf89940ff0b70bf0366745278c31dca7cf418ae2aa
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/plugin-framework@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/plugin-framework@npm:2.7.0"
+  dependencies:
+    "@protobuf-ts/runtime": ^2.7.0
+    typescript: ^3.9
+  checksum: db7d995cbe498210d661bb0844d03237b88ca0bcbef828c4dbb6ee0f6d560c3c2176f7cb65ab5e6c59d53f36b50ad776648a8701d9b6d7cbb133c3fffae041c0
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/plugin@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/plugin@npm:2.7.0"
+  dependencies:
+    "@protobuf-ts/plugin-framework": ^2.7.0
+    "@protobuf-ts/protoc": ^2.7.0
+    "@protobuf-ts/runtime": ^2.7.0
+    "@protobuf-ts/runtime-rpc": ^2.7.0
+    typescript: ^3.9
+  bin:
+    protoc-gen-dump: bin/protoc-gen-dump
+    protoc-gen-ts: bin/protoc-gen-ts
+  checksum: 5de9d53bde2b07e323601371e5e0433d9fd3e521589194843e706b358bcde92e5bc8386d6fea36b10c0c599bbb96861ee09cd9b706bf3af73401ce0c57873a1b
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/protoc@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/protoc@npm:2.7.0"
+  bin:
+    protoc: protoc.js
+  checksum: 4291ca40b0def491b6be631c65b2ef3532251d148628958bb333440161161afef7f78df44492a0e0de567d9913431887fbe1abe0c437b1b1361d25ca4ce93b8f
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/runtime-rpc@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/runtime-rpc@npm:2.7.0"
+  dependencies:
+    "@protobuf-ts/runtime": ^2.7.0
+  checksum: a4ce8595ea4ae7b842483087c1db2d2de9492be39d05b6c4334d9f85d382facfcef3836a5d75ef1437765dda0d6dcf8ee0bb8b21522de5d29981ad220a629470
+  languageName: node
+  linkType: hard
+
+"@protobuf-ts/runtime@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "@protobuf-ts/runtime@npm:2.7.0"
+  checksum: 4fad2a9da293e2fb96c54d1ff5f893d3291ec7106746e7563beb0a3d287fffef4dde18ce7f79244fe793a6542168b8e1c29440f06be319745114407b20521fad
   languageName: node
   linkType: hard
 
@@ -4867,13 +4911,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/google-protobuf@npm:^3.7.4":
-  version: 3.15.6
-  resolution: "@types/google-protobuf@npm:3.15.6"
-  checksum: e8f7cd9d263093cd0a72eb10ff0bb8221e28aa8b9f601eddbe19b286932aae96fbc9ccb1f3a744525e7811fa87a6aeefd431858b6e2034f14a2dc68710a86d54
-  languageName: node
-  linkType: hard
-
 "@types/graceful-fs@npm:^4.1.2, @types/graceful-fs@npm:^4.1.3":
   version: 4.1.5
   resolution: "@types/graceful-fs@npm:4.1.5"
@@ -5136,13 +5173,6 @@ __metadata:
   version: 4.1.4
   resolution: "@types/npmlog@npm:4.1.4"
   checksum: 740f7431ccfc0e127aa8d162fe05c6ce8aa71290be020d179b2824806d19bd2c706c7e0c9a3c9963cefcdf2ceacb1dec6988c394c3694451387759dafe0aa927
-  languageName: node
-  linkType: hard
-
-"@types/object-hash@npm:^1.3.0":
-  version: 1.3.4
-  resolution: "@types/object-hash@npm:1.3.4"
-  checksum: fe4aa041427f3c69cbcf63434af6e788329b40d7208b30aa845cfc1aa6bf9b0c11b23fa33a567d85ba7f2574a95c3b4a227f4b9b9b55da1eaea68ab94b4058d9
   languageName: node
   linkType: hard
 
@@ -5718,45 +5748,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volar/code-gen@npm:0.37.8":
-  version: 0.37.8
-  resolution: "@volar/code-gen@npm:0.37.8"
+"@volar/code-gen@npm:0.37.9":
+  version: 0.37.9
+  resolution: "@volar/code-gen@npm:0.37.9"
   dependencies:
-    "@volar/source-map": 0.37.8
-  checksum: f595e6bdbf3da18875c801ccbe6ed25dbbea9cc1e072343fd43cf38b0735de1eae089900addfd4d37aebd37c21bdbc41c2e52078d36ae1dd3c5115fe4bf934ff
+    "@volar/source-map": 0.37.9
+  checksum: 38dc255b17f0d231164f2f9a9d236760b0ef8defd88cd504c232619b8b66d5392d4a95f58074fba3804e017b3a81d22a92e664d0b5f75d42097faf52524ccdf1
   languageName: node
   linkType: hard
 
-"@volar/source-map@npm:0.37.8":
-  version: 0.37.8
-  resolution: "@volar/source-map@npm:0.37.8"
-  checksum: c840c33b2e80ddaac6c15b7186797c8c3c76e73da65f27e87804506bc81eed19d821dd6215ed9ddd6176847ebcd3c4b610bedfe76f2f341e0c801be9ca0db995
+"@volar/source-map@npm:0.37.9":
+  version: 0.37.9
+  resolution: "@volar/source-map@npm:0.37.9"
+  checksum: c4dd5f30cf5cfd52c609634e9b8073da55a363f4c31ba2aae29661a5c137c60764251065c0966760c55bed872ad5ce311ad1345c38f5ec97b7cc0d1af6cf443b
   languageName: node
   linkType: hard
 
-"@volar/vue-code-gen@npm:0.37.8":
-  version: 0.37.8
-  resolution: "@volar/vue-code-gen@npm:0.37.8"
+"@volar/vue-code-gen@npm:0.37.9":
+  version: 0.37.9
+  resolution: "@volar/vue-code-gen@npm:0.37.9"
   dependencies:
-    "@volar/code-gen": 0.37.8
-    "@volar/source-map": 0.37.8
+    "@volar/code-gen": 0.37.9
+    "@volar/source-map": 0.37.9
     "@vue/compiler-core": ^3.2.37
     "@vue/compiler-dom": ^3.2.37
     "@vue/shared": ^3.2.37
-  checksum: 21053798c0d2d1a74c8ed208289785627eb8d0bb98efbe7014565797de662109c9854e34f7f951362f56f4d19191f2e87efae9c3cde710ad0de9baf1e43a841b
+  checksum: c3ef79b0b2914ddf58a87817876c4e51e978d2e396b58c0bec8e9d687af16b092ed42292b5141e9e66c3368e061ba1d84da550c4207de8ca5e26f2cef64392cf
   languageName: node
   linkType: hard
 
-"@volar/vue-typescript@npm:0.37.8":
-  version: 0.37.8
-  resolution: "@volar/vue-typescript@npm:0.37.8"
+"@volar/vue-typescript@npm:0.37.9":
+  version: 0.37.9
+  resolution: "@volar/vue-typescript@npm:0.37.9"
   dependencies:
-    "@volar/code-gen": 0.37.8
-    "@volar/source-map": 0.37.8
-    "@volar/vue-code-gen": 0.37.8
+    "@volar/code-gen": 0.37.9
+    "@volar/source-map": 0.37.9
+    "@volar/vue-code-gen": 0.37.9
     "@vue/compiler-sfc": ^3.2.37
     "@vue/reactivity": ^3.2.37
-  checksum: fdf0a7936dcf88fa67914e0d427434c25eae1666960bb240530e35035ef9ef434b57b921439c9cc8dc8c77b6d86cb91553ae56dba59f9b834945b527797b7184
+  checksum: dc33ace5eda32b79b9d17962941fd28f17b080eea65e9b3dff085d0866a6f4e91f9012670e759ebac3215e2d11c1ae9bf991cac3b10cbaa78622e376852ebf4d
   languageName: node
   linkType: hard
 
@@ -6531,19 +6561,17 @@ __metadata:
     "@mikro-orm/postgresql": ^5.2.0
     "@mikro-orm/reflection": ^5.2.0
     "@mikro-orm/seeder": ^5.2.0
+    "@protobuf-ts/grpc-backend": ^2.7.0
+    "@protobuf-ts/plugin": ^2.7.0
+    "@protobuf-ts/protoc": ^2.7.0
+    "@protobuf-ts/runtime": ^2.7.0
+    "@protobuf-ts/runtime-rpc": ^2.7.0
     "@white-rabbit/business-logic": "workspace:^"
     cross-env: ^7.0.3
-    grpc-tools: ^1.11.2
-    long: ^5.2.0
     mkdirp: ^1.0.4
-    nice-grpc: ^1.2.0
-    nice-grpc-error-details: ^0.1.0
-    nice-grpc-server-reflection: ^1.0.12
-    protobufjs: ^6.11.3
     reflect-metadata: ^0.1.13
     rimraf: ^3.0.2
     ts-node: ^10.8.1
-    ts-proto: ^1.115.4
     tsyringe: ^4.7.0
   languageName: unknown
   linkType: soft
@@ -6738,15 +6766,6 @@ __metadata:
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
   checksum: a4a97ec07d7ea112c517036882b2ac22f3109b7b19077dc656316d07d308438aac28e4d9746dc4d84bf6b1e75b4a7b0a5f3cb30592419f128ca9a8cee3bcfa17
-  languageName: node
-  linkType: hard
-
-"abort-controller-x@npm:^0.2.4":
-  version: 0.2.6
-  resolution: "abort-controller-x@npm:0.2.6"
-  dependencies:
-    node-abort-controller: ^1.2.1 || ^2.0.0
-  checksum: 7823e3ecc3ddbf88f8f51b3e824dc6d9f1ae890cf042e2e883a4b69ffd0b47d31f9d4a1bb71b97d8cea08c1947ea92c074877c44d7e3bd86f9c41b9bb73489cf
   languageName: node
   linkType: hard
 
@@ -10161,13 +10180,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dataloader@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "dataloader@npm:1.4.0"
-  checksum: e2c93d43afde68980efc0cd9ff48e9851116e27a9687f863e02b56d46f7e7868cc762cd6dcbaf4197e1ca850a03651510c165c2ae24b8e9843fd894002ad0e20
-  languageName: node
-  linkType: hard
-
 "dayjs@npm:^1.10.4":
   version: 1.11.2
   resolution: "dayjs@npm:1.11.2"
@@ -11947,9 +11959,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-n@npm:^15.2.2":
-  version: 15.2.2
-  resolution: "eslint-plugin-n@npm:15.2.2"
+"eslint-plugin-n@npm:^15.2.3":
+  version: 15.2.3
+  resolution: "eslint-plugin-n@npm:15.2.3"
   dependencies:
     builtins: ^5.0.1
     eslint-plugin-es: ^4.1.0
@@ -11961,7 +11973,7 @@ __metadata:
     semver: ^7.3.7
   peerDependencies:
     eslint: ">=7.0.0"
-  checksum: 82394c8cf9e3fc4f79f6d7438d9c8a5f2f6704b215adfe5beb731b254471aae879c30a784c5af914a51c4e3e855f7a2e655540c2e8aacab6112601b97bd00528
+  checksum: da02bbf3152c49f9a09ab253f70e85f9d62af0f40f3d1882cf8a5fc9b9e07465c7f9632feae002ee97bce0598b408f017a4bb6c6f152b0870bad6f50aa430820
   languageName: node
   linkType: hard
 
@@ -13715,13 +13727,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"google-protobuf@npm:^3.15.6":
-  version: 3.20.1
-  resolution: "google-protobuf@npm:3.20.1"
-  checksum: a440fbc329bb441b253bc421b01540918f4b66921c47a3bc57d154d2677dc917cb1a29126ff35ddc4d8872d1b5843ef1ece60b6dff506ba64a9f5807962d3f61
-  languageName: node
-  linkType: hard
-
 "got@npm:^9.6.0":
   version: 9.6.0
   resolution: "got@npm:9.6.0"
@@ -13770,18 +13775,6 @@ __metadata:
   version: 16.5.0
   resolution: "graphql@npm:16.5.0"
   checksum: a82a926d085818934d04fdf303a269af170e79de943678bd2726370a96194f9454ade9d6d76c2de69afbd7b9f0b4f8061619baecbbddbe82125860e675ac219e
-  languageName: node
-  linkType: hard
-
-"grpc-tools@npm:^1.11.2":
-  version: 1.11.2
-  resolution: "grpc-tools@npm:1.11.2"
-  dependencies:
-    "@mapbox/node-pre-gyp": ^1.0.5
-  bin:
-    grpc_tools_node_protoc: bin/protoc.js
-    grpc_tools_node_protoc_plugin: bin/protoc_plugin.js
-  checksum: 7df0778edadee09b982f31725f5170ec3679c40213e8c618ee5f5e9ee1062382798b45f2dacac1e63d5012cd2714c5e2904265a7ced64e1736147a17fd111960
   languageName: node
   linkType: hard
 
@@ -16627,13 +16620,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"long@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "long@npm:5.2.0"
-  checksum: 37aa4e67b9c3eebc6d9d675adcc9d06f06059ca268922a71273de389746bf07f0ff282f9e604d17fdf84c4149099b44e936ea2b621a6c4759a216621afa97efd
-  languageName: node
-  linkType: hard
-
 "longest@npm:^2.0.1":
   version: 2.0.1
   resolution: "longest@npm:2.0.1"
@@ -17638,50 +17624,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nice-grpc-common@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "nice-grpc-common@npm:1.1.0"
-  dependencies:
-    node-abort-controller: ^2.0.0
-    ts-error: ^1.0.6
-  checksum: 0e191675873bd63b9c0b8b5b86cae4eb1db2bb00021fdd644f9f4cf862b965748ef279ea4b4f5b7e9d939aab68ac3b6fa8794438a86b1d132a1febc3266715b5
-  languageName: node
-  linkType: hard
-
-"nice-grpc-error-details@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "nice-grpc-error-details@npm:0.1.0"
-  dependencies:
-    nice-grpc-common: ^1.1.0
-    protobufjs: ^6.11.2
-  checksum: 858ad721a2dd1a67a1c3e7d8c48d6f2b721a76ac8b1c1c800945ce2d809d6ba20352c0f62412779a8ff14e475f8b91fb2d393eb0c7038362ce7978b9edcfc711
-  languageName: node
-  linkType: hard
-
-"nice-grpc-server-reflection@npm:^1.0.12":
-  version: 1.0.12
-  resolution: "nice-grpc-server-reflection@npm:1.0.12"
-  dependencies:
-    "@grpc/grpc-js": ^1.6.1
-    "@types/google-protobuf": ^3.7.4
-    google-protobuf: ^3.15.6
-    nice-grpc: ^1.2.0
-  checksum: 1666e3290b7891d519d5062a337751bb5378b2622ed19eba92476615a86fb2b90a1df2e790be231fb4cf0bcd34882f592f2d16a6dd59117ce90f575e6b9caafd
-  languageName: node
-  linkType: hard
-
-"nice-grpc@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "nice-grpc@npm:1.2.0"
-  dependencies:
-    "@grpc/grpc-js": ^1.6.1
-    abort-controller-x: ^0.2.4
-    nice-grpc-common: ^1.1.0
-    node-abort-controller: ^1.2.1
-  checksum: e7fb7a25a36a7f58c1647b47cb6df45c4ff7c460e06aac3e8a245ef84b9c987abf0f13601a647bea7141c57a26c6f96728ddb42eddc7b017c4c03be5eca81753
-  languageName: node
-  linkType: hard
-
 "nice-try@npm:^1.0.4":
   version: 1.0.5
   resolution: "nice-try@npm:1.0.5"
@@ -17705,20 +17647,6 @@ __metadata:
   dependencies:
     semver: ^7.3.5
   checksum: ad76823920780de39b9712b10c8e5ee424d573b74720b9eeef9ce6523d587f114787aefeabbd34d7a861f9cfab9ac131e1a149243470bb79d6eb5d414a3fa58e
-  languageName: node
-  linkType: hard
-
-"node-abort-controller@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "node-abort-controller@npm:1.2.1"
-  checksum: 7505ecba9614116fe075c01c4016a359122c44741db98c2b7759fd3adeb4c505ab39daeb45f16e3db6ac6f22e14c5f27d910432ba7d3fe1a6f9730487aa2f23e
-  languageName: node
-  linkType: hard
-
-"node-abort-controller@npm:^1.2.1 || ^2.0.0, node-abort-controller@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "node-abort-controller@npm:2.0.0"
-  checksum: 9276dab2dbd02444efcc61a1444a6f6909ead98cb708bff2f0bdd188bcee32c0d9ac32897f610512a369a9078cde9dff75caa2b7b5766ce66ce7d6ce0c8ccbf9
   languageName: node
   linkType: hard
 
@@ -17993,13 +17921,6 @@ __metadata:
     define-property: ^0.2.5
     kind-of: ^3.0.3
   checksum: a9e35f07e3a2c882a7e979090360d1a20ab51d1fa19dfdac3aa8873b328a7c4c7683946ee97c824ae40079d848d6740a3788fa14f2185155dab7ed970a72c783
-  languageName: node
-  linkType: hard
-
-"object-hash@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "object-hash@npm:1.3.1"
-  checksum: fdcb957a2f15a9060e30655a9f683ba1fc25dfb8809a73d32e9634bec385a2f1d686c707ac1e5f69fb773bc12df03fb64c77ce3faeed83e35f4eb1946cb1989e
   languageName: node
   linkType: hard
 
@@ -19152,12 +19073,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.5.1, prettier@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "prettier@npm:2.7.0"
+"prettier@npm:^2.7.1":
+  version: 2.7.1
+  resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 5b55bb1dced9d16635b83229df8e670d150890fdb343f19e8a66e610094a108e960c0f57352b3e5cdbc4eff4ef00a834406047ffcd9f20bd22a6497ba143c81f
+  checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
   languageName: node
   linkType: hard
 
@@ -19331,7 +19252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^6.10.0, protobufjs@npm:^6.11.2, protobufjs@npm:^6.11.3, protobufjs@npm:^6.8.8":
+"protobufjs@npm:^6.10.0":
   version: 6.11.3
   resolution: "protobufjs@npm:6.11.3"
   dependencies:
@@ -22564,13 +22485,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-error@npm:^1.0.6":
-  version: 1.0.6
-  resolution: "ts-error@npm:1.0.6"
-  checksum: 043d15c155bf3aeeb146523f24650a773a4aa607587252692640eb233f9d832b73e207c4f076c2e7bc68e9897979eec0586cf631a919f3a3c542fb981d35a5d7
-  languageName: node
-  linkType: hard
-
 "ts-invariant@npm:^0.4.0":
   version: 0.4.4
   resolution: "ts-invariant@npm:0.4.4"
@@ -22688,42 +22602,6 @@ __metadata:
     typescript:
       optional: true
   checksum: c2a698b85d521298fe6f2435fbf2d3dc5834b423ea25abd321805ead3f399dbeedce7ca09492d7eb005b9d2c009c6b9587055bc3ab273dc6b9e40eefd7edb5b2
-  languageName: node
-  linkType: hard
-
-"ts-poet@npm:^4.11.0":
-  version: 4.11.0
-  resolution: "ts-poet@npm:4.11.0"
-  dependencies:
-    lodash: ^4.17.15
-    prettier: ^2.5.1
-  checksum: 58141523080aafdce397338c8db435a6055385ed919d77c9c77bed76f2f8f2bbe924f26e69d2681ca27270519ea0ec7e041fbadc765a4a25528fcbf2548822f5
-  languageName: node
-  linkType: hard
-
-"ts-proto-descriptors@npm:1.6.0":
-  version: 1.6.0
-  resolution: "ts-proto-descriptors@npm:1.6.0"
-  dependencies:
-    long: ^4.0.0
-    protobufjs: ^6.8.8
-  checksum: 72de9826c2408efb979495c66add49200ea550c6540ebbf05c144cf5d66d21c09722a56cd183e25936196e04a24258e6af2dbdc2ef9e47e8dd19f094de681e89
-  languageName: node
-  linkType: hard
-
-"ts-proto@npm:^1.115.4":
-  version: 1.115.4
-  resolution: "ts-proto@npm:1.115.4"
-  dependencies:
-    "@types/object-hash": ^1.3.0
-    dataloader: ^1.4.0
-    object-hash: ^1.3.1
-    protobufjs: ^6.11.3
-    ts-poet: ^4.11.0
-    ts-proto-descriptors: 1.6.0
-  bin:
-    protoc-gen-ts_proto: protoc-gen-ts_proto
-  checksum: 7164bbeb1bdb2bd2cc07baf0e05eba82638dcdc52ef78dca24d8ba02f18adf399e4025cb778ac5183a5fc3a0d70fea83d4f1def7eae5512a71966c579beeba8b
   languageName: node
   linkType: hard
 
@@ -22914,6 +22792,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^3.9":
+  version: 3.9.10
+  resolution: "typescript@npm:3.9.10"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 46c842e2cd4797b88b66ef06c9c41dd21da48b95787072ccf39d5f2aa3124361bc4c966aa1c7f709fae0509614d76751455b5231b12dbb72eb97a31369e1ff92
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^4.6.4, typescript@npm:^4.7.3":
   version: 4.7.3
   resolution: "typescript@npm:4.7.3"
@@ -22921,6 +22809,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: fd13a1ce53790a36bb8350e1f5e5e384b5f6cb9b0635114a6d01d49cb99916abdcfbc13c7521cdae2f2d3f6d8bc4a8ae7625edf645a04ee940588cd5e7597b2f
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^3.9#~builtin<compat/typescript>":
+  version: 3.9.10
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=7ad353"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: dc7141ab555b23a8650a6787f98845fc11692063d02b75ff49433091b3af2fe3d773650dea18389d7c21f47d620fb3b110ea363dab4ab039417a6ccbbaf96fc2
   languageName: node
   linkType: hard
 
@@ -23784,16 +23682,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^0.37.8":
-  version: 0.37.8
-  resolution: "vue-tsc@npm:0.37.8"
+"vue-tsc@npm:^0.37.9":
+  version: 0.37.9
+  resolution: "vue-tsc@npm:0.37.9"
   dependencies:
-    "@volar/vue-typescript": 0.37.8
+    "@volar/vue-typescript": 0.37.9
   peerDependencies:
     typescript: "*"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: d70318b4c654d7ed842f089a056dc82a3b17c27a28db6e9ccd9d18de1d07444fe384bf7e76d2cb9575e02e5ec37228ee4b7883df7359a0d0312d1da0bf49311e
+  checksum: 0eb161d6b9081689e10b8f85133009433b3974c578164380296a40353bc77152db63f99f40004b3f479c7277531f1f55fc2bb7fa0a8c8141aabd1a070451aa21
   languageName: node
   linkType: hard
 
@@ -24217,7 +24115,7 @@ __metadata:
     eslint-plugin-cypress: ^2.12.1
     eslint-plugin-eslint-comments: ^3.2.0
     eslint-plugin-import: ^2.26.0
-    eslint-plugin-n: ^15.2.2
+    eslint-plugin-n: ^15.2.3
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-promise: ^6.0.0
@@ -24231,7 +24129,7 @@ __metadata:
     mkdirp: ^1.0.4
     postcss: ^8.4.14
     postcss-html: ^1.4.1
-    prettier: ^2.7.0
+    prettier: ^2.7.1
     rimraf: ^3.0.2
     rollup-plugin-visualizer: ^5.6.0
     sass: ^1.52.3
@@ -24248,7 +24146,7 @@ __metadata:
     vite-plugin-vuetify: ^1.0.0-alpha.11
     vitest: ^0.15.1
     vue-eslint-parser: ^9.0.2
-    vue-tsc: ^0.37.8
+    vue-tsc: ^0.37.9
   languageName: unknown
   linkType: soft
 

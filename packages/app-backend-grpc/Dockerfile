@@ -10,7 +10,6 @@ WORKDIR /home/node/app
 USER node
 
 COPY dist/index.js index.js
-COPY protoset.bin protoset.bin
 
 RUN npm i pg
 

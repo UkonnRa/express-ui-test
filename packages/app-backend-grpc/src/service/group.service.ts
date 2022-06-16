@@ -9,42 +9,81 @@ import {
   GroupEntity,
 } from "@white-rabbit/business-logic";
 import { MikroORM } from "@mikro-orm/core";
-import { FindPageRequest, Order, RelationshipRequest } from "../proto/shared";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+
+import { IGroupService } from "../proto/app.server";
 import { StringValue } from "../proto/google/protobuf/wrappers";
-import { DeepPartial, UserPage } from "../proto/user";
 import {
+  FindPageRequest,
   Group,
   GroupPage,
   GroupResponse,
-  GroupServiceServiceImplementation,
-} from "../proto/group";
-import UserService from "./user.service";
+  Order,
+  User,
+} from "../proto/app";
 
 @singleton()
-export default class GroupService implements GroupServiceServiceImplementation {
+export default class GroupService implements IGroupService {
   constructor(
     @inject(MikroORM) private readonly orm: MikroORM,
     @inject(CoreUserService) private readonly userService: CoreUserService,
-    @inject(CoreGroupService) private readonly groupService: CoreGroupService,
-    @inject(UserService) private readonly grpcUserService: UserService
+    @inject(CoreGroupService) private readonly groupService: CoreGroupService
   ) {}
 
-  async admins({
-    id,
-    input,
-  }: RelationshipRequest): Promise<DeepPartial<UserPage>> {
-    const query = input?.query != null ? JSON.parse(input.query) : {};
-    return this.grpcUserService.findPage({
-      query: JSON.stringify({
-        ...query,
-        adminInGroups: id,
-      }),
-      pagination: input?.pagination,
-      sort: input?.sort ?? [],
+  async admins(
+    request: StringValue,
+    responses: RpcInputStream<User>
+  ): Promise<void> {
+    const user = (await this.orm.em
+      .fork()
+      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+    const authUser = {
+      authId: user.authIds[0],
+      user: user,
+      scopes: [this.userService.readScope, this.groupService.readScope],
+    };
+
+    const entity = await this.groupService.findOne({
+      query: { id: request.value },
+      authUser,
     });
+
+    if (entity == null) {
+      await responses.complete();
+      return;
+    }
+
+    for (const item of await entity.admins.loadItems()) {
+      await responses.send(User.fromJsonString(JSON.stringify(item)));
+    }
+    await responses.complete();
   }
 
-  async findPage(request: FindPageRequest): Promise<DeepPartial<GroupPage>> {
+  async findOne(request: StringValue): Promise<GroupResponse> {
+    const query: Query<GroupEntity> = JSON.parse(request.value);
+    const user = (await this.orm.em
+      .fork()
+      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+    const authUser = {
+      authId: user.authIds[0],
+      user: user,
+      scopes: [this.userService.readScope, this.groupService.readScope],
+    };
+
+    const entity = await this.groupService.findOne({
+      query,
+      authUser,
+    });
+
+    return {
+      group:
+        entity != null
+          ? Group.fromJsonString(JSON.stringify(entity))
+          : undefined,
+    };
+  }
+
+  async findPage(request: FindPageRequest): Promise<GroupPage> {
     const query: Query<GroupEntity> =
       request.query != null ? JSON.parse(request.query) : {};
     const user = (await this.orm.em
@@ -65,11 +104,13 @@ export default class GroupService implements GroupServiceServiceImplementation {
       })),
     });
 
-    return GroupPage.fromJSON(page);
+    return GroupPage.fromJsonString(JSON.stringify(page));
   }
 
-  async findOne(request: StringValue): Promise<DeepPartial<GroupResponse>> {
-    const query: Query<GroupEntity> = JSON.parse(request.value);
+  async members(
+    request: StringValue,
+    responses: RpcInputStream<User>
+  ): Promise<void> {
     const user = (await this.orm.em
       .fork()
       .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
@@ -80,25 +121,18 @@ export default class GroupService implements GroupServiceServiceImplementation {
     };
 
     const entity = await this.groupService.findOne({
-      query,
+      query: { id: request.value },
       authUser,
     });
 
-    return { group: entity != null ? Group.fromJSON(entity) : undefined };
-  }
+    if (entity == null) {
+      await responses.complete();
+      return;
+    }
 
-  async members({
-    id,
-    input,
-  }: RelationshipRequest): Promise<DeepPartial<UserPage>> {
-    const query = input?.query != null ? JSON.parse(input.query) : {};
-    return this.grpcUserService.findPage({
-      query: JSON.stringify({
-        ...query,
-        memberInGroups: id,
-      }),
-      pagination: input?.pagination,
-      sort: input?.sort ?? [],
-    });
+    for (const item of await entity.members.loadItems()) {
+      await responses.send(User.fromJsonString(JSON.stringify(item)));
+    }
+    await responses.complete();
   }
 }
