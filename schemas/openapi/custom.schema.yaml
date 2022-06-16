@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: WhiteRabbit Restful API - Custom Mode
+  description: This is WhiteRabbit Restful API without any popular schema.
+  version: 0.0.1
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: 'http://localhost:6000'
+paths:
+  /users:
+    get:
+      operationId: userFindPage
+      parameters:
+        - $ref: "#/components/parameters/findPageQuery"
+        - $ref: "#/components/parameters/findPagePagination"
+        - $ref: "#/components/parameters/findPageSort"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPage"
+  /users/{id}:
+    get:
+      operationId: userFindOne
+      parameters:
+        - $ref: "#/components/parameters/findOneId"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /groups:
+    get:
+      operationId: groupFindPage
+      parameters:
+        - $ref: "#/components/parameters/findPageQuery"
+        - $ref: "#/components/parameters/findPagePagination"
+        - $ref: "#/components/parameters/findPageSort"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupPage"
+  /groups/{id}:
+    get:
+      operationId: groupFindOne
+      parameters:
+        - $ref: "#/components/parameters/findOneId"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+  /groups/{id}/admins:
+    get:
+      operationId: groupFindAdmins
+      parameters:
+        - $ref: "#/components/parameters/findOneId"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /groups/{id}/members:
+    get:
+      operationId: groupFindMembers
+      parameters:
+        - $ref: "#/components/parameters/findOneId"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+components:
+  parameters:
+    findOneId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    findPageQuery:
+      name: query
+      in: query
+      required: false
+      schema:
+        type: string
+    findPagePagination:
+      name: pagination
+      in: query
+      required: true
+      style: deepObject
+      schema:
+        $ref: "#/components/schemas/Pagination"
+    findPageSort:
+      name: sort
+      in: query
+      required: true
+      schema:
+        type: array
+        items:
+          $ref: "#/components/schemas/Sort"
+
+  requestBodies:
+    FindPageRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [pagination, sort]
+            additionalProperties: true
+            properties:
+              query:
+                type: string
+              pagination:
+                $ref: "#/components/schemas/Pagination"
+              sort:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sort"
+  schemas:
+    PageInfo:
+      type: object
+      required: [hasPreviousPage, hasNextPage]
+      additionalProperties: false
+      properties:
+        hasPreviousPage:
+          type: boolean
+        hasNextPage:
+          type: boolean
+        startCursor:
+          type: string
+        endCursor:
+          type: string
+    Sort:
+      type: object
+      required: [field, order]
+      additionalProperties: false
+      properties:
+        field:
+          type: string
+        order:
+          $ref: "#/components/schemas/Order"
+    Order:
+      type: string
+      enum: [ ASC, DESC ]
+    Pagination:
+      type: object
+      required: [ size ]
+      additionalProperties: false
+      properties:
+        after:
+          type: string
+        before:
+          type: string
+        size:
+          type: integer
+        offset:
+          type: integer
+
+    User:
+      type: object
+      required: [ id, createdAt, updatedAt, name, role, authIds ]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+        deletedAt:
+          type: string
+          format: datetime
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/Role"
+        authIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuthId"
+    AuthId:
+      type: object
+      required: [ provider, value ]
+      additionalProperties: false
+      properties:
+        provider:
+          type: string
+        value:
+          type: string
+    Role:
+      type: string
+      enum: [ USER, ADMIN, OWNER ]
+
+    UserItem:
+      type: object
+      required: [cursor, data]
+      additionalProperties: false
+      properties:
+        cursor:
+          type: string
+        data:
+          $ref: "#/components/schemas/User"
+    UserPage:
+      type: object
+      required: [pageInfo, items]
+      additionalProperties: false
+      properties:
+        pageInfo:
+          $ref: "#/components/schemas/PageInfo"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserItem"
+
+    Group:
+      type: object
+      required: [ id, createdAt, updatedAt, name, admins, members ]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+        deletedAt:
+          type: string
+          format: datetime
+        name:
+          type: string
+        description:
+          type: string
+
+    GroupItem:
+      type: object
+      required: [cursor, data]
+      additionalProperties: false
+      properties:
+        cursor:
+          type: string
+        data:
+          $ref: "#/components/schemas/Group"
+    GroupPage:
+      type: object
+      required: [pageInfo, items]
+      additionalProperties: false
+      properties:
+        pageInfo:
+          $ref: "#/components/schemas/PageInfo"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupItem"
