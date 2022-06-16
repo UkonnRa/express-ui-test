@@ -9,7 +9,7 @@
     "lint:fix": "yarn lint --fix"
   },
   "devDependencies": {
-    "@mikro-orm/better-sqlite": "^5.1.5",
+    "@mikro-orm/better-sqlite": "^5.2.0",
     "electron": "19.0.4",
     "electron-builder": "^23.1.0",
     "tree-kill": "^1.2.2"

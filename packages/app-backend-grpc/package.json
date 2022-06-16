@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
-    "@mikro-orm/core": "^5.1.5",
-    "@mikro-orm/postgresql": "^5.1.5",
+    "@mikro-orm/core": "^5.2.0",
+    "@mikro-orm/postgresql": "^5.2.0",
     "@white-rabbit/business-logic": "workspace:^",
     "long": "^5.2.0",
     "nice-grpc": "^1.2.0",
@@ -27,9 +27,9 @@
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.1.5",
-    "@mikro-orm/reflection": "^5.1.5",
-    "@mikro-orm/seeder": "^5.1.5",
+    "@mikro-orm/cli": "^5.2.0",
+    "@mikro-orm/reflection": "^5.2.0",
+    "@mikro-orm/seeder": "^5.2.0",
     "cross-env": "^7.0.3",
     "grpc-tools": "^1.11.2",
     "mkdirp": "^1.0.4",

@@ -10,7 +10,7 @@
     "@types/markdown-it": "^12.2.3",
     "@types/markdown-it-plantuml": "^1.4.1",
     "@vueuse/core": "^8.6.0",
-    "vitepress": "^1.0.0-alpha.1"
+    "vitepress": "^1.0.0-alpha.2"
   },
   "dependencies": {
     "markdown-it-mathjax3": "^4.3.1",

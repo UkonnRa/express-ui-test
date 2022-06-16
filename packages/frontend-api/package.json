@@ -7,7 +7,7 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
-    "@mikro-orm/core": "^5.1.5",
+    "@mikro-orm/core": "^5.2.0",
     "@white-rabbit/business-logic": "workspace:^"
   }
 }
