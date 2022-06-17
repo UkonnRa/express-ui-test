@@ -3,7 +3,8 @@
   "include": ["src"],
   "exclude": ["src/**/*.spec.ts"],
   "compilerOptions": {
-    "rootDir": "src/"
+    "rootDir": "src/",
+    "isolatedModules": true
     //    "paths": {
     //      "@/*": ["./src/*"]
     //    }

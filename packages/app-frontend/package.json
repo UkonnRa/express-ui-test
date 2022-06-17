@@ -3,7 +3,7 @@
   "packageManager": "yarn@3.2.1",
   "main": "src/main.ts",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3100",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run --coverage",
@@ -14,11 +14,17 @@
     "@white-rabbit/components": "workspace:^",
     "@white-rabbit/frontend-api": "workspace:^",
     "pinia": "^2.0.14",
+    "reflect-metadata": "^0.1.13",
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-i18n": "9.1.10",
     "vue-router": "^4.0.16",
-    "vuetify": "^3.0.0-beta.3"
+    "vuetify": "^3.0.0-beta.4"
+  },
+  "devDependencies": {
+    "vite": "^2.9.12",
+    "vitest": "^0.15.1",
+    "vue-tsc": "^0.37.9"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

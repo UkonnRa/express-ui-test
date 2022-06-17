@@ -22,7 +22,7 @@ export default class Server {
 
   async start(): Promise<void> {
     const url = `0.0.0.0:${process.env.PORT ?? 80}`;
-    await this.server.bindAsync(
+    this.server.bindAsync(
       url,
       ServerCredentials.createInsecure(),
       (err: Error | null, port: number) => {

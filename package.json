@@ -39,7 +39,7 @@
     "@storybook/core-common": "^6.5.9",
     "@storybook/vue3": "^6.5.9",
     "@types/eslint": "^8.4.3",
-    "@types/jest": "^28.1.1",
+    "@types/jest": "^28.1.2",
     "@types/lodash-es": "^4.17.6",
     "@types/mkdirp": "^1.0.2",
     "@types/node": "^18.0.0",

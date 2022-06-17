@@ -1,11 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import App from "../App.vue";
+import UserCard from "./UserCard.vue";
 
 describe("App.vue", () => {
-  it("can be mounted", () => {
-    const wrapper = mount(App);
+  it("can be mounted", async () => {
+    const wrapper = mount(UserCard);
     expect(wrapper.text()).toContain("User");
-    expect(wrapper.text()).toContain("Hello");
   });
 });
