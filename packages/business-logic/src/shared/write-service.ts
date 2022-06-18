@@ -26,10 +26,6 @@ function checkPermission<E extends AbstractEntity<E>>(
     throw new NoPermissionError(entityType, "WRITE");
   }
 
-  if (user?.deletedAt != null) {
-    throw new NotFoundError(entityType, user.id);
-  }
-
   if (
     entity?.deletedAt != null &&
     (user?.role ?? RoleValue.USER) === RoleValue.USER

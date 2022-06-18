@@ -5,7 +5,7 @@ import { GroupEntity } from "../src/group";
 export default class GroupFactory extends Factory<GroupEntity> {
   protected definition(faker: Faker): EntityData<GroupEntity> {
     return {
-      name: faker.company.companyName(),
+      name: faker.unique(faker.company.companyName),
       description: faker.lorem.sentence(),
       deletedAt: Math.random() < 0.2 ? faker.date.recent(10) : undefined,
     };

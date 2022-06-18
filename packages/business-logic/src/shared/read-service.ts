@@ -131,10 +131,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
    * @param user
    */
   async isReadable(entity: E, { user }: AuthUser): Promise<boolean> {
-    return !(
-      entity?.deletedAt != null &&
-      (user?.role ?? RoleValue.USER) === RoleValue.USER
-    );
+    if ((user?.role ?? RoleValue.USER) !== RoleValue.USER) {
+      return true;
+    }
+
+    return entity.deletedAt == null;
   }
 
   async handleAdditionalQueries(

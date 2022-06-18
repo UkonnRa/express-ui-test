@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 import { RoleValue } from "../src";
 import UserFactory from "./user.factory";
 import GroupFactory from "./group.factory";
+import JournalFactory from "./journal.factory";
 
 export default class DefaultSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
@@ -32,5 +33,18 @@ export default class DefaultSeeder extends Seeder {
       v.setMembers(faker.helpers.arrayElements(users, 13));
     });
     em.persist(groups);
+
+    const journals = new JournalFactory(em).make(20);
+    journals.forEach((v) => {
+      v.setAccessItems(
+        faker.helpers.arrayElements([...users, ...groups], 5),
+        "admin"
+      );
+      v.setAccessItems(
+        faker.helpers.arrayElements([...users, ...groups], 13),
+        "member"
+      );
+    });
+    em.persist(journals);
   }
 }

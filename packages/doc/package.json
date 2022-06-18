@@ -2,7 +2,7 @@
   "name": "@white-rabbit/doc",
   "packageManager": "yarn@3.2.1",
   "scripts": {
-    "dev": "vitepress dev docs",
+    "dev": "vitepress dev docs --port 2100",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },

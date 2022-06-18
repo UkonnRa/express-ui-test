@@ -42,4 +42,20 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
     this.members.set(values);
     this.admins.remove(...values);
   }
+
+  async contains(
+    user: UserEntity,
+    fields: Array<"admins" | "members"> = ["admins", "members"]
+  ): Promise<boolean> {
+    let result = false;
+    for (const field of fields) {
+      const collection = this[field];
+      if (!collection.isInitialized()) {
+        await collection.init();
+      }
+      result =
+        result || collection.getItems().some((item) => item.id === user.id);
+    }
+    return result;
+  }
 }

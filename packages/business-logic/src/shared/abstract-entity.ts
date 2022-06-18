@@ -6,6 +6,7 @@ import {
   Property,
 } from "@mikro-orm/core";
 import { v4 } from "uuid";
+import ValidationLengthError from "../error/validation-length.error";
 
 @Entity({ abstract: true })
 @Filter({
@@ -27,4 +28,15 @@ export default abstract class AbstractEntity<
 
   @Property({ type: Date, nullable: true })
   deletedAt?: Date;
+
+  protected checkLength(
+    entityType: string,
+    field: string,
+    length: number,
+    { min, max }: { min?: number; max?: number }
+  ): void {
+    if ((min != null && length < min) || (max != null && length > max)) {
+      throw new ValidationLengthError(entityType, field, { min, max });
+    }
+  }
 }

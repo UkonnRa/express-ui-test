@@ -3,8 +3,6 @@ import { Constructor, EntityData } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { RoleValue, UserEntity } from "../src";
 
-const AUTH_PROVIDERS = ["Auth0", "Authing", "GitHub", "Google"];
-
 export default class UserFactory extends Factory<UserEntity> {
   private static randomRole(): RoleValue {
     const value = Math.random();
@@ -19,10 +17,10 @@ export default class UserFactory extends Factory<UserEntity> {
 
   protected definition(faker: Faker): EntityData<UserEntity> {
     return {
-      name: faker.name.findName(),
+      name: faker.unique(faker.name.findName),
       role: UserFactory.randomRole(),
       authIds: faker.helpers
-        .uniqueArray(AUTH_PROVIDERS, 2)
+        .uniqueArray(faker.company.bs, 2)
         .map((provider) => ({ provider, value: v4() })),
       deletedAt: Math.random() < 0.2 ? faker.date.recent(10) : undefined,
     };

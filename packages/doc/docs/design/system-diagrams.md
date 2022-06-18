@@ -93,7 +93,6 @@ package users {
 }
 
 package groups {
-  AccessItemGroup *-- Group
   Group *-- User
   note left of Group: If deleted, all related AccessItem should be deleted as well
   class Group extends Entity {
@@ -114,13 +113,12 @@ package groups {
 }
 
 package journals {
-  class Unit {
-    value: string
-  }
-  note left: With specific validation, eg. text length, etc.
-
   Journal *-- AccessItem
-  Journal *-- Unit
+  note left of Journal::unit
+    Journal has a main currency unit.
+    All accounts/records in this journal should be able
+      to map to this unit
+  end note
   class Journal extends Entity {
     + name: string // Sortable, Fulltext
     + description: string, Fulltext
@@ -130,8 +128,7 @@ package journals {
     + endDate: Date
     + admins: AccessItem[]
     + members: AccessItem[]
-    + units: Unit[] // Computed
-    + mainUnit: Unit
+    + unit: string
   }
 
   interface AccessItem {
