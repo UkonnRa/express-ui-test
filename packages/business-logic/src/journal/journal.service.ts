@@ -51,11 +51,17 @@ export default class JournalService extends WriteService<
     const users = await em.find(UserEntity, {
       id: accessItems.filter(({ type }) => type === "user").map(({ id }) => id),
     });
-    const groups = await em.find(GroupEntity, {
-      id: accessItems
-        .filter(({ type }) => type === "group")
-        .map(({ id }) => id),
-    });
+    const groups = await em.find(
+      GroupEntity,
+      {
+        id: accessItems
+          .filter(({ type }) => type === "group")
+          .map(({ id }) => id),
+      },
+      {
+        populate: ["admins", "members"],
+      }
+    );
     return [
       ...(await filterAsync(users, async (item) =>
         this.userService.isReadable(item, authUser)
@@ -186,20 +192,14 @@ export default class JournalService extends WriteService<
       return false;
     }
 
-    if (!entity.accessItems.isInitialized()) {
-      await entity.accessItems.init();
+    let result = false;
+    for (const item of entity.accessItems.getItems()) {
+      if (authUser.user != null && (await item.contains(authUser.user))) {
+        result = result || true;
+      }
     }
 
-    return (
-      await Promise.all(
-        entity.accessItems
-          .getItems()
-          .map(
-            async (item) =>
-              authUser.user != null && item.contains(authUser.user)
-          )
-      )
-    ).some((b) => b);
+    return result;
   }
 
   async checkWriteable(

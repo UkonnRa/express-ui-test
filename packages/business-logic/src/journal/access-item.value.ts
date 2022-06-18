@@ -40,7 +40,7 @@ export default abstract class AccessItemValue {
 
 @Entity({ discriminatorValue: "user" })
 export class AccessItemUserValue extends AccessItemValue {
-  @ManyToOne(() => UserEntity, { primary: true })
+  @ManyToOne(() => UserEntity, { primary: true, eager: true })
   user: UserEntity;
 
   constructor(user: UserEntity, accessible: AccessItemAccessibleType) {
@@ -54,14 +54,15 @@ export class AccessItemUserValue extends AccessItemValue {
     return this.user.id;
   }
 
+  // Only non-deleted user can be inited
   async contains(user: UserEntity): Promise<boolean> {
-    return user.id === this.user.id;
+    return this.user.isInitialized() && user.id === this.user.id;
   }
 }
 
 @Entity({ discriminatorValue: "group" })
 export class AccessItemGroupValue extends AccessItemValue {
-  @ManyToOne(() => GroupEntity, { primary: true })
+  @ManyToOne(() => GroupEntity, { primary: true, eager: true })
   group: GroupEntity;
 
   constructor(group: GroupEntity, accessible: AccessItemAccessibleType) {
@@ -75,7 +76,8 @@ export class AccessItemGroupValue extends AccessItemValue {
     return this.group.id;
   }
 
+  // Only non-deleted group can be inited
   async contains(user: UserEntity): Promise<boolean> {
-    return this.group.contains(user);
+    return this.group.isInitialized() && this.group.contains(user);
   }
 }

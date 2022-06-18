@@ -8,9 +8,10 @@ import {
   FindOneInput,
   UserEntity,
   WriteService,
+  Page,
 } from "@white-rabbit/business-logic";
-import { Task, FindPageTask } from "./task";
 import { MikroORM } from "@mikro-orm/core";
+import { Task, FindPageTask } from "./task";
 import AbstractTask, { AuthUserInput } from "./task/abstract-task";
 import AbstractExceptionTask from "./task/abstract-exception-task";
 
@@ -77,6 +78,13 @@ export default abstract class AbstractSuite<
       em
     );
 
+    const toCursors = ({ pageInfo, items }: Page<E>): Page<string> => {
+      return {
+        pageInfo,
+        items: items.map(({ cursor, data }) => ({ cursor, data: data.id })),
+      };
+    };
+
     if (expectNextPage === true) {
       expect(page.pageInfo.hasNextPage).toBeTruthy();
       expect(page.items.length).toBe(input.pagination.size);
@@ -105,7 +113,7 @@ export default abstract class AbstractSuite<
           before: nextPage.pageInfo.startCursor,
         },
       });
-      expect(nextPagePrevious).toStrictEqual(page);
+      expect(toCursors(nextPagePrevious)).toStrictEqual(toCursors(page));
     } else if (expectNextPage === false) {
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
@@ -148,7 +156,7 @@ export default abstract class AbstractSuite<
           after: previousPage.pageInfo.endCursor,
         },
       });
-      expect(previousPageNext).toStrictEqual(page);
+      expect(toCursors(previousPageNext)).toStrictEqual(toCursors(page));
     } else if (expectPreviousPage === false) {
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {

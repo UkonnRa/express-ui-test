@@ -40,6 +40,7 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
 
   @OneToMany(() => AccessItemValue, (item) => item.journal, {
     orphanRemoval: true,
+    eager: true,
   })
   accessItems = new Collection<AccessItemValue>(this);
 
