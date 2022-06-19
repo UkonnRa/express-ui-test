@@ -30,7 +30,7 @@
     "@digitalroute/cz-conventional-changelog-for-jira": "^7.3.0",
     "@faker-js/faker": "^7.2.0",
     "@intlify/vite-plugin-vue-i18n": "^3.4.0",
-    "@mdx-js/react": "^2.1.1",
+    "@mdx-js/react": "^2.1.2",
     "@storybook/addon-actions": "^6.5.9",
     "@storybook/addon-docs": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.9",
@@ -58,7 +58,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^10.1.0",
     "cz-conventional-changelog": "^3.3.0",
-    "esbuild": "^0.14.45",
+    "esbuild": "^0.14.46",
     "esbuild-visualizer": "^0.3.1",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
@@ -97,7 +97,7 @@
     "vite-plugin-vuetify": "^1.0.0-alpha.12",
     "vitest": "^0.15.1",
     "vue-eslint-parser": "^9.0.2",
-    "vue-tsc": "^0.37.9"
+    "vue-tsc": "^0.38.1"
   },
   "config": {
     "commitizen": {
