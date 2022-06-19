@@ -1,0 +1,35 @@
+type JournalConnection {
+  pageInfo: PageInfo!
+  edges: [JournalEdge!]!
+}
+
+type JournalEdge {
+  node: Journal!
+  cursor: String!
+}
+
+type Journal {
+  id: ID!
+  createdAt: String!
+  updatedAt: String!
+  deletedAt: String
+
+  name: String!
+  description: String!
+  tags: [String!]!
+  unit: String!
+  archived: Boolean!
+
+  admins: [AccessItem!]!
+  members: [AccessItem!]!
+}
+
+union AccessItem = AccessItemUser | AccessItemGroup
+
+type AccessItemUser {
+  user: User!
+}
+
+type AccessItemGroup {
+  group: Group!
+}

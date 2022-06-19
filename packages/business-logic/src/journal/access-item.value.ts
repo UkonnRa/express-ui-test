@@ -1,4 +1,5 @@
-import { Entity, Enum, ManyToOne } from "@mikro-orm/core";
+import { Entity, Enum, ManyToOne, PrimaryKey, Unique } from "@mikro-orm/core";
+import { v4 } from "uuid";
 import { UserEntity } from "../user";
 import { GroupEntity } from "../group";
 // eslint-disable-next-line import/no-cycle
@@ -12,14 +13,20 @@ import JournalEntity, {
   abstract: true,
   collection: "access_item",
 })
+@Unique({ properties: ["type", "accessible", "journal", "user", "group"] })
 export default abstract class AccessItemValue {
-  @Enum({ type: "string", items: ["user", "group"], primary: true })
+  // In PG, all fields in composite primary keys should be non-null, which does not match our case
+  // Waiting for https://github.com/mikro-orm/mikro-orm/issues/1575
+  @PrimaryKey({ type: "string" })
+  id: string = v4();
+
+  @Enum({ type: "string", items: ["user", "group"] })
   type: AccessItemType;
 
-  @Enum({ type: "string", items: ["admin", "member"], primary: true })
+  @Enum({ type: "string", items: ["admin", "member"] })
   accessible: AccessItemAccessibleType;
 
-  @ManyToOne(() => JournalEntity, { primary: true })
+  @ManyToOne(() => JournalEntity)
   journal: JournalEntity;
 
   abstract get itemId(): string;
@@ -40,7 +47,7 @@ export default abstract class AccessItemValue {
 
 @Entity({ discriminatorValue: "user" })
 export class AccessItemUserValue extends AccessItemValue {
-  @ManyToOne(() => UserEntity, { primary: true, eager: true })
+  @ManyToOne(() => UserEntity, { eager: true })
   user: UserEntity;
 
   constructor(user: UserEntity, accessible: AccessItemAccessibleType) {
@@ -62,7 +69,7 @@ export class AccessItemUserValue extends AccessItemValue {
 
 @Entity({ discriminatorValue: "group" })
 export class AccessItemGroupValue extends AccessItemValue {
-  @ManyToOne(() => GroupEntity, { primary: true, eager: true })
+  @ManyToOne(() => GroupEntity, { eager: true })
   group: GroupEntity;
 
   constructor(group: GroupEntity, accessible: AccessItemAccessibleType) {

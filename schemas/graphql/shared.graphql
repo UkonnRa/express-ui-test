@@ -37,4 +37,15 @@ type Query {
     offset: Int
     sort: [Sort!]!
   ): GroupConnection!
+
+  journal(query: String): Journal
+  journals(
+    query: String
+    first: Int
+    after: String
+    last: Int
+    before: String
+    offset: Int
+    sort: [Sort!]!
+  ): JournalConnection!
 }

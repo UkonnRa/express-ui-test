@@ -3,6 +3,8 @@ import {
   AuthUser,
   GroupEntity,
   GroupService,
+  JournalEntity,
+  JournalService,
   Query,
   RoleValue,
   UserEntity,
@@ -17,7 +19,8 @@ export default class QueryResolver {
   constructor(
     @inject(MikroORM) private readonly orm: MikroORM,
     @inject(UserService) private readonly userService: UserService,
-    @inject(GroupService) private readonly groupService: GroupService
+    @inject(GroupService) private readonly groupService: GroupService,
+    @inject(JournalService) private readonly journalService: JournalService
   ) {}
 
   async user(
@@ -109,6 +112,57 @@ export default class QueryResolver {
       };
     }
     const page = await this.groupService.findPage({
+      ...input,
+      authUser: context.authUser,
+    });
+    return createConnection(page);
+  }
+
+  async journal(
+    _: any,
+    args: { query: string },
+    context: { authUser: AuthUser }
+  ): Promise<EntityDTO<JournalEntity> | null> {
+    if (context.authUser == null) {
+      const user = (await this.orm.em
+        .fork()
+        .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      context.authUser = {
+        authId: user.authIds[0],
+        user: user,
+        scopes: [
+          this.userService.readScope,
+          this.groupService.readScope,
+          this.journalService.readScope,
+        ],
+      };
+    }
+
+    const query: Query<JournalEntity> = JSON.parse(args.query);
+    const entity = await this.journalService.findOne({
+      query,
+      authUser: context.authUser,
+    });
+    return entity == null ? null : entity.toObject();
+  }
+
+  async journals(
+    _: any,
+    args: FindPage,
+    context: { authUser?: AuthUser }
+  ): Promise<Connection<JournalEntity>> {
+    const input = createFindPage<JournalEntity>(args);
+    if (context.authUser == null) {
+      const user = (await this.orm.em
+        .fork()
+        .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      context.authUser = {
+        authId: user.authIds[0],
+        user: user,
+        scopes: [this.userService.readScope, this.groupService.readScope],
+      };
+    }
+    const page = await this.journalService.findPage({
       ...input,
       authUser: context.authUser,
     });

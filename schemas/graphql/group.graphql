@@ -15,7 +15,7 @@ type Group {
   deletedAt: String
 
   name: String!
-  description: String
+  description: String!
 
   admins: [User!]!
 

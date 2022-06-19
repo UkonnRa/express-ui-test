@@ -2,7 +2,12 @@ import path from "path";
 import { inject, singleton } from "tsyringe";
 import { ApolloServer } from "apollo-server";
 import { loadFilesSync } from "@graphql-tools/load-files";
-import { QueryResolver, GroupResolver } from "./resolver";
+import {
+  QueryResolver,
+  GroupResolver,
+  AccessItemResolver,
+  JournalResolver,
+} from "./resolver";
 
 @singleton()
 export default class Server {
@@ -10,7 +15,9 @@ export default class Server {
 
   constructor(
     @inject(QueryResolver) queryResolver: QueryResolver,
-    @inject(GroupResolver) groupResolver: GroupResolver
+    @inject(GroupResolver) groupResolver: GroupResolver,
+    @inject(JournalResolver) journalResolver: JournalResolver,
+    @inject(AccessItemResolver) accessItemResolver: AccessItemResolver
   ) {
     this.server = new ApolloServer({
       cache: "bounded",
@@ -25,6 +32,10 @@ export default class Server {
             queryResolver.groups(source, args, context),
           group: async (source, args, context) =>
             queryResolver.group(source, args, context),
+          journals: async (source, args, context) =>
+            queryResolver.journals(source, args, context),
+          journal: async (source, args, context) =>
+            queryResolver.journal(source, args, context),
         },
         User: {
           createdAt: (source) => source.createdAt.toISOString(),
@@ -40,6 +51,27 @@ export default class Server {
             groupResolver.admins(source, args, context),
           members: async (source, args, context) =>
             groupResolver.members(source, args, context),
+        },
+        Journal: {
+          createdAt: (source) => source.createdAt.toISOString(),
+          updatedAt: (source) => source.updatedAt.toISOString(),
+          deletedAt: (source) => source.deletedAt?.toISOString(),
+
+          admins: async (source, args, context) =>
+            journalResolver.admins(source, args, context),
+          members: async (source, args, context) =>
+            journalResolver.members(source, args, context),
+        },
+        AccessItem: {
+          __resolveType: accessItemResolver.__resolveType,
+        },
+        AccessItemUser: {
+          user: async (source, args, context) =>
+            accessItemResolver.user(source, args, context),
+        },
+        AccessItemGroup: {
+          group: async (source, args, context) =>
+            accessItemResolver.group(source, args, context),
         },
       },
       csrfPrevention: true,
