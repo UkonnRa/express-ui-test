@@ -33,6 +33,10 @@ const sidebarDesign = () => [
         text: "Cursor-Based Pagination",
         link: "/design/cursor-based-pagination",
       },
+      {
+        text: "Soft Delete, or Not?",
+        link: "/design/soft-delete-or-not",
+      },
     ],
   },
 ];
