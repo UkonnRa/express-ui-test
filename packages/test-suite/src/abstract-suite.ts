@@ -8,7 +8,7 @@ import {
   FindOneInput,
   UserEntity,
   WriteService,
-  Page,
+  ALL_SCOPES,
 } from "@white-rabbit/business-logic";
 import { MikroORM } from "@mikro-orm/core";
 import { Task, FindPageTask } from "./task";
@@ -41,9 +41,7 @@ export default abstract class AbstractSuite<
     let userValue: UserEntity | undefined;
     if (user != null) {
       const em = this.orm.em.fork();
-      userValue = await em.findOneOrFail(UserEntity, user, {
-        filters: { excludeDeleted: user.deletedAt == null },
-      });
+      userValue = await em.findOneOrFail(UserEntity, user, {});
     }
 
     let authIdValue = authId;
@@ -60,7 +58,7 @@ export default abstract class AbstractSuite<
     return {
       authId: authIdValue,
       user: userValue,
-      scopes: scopes ?? [this.service.readScope, this.service.writeScope],
+      scopes: scopes ?? ALL_SCOPES,
     };
   }
 
@@ -77,13 +75,6 @@ export default abstract class AbstractSuite<
       },
       em
     );
-
-    const toCursors = ({ pageInfo, items }: Page<E>): Page<string> => {
-      return {
-        pageInfo,
-        items: items.map(({ cursor, data }) => ({ cursor, data: data.id })),
-      };
-    };
 
     if (expectNextPage === true) {
       expect(page.pageInfo.hasNextPage).toBeTruthy();
@@ -113,7 +104,7 @@ export default abstract class AbstractSuite<
           before: nextPage.pageInfo.startCursor,
         },
       });
-      expect(toCursors(nextPagePrevious)).toStrictEqual(toCursors(page));
+      expect(nextPagePrevious).toStrictEqual(page);
     } else if (expectNextPage === false) {
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
@@ -156,7 +147,7 @@ export default abstract class AbstractSuite<
           after: previousPage.pageInfo.endCursor,
         },
       });
-      expect(toCursors(previousPageNext)).toStrictEqual(toCursors(page));
+      expect(previousPageNext).toStrictEqual(page);
     } else if (expectPreviousPage === false) {
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {

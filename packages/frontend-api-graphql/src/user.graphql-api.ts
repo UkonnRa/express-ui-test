@@ -29,7 +29,7 @@ export default class UserGraphqlApi implements UserApi {
             id
             createdAt
             updatedAt
-            deletedAt
+
             name
             role
             authIds {
@@ -86,7 +86,7 @@ export default class UserGraphqlApi implements UserApi {
                 id
                 createdAt
                 updatedAt
-                deletedAt
+
                 name
                 role
                 authIds

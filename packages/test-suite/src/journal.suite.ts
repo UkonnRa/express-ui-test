@@ -1,4 +1,5 @@
 import {
+  AccessItemValue,
   JournalCommand,
   JournalEntity,
   JournalService,
@@ -24,7 +25,6 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
     checker: async ({ item }) => {
       let prevName: string | null = null;
       for (const { data } of item) {
-        expect(data.deletedAt).toBeFalsy();
         if (prevName != null) {
           expect(data.name.localeCompare(prevName)).toBeGreaterThan(0);
         }
@@ -39,7 +39,7 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
     input: async (em) => {
       const journal = await em.findOneOrFail(
         JournalEntity,
-        {},
+        { archived: false },
         { populate: ["accessItems"] }
       );
       const adminUserId = journal.admins.filter(
@@ -65,6 +65,36 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
           }),
         ])
       );
+    },
+  },
+
+  {
+    type: "HandleCommandTask",
+    name: "When deleting Journal, all related access items should be deleted",
+    input: async (em) => {
+      const journal = await em.findOneOrFail(
+        JournalEntity,
+        {
+          archived: false,
+        },
+        { populate: ["accessItems"] }
+      );
+      expect(journal.accessItems.length).toBeGreaterThan(0);
+      return {
+        authUser: { user: { role: RoleValue.ADMIN } },
+        command: {
+          type: "DeleteJournalCommand",
+          targetId: journal.id,
+        },
+      };
+    },
+    checker: async ({ input, item }, em) => {
+      expect(item).toBeFalsy();
+
+      const accessItems = await em.find(AccessItemValue, {
+        journal: input.command.targetId,
+      });
+      expect(accessItems.length).toBe(0);
     },
   },
 ];

@@ -1,13 +1,14 @@
 import {
+  Cascade,
   Collection,
   Entity,
   OneToMany,
   Property,
-  Unique,
   types,
+  Unique,
 } from "@mikro-orm/core";
 import { AbstractEntity } from "../shared";
-import { UserEntity, USER_TYPE } from "../user";
+import { USER_TYPE, UserEntity } from "../user";
 import { GROUP_TYPE, GroupEntity } from "../group";
 // eslint-disable-next-line import/no-cycle
 import AccessItemValue from "./access-item.value";
@@ -41,6 +42,7 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
   @OneToMany(() => AccessItemValue, (item) => item.journal, {
     orphanRemoval: true,
     eager: true,
+    cascade: [Cascade.ALL],
   })
   accessItems = new Collection<AccessItemValue>(this);
 

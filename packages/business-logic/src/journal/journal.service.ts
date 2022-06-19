@@ -150,6 +150,7 @@ export default class JournalService extends WriteService<
       entity.setAccessItems(members, "member");
     }
 
+    em.persist(entity);
     return entity;
   }
 
@@ -164,9 +165,7 @@ export default class JournalService extends WriteService<
       em
     );
 
-    entity.deletedAt = new Date();
-    entity.name = entity.name + new Date().toUTCString();
-    em.persist(entity);
+    await em.removeAndFlush(entity);
   }
 
   async handle(
@@ -214,7 +213,11 @@ export default class JournalService extends WriteService<
       throw new NoPermissionError(this.type, "WRITE");
     }
 
-    if (entity.archived && user.role === RoleValue.USER) {
+    if (user.role !== RoleValue.USER) {
+      return;
+    }
+
+    if (entity.archived) {
       throw new AlreadyArchivedError(this.type, entity.id);
     }
 

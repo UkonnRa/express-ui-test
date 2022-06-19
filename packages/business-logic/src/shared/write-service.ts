@@ -8,7 +8,6 @@ import {
 import { EntityName } from "@mikro-orm/core/typings";
 import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import RequiredFieldError from "../error/required-field.error";
-import RoleValue from "./role.value";
 import ReadService from "./read-service";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
@@ -18,19 +17,12 @@ import CommandsInput from "./commands.input";
 
 function checkPermission<E extends AbstractEntity<E>>(
   entityType: string,
-  { user, scopes }: AuthUser,
+  { scopes }: AuthUser,
   scope: string,
-  entity?: E
+  _?: E
 ): void {
   if (!scopes.includes(scope)) {
     throw new NoPermissionError(entityType, "WRITE");
-  }
-
-  if (
-    entity?.deletedAt != null &&
-    (user?.role ?? RoleValue.USER) === RoleValue.USER
-  ) {
-    throw new NotFoundError(entityType, entity.id);
   }
 }
 

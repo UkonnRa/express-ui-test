@@ -191,9 +191,6 @@ components:
         updatedAt:
           type: string
           format: datetime
-        deletedAt:
-          type: string
-          format: datetime
         name:
           type: string
         role:
@@ -247,9 +244,6 @@ components:
           type: string
           format: datetime
         updatedAt:
-          type: string
-          format: datetime
-        deletedAt:
           type: string
           format: datetime
         name:

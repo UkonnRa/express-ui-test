@@ -96,15 +96,11 @@ export interface Group {
    */
   updatedAt?: Timestamp;
   /**
-   * @generated from protobuf field: google.protobuf.Timestamp deletedAt = 4;
-   */
-  deletedAt?: Timestamp;
-  /**
-   * @generated from protobuf field: string name = 5;
+   * @generated from protobuf field: string name = 4;
    */
   name: string;
   /**
-   * @generated from protobuf field: optional string description = 6;
+   * @generated from protobuf field: optional string description = 5;
    */
   description?: string;
 }
@@ -160,19 +156,15 @@ export interface User {
    */
   updatedAt?: Timestamp;
   /**
-   * @generated from protobuf field: google.protobuf.Timestamp deletedAt = 4;
-   */
-  deletedAt?: Timestamp;
-  /**
-   * @generated from protobuf field: string name = 5;
+   * @generated from protobuf field: string name = 4;
    */
   name: string;
   /**
-   * @generated from protobuf field: whiterabbit.Role role = 6;
+   * @generated from protobuf field: whiterabbit.Role role = 5;
    */
   role: Role;
   /**
-   * @generated from protobuf field: repeated whiterabbit.AuthId authIds = 7;
+   * @generated from protobuf field: repeated whiterabbit.AuthId authIds = 6;
    */
   authIds: AuthId[];
 }
@@ -370,10 +362,9 @@ class Group$Type extends MessageType<Group> {
       { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 2, name: "createdAt", kind: "message", T: () => Timestamp },
       { no: 3, name: "updatedAt", kind: "message", T: () => Timestamp },
-      { no: 4, name: "deletedAt", kind: "message", T: () => Timestamp },
-      { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
-        no: 6,
+        no: 5,
         name: "description",
         kind: "scalar",
         opt: true,
@@ -437,16 +428,15 @@ class User$Type extends MessageType<User> {
       { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       { no: 2, name: "createdAt", kind: "message", T: () => Timestamp },
       { no: 3, name: "updatedAt", kind: "message", T: () => Timestamp },
-      { no: 4, name: "deletedAt", kind: "message", T: () => Timestamp },
-      { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
-        no: 6,
+        no: 5,
         name: "role",
         kind: "enum",
         T: () => ["whiterabbit.Role", Role],
       },
       {
-        no: 7,
+        no: 6,
         name: "authIds",
         kind: "message",
         repeat: 1 /*RepeatType.PACKED*/,

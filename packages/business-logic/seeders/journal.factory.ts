@@ -10,7 +10,6 @@ export default class JournalFactory extends Factory<JournalEntity> {
       tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
       unit: faker.finance.currencyCode(),
       archived: Math.random() < 0.2,
-      deletedAt: Math.random() < 0.2 ? faker.date.recent(10) : undefined,
     };
   }
 

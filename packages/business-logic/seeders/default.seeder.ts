@@ -11,20 +11,14 @@ export default class DefaultSeeder extends Seeder {
     const users = await Promise.all([
       new UserFactory(em).create(5, {
         role: RoleValue.OWNER,
-        deletedAt: undefined,
       }),
       new UserFactory(em).create(8, {
         role: RoleValue.ADMIN,
-        deletedAt: undefined,
       }),
       new UserFactory(em).create(13, {
         role: RoleValue.USER,
-        deletedAt: undefined,
       }),
-      new UserFactory(em).create(5, {
-        deletedAt: faker.date.recent(10),
-      }),
-      new UserFactory(em).create(21),
+      new UserFactory(em).create(13),
     ]).then((nested) => nested.flatMap((xs) => xs));
 
     const groups = new GroupFactory(em).make(20);

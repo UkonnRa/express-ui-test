@@ -1,6 +1,5 @@
 import FullTextQuery from "./full-text.query";
-import IncludeDeletedQuery from "./include-deleted.query";
 
-type AdditionalQuery = FullTextQuery | IncludeDeletedQuery;
+type AdditionalQuery = FullTextQuery;
 
 export default AdditionalQuery;

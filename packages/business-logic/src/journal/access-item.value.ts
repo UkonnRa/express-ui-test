@@ -26,7 +26,10 @@ export default abstract class AccessItemValue {
   @Enum({ type: "string", items: ["admin", "member"] })
   accessible: AccessItemAccessibleType;
 
-  @ManyToOne(() => JournalEntity)
+  @ManyToOne(() => JournalEntity, {
+    onDelete: "cascade",
+    onUpdateIntegrity: "cascade",
+  })
   journal: JournalEntity;
 
   abstract get itemId(): string;
@@ -47,7 +50,11 @@ export default abstract class AccessItemValue {
 
 @Entity({ discriminatorValue: "user" })
 export class AccessItemUserValue extends AccessItemValue {
-  @ManyToOne(() => UserEntity, { eager: true })
+  @ManyToOne(() => UserEntity, {
+    eager: true,
+    onDelete: "cascade",
+    onUpdateIntegrity: "cascade",
+  })
   user: UserEntity;
 
   constructor(user: UserEntity, accessible: AccessItemAccessibleType) {
@@ -69,7 +76,11 @@ export class AccessItemUserValue extends AccessItemValue {
 
 @Entity({ discriminatorValue: "group" })
 export class AccessItemGroupValue extends AccessItemValue {
-  @ManyToOne(() => GroupEntity, { eager: true })
+  @ManyToOne(() => GroupEntity, {
+    eager: true,
+    onDelete: "cascade",
+    onUpdateIntegrity: "cascade",
+  })
   group: GroupEntity;
 
   constructor(group: GroupEntity, accessible: AccessItemAccessibleType) {

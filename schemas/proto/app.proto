@@ -39,10 +39,9 @@ message Group {
   string id = 1;
   google.protobuf.Timestamp createdAt = 2;
   google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
 
-  string name = 5;
-  optional string description = 6;
+  string name = 4;
+  optional string description = 5;
 }
 
 message GroupPage {
@@ -70,10 +69,10 @@ message User {
   string id = 1;
   google.protobuf.Timestamp createdAt = 2;
   google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
-  string name = 5;
-  Role role = 6;
-  repeated AuthId authIds = 7;
+
+  string name = 4;
+  Role role = 5;
+  repeated AuthId authIds = 6;
 }
 
 enum Role {

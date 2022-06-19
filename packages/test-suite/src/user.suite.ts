@@ -1,4 +1,5 @@
 import {
+  AccessItemUserValue,
   DeleteUserCommand,
   encodeCursor,
   NoPermissionError,
@@ -25,7 +26,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindPageTask",
     name: "User[ANY] can find all active users",
     input: {
-      authUser: { user: {} },
+      authUser: { user: { role: { $ne: null } } },
       query: { role: RoleValue.ADMIN },
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
@@ -56,7 +57,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       const data = users[users.length - 1];
 
       return {
-        authUser: { user: {} },
+        authUser: { user: { role: { $ne: null } } },
         query: { role: RoleValue.USER },
         pagination: { size: 3, before: encodeCursor({ id: data.id }) },
         sort: [{ field: "name", order: Order.DESC }],
@@ -77,31 +78,10 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   },
   {
     type: "FindPageTask",
-    name: "User[ADMIN] can find deleted users",
-    input: {
-      authUser: { user: { role: RoleValue.ADMIN } },
-      query: {
-        deletedAt: { $ne: null },
-        $additional: [{ type: "IncludeDeletedQuery" }],
-      },
-      pagination: { size: 3 },
-      sort: [{ field: "name", order: Order.ASC }],
-    },
-    checker: async ({ item }) => {
-      expect(item.length).toBeGreaterThan(0);
-      for (const { data } of item) {
-        expect(data.deletedAt).toBeTruthy();
-      }
-    },
-    expectNextPage: true,
-    expectPreviousPage: false,
-  },
-  {
-    type: "FindPageTask",
     name: "User[ANY] starts at the beginning if Cursor[after] and Cursor[before] are not found",
     input: {
-      authUser: { user: {} },
-      query: {},
+      authUser: { user: { role: { $ne: null } } },
+      query: { role: RoleValue.USER },
       pagination: {
         size: 3,
         before: encodeCursor({ id: v4() }),
@@ -123,24 +103,6 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   },
   {
     type: "FindPageExceptionTask",
-    name: "User[USER] cannot use Query[IncludeDeletedQuery]",
-    input: {
-      authUser: { user: { role: RoleValue.USER } },
-      query: {
-        deletedAt: { $ne: null },
-        $additional: [{ type: "IncludeDeletedQuery" }],
-      },
-      pagination: { size: 3 },
-      sort: [{ field: "name", order: Order.ASC }],
-    },
-    expected: {
-      type: "NoPermissionError",
-      entityType: USER_TYPE,
-      permission: "READ",
-    } as Partial<NoPermissionError>,
-  },
-  {
-    type: "FindPageExceptionTask",
     name: "User cannot find anything if no read scope",
     input: {
       authUser: { user: { role: RoleValue.ADMIN }, scopes: [] },
@@ -159,7 +121,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneTask",
     name: "User[ANY] can find any active user",
     input: {
-      authUser: { user: {} },
+      authUser: { user: { role: { $ne: null } } },
       query: { role: RoleValue.ADMIN },
     },
     checker: async ({ item }) => {
@@ -168,23 +130,9 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   },
   {
     type: "FindOneTask",
-    name: "User[OWNER] can find an deleted user",
-    input: {
-      authUser: { user: { role: RoleValue.OWNER } },
-      query: {
-        deletedAt: { $ne: null },
-        $additional: [{ type: "IncludeDeletedQuery" }],
-      },
-    },
-    checker: async ({ item }) => {
-      expect(item?.deletedAt).toBeTruthy();
-    },
-  },
-  {
-    type: "FindOneTask",
     name: "Not found",
     input: {
-      authUser: { user: {} },
+      authUser: { user: { role: RoleValue.OWNER } },
       query: { id: v4() },
     },
     checker: async ({ item }) => {
@@ -193,26 +141,10 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
   },
   {
     type: "FindOneExceptionTask",
-    name: "User[USER] cannot use Query[IncludeDeletedQuery]",
-    input: {
-      authUser: { user: { role: RoleValue.USER } },
-      query: {
-        deletedAt: { $ne: null },
-        $additional: [{ type: "IncludeDeletedQuery" }],
-      },
-    },
-    expected: {
-      type: "NoPermissionError",
-      entityType: USER_TYPE,
-      permission: "READ",
-    } as Partial<NoPermissionError>,
-  },
-  {
-    type: "FindOneExceptionTask",
     name: "User cannot find anything if no read scope",
     input: {
       authUser: { user: { role: RoleValue.ADMIN }, scopes: [] },
-      query: {},
+      query: { role: RoleValue.USER },
     },
     expected: {
       type: "NoPermissionError",
@@ -224,7 +156,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneExceptionTask",
     name: "User cannot find anything without the related scopes",
     input: {
-      authUser: { user: {}, scopes: [USER_WRITE_SCOPE] },
+      authUser: { user: { role: { $ne: null } }, scopes: [USER_WRITE_SCOPE] },
       query: { role: RoleValue.USER },
     },
     expected: {
@@ -232,19 +164,6 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       entityType: USER_TYPE,
       permission: "READ",
     } as Partial<NoPermissionError>,
-  },
-  {
-    type: "FindOneExceptionTask",
-    name: "User[deleted] cannot do any operation",
-    input: {
-      authUser: { user: { deletedAt: { $ne: null } } },
-      query: { role: RoleValue.USER },
-    },
-    expected: async ({ authUser }): Promise<Partial<NotFoundError>> => ({
-      type: "NotFoundError",
-      entityType: USER_TYPE,
-      id: authUser.user?.id,
-    }),
   },
 
   {
@@ -323,7 +242,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "HandleCommandTask",
     name: "User[ANY] can update self",
     input: async (em) => {
-      const user = await em.findOneOrFail(UserEntity, {});
+      const user = await em.findOneOrFail(UserEntity, { role: { $ne: null } });
       return {
         authUser: { user: { id: user.id } },
         command: {
@@ -341,7 +260,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "HandleCommandTask",
     name: "User can update nothing",
     input: async (em) => {
-      const user = await em.findOneOrFail(UserEntity, {});
+      const user = await em.findOneOrFail(UserEntity, { role: { $ne: null } });
       return {
         authUser: { user },
         command: {
@@ -490,7 +409,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "HandleCommandTask",
     name: "User[ANY] can delete self",
     input: async (em) => {
-      const user = await em.findOneOrFail(UserEntity, {});
+      const user = await em.findOneOrFail(UserEntity, { role: RoleValue.USER });
       return {
         authUser: { user },
         command: {
@@ -499,8 +418,14 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
         },
       };
     },
-    checker: async ({ item }) => {
+    checker: async ({ item, input }, em) => {
       expect(item).toBeFalsy();
+
+      const accessItems = await em.find(AccessItemUserValue, {
+        type: "user",
+        user: input.command.targetId,
+      });
+      expect(accessItems.length).toBeFalsy();
     },
   } as HandleCommandTask<UserEntity, UserCommand, DeleteUserCommand>,
   {

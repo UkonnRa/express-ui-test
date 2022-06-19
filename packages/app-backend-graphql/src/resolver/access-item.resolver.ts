@@ -57,7 +57,6 @@ export default class AccessItemResolver {
     const entity = await this.userService.findOne({
       query: {
         id: parent.user,
-        $additional: [{ type: "IncludeDeletedQuery" }],
       },
       authUser: context.authUser,
     });
@@ -91,7 +90,6 @@ export default class AccessItemResolver {
     const entity = await this.groupService.findOne({
       query: {
         id: parent.group,
-        $additional: [{ type: "IncludeDeletedQuery" }],
       },
       authUser: context.authUser,
     });

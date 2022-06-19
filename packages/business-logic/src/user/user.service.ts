@@ -123,9 +123,7 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
       em
     );
 
-    entity.deletedAt = new Date();
-    entity.name = entity.name + new Date().toUTCString();
-    em.persist(entity);
+    await em.removeAndFlush(entity);
   }
 
   override async handle(

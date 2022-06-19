@@ -40,12 +40,10 @@ export default class Server {
         User: {
           createdAt: (source) => source.createdAt.toISOString(),
           updatedAt: (source) => source.updatedAt.toISOString(),
-          deletedAt: (source) => source.deletedAt?.toISOString(),
         },
         Group: {
           createdAt: (source) => source.createdAt.toISOString(),
           updatedAt: (source) => source.updatedAt.toISOString(),
-          deletedAt: (source) => source.deletedAt?.toISOString(),
 
           admins: async (source, args, context) =>
             groupResolver.admins(source, args, context),
@@ -55,7 +53,6 @@ export default class Server {
         Journal: {
           createdAt: (source) => source.createdAt.toISOString(),
           updatedAt: (source) => source.updatedAt.toISOString(),
-          deletedAt: (source) => source.deletedAt?.toISOString(),
 
           admins: async (source, args, context) =>
             journalResolver.admins(source, args, context),

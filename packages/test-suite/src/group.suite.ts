@@ -1,4 +1,5 @@
 import {
+  AccessItemGroupValue,
   GroupCommand,
   GroupEntity,
   GroupService,
@@ -24,7 +25,6 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
     checker: async ({ item }) => {
       let prevName: string | null = null;
       for (const { data } of item) {
-        expect(data.deletedAt).toBeFalsy();
         if (prevName != null) {
           expect(data.name.localeCompare(prevName)).toBeGreaterThan(0);
         }
@@ -39,7 +39,7 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
     input: async (em) => {
       const group = await em.findOneOrFail(
         GroupEntity,
-        {},
+        { description: { $ne: null } },
         { populate: ["admins"] }
       );
       return {
@@ -53,6 +53,33 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
           expect.objectContaining({ id: input.query?.admins }),
         ])
       );
+    },
+  },
+
+  {
+    type: "HandleCommandTask",
+    name: "When deleting Group, all related access items should be deleted",
+    input: async (em) => {
+      const accessItem = await em.findOneOrFail(AccessItemGroupValue, {
+        type: "group",
+        accessible: "admin",
+      });
+      return {
+        authUser: { user: { role: RoleValue.ADMIN } },
+        command: {
+          type: "DeleteGroupCommand",
+          targetId: accessItem.group.id,
+        },
+      };
+    },
+    checker: async ({ input, item }, em) => {
+      expect(item).toBeFalsy();
+
+      const accessItems = await em.find(AccessItemGroupValue, {
+        type: "group",
+        group: input.command.targetId,
+      });
+      expect(accessItems.length).toBeFalsy();
     },
   },
 ];

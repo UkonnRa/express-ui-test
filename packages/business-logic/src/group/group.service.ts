@@ -138,9 +138,7 @@ export default class GroupService extends WriteService<
       em
     );
 
-    entity.deletedAt = new Date();
-    entity.name = entity.name + new Date().toUTCString();
-    em.persist(entity);
+    await em.removeAndFlush(entity);
   }
 
   override async handle(

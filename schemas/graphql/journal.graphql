@@ -12,7 +12,6 @@ type Journal {
   id: ID!
   createdAt: String!
   updatedAt: String!
-  deletedAt: String
 
   name: String!
   description: String!

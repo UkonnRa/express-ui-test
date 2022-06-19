@@ -22,7 +22,6 @@ export default class UserFactory extends Factory<UserEntity> {
       authIds: faker.helpers
         .uniqueArray(faker.company.bs, 2)
         .map((provider) => ({ provider, value: v4() })),
-      deletedAt: Math.random() < 0.2 ? faker.date.recent(10) : undefined,
     };
   }
 

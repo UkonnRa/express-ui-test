@@ -7,7 +7,7 @@ import {
   QueryOrderMap,
 } from "@mikro-orm/core";
 import { decodeCursor, encodeCursor, filterAsync } from "../utils";
-import { NoPermissionError, NotFoundError } from "../error";
+import { NoPermissionError } from "../error";
 import Cursor from "./cursor";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
@@ -130,12 +130,8 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
    * @param entity
    * @param user
    */
-  async isReadable(entity: E, { user }: AuthUser): Promise<boolean> {
-    if ((user?.role ?? RoleValue.USER) !== RoleValue.USER) {
-      return true;
-    }
-
-    return entity.deletedAt == null;
+  async isReadable(_: E, { user }: AuthUser): Promise<boolean> {
+    return (user?.role ?? RoleValue.USER) !== RoleValue.USER;
   }
 
   async handleAdditionalQueries(
@@ -148,10 +144,6 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
   private checkPermission(authUser: AuthUser, query?: Query<E>): void {
     if (!authUser.scopes.includes(this.readScope)) {
       throw new NoPermissionError(this.type, "READ");
-    }
-
-    if (authUser.user?.deletedAt != null) {
-      throw new NotFoundError(this.type, authUser.user.id);
     }
 
     if (
@@ -193,18 +185,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     const result: E[] = [];
     const limit = pagination.size + 1;
 
-    // Fetching Deleted
-    const filters = { excludeDeleted: true };
-    if (additionalQueries.some((q) => q.type === "IncludeDeletedQuery")) {
-      filters.excludeDeleted = false;
-    }
-
     while (true) {
       let entities = await em.find(this.entityName, filterQuery, {
         orderBy: sort,
         offset: (pagination.offset ?? 0) + cnt * limit,
         limit,
-        filters,
       });
       cnt += 1;
       if (entities.length === 0) {
