@@ -1,6 +1,7 @@
 import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import {
+  AdditionalQuery,
   AuthUser,
   checkCreate,
   CommandInput,
@@ -17,6 +18,7 @@ import AccessItemInput from "./access-item.input";
 import CreateJournalCommand from "./create-journal.command";
 import UpdateJournalCommand from "./update-journal.command";
 import DeleteJournalCommand from "./delete-journal.command";
+import AccessItemValue from "./access-item.value";
 
 export const JOURNAL_READ_SCOPE =
   "urn:alices-wonderland:white-rabbit:journals:read";
@@ -193,7 +195,7 @@ export default class JournalService extends WriteService<
 
     let result = false;
     for (const item of entity.accessItems.getItems()) {
-      if (authUser.user != null && (await item.contains(authUser.user))) {
+      if (authUser.user != null && (await item.contains(authUser.user.id))) {
         result = result || true;
       }
     }
@@ -226,11 +228,50 @@ export default class JournalService extends WriteService<
     }
 
     const adminContains = await Promise.all(
-      entity.admins.map(async (item) => item.contains(user))
+      entity.admins.map(async (item) => item.contains(user.id))
     );
 
     if (adminContains.every((isAdmin) => !isAdmin)) {
       throw new NoPermissionError(this.type, "WRITE");
+    }
+  }
+
+  async handleAdditionalQueries(
+    entities: JournalEntity[],
+    additionalQueries: AdditionalQuery[]
+  ): Promise<JournalEntity[]> {
+    if (entities.length === 0 || additionalQueries.length === 0) {
+      return entities;
+    }
+
+    const query = additionalQueries[0];
+    const someContains = async (
+      accessItems: AccessItemValue[],
+      userId: string
+    ): Promise<boolean> => {
+      for (const item of accessItems) {
+        if (await item.contains(userId)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (query.type === "ContainingUserQuery") {
+      return filterAsync(entities, async (value) => {
+        if (query.field === "admin") {
+          return someContains(value.admins, query.user);
+        } else if (query.field === "member") {
+          return someContains(value.members, query.user);
+        } else {
+          return (
+            (await someContains(value.admins, query.user)) ||
+            someContains(value.members, query.user)
+          );
+        }
+      });
+    } else {
+      return entities;
     }
   }
 }

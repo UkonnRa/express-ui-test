@@ -48,7 +48,7 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   }
 
   async contains(
-    user: UserEntity,
+    userId: string,
     fields: Array<"admins" | "members"> = ["admins", "members"]
   ): Promise<boolean> {
     let result = false;
@@ -58,7 +58,7 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
         await collection.init();
       }
       result =
-        result || collection.getItems().some((item) => item.id === user.id);
+        result || collection.getItems().some((item) => item.id === userId);
     }
     return result;
   }

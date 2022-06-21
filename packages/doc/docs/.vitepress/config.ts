@@ -37,9 +37,15 @@ const sidebarDesign = () => [
         text: "Soft Delete, or Not?",
         link: "/design/soft-delete-or-not",
       },
+      {
+        text: "Extendable Query System",
+        link: "/design/extendable-query-system",
+      },
     ],
   },
 ];
+
+const customElements = ["mjx-container"];
 
 export default defineConfig({
   lang: "en-US",
@@ -91,6 +97,14 @@ export default defineConfig({
     config: (md) => {
       md.use(plantuml);
       md.use(mathjax);
+    },
+  },
+
+  vue: {
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => customElements.includes(tag),
+      },
     },
   },
 });

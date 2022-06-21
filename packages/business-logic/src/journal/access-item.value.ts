@@ -34,7 +34,7 @@ export default abstract class AccessItemValue {
 
   abstract get itemId(): string;
 
-  abstract contains(user: UserEntity): Promise<boolean>;
+  abstract contains(user: string): Promise<boolean>;
 
   static create(
     items: Array<UserEntity | GroupEntity>,
@@ -69,8 +69,8 @@ export class AccessItemUserValue extends AccessItemValue {
   }
 
   // Only non-deleted user can be inited
-  async contains(user: UserEntity): Promise<boolean> {
-    return this.user.isInitialized() && user.id === this.user.id;
+  async contains(userId: string): Promise<boolean> {
+    return this.user.isInitialized() && userId === this.user.id;
   }
 }
 
@@ -95,7 +95,7 @@ export class AccessItemGroupValue extends AccessItemValue {
   }
 
   // Only non-deleted group can be inited
-  async contains(user: UserEntity): Promise<boolean> {
-    return this.group.isInitialized() && this.group.contains(user);
+  async contains(userId: string): Promise<boolean> {
+    return this.group.isInitialized() && this.group.contains(userId);
   }
 }
