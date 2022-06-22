@@ -9,7 +9,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@mikro-orm/core": "^5.2.0",
+    "@mikro-orm/core": "^5.2.1",
     "dotenv": "^16.0.1",
     "js-base64": "^3.7.2",
     "reflect-metadata": "^0.1.13",
@@ -17,10 +17,10 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@mikro-orm/better-sqlite": "^5.2.0",
-    "@mikro-orm/cli": "^5.2.0",
-    "@mikro-orm/reflection": "^5.2.0",
-    "@mikro-orm/seeder": "^5.2.0",
+    "@mikro-orm/better-sqlite": "^5.2.1",
+    "@mikro-orm/cli": "^5.2.1",
+    "@mikro-orm/reflection": "^5.2.1",
+    "@mikro-orm/seeder": "^5.2.1",
     "@types/uuid": "^8.3.4",
     "@white-rabbit/test-suite": "workspace:^"
   },

@@ -5,20 +5,24 @@ import { RoleValue } from "../src";
 import UserFactory from "./user.factory";
 import GroupFactory from "./group.factory";
 import JournalFactory from "./journal.factory";
+import AccountFactory from "./account.factory";
 
 export default class DefaultSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
+    const userFactory = new UserFactory(em);
+    const accountFactory = new AccountFactory(em);
+
     const users = await Promise.all([
-      new UserFactory(em).create(5, {
+      userFactory.create(5, {
         role: RoleValue.OWNER,
       }),
-      new UserFactory(em).create(8, {
+      userFactory.create(8, {
         role: RoleValue.ADMIN,
       }),
-      new UserFactory(em).create(13, {
+      userFactory.create(13, {
         role: RoleValue.USER,
       }),
-      new UserFactory(em).create(13),
+      userFactory.create(13),
     ]).then((nested) => nested.flatMap((xs) => xs));
 
     const groups = new GroupFactory(em).make(20);
@@ -40,5 +44,12 @@ export default class DefaultSeeder extends Seeder {
       );
     });
     em.persist(journals);
+
+    const accounts = journals.flatMap((journal) => {
+      return accountFactory.make(8, {
+        journal,
+      });
+    });
+    em.persist(accounts);
   }
 }

@@ -75,8 +75,8 @@ export default defineConfig({
     },
 
     editLink: {
-      repo: "alices-wonderland/white-rabbit",
-      dir: "packages/docs",
+      pattern:
+        "https://github.com/alices-wonderland/white-rabbit/edit/main/packages/doc/docs/:path",
       text: "Edit this page on GitHub",
     },
 
