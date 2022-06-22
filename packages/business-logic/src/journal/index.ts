@@ -16,6 +16,9 @@ export {
   AccessItemGroupValue,
 } from "./access-item.value";
 
+export { default as AccessItemTypeValue } from "./access-item-type.value";
+export { default as AccessItemAccessibleTypeValue } from "./access-item-accessible-type.value";
+
 export { default as AccessItemInput } from "./access-item.input";
 export { default as JournalCommand } from "./journal.command";
 export { default as CreateJournalCommand } from "./create-journal.command";

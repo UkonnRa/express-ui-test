@@ -1,4 +1,6 @@
 import {
+  AccessItemAccessibleTypeValue,
+  AccessItemTypeValue,
   AccessItemValue,
   JournalCommand,
   JournalEntity,
@@ -43,12 +45,16 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
         { populate: ["accessItems"] }
       );
       const adminUserId = journal.admins.filter(
-        (item) => item.type === "user"
+        (item) => item.type === AccessItemTypeValue.USER
       )[0].itemId;
       return {
         authUser: { user: { role: RoleValue.OWNER } },
         query: {
-          accessItems: { accessible: "admin", type: "user", user: adminUserId },
+          accessItems: {
+            accessible: AccessItemAccessibleTypeValue.ADMIN,
+            type: AccessItemTypeValue.USER,
+            user: adminUserId,
+          },
         },
       };
     },

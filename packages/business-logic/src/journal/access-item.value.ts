@@ -3,10 +3,9 @@ import { v4 } from "uuid";
 import { UserEntity } from "../user";
 import { GroupEntity } from "../group";
 // eslint-disable-next-line import/no-cycle
-import JournalEntity, {
-  AccessItemAccessibleType,
-  AccessItemType,
-} from "./journal.entity";
+import JournalEntity from "./journal.entity";
+import AccessItemTypeValue from "./access-item-type.value";
+import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
 @Entity({
   discriminatorColumn: "type",
@@ -20,11 +19,11 @@ export default abstract class AccessItemValue {
   @PrimaryKey({ type: "string" })
   id: string = v4();
 
-  @Enum({ type: "string", items: ["user", "group"] })
-  type: AccessItemType;
+  @Enum({ type: "string", items: () => AccessItemTypeValue })
+  type: AccessItemTypeValue;
 
-  @Enum({ type: "string", items: ["admin", "member"] })
-  accessible: AccessItemAccessibleType;
+  @Enum({ type: "string", items: () => AccessItemAccessibleTypeValue })
+  accessible: AccessItemAccessibleTypeValue;
 
   @ManyToOne(() => JournalEntity, {
     onDelete: "cascade",
@@ -38,7 +37,7 @@ export default abstract class AccessItemValue {
 
   static create(
     items: Array<UserEntity | GroupEntity>,
-    accessible: AccessItemAccessibleType
+    accessible: AccessItemAccessibleTypeValue
   ): AccessItemValue[] {
     return items.map((item) =>
       item instanceof UserEntity
@@ -48,7 +47,7 @@ export default abstract class AccessItemValue {
   }
 }
 
-@Entity({ discriminatorValue: "user" })
+@Entity({ discriminatorValue: AccessItemTypeValue.USER })
 export class AccessItemUserValue extends AccessItemValue {
   @ManyToOne(() => UserEntity, {
     eager: true,
@@ -57,9 +56,9 @@ export class AccessItemUserValue extends AccessItemValue {
   })
   user: UserEntity;
 
-  constructor(user: UserEntity, accessible: AccessItemAccessibleType) {
+  constructor(user: UserEntity, accessible: AccessItemAccessibleTypeValue) {
     super();
-    this.type = "user";
+    this.type = AccessItemTypeValue.USER;
     this.accessible = accessible;
     this.user = user;
   }
@@ -74,7 +73,7 @@ export class AccessItemUserValue extends AccessItemValue {
   }
 }
 
-@Entity({ discriminatorValue: "group" })
+@Entity({ discriminatorValue: AccessItemTypeValue.GROUP })
 export class AccessItemGroupValue extends AccessItemValue {
   @ManyToOne(() => GroupEntity, {
     eager: true,
@@ -83,9 +82,9 @@ export class AccessItemGroupValue extends AccessItemValue {
   })
   group: GroupEntity;
 
-  constructor(group: GroupEntity, accessible: AccessItemAccessibleType) {
+  constructor(group: GroupEntity, accessible: AccessItemAccessibleTypeValue) {
     super();
-    this.type = "group";
+    this.type = AccessItemTypeValue.GROUP;
     this.accessible = accessible;
     this.group = group;
   }

@@ -1,4 +1,5 @@
 import {
+  AccessItemTypeValue,
   AccessItemUserValue,
   DeleteUserCommand,
   encodeCursor,
@@ -422,7 +423,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
       expect(item).toBeFalsy();
 
       const accessItems = await em.find(AccessItemUserValue, {
-        type: "user",
+        type: AccessItemTypeValue.USER,
         user: input.command.targetId,
       });
       expect(accessItems.length).toBeFalsy();

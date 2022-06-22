@@ -1,6 +1,6 @@
-import { AccessItemType } from "./journal.entity";
+import AccessItemTypeValue from "./access-item-type.value";
 
 export default interface AccessItemInput {
-  type: AccessItemType;
+  type: AccessItemTypeValue;
   id: string;
 }

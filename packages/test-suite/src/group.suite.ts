@@ -1,5 +1,7 @@
 import {
+  AccessItemAccessibleTypeValue,
   AccessItemGroupValue,
+  AccessItemTypeValue,
   GroupCommand,
   GroupEntity,
   GroupService,
@@ -61,8 +63,8 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
     name: "When deleting Group, all related access items should be deleted",
     input: async (em) => {
       const accessItem = await em.findOneOrFail(AccessItemGroupValue, {
-        type: "group",
-        accessible: "admin",
+        type: AccessItemTypeValue.GROUP,
+        accessible: AccessItemAccessibleTypeValue.ADMIN,
       });
       return {
         authUser: { user: { role: RoleValue.ADMIN } },
@@ -76,7 +78,7 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
       expect(item).toBeFalsy();
 
       const accessItems = await em.find(AccessItemGroupValue, {
-        type: "group",
+        type: AccessItemTypeValue.GROUP,
         group: input.command.targetId,
       });
       expect(accessItems.length).toBeFalsy();

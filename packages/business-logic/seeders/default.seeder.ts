@@ -1,7 +1,7 @@
 import { Seeder } from "@mikro-orm/seeder";
 import { EntityManager } from "@mikro-orm/core";
 import { faker } from "@faker-js/faker";
-import { RoleValue } from "../src";
+import { AccessItemAccessibleTypeValue, RoleValue } from "../src";
 import UserFactory from "./user.factory";
 import GroupFactory from "./group.factory";
 import JournalFactory from "./journal.factory";
@@ -36,11 +36,11 @@ export default class DefaultSeeder extends Seeder {
     journals.forEach((v) => {
       v.setAccessItems(
         faker.helpers.arrayElements([...users, ...groups], 5),
-        "admin"
+        AccessItemAccessibleTypeValue.ADMIN
       );
       v.setAccessItems(
         faker.helpers.arrayElements([...users, ...groups], 13),
-        "member"
+        AccessItemAccessibleTypeValue.MEMBER
       );
     });
     em.persist(journals);

@@ -8,18 +8,15 @@ import {
   Unique,
 } from "@mikro-orm/core";
 import { AbstractEntity } from "../shared";
-import { USER_TYPE, UserEntity } from "../user";
-import { GROUP_TYPE, GroupEntity } from "../group";
+import { UserEntity } from "../user";
+import { GroupEntity } from "../group";
 // eslint-disable-next-line import/no-cycle
 import AccessItemValue from "./access-item.value";
+import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
 export const JOURNAL_TYPE = "journal";
 
 export const JOURNAL_TYPE_PLURAL = "journals";
-
-export type AccessItemType = typeof USER_TYPE | typeof GROUP_TYPE;
-
-export type AccessItemAccessibleType = "admin" | "member";
 
 @Entity({ collection: JOURNAL_TYPE })
 export default class JournalEntity extends AbstractEntity<JournalEntity> {
@@ -61,7 +58,7 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
 
   setAccessItems(
     items: Array<UserEntity | GroupEntity>,
-    accessible: AccessItemAccessibleType
+    accessible: AccessItemAccessibleTypeValue
   ): void {
     this.accessItems.remove(
       (item) =>
@@ -74,12 +71,16 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
   get admins(): AccessItemValue[] {
     return this.accessItems
       .getItems()
-      .filter((item) => item.accessible === "admin");
+      .filter(
+        (item) => item.accessible === AccessItemAccessibleTypeValue.ADMIN
+      );
   }
 
   get members(): AccessItemValue[] {
     return this.accessItems
       .getItems()
-      .filter((item) => item.accessible === "member");
+      .filter(
+        (item) => item.accessible === AccessItemAccessibleTypeValue.MEMBER
+      );
   }
 }

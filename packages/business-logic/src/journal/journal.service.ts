@@ -19,6 +19,8 @@ import CreateJournalCommand from "./create-journal.command";
 import UpdateJournalCommand from "./update-journal.command";
 import DeleteJournalCommand from "./delete-journal.command";
 import AccessItemValue from "./access-item.value";
+import AccessItemTypeValue from "./access-item-type.value";
+import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
 export const JOURNAL_READ_SCOPE =
   "urn:alices-wonderland:white-rabbit:journals:read";
@@ -51,13 +53,15 @@ export default class JournalService extends WriteService<
     em: EntityManager
   ): Promise<Array<UserEntity | GroupEntity>> {
     const users = await em.find(UserEntity, {
-      id: accessItems.filter(({ type }) => type === "user").map(({ id }) => id),
+      id: accessItems
+        .filter(({ type }) => type === AccessItemTypeValue.USER)
+        .map(({ id }) => id),
     });
     const groups = await em.find(
       GroupEntity,
       {
         id: accessItems
-          .filter(({ type }) => type === "group")
+          .filter(({ type }) => type === AccessItemTypeValue.GROUP)
           .map(({ id }) => id),
       },
       {
@@ -98,8 +102,8 @@ export default class JournalService extends WriteService<
       command.tags,
       command.unit
     );
-    entity.setAccessItems(admins, "admin");
-    entity.setAccessItems(members, "member");
+    entity.setAccessItems(admins, AccessItemAccessibleTypeValue.ADMIN);
+    entity.setAccessItems(members, AccessItemAccessibleTypeValue.MEMBER);
     em.persist(entity);
     return entity;
   }
@@ -144,12 +148,12 @@ export default class JournalService extends WriteService<
 
     if (command.admins != null) {
       const admins = await this.loadUserGroup(authUser, command.admins, em);
-      entity.setAccessItems(admins, "admin");
+      entity.setAccessItems(admins, AccessItemAccessibleTypeValue.ADMIN);
     }
 
     if (command.members != null) {
       const members = await this.loadUserGroup(authUser, command.members, em);
-      entity.setAccessItems(members, "member");
+      entity.setAccessItems(members, AccessItemAccessibleTypeValue.MEMBER);
     }
 
     em.persist(entity);
@@ -262,9 +266,9 @@ export default class JournalService extends WriteService<
 
     if (query.type === "ContainingUserQuery") {
       return filterAsync(entities, async (value) => {
-        if (query.field === "admin") {
+        if (query.field === AccessItemAccessibleTypeValue.ADMIN) {
           return someContains(value.admins, query.user);
-        } else if (query.field === "member") {
+        } else if (query.field === AccessItemAccessibleTypeValue.MEMBER) {
           return someContains(value.members, query.user);
         } else {
           return (
