@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@graphql-tools/load-files": "^6.5.4",
-    "@mikro-orm/core": "^5.2.0",
-    "@mikro-orm/postgresql": "^5.2.0",
+    "@mikro-orm/core": "^5.2.1",
+    "@mikro-orm/postgresql": "^5.2.1",
     "@white-rabbit/business-logic": "workspace:^",
     "apollo-server": "^3.9.0",
     "dotenv": "^16.0.1",
@@ -23,9 +23,9 @@
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.2.0",
-    "@mikro-orm/reflection": "^5.2.0",
-    "@mikro-orm/seeder": "^5.2.0",
+    "@mikro-orm/cli": "^5.2.1",
+    "@mikro-orm/reflection": "^5.2.1",
+    "@mikro-orm/seeder": "^5.2.1",
     "cpy-cli": "^4.1.0",
     "cross-env": "^7.0.3",
     "rimraf": "^3.0.2",

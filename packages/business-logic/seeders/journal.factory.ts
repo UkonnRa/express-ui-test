@@ -5,7 +5,7 @@ import { JournalEntity } from "../src";
 export default class JournalFactory extends Factory<JournalEntity> {
   protected definition(faker: Faker): EntityData<JournalEntity> {
     return {
-      name: faker.unique(faker.commerce.productName),
+      name: faker.unique(faker.commerce.department),
       description: faker.lorem.sentence(),
       tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
       unit: faker.finance.currencyCode(),

@@ -7,16 +7,21 @@ import {
   AccessItemValue,
   JournalEntity,
 } from "./journal";
+import { AccountEntity } from "./account";
 
 export const config: Options = {
   discovery: { disableDynamicFileAccess: true },
   entities: [
     UserEntity,
-    GroupEntity,
     AuthIdValue,
+
+    GroupEntity,
+
     JournalEntity,
     AccessItemValue,
     AccessItemUserValue,
     AccessItemGroupValue,
+
+    AccountEntity,
   ],
 };

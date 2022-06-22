@@ -193,14 +193,17 @@ export default class JournalService extends WriteService<
       return false;
     }
 
-    let result = false;
-    for (const item of entity.accessItems.getItems()) {
-      if (authUser.user != null && (await item.contains(authUser.user.id))) {
-        result = result || true;
-      }
+    if (!entity.accessItems.isInitialized()) {
+      await entity.accessItems.init();
     }
 
-    return result;
+    const accessItemsContains = await Promise.all(
+      entity.accessItems
+        .getItems()
+        .map(async (item) => item.contains(authUser.user?.id ?? ""))
+    );
+
+    return !accessItemsContains.every((contains) => !contains);
   }
 
   async checkWriteable(
