@@ -205,19 +205,16 @@ package records {
   
   Record *-- RecordItem
   RecordItem *-- Account
-  RecordItem *-- Price
+  note left of RecordItem::price
+    * if null, the account.unit must be the same as journal.unit
+    * otherwise, the price is a must, the unit is journal.unit
+  end note
   class RecordItem {
     + account: Account
     + amount: number
-    + price: Price
+    + price: number | null
   }
-  
-  Price *-- Unit
-  class Price {
-    + price: number
-    + unit: Unit
-  }
-  
+
   interface RecordCommand {
     + type: "Create" | "Update" | "Delete"
   }

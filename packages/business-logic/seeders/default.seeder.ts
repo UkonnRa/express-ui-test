@@ -1,16 +1,23 @@
 import { Seeder } from "@mikro-orm/seeder";
 import { EntityManager } from "@mikro-orm/core";
 import { faker } from "@faker-js/faker";
-import { AccessItemAccessibleTypeValue, RoleValue } from "../src";
+import {
+  AccessItemAccessibleTypeValue,
+  RecordItemValue,
+  RecordTypeValue,
+  RoleValue,
+} from "../src";
 import UserFactory from "./user.factory";
 import GroupFactory from "./group.factory";
 import JournalFactory from "./journal.factory";
 import AccountFactory from "./account.factory";
+import RecordFactory from "./record.factory";
 
 export default class DefaultSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const userFactory = new UserFactory(em);
     const accountFactory = new AccountFactory(em);
+    const recordFactory = new RecordFactory(em);
 
     const users = await Promise.all([
       userFactory.create(5, {
@@ -51,5 +58,48 @@ export default class DefaultSeeder extends Seeder {
       });
     });
     em.persist(accounts);
+
+    const records = journals.flatMap((journal) =>
+      recordFactory.make(8, {
+        journal,
+      })
+    );
+
+    const price = (): number => Number((Math.random() * 200 - 100).toFixed(2));
+
+    for (const record of records) {
+      const availableAccounts = accounts.filter(
+        (account) => account.journal.id === record.journal.id
+      );
+      // Valid checkers
+      const acs = faker.helpers.arrayElements(availableAccounts, 3);
+      if (Math.random() < 0.025) {
+        const amount = records
+          .filter(
+            ({ timestamp }) => timestamp.valueOf() < record.timestamp.valueOf()
+          )
+          .flatMap((record) => record.items.getItems())
+          .filter((item) => item.account.id === acs[0].id)
+          .reduce((prev, curr) => prev + curr.amount, 0);
+        record.type = RecordTypeValue.CHECK;
+        record.items.set([new RecordItemValue(record, acs[0], amount)]);
+      } else if (Math.random() < 0.05) {
+        record.type = RecordTypeValue.CHECK;
+        record.items.set([new RecordItemValue(record, acs[0], price())]);
+      } else {
+        record.items.set(
+          acs.map(
+            (account) =>
+              new RecordItemValue(
+                record,
+                account,
+                price(),
+                account.unit === account.journal.unit ? undefined : price()
+              )
+          )
+        );
+      }
+    }
+    em.persist(records);
   }
 }

@@ -8,6 +8,7 @@ import {
   JournalEntity,
 } from "./journal";
 import { AccountEntity } from "./account";
+import { RecordEntity, RecordItemValue } from "./record";
 
 export const config: Options = {
   discovery: { disableDynamicFileAccess: true },
@@ -23,5 +24,8 @@ export const config: Options = {
     AccessItemGroupValue,
 
     AccountEntity,
+
+    RecordEntity,
+    RecordItemValue,
   ],
 };
