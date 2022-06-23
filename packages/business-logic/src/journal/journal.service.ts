@@ -243,15 +243,11 @@ export default class JournalService extends WriteService<
     }
   }
 
-  async handleAdditionalQueries(
+  async handleAdditionalQuery(
+    authUser: AuthUser,
     entities: JournalEntity[],
-    additionalQueries: AdditionalQuery[]
+    query: AdditionalQuery
   ): Promise<JournalEntity[]> {
-    if (entities.length === 0 || additionalQueries.length === 0) {
-      return entities;
-    }
-
-    const query = additionalQueries[0];
     const someContains = async (
       accessItems: AccessItemValue[],
       userId: string
@@ -263,7 +259,6 @@ export default class JournalService extends WriteService<
       }
       return false;
     };
-
     if (query.type === "ContainingUserQuery") {
       return filterAsync(entities, async (value) => {
         if (query.field === AccessItemAccessibleTypeValue.ADMIN) {
@@ -278,7 +273,7 @@ export default class JournalService extends WriteService<
         }
       });
     } else {
-      return entities;
+      return super.handleAdditionalQuery(authUser, entities, query);
     }
   }
 }

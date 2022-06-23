@@ -7,7 +7,7 @@ import {
   QueryOrderMap,
 } from "@mikro-orm/core";
 import { decodeCursor, encodeCursor, filterAsync } from "../utils";
-import { NoPermissionError } from "../error";
+import { NoPermissionError, InvalidQueryError } from "../error";
 import Cursor from "./cursor";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
@@ -20,6 +20,7 @@ import FindOneInput from "./find-one.input";
 import Pagination from "./pagination";
 import { AdditionalQuery, Query } from "./query";
 import RoleValue from "./role.value";
+import FindAllInput from "./find-all.input";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 
@@ -113,6 +114,9 @@ async function createCursorRelatedQueryAndSort<E extends AbstractEntity<E>>(
   ];
 }
 
+const DEFAULT_SIZE = 100;
+const KEY_ADDITIONAL_QUERY = "$additional";
+
 export default abstract class ReadService<E extends AbstractEntity<E>> {
   protected constructor(
     readonly orm: MikroORM,
@@ -127,18 +131,39 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
    * * whether the authUser has scope
    * * whether the entity is already deleted
    *
-   * @param entity
    * @param user
    */
   async isReadable(_: E, { user }: AuthUser): Promise<boolean> {
     return (user?.role ?? RoleValue.USER) !== RoleValue.USER;
   }
 
-  async handleAdditionalQueries(
+  async handleAdditionalQuery(
+    authUser: AuthUser,
     entities: E[],
-    _additionalQueries: AdditionalQuery[]
+    query: AdditionalQuery
   ): Promise<E[]> {
-    return entities;
+    if (query.type === "IsReadableQuery") {
+      return filterAsync(entities, async (entity) =>
+        this.isReadable(entity, authUser)
+      );
+    } else {
+      throw new InvalidQueryError(query.type, this.type);
+    }
+  }
+
+  private async handleAdditionalQueries(
+    authUser: AuthUser,
+    entities: E[],
+    queries: AdditionalQuery[]
+  ): Promise<E[]> {
+    let result = entities;
+    for (const query of queries) {
+      result = await this.handleAdditionalQuery(authUser, result, query);
+      if (result.length === 0) {
+        break;
+      }
+    }
+    return result;
   }
 
   private checkPermission(authUser: AuthUser, query?: Query<E>): void {
@@ -173,35 +198,34 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     return [cursorObj, entity.toObject()];
   }
 
-  private async doFindPage(
+  private async doFindAll(
+    authUser: AuthUser,
     filterQuery: ObjectQuery<E>,
-    sort: QueryOrderMap<E>,
-    pagination: Pagination,
+    sort: QueryOrderMap<E> | undefined,
+    pagination: Pagination | undefined,
     additionalQueries: AdditionalQuery[],
-    externalQueries: Array<(entity: E) => Promise<boolean>>,
     em: EntityManager
   ): Promise<E[]> {
     let cnt = 0;
     const result: E[] = [];
-    const limit = pagination.size + 1;
+    const limit = (pagination?.size ?? DEFAULT_SIZE) + 1;
 
     while (true) {
-      let entities = await em.find(this.entityName, filterQuery, {
+      const entities = await em.find(this.entityName, filterQuery, {
         orderBy: sort,
-        offset: (pagination.offset ?? 0) + cnt * limit,
+        offset: (pagination?.offset ?? 0) + cnt * limit,
         limit,
       });
       cnt += 1;
       if (entities.length === 0) {
         break;
       }
-      entities = await filterAsync(entities, async (e) =>
-        Promise.all(externalQueries.map(async (q) => q(e))).then((bs) =>
-          bs.every((b) => b)
-        )
-      );
       result.push(
-        ...(await this.handleAdditionalQueries(entities, additionalQueries))
+        ...(await this.handleAdditionalQueries(
+          authUser,
+          entities,
+          additionalQueries
+        ))
       );
       if (result.length >= limit) {
         break;
@@ -210,49 +234,64 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     return result;
   }
 
-  readonly findPage = async (
-    input: FindPageInput<E>,
-    em?: EntityManager
-  ): Promise<Page<E>> => {
-    this.checkPermission(input.authUser, input.query);
-
-    const emInst = em ?? this.orm.em.fork();
-    const after = await this.getCursorAndEntity(input.pagination.after, emInst);
-    const before = await this.getCursorAndEntity(
-      input.pagination.before,
-      emInst
-    );
-
-    const additionalQueries = [];
-    if (input.query?.$additional != null) {
-      additionalQueries.push(...input.query.$additional);
+  private getQueries(query?: Query<E>): [AdditionalQuery[], ObjectQuery<E>] {
+    const additionalQueries: AdditionalQuery[] = [{ type: "IsReadableQuery" }];
+    if (query?.$additional != null) {
+      additionalQueries.push(...query.$additional);
     }
     const mikroQuery = Object.fromEntries(
-      Object.entries(input.query ?? {}).filter(([k]) => k !== "$additional")
+      Object.entries(query ?? {}).filter(([k]) => k !== KEY_ADDITIONAL_QUERY)
     ) as ObjectQuery<E>;
 
-    const [filterQuery, sort, reversed] = await createCursorRelatedQueryAndSort(
+    return [additionalQueries, mikroQuery];
+  }
+
+  readonly findAll = async (
+    { authUser, query }: FindAllInput<E>,
+    em?: EntityManager
+  ): Promise<E[]> => {
+    this.checkPermission(authUser, query);
+
+    const emInst = em ?? this.orm.em.fork();
+
+    const [additionalQueries, mikroQuery] = this.getQueries(query);
+
+    return this.doFindAll(
+      authUser,
       mikroQuery,
-      input.sort,
-      after,
-      before
-    );
-
-    const externalQueries = [
-      async (e: E) => this.isReadable(e, input.authUser),
-    ];
-
-    const entities = await this.doFindPage(
-      filterQuery,
-      sort,
-      input.pagination,
+      undefined,
+      undefined,
       additionalQueries,
-      externalQueries,
+      emInst
+    );
+  };
+
+  readonly findPage = async (
+    { authUser, pagination, sort, query }: FindPageInput<E>,
+    em?: EntityManager
+  ): Promise<Page<E>> => {
+    this.checkPermission(authUser, query);
+
+    const emInst = em ?? this.orm.em.fork();
+    const after = await this.getCursorAndEntity(pagination.after, emInst);
+    const before = await this.getCursorAndEntity(pagination.before, emInst);
+
+    const [additionalQueries, mikroQuery] = this.getQueries(query);
+
+    const [filterQuery, finalSort, reversed] =
+      await createCursorRelatedQueryAndSort(mikroQuery, sort, after, before);
+
+    const entities = await this.doFindAll(
+      authUser,
+      filterQuery,
+      finalSort,
+      pagination,
+      additionalQueries,
       emInst
     );
     let hasPreviousPage = false;
     let hasNextPage = false;
-    const exceeded = entities.length > input.pagination.size;
+    const exceeded = entities.length > pagination.size;
 
     if (reversed) {
       if (exceeded) {
@@ -271,7 +310,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
     }
 
     let pageItems = entities
-      .slice(0, exceeded ? input.pagination.size : entities.length)
+      .slice(0, exceeded ? pagination.size : entities.length)
       .map<PageItem<E>>((data) => ({
         cursor: encodeCursor({ id: data.id }),
         data,
@@ -299,22 +338,20 @@ export default abstract class ReadService<E extends AbstractEntity<E>> {
 
     const emInst = em ?? this.orm.em.fork();
 
-    const additionalQueries = [];
+    const additionalQueries: AdditionalQuery[] = [{ type: "IsReadableQuery" }];
     if (query?.$additional != null) {
       additionalQueries.push(...query.$additional);
     }
     const mikroQuery = Object.fromEntries(
-      Object.entries(query ?? {}).filter(([k]) => k !== "$additional")
+      Object.entries(query ?? {}).filter(([k]) => k !== KEY_ADDITIONAL_QUERY)
     ) as ObjectQuery<E>;
 
-    const externalQueries = [async (e: E) => this.isReadable(e, authUser)];
-
-    const entities = await this.doFindPage(
+    const entities = await this.doFindAll(
+      authUser,
       mikroQuery,
       [{ id: Order.ASC }],
-      { size: 1 },
+      undefined,
       additionalQueries,
-      externalQueries,
       emInst
     );
     if (entities[0] != null) {

@@ -1,4 +1,5 @@
 enum RecordTypeValue {
+  RECORD = "RECORD",
   CHECK = "CHECK",
 }
 

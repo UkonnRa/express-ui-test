@@ -34,8 +34,8 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
   @Property({ type: "string" })
   description: string;
 
-  @Enum({ type: "string", items: () => RecordTypeValue, nullable: true })
-  type?: RecordTypeValue;
+  @Enum({ type: "string", items: () => RecordTypeValue })
+  type: RecordTypeValue;
 
   @Property({ type: Date })
   timestamp: Date;

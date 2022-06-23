@@ -159,10 +159,9 @@ export default class AccountService extends WriteService<
     entity: AccountEntity,
     authUser: AuthUser
   ): Promise<boolean> {
-    if (!(await super.isReadable(entity, authUser))) {
-      return false;
-    }
-
-    return this.journalService.isReadable(entity.journal, authUser);
+    return (
+      (await super.isReadable(entity, authUser)) &&
+      this.journalService.isReadable(entity.journal, authUser)
+    );
   }
 }

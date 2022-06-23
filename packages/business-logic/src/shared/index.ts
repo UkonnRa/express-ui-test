@@ -9,6 +9,7 @@ export { default as CommandsInput } from "./commands.input";
 export { default as ReadService } from "./read-service";
 export { default as FindPageInput } from "./find-page.input";
 export { default as FindOneInput } from "./find-one.input";
+export { default as FindAllInput } from "./find-all.input";
 export * from "./query";
 
 export { default as Cursor } from "./cursor";

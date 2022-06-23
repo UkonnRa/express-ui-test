@@ -6098,7 +6098,7 @@ __metadata:
   resolution: "@white-rabbit/app-backend-desktop@workspace:packages/app-desktop"
   dependencies:
     "@mikro-orm/better-sqlite": ^5.2.1
-    electron: 19.0.5
+    electron: 19.0.6
     electron-builder: ^23.2.0
     tree-kill: ^1.2.2
   languageName: unknown
@@ -6238,7 +6238,7 @@ __metadata:
     "@vueuse/core": ^8.7.5
     markdown-it-mathjax3: ^4.3.1
     markdown-it-plantuml: ^1.4.1
-    vitepress: 1.0.0-alpha.2
+    vitepress: 1.0.0-alpha.4
   languageName: unknown
   linkType: soft
 
@@ -10516,16 +10516,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:19.0.5":
-  version: 19.0.5
-  resolution: "electron@npm:19.0.5"
+"electron@npm:19.0.6":
+  version: 19.0.6
+  resolution: "electron@npm:19.0.6"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: d5097c52f75c56fb44bb9317f28339a9cce4a07b29b0ed54f351a35b737ecacc20f6a8a58c5bcbbf518c324b2b8e616e1c6a51ed34d66d29447ba5aab6aa8088
+  checksum: 19aac7f2051a41877ba16aa5bd7e53cb1cfcb60e724b8edc33823a8efb9c4e312eb26f8c5efef7eafb1079bdc7b433938cbdbdfe82eed567535fb6f1ebdc3da7
   languageName: node
   linkType: hard
 
@@ -20059,16 +20059,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass@npm:^1.52.3":
-  version: 1.52.3
-  resolution: "sass@npm:1.52.3"
+"sass@npm:^1.53.0":
+  version: 1.53.0
+  resolution: "sass@npm:1.53.0"
   dependencies:
     chokidar: ">=3.0.0 <4.0.0"
     immutable: ^4.0.0
     source-map-js: ">=0.6.2 <2.0.0"
   bin:
     sass: sass.js
-  checksum: 175a073c0e7b67d1baff6d3969431228002ece681886cebc2a354c241134ff120fda5c12a0465989966dacfb1ca518d85507304f4d4cd03d4a91d71dbc77d978
+  checksum: 4bcb0617d6a4d1f2c089a1cb5c32f65a9ee874b23559f2742fab07cf8478fb74ad20c0730cf9f93915d7dbfc258901f89970674228c3ac91c3883a0a62a0ddab
   languageName: node
   linkType: hard
 
@@ -22939,9 +22939,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:1.0.0-alpha.2":
-  version: 1.0.0-alpha.2
-  resolution: "vitepress@npm:1.0.0-alpha.2"
+"vitepress@npm:1.0.0-alpha.4":
+  version: 1.0.0-alpha.4
+  resolution: "vitepress@npm:1.0.0-alpha.4"
   dependencies:
     "@docsearch/css": ^3.0.0
     "@docsearch/js": ^3.0.0
@@ -22954,7 +22954,7 @@ __metadata:
     vue: ^3.2.33
   bin:
     vitepress: bin/vitepress.js
-  checksum: f1d0bf7af7cef60c5ee226b960de5c893c275aafaa98fc92f1b3f1dc97a4714709a02532f7e75b70cc3b05913349ac1848fa542c55b18eb6afa914d3707a3b11
+  checksum: f77f1e184c3b6642dbb01717931601412fad2e369a9082b5c68df6d318ad04ead19f09092f2be277dcdcbb837c0d1605f6e9a66f820021b83fc124335f60d534
   languageName: node
   linkType: hard
 
@@ -23069,7 +23069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-eslint-parser@npm:^9.0.0, vue-eslint-parser@npm:^9.0.1, vue-eslint-parser@npm:^9.0.2":
+"vue-eslint-parser@npm:^9.0.0, vue-eslint-parser@npm:^9.0.1":
   version: 9.0.2
   resolution: "vue-eslint-parser@npm:9.0.2"
   dependencies:
@@ -23083,6 +23083,23 @@ __metadata:
   peerDependencies:
     eslint: ">=6.0.0"
   checksum: 0160bb4dc742f3fea410223074d813969eae87825afe536a4b7de7a9d3ca35169cdee2d821494805e1c5dd337aae3178e1485d945a26432a69a281180887fb4d
+  languageName: node
+  linkType: hard
+
+"vue-eslint-parser@npm:^9.0.3":
+  version: 9.0.3
+  resolution: "vue-eslint-parser@npm:9.0.3"
+  dependencies:
+    debug: ^4.3.4
+    eslint-scope: ^7.1.1
+    eslint-visitor-keys: ^3.3.0
+    espree: ^9.3.1
+    esquery: ^1.4.0
+    lodash: ^4.17.21
+    semver: ^7.3.6
+  peerDependencies:
+    eslint: ">=6.0.0"
+  checksum: 61248eb504b8d0cbc95ed3f7ec6b11b72782cd76e4049798626f9c09031d620691a967231985c79d8ece8b04864797e465b7f47bcf91828e18344ae3691d9066
   languageName: node
   linkType: hard
 
@@ -23578,7 +23595,7 @@ __metadata:
     prettier: ^2.7.1
     rimraf: ^3.0.2
     rollup-plugin-visualizer: ^5.6.0
-    sass: ^1.52.3
+    sass: ^1.53.0
     sass-loader: ^13.0.0
     serve: ^13.0.2
     stylelint: ^14.9.1
@@ -23591,7 +23608,7 @@ __metadata:
     vite: ^2.9.12
     vite-plugin-vuetify: ^1.0.0-alpha.12
     vitest: ^0.15.2
-    vue-eslint-parser: ^9.0.2
+    vue-eslint-parser: ^9.0.3
     vue-tsc: ^0.38.1
   languageName: unknown
   linkType: soft
