@@ -20,6 +20,13 @@ export default class DefaultSeeder extends Seeder {
     const recordFactory = new RecordFactory(em);
 
     const users = await Promise.all([
+      userFactory.makeOne({
+        name: "Wonderland Admin",
+        role: RoleValue.ADMIN,
+        authIds: {
+          authing: "62b5cd86f9ea58a8efb2b625",
+        },
+      }),
       userFactory.create(5, {
         role: RoleValue.OWNER,
       }),

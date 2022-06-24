@@ -2,10 +2,8 @@ import { inject, singleton } from "tsyringe";
 import { ServerCredentials, Server as GrpcServer } from "@grpc/grpc-js";
 import { adaptService } from "@protobuf-ts/grpc-backend";
 import { GroupService, UserService } from "./service";
-import {
-  UserService as UserServiceDef,
-  GroupService as GroupServiceDef,
-} from "./proto/app";
+import { UserService as UserServiceDef } from "./proto/user";
+import { GroupService as GroupServiceDef } from "./proto/group";
 
 @singleton()
 export default class Server {

@@ -181,7 +181,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ input, item }) => {
       expect(item?.name).toBe(input.command.name);
       expect(item?.role).toBe(RoleValue.USER);
-      expect(item?.authIds?.length).toBe(0);
+      expect(Object.keys(item?.authIds ?? {}).length).toBe(0);
     },
   },
   {
@@ -199,7 +199,9 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     checker: async ({ input, item }) => {
       expect(item?.role).toBe(RoleValue.USER);
       expect(item?.name).toBe(input.command.name);
-      expect(item?.authIds).toEqual([input.authUser.authId]);
+      expect(item?.authIds).toEqual({
+        [input.authUser.authId.provider]: input.authUser.authId.value,
+      });
     },
   },
   {
@@ -533,7 +535,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
           targetId: "lid-1",
           name: faker.name.findName(),
           role: RoleValue.USER,
-          authIds: [{ provider: faker.company.companyName(), value: v4() }],
+          authIds: { [faker.company.companyName()]: v4() },
         },
         {
           type: "UpdateUserCommand",
@@ -586,7 +588,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
           type: "CreateUserCommand",
           name: faker.name.findName(),
           role: RoleValue.USER,
-          authIds: [{ provider: faker.company.companyName(), value: v4() }],
+          authIds: { [faker.company.companyName()]: v4() },
         },
         {
           type: "UpdateUserCommand",

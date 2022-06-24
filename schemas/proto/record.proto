@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package whiterabbit.record;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "shared.proto";
+
+message Record {
+  string id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+
+  string journal = 4;
+  string name = 5;
+  string description = 6;
+
+  Type type = 7;
+  google.protobuf.Timestamp timestamp = 8;
+  repeated string tags = 9;
+  repeated Item items = 10;
+}
+
+enum Type {
+  RECORD = 0;
+  CHECK = 1;
+}
+
+message Item {
+  string account = 1;
+  double amount = 2;
+  optional double price = 3;
+}
+
+message RecordPage {
+  whiterabbit.shared.PageInfo pageInfo = 1;
+  repeated RecordItem items = 2;
+}
+
+message RecordItem {
+  string cursor = 1;
+  Record data = 2;
+}
+
+message RecordResponse {
+  Record record = 1;
+}
+
+message CreateCommand {
+  optional string id = 1;
+
+  string journal = 2;
+  string name = 3;
+  string description = 4;
+  Type type = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  repeated string tags = 7;
+  repeated Item items = 8;
+}
+
+message UpdateCommand {
+  string id = 1;
+
+  optional string journal = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional Type type = 5;
+  optional google.protobuf.Timestamp timestamp = 6;
+  whiterabbit.shared.NullableStringArray tags = 7;
+  NullableItemArray items = 8;
+}
+
+message NullableItemArray {
+  repeated Item items = 1;
+}
+
+message DeleteCommand {
+  string id = 1;
+}
+
+message Command {
+  oneof command {
+    CreateCommand create = 1;
+    UpdateCommand update = 2;
+    DeleteCommand delete = 3;
+  }
+}
+
+message Commands {
+  repeated Command commands = 1;
+}
+
+service RecordService {
+  rpc findOne(google.protobuf.StringValue) returns (RecordResponse);
+  rpc findPage(whiterabbit.shared.FindPageRequest) returns (RecordPage);
+
+  rpc handle(Command) returns (RecordResponse);
+  rpc handleAll(Commands) returns (stream RecordResponse);
+}

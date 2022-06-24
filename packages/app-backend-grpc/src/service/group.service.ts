@@ -1,138 +1,83 @@
 import { inject, singleton } from "tsyringe";
 import {
-  Order as CoreOrder,
-  Query,
-  RoleValue,
-  UserEntity,
   UserService as CoreUserService,
   GroupService as CoreGroupService,
   GroupEntity,
+  GroupCommand,
+  Page,
 } from "@white-rabbit/business-logic";
-import { MikroORM } from "@mikro-orm/core";
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { IGroupService } from "../proto/app.server";
-import { StringValue } from "../proto/google/protobuf/wrappers";
-import {
-  FindPageRequest,
-  Group,
-  GroupPage,
-  GroupResponse,
-  Order,
-  User,
-} from "../proto/app";
+import { BaseClient } from "openid-client";
+import { IGroupService } from "../proto/group.server";
+import { Command, Group, GroupPage, GroupResponse } from "../proto/group";
+import AbstractService from "./abstract-service";
 
 @singleton()
-export default class GroupService implements IGroupService {
+export default class GroupService
+  extends AbstractService<
+    GroupEntity,
+    GroupCommand,
+    CoreGroupService,
+    Command,
+    GroupResponse,
+    GroupPage
+  >
+  implements IGroupService
+{
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
-    @inject(MikroORM) private readonly orm: MikroORM,
-    @inject(CoreUserService) private readonly userService: CoreUserService,
-    @inject(CoreGroupService) private readonly groupService: CoreGroupService
-  ) {}
-
-  async admins(
-    request: StringValue,
-    responses: RpcInputStream<User>
-  ): Promise<void> {
-    const user = (await this.orm.em
-      .fork()
-      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
-    const authUser = {
-      authId: user.authIds[0],
-      user: user,
-      scopes: [this.userService.readScope, this.groupService.readScope],
-    };
-
-    const entity = await this.groupService.findOne({
-      query: { id: request.value },
-      authUser,
-    });
-
-    if (entity == null) {
-      await responses.complete();
-      return;
-    }
-
-    for (const item of await entity.admins.loadItems()) {
-      await responses.send(User.fromJsonString(JSON.stringify(item)));
-    }
-    await responses.complete();
+    @inject(MikroORM) orm: MikroORM,
+    @inject(BaseClient) oidcClient: BaseClient,
+    @inject(CoreUserService)
+    userService: CoreUserService,
+    @inject(CoreGroupService) groupService: CoreGroupService
+  ) {
+    super(orm, oidcClient, userService, groupService);
   }
 
-  async findOne(request: StringValue): Promise<GroupResponse> {
-    const query: Query<GroupEntity> = JSON.parse(request.value);
-    const user = (await this.orm.em
-      .fork()
-      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
-    const authUser = {
-      authId: user.authIds[0],
-      user: user,
-      scopes: [this.userService.readScope, this.groupService.readScope],
-    };
-
-    const entity = await this.groupService.findOne({
-      query,
-      authUser,
-    });
-
-    return {
-      group:
-        entity != null
-          ? Group.fromJsonString(JSON.stringify(entity))
-          : undefined,
-    };
+  override getCommand({ command }: Command): GroupCommand {
+    switch (command.oneofKind) {
+      case "create":
+        return {
+          type: "CreateGroupCommand",
+          targetId: command.create.id,
+          name: command.create.name,
+          description: command.create.description,
+          admins: command.create.admins,
+          members: command.create.members,
+        };
+      case "update":
+        return {
+          type: "UpdateGroupCommand",
+          targetId: command.update.id,
+          name: command.update.description,
+          description: command.update.description,
+          admins: command.update.admins?.items,
+          members: command.update.members?.items,
+        };
+      case "delete":
+        return {
+          type: "DeleteGroupCommand",
+          targetId: command.delete.id,
+        };
+      default:
+        throw new Error(`No such command`);
+    }
   }
 
-  async findPage(request: FindPageRequest): Promise<GroupPage> {
-    const query: Query<GroupEntity> =
-      request.query != null ? JSON.parse(request.query) : {};
-    const user = (await this.orm.em
-      .fork()
-      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
-    const authUser = {
-      authId: user.authIds[0],
-      user: user,
-      scopes: [this.userService.readScope, this.groupService.readScope],
-    };
-    const page = await this.groupService.findPage({
-      query,
-      authUser,
-      pagination: request.pagination ?? { size: 5 },
-      sort: request.sort.map(({ field, order }) => ({
-        field,
-        order: order === Order.ASC ? CoreOrder.ASC : CoreOrder.DESC,
-      })),
-    });
-
+  getPageResponse(page: Page<GroupEntity>): GroupPage {
     return GroupPage.fromJsonString(JSON.stringify(page));
   }
 
-  async members(
-    request: StringValue,
-    responses: RpcInputStream<User>
-  ): Promise<void> {
-    const user = (await this.orm.em
-      .fork()
-      .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
-    const authUser = {
-      authId: user.authIds[0],
-      user: user,
-      scopes: [this.userService.readScope, this.groupService.readScope],
+  getResponse(
+    entity: EntityDTO<GroupEntity> | GroupEntity | null
+  ): GroupResponse {
+    return {
+      group:
+        entity == null
+          ? undefined
+          : Group.fromJsonString(JSON.stringify(entity)),
     };
-
-    const entity = await this.groupService.findOne({
-      query: { id: request.value },
-      authUser,
-    });
-
-    if (entity == null) {
-      await responses.complete();
-      return;
-    }
-
-    for (const item of await entity.members.loadItems()) {
-      await responses.send(User.fromJsonString(JSON.stringify(item)));
-    }
-    await responses.complete();
   }
 }

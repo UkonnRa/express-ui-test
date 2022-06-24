@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package whiterabbit.journal;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "shared.proto";
+
+message Journal {
+  string id = 1;
+  google.protobuf.Timestamp createdAt = 2;
+  google.protobuf.Timestamp updatedAt = 3;
+
+  string name = 4;
+  string description = 5;
+  repeated string tags = 6;
+  string unit = 7;
+  bool archived = 8;
+  repeated AccessItem admins = 9;
+  repeated AccessItem members = 10;
+}
+
+message AccessItem {
+  AccessItemType type = 1;
+  string id = 2;
+}
+
+enum AccessItemType {
+  USER = 0;
+  GROUP = 1;
+}
+
+message JournalPage {
+  whiterabbit.shared.PageInfo pageInfo = 1;
+  repeated JournalItem items = 2;
+}
+
+message JournalItem {
+  string cursor = 1;
+  Journal data = 2;
+}
+
+message JournalResponse {
+  Journal journal = 1;
+}
+
+message CreateCommand {
+  optional string id = 1;
+  string name = 2;
+  string description = 3;
+  repeated string tags = 4;
+  string unit = 5;
+  bool archived = 6;
+  repeated AccessItem admins = 7;
+  repeated AccessItem members = 8;
+}
+
+message UpdateCommand {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  whiterabbit.shared.NullableStringArray tags = 4;
+  optional string unit = 5;
+  optional bool archived = 6;
+  NullableAccessItemArray admins = 7;
+  NullableAccessItemArray members = 8;
+}
+
+message NullableAccessItemArray {
+  repeated AccessItem values = 1;
+}
+
+message DeleteCommand {
+  string id = 1;
+}
+
+message Command {
+  oneof command {
+    CreateCommand create = 1;
+    UpdateCommand update = 2;
+    DeleteCommand delete = 3;
+  }
+}
+
+message Commands {
+  repeated Command commands = 1;
+}
+
+service JournalService {
+  rpc findOne(google.protobuf.StringValue) returns (JournalResponse);
+  rpc findPage(whiterabbit.shared.FindPageRequest) returns (JournalPage);
+
+  rpc handle(Command) returns (JournalResponse);
+  rpc handleAll(Commands) returns (stream JournalResponse);
+}

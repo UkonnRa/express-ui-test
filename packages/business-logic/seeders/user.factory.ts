@@ -19,9 +19,11 @@ export default class UserFactory extends Factory<UserEntity> {
     return {
       name: faker.unique(faker.name.findName),
       role: UserFactory.randomRole(),
-      authIds: faker.helpers
-        .uniqueArray(faker.company.bs, 2)
-        .map((provider) => ({ provider, value: v4() })),
+      authIds: Object.fromEntries(
+        faker.helpers
+          .uniqueArray(faker.company.bs, 2)
+          .map((provider) => [provider, v4()])
+      ),
     };
   }
 

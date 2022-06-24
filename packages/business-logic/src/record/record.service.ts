@@ -13,10 +13,8 @@ import CreateRecordItemValue from "./create-record-item.value";
 import UpdateRecordCommand from "./update-record.command";
 import DeleteRecordCommand from "./delete-record.command";
 
-export const RECORD_READ_SCOPE =
-  "urn:alices-wonderland:white-rabbit:records:read";
-export const RECORD_WRITE_SCOPE =
-  "urn:alices-wonderland:white-rabbit:records:write";
+export const RECORD_READ_SCOPE = "white-rabbit_records_read";
+export const RECORD_WRITE_SCOPE = "white-rabbit_records_write";
 
 export default class RecordService extends WriteService<
   RecordEntity,

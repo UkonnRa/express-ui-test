@@ -22,10 +22,8 @@ import AccessItemValue from "./access-item.value";
 import AccessItemTypeValue from "./access-item-type.value";
 import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
-export const JOURNAL_READ_SCOPE =
-  "urn:alices-wonderland:white-rabbit:journals:read";
-export const JOURNAL_WRITE_SCOPE =
-  "urn:alices-wonderland:white-rabbit:journals:write";
+export const JOURNAL_READ_SCOPE = "white-rabbit_journals_read";
+export const JOURNAL_WRITE_SCOPE = "white-rabbit_journals_write";
 
 @singleton()
 export default class JournalService extends WriteService<

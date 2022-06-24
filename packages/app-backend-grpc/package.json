@@ -21,6 +21,7 @@
     "@protobuf-ts/runtime": "^2.7.0",
     "@protobuf-ts/runtime-rpc": "^2.7.0",
     "@white-rabbit/business-logic": "workspace:^",
+    "openid-client": "^5.1.6",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0"
   },
@@ -30,6 +31,7 @@
     "@mikro-orm/seeder": "^5.2.1",
     "@protobuf-ts/plugin": "^2.7.0",
     "@protobuf-ts/protoc": "^2.7.0",
+    "@types/openid-client": "^3.7.0",
     "cross-env": "^7.0.3",
     "mkdirp": "^1.0.4",
     "rimraf": "^3.0.2",

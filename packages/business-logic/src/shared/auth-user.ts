@@ -1,7 +1,7 @@
-import { AuthIdValue, UserEntity } from "../user";
+import { UserEntity } from "../user";
 
 export default interface AuthUser {
   readonly user?: UserEntity;
-  readonly authId: AuthIdValue;
+  readonly authId: { provider: string; value: string };
   readonly scopes: string[];
 }

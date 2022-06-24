@@ -1,5 +1,5 @@
 import { Options } from "@mikro-orm/core";
-import { AuthIdValue, UserEntity } from "./user";
+import { UserEntity } from "./user";
 import { GroupEntity } from "./group";
 import {
   AccessItemGroupValue,
@@ -12,9 +12,9 @@ import { RecordEntity, RecordItemValue } from "./record";
 
 export const config: Options = {
   discovery: { disableDynamicFileAccess: true },
+  debug: process.env.DEBUG === "true",
   entities: [
     UserEntity,
-    AuthIdValue,
 
     GroupEntity,
 

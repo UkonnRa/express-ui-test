@@ -16,9 +16,8 @@ import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
 
-export const USER_READ_SCOPE = "urn:alices-wonderland:white-rabbit:users:read";
-export const USER_WRITE_SCOPE =
-  "urn:alices-wonderland:white-rabbit:users:write";
+export const USER_READ_SCOPE = "white-rabbit_users_read";
+export const USER_WRITE_SCOPE = "white-rabbit_users_write";
 
 @singleton()
 export default class UserService extends WriteService<UserEntity, UserCommand> {
@@ -55,7 +54,9 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
     const entity = new UserEntity(
       command.name,
       command.role ?? RoleValue.USER,
-      authUser.user == null ? [authUser.authId] : command.authIds ?? []
+      authUser.user == null
+        ? { [authUser.authId.provider]: authUser.authId.value }
+        : command.authIds ?? {}
     );
 
     em.persist(entity);

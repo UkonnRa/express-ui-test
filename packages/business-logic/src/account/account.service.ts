@@ -9,10 +9,8 @@ import CreateAccountCommand from "./create-account.command";
 import UpdateAccountCommand from "./update-account.command";
 import DeleteAccountCommand from "./delete-account.command";
 
-export const ACCOUNT_READ_SCOPE =
-  "urn:alices-wonderland:white-rabbit:accounts:read";
-export const ACCOUNT_WRITE_SCOPE =
-  "urn:alices-wonderland:white-rabbit:accounts:write";
+export const ACCOUNT_READ_SCOPE = "white-rabbit_accounts_read";
+export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts_write";
 
 export default class AccountService extends WriteService<
   AccountEntity,

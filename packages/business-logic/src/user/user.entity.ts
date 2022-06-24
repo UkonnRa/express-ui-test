@@ -1,6 +1,5 @@
 import {
   Collection,
-  Embedded,
   Entity,
   Enum,
   ManyToMany,
@@ -9,7 +8,6 @@ import {
 } from "@mikro-orm/core";
 import { AbstractEntity, RoleValue } from "../shared";
 import { type GroupEntity } from "../group";
-import AuthIdValue from "./auth-id.value";
 
 export const USER_TYPE = "user";
 
@@ -24,8 +22,8 @@ export default class UserEntity extends AbstractEntity<UserEntity> {
   @Enum({ type: "string", items: () => RoleValue })
   role: RoleValue;
 
-  @Embedded(() => AuthIdValue, { array: true })
-  authIds: AuthIdValue[] = [];
+  @Property({ type: "json" })
+  authIds: Record<string, string>;
 
   @ManyToMany("GroupEntity", (group: GroupEntity) => group.admins)
   adminInGroups = new Collection<GroupEntity>(this);
@@ -33,7 +31,7 @@ export default class UserEntity extends AbstractEntity<UserEntity> {
   @ManyToMany("GroupEntity", (group: GroupEntity) => group.members)
   memberInGroups = new Collection<GroupEntity>(this);
 
-  constructor(name: string, role: RoleValue, authIds: AuthIdValue[]) {
+  constructor(name: string, role: RoleValue, authIds: Record<string, string>) {
     super();
     this.name = name;
     this.role = role;
