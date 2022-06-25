@@ -103,18 +103,18 @@ export interface RecordItem {
  */
 export interface RecordResponse {
   /**
-   * @generated from protobuf field: whiterabbit.record.Record record = 1;
+   * @generated from protobuf field: whiterabbit.record.Record item = 1;
    */
-  record?: Record;
+  item?: Record;
 }
 /**
  * @generated from protobuf message whiterabbit.record.CreateCommand
  */
 export interface CreateCommand {
   /**
-   * @generated from protobuf field: optional string id = 1;
+   * @generated from protobuf field: optional string targetId = 1;
    */
-  id?: string;
+  targetId?: string;
   /**
    * @generated from protobuf field: string journal = 2;
    */
@@ -149,9 +149,9 @@ export interface CreateCommand {
  */
 export interface UpdateCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
   /**
    * @generated from protobuf field: optional string journal = 2;
    */
@@ -195,9 +195,9 @@ export interface NullableItemArray {
  */
 export interface DeleteCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
 }
 /**
  * @generated from protobuf message whiterabbit.record.Command
@@ -353,7 +353,7 @@ export const RecordItem = new RecordItem$Type();
 class RecordResponse$Type extends MessageType<RecordResponse> {
   constructor() {
     super("whiterabbit.record.RecordResponse", [
-      { no: 1, name: "record", kind: "message", T: () => Record },
+      { no: 1, name: "item", kind: "message", T: () => Record },
     ]);
   }
 }
@@ -367,7 +367,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
     super("whiterabbit.record.CreateCommand", [
       {
         no: 1,
-        name: "id",
+        name: "targetId",
         kind: "scalar",
         opt: true,
         T: 9 /*ScalarType.STRING*/,
@@ -412,7 +412,7 @@ export const CreateCommand = new CreateCommand$Type();
 class UpdateCommand$Type extends MessageType<UpdateCommand> {
   constructor() {
     super("whiterabbit.record.UpdateCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
         no: 2,
         name: "journal",
@@ -473,7 +473,7 @@ export const NullableItemArray = new NullableItemArray$Type();
 class DeleteCommand$Type extends MessageType<DeleteCommand> {
   constructor() {
     super("whiterabbit.record.DeleteCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
 }
@@ -539,6 +539,13 @@ export const RecordService = new ServiceType(
   [
     { name: "findOne", options: {}, I: StringValue, O: RecordResponse },
     { name: "findPage", options: {}, I: FindPageRequest, O: RecordPage },
+    {
+      name: "findAll",
+      serverStreaming: true,
+      options: {},
+      I: StringValue,
+      O: Record,
+    },
     { name: "handle", options: {}, I: Command, O: RecordResponse },
     {
       name: "handleAll",

@@ -114,4 +114,12 @@ export default class UserGraphqlApi implements UserApi {
       })),
     };
   }
+
+  async handle(): Promise<UserModel | null> {
+    return Promise.resolve(null);
+  }
+
+  async handleAll(): Promise<Array<UserModel | null>> {
+    return Promise.resolve([]);
+  }
 }

@@ -45,11 +45,11 @@ message AccountItem {
 }
 
 message AccountResponse {
-  Account account = 1;
+  Account item = 1;
 }
 
 message CreateCommand {
-  optional string id = 1;
+  optional string targetId = 1;
   string journal = 2;
   string name = 3;
   string description = 4;
@@ -60,7 +60,7 @@ message CreateCommand {
 }
 
 message UpdateCommand {
-  string id = 1;
+  string targetId = 1;
 
   optional string journal = 2;
   optional string name = 3;
@@ -72,7 +72,7 @@ message UpdateCommand {
 }
 
 message DeleteCommand {
-  string id = 1;
+  string targetId = 1;
 }
 
 message Command {
@@ -90,6 +90,7 @@ message Commands {
 service AccountService {
   rpc findOne(google.protobuf.StringValue) returns (AccountResponse);
   rpc findPage(whiterabbit.shared.FindPageRequest) returns (AccountPage);
+  rpc findAll(google.protobuf.StringValue) returns (stream Account);
 
   rpc handle(Command) returns (AccountResponse);
   rpc handleAll(Commands) returns (stream AccountResponse);

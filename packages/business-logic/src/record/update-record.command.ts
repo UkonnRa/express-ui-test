@@ -10,6 +10,6 @@ export default interface UpdateRecordCommand extends Command {
   readonly description?: string;
   readonly recordType?: RecordTypeValue;
   readonly timestamp?: Date;
-  readonly tags?: Set<string>;
+  readonly tags?: string[];
   readonly items?: CreateRecordItemValue[];
 }

@@ -41,11 +41,11 @@ message JournalItem {
 }
 
 message JournalResponse {
-  Journal journal = 1;
+  Journal item = 1;
 }
 
 message CreateCommand {
-  optional string id = 1;
+  optional string targetId = 1;
   string name = 2;
   string description = 3;
   repeated string tags = 4;
@@ -56,7 +56,7 @@ message CreateCommand {
 }
 
 message UpdateCommand {
-  string id = 1;
+  string targetId = 1;
   optional string name = 2;
   optional string description = 3;
   whiterabbit.shared.NullableStringArray tags = 4;
@@ -71,7 +71,7 @@ message NullableAccessItemArray {
 }
 
 message DeleteCommand {
-  string id = 1;
+  string targetId = 1;
 }
 
 message Command {
@@ -89,6 +89,7 @@ message Commands {
 service JournalService {
   rpc findOne(google.protobuf.StringValue) returns (JournalResponse);
   rpc findPage(whiterabbit.shared.FindPageRequest) returns (JournalPage);
+  rpc findAll(google.protobuf.StringValue) returns (stream Journal);
 
   rpc handle(Command) returns (JournalResponse);
   rpc handleAll(Commands) returns (stream JournalResponse);

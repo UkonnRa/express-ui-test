@@ -13,6 +13,7 @@
   "dependencies": {
     "@white-rabbit/components": "workspace:^",
     "@white-rabbit/frontend-api": "workspace:^",
+    "oidc-client-ts": "^2.0.5",
     "pinia": "^2.0.14",
     "reflect-metadata": "^0.1.13",
     "uuid": "^8.3.2",

@@ -71,18 +71,18 @@ export interface UserItem {
  */
 export interface UserResponse {
   /**
-   * @generated from protobuf field: whiterabbit.user.User user = 1;
+   * @generated from protobuf field: whiterabbit.user.User item = 1;
    */
-  user?: User;
+  item?: User;
 }
 /**
  * @generated from protobuf message whiterabbit.user.CreateCommand
  */
 export interface CreateCommand {
   /**
-   * @generated from protobuf field: optional string id = 1;
+   * @generated from protobuf field: optional string targetId = 1;
    */
-  id?: string;
+  targetId?: string;
   /**
    * @generated from protobuf field: string name = 2;
    */
@@ -92,20 +92,18 @@ export interface CreateCommand {
    */
   role?: Role;
   /**
-   * @generated from protobuf field: map<string, string> authIds = 4;
+   * @generated from protobuf field: whiterabbit.user.NullableAuthIds authIds = 4;
    */
-  authIds: {
-    [key: string]: string;
-  };
+  authIds?: NullableAuthIds;
 }
 /**
  * @generated from protobuf message whiterabbit.user.UpdateCommand
  */
 export interface UpdateCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
   /**
    * @generated from protobuf field: optional string name = 2;
    */
@@ -135,9 +133,9 @@ export interface NullableAuthIds {
  */
 export interface DeleteCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
 }
 /**
  * @generated from protobuf message whiterabbit.user.Command
@@ -262,7 +260,7 @@ export const UserItem = new UserItem$Type();
 class UserResponse$Type extends MessageType<UserResponse> {
   constructor() {
     super("whiterabbit.user.UserResponse", [
-      { no: 1, name: "user", kind: "message", T: () => User },
+      { no: 1, name: "item", kind: "message", T: () => User },
     ]);
   }
 }
@@ -276,7 +274,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
     super("whiterabbit.user.CreateCommand", [
       {
         no: 1,
-        name: "id",
+        name: "targetId",
         kind: "scalar",
         opt: true,
         T: 9 /*ScalarType.STRING*/,
@@ -289,13 +287,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
         opt: true,
         T: () => ["whiterabbit.user.Role", Role],
       },
-      {
-        no: 4,
-        name: "authIds",
-        kind: "map",
-        K: 9 /*ScalarType.STRING*/,
-        V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      },
+      { no: 4, name: "authIds", kind: "message", T: () => NullableAuthIds },
     ]);
   }
 }
@@ -307,7 +299,7 @@ export const CreateCommand = new CreateCommand$Type();
 class UpdateCommand$Type extends MessageType<UpdateCommand> {
   constructor() {
     super("whiterabbit.user.UpdateCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
         no: 2,
         name: "name",
@@ -352,7 +344,7 @@ export const NullableAuthIds = new NullableAuthIds$Type();
 class DeleteCommand$Type extends MessageType<DeleteCommand> {
   constructor() {
     super("whiterabbit.user.DeleteCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
 }
@@ -416,6 +408,13 @@ export const Commands = new Commands$Type();
 export const UserService = new ServiceType("whiterabbit.user.UserService", [
   { name: "findOne", options: {}, I: StringValue, O: UserResponse },
   { name: "findPage", options: {}, I: FindPageRequest, O: UserPage },
+  {
+    name: "findAll",
+    serverStreaming: true,
+    options: {},
+    I: StringValue,
+    O: User,
+  },
   { name: "handle", options: {}, I: Command, O: UserResponse },
   {
     name: "handleAll",

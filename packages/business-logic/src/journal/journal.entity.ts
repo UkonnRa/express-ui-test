@@ -27,8 +27,16 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
   @Property({ type: "string" })
   description: string;
 
-  @Property({ type: types.array })
-  tags: Set<string> = new Set();
+  @Property({ name: "tags", type: types.array })
+  _tags: string[];
+
+  get tags(): string[] {
+    return this._tags;
+  }
+
+  set tags(value: Iterable<string>) {
+    this._tags = [...new Set(value)];
+  }
 
   @Property({ type: "string" })
   unit: string;
@@ -52,7 +60,7 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
     super();
     this.name = name;
     this.description = description;
-    this.tags = new Set(tags);
+    this.tags = tags;
     this.unit = unit;
   }
 

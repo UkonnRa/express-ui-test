@@ -85,18 +85,18 @@ export interface AccountItem {
  */
 export interface AccountResponse {
   /**
-   * @generated from protobuf field: whiterabbit.account.Account account = 1;
+   * @generated from protobuf field: whiterabbit.account.Account item = 1;
    */
-  account?: Account;
+  item?: Account;
 }
 /**
  * @generated from protobuf message whiterabbit.account.CreateCommand
  */
 export interface CreateCommand {
   /**
-   * @generated from protobuf field: optional string id = 1;
+   * @generated from protobuf field: optional string targetId = 1;
    */
-  id?: string;
+  targetId?: string;
   /**
    * @generated from protobuf field: string journal = 2;
    */
@@ -131,9 +131,9 @@ export interface CreateCommand {
  */
 export interface UpdateCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
   /**
    * @generated from protobuf field: optional string journal = 2;
    */
@@ -168,9 +168,9 @@ export interface UpdateCommand {
  */
 export interface DeleteCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
 }
 /**
  * @generated from protobuf message whiterabbit.account.Command
@@ -324,7 +324,7 @@ export const AccountItem = new AccountItem$Type();
 class AccountResponse$Type extends MessageType<AccountResponse> {
   constructor() {
     super("whiterabbit.account.AccountResponse", [
-      { no: 1, name: "account", kind: "message", T: () => Account },
+      { no: 1, name: "item", kind: "message", T: () => Account },
     ]);
   }
 }
@@ -338,7 +338,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
     super("whiterabbit.account.CreateCommand", [
       {
         no: 1,
-        name: "id",
+        name: "targetId",
         kind: "scalar",
         opt: true,
         T: 9 /*ScalarType.STRING*/,
@@ -376,7 +376,7 @@ export const CreateCommand = new CreateCommand$Type();
 class UpdateCommand$Type extends MessageType<UpdateCommand> {
   constructor() {
     super("whiterabbit.account.UpdateCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
         no: 2,
         name: "journal",
@@ -437,7 +437,7 @@ export const UpdateCommand = new UpdateCommand$Type();
 class DeleteCommand$Type extends MessageType<DeleteCommand> {
   constructor() {
     super("whiterabbit.account.DeleteCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
 }
@@ -503,6 +503,13 @@ export const AccountService = new ServiceType(
   [
     { name: "findOne", options: {}, I: StringValue, O: AccountResponse },
     { name: "findPage", options: {}, I: FindPageRequest, O: AccountPage },
+    {
+      name: "findAll",
+      serverStreaming: true,
+      options: {},
+      I: StringValue,
+      O: Account,
+    },
     { name: "handle", options: {}, I: Command, O: AccountResponse },
     {
       name: "handleAll",

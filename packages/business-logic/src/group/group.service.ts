@@ -16,8 +16,8 @@ import CreateGroupCommand from "./create-group.command";
 import UpdateGroupCommand from "./update-group.command";
 import DeleteGroupCommand from "./delete-group.command";
 
-export const GROUP_READ_SCOPE = "white-rabbit_groups_read";
-export const GROUP_WRITE_SCOPE = "white-rabbit_groups_write";
+export const GROUP_READ_SCOPE = "white-rabbit_groups:read";
+export const GROUP_WRITE_SCOPE = "white-rabbit_groups:write";
 
 @singleton()
 export default class GroupService extends WriteService<

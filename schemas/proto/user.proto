@@ -33,18 +33,18 @@ message UserItem {
 }
 
 message UserResponse {
-  User user = 1;
+  User item = 1;
 }
 
 message CreateCommand {
-  optional string id = 1;
+  optional string targetId = 1;
   string name = 2;
   optional Role role = 3;
-  map<string, string> authIds = 4;
+  NullableAuthIds authIds = 4;
 }
 
 message UpdateCommand {
-  string id = 1;
+  string targetId = 1;
   optional string name = 2;
   optional Role role = 3;
   NullableAuthIds authIds = 4;
@@ -55,7 +55,7 @@ message NullableAuthIds {
 }
 
 message DeleteCommand {
-  string id = 1;
+  string targetId = 1;
 }
 
 message Command {
@@ -73,6 +73,7 @@ message Commands {
 service UserService {
   rpc findOne(google.protobuf.StringValue) returns (UserResponse);
   rpc findPage(whiterabbit.shared.FindPageRequest) returns (UserPage);
+  rpc findAll(google.protobuf.StringValue) returns (stream User);
 
   rpc handle(Command) returns (UserResponse);
   rpc handleAll(Commands) returns (stream UserResponse);

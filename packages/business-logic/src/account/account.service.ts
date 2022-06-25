@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM } from "@mikro-orm/core";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
@@ -9,9 +9,10 @@ import CreateAccountCommand from "./create-account.command";
 import UpdateAccountCommand from "./update-account.command";
 import DeleteAccountCommand from "./delete-account.command";
 
-export const ACCOUNT_READ_SCOPE = "white-rabbit_accounts_read";
-export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts_write";
+export const ACCOUNT_READ_SCOPE = "white-rabbit_accounts:read";
+export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts:write";
 
+@singleton()
 export default class AccountService extends WriteService<
   AccountEntity,
   AccountCommand

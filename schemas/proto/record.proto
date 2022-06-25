@@ -43,11 +43,11 @@ message RecordItem {
 }
 
 message RecordResponse {
-  Record record = 1;
+  Record item = 1;
 }
 
 message CreateCommand {
-  optional string id = 1;
+  optional string targetId = 1;
 
   string journal = 2;
   string name = 3;
@@ -59,7 +59,7 @@ message CreateCommand {
 }
 
 message UpdateCommand {
-  string id = 1;
+  string targetId = 1;
 
   optional string journal = 2;
   optional string name = 3;
@@ -75,7 +75,7 @@ message NullableItemArray {
 }
 
 message DeleteCommand {
-  string id = 1;
+  string targetId = 1;
 }
 
 message Command {
@@ -93,6 +93,7 @@ message Commands {
 service RecordService {
   rpc findOne(google.protobuf.StringValue) returns (RecordResponse);
   rpc findPage(whiterabbit.shared.FindPageRequest) returns (RecordPage);
+  rpc findAll(google.protobuf.StringValue) returns (stream Record);
 
   rpc handle(Command) returns (RecordResponse);
   rpc handleAll(Commands) returns (stream RecordResponse);

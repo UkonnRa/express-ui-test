@@ -3,9 +3,10 @@
 // @generated from protobuf file "record.proto" (package "whiterabbit.record", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { Commands } from "./record";
 import { Command } from "./record";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { Record } from "./record";
 import { RecordPage } from "./record";
 import { FindPageRequest } from "./shared";
 import { RecordResponse } from "./record";
@@ -23,6 +24,14 @@ export interface IRecordService<T = ServerCallContext> {
    * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.record.RecordPage);
    */
   findPage(request: FindPageRequest, context: T): Promise<RecordPage>;
+  /**
+   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.record.Record);
+   */
+  findAll(
+    request: StringValue,
+    responses: RpcInputStream<Record>,
+    context: T
+  ): Promise<void>;
   /**
    * @generated from protobuf rpc: handle(whiterabbit.record.Command) returns (whiterabbit.record.RecordResponse);
    */

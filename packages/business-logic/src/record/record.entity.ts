@@ -40,8 +40,16 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
   @Property({ type: Date })
   timestamp: Date;
 
-  @Property({ type: types.array })
-  tags: Set<string> = new Set();
+  @Property({ name: "tags", type: types.array })
+  _tags: string[];
+
+  get tags(): string[] {
+    return this._tags;
+  }
+
+  set tags(value: Iterable<string>) {
+    this._tags = [...new Set(value)];
+  }
 
   @OneToMany(() => RecordItemValue, (item) => item.record, {
     orphanRemoval: true,
@@ -56,7 +64,7 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
     description: string,
     type: RecordTypeValue,
     timestamp: Date,
-    tags: Set<string>
+    tags: Iterable<string>
   ) {
     super();
     this.journal = journal;
@@ -64,6 +72,6 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
     this.description = description;
     this.type = type;
     this.timestamp = timestamp;
-    this.tags = tags;
+    this.tags = [...new Set(tags)];
   }
 }

@@ -3,9 +3,10 @@
 // @generated from protobuf file "user.proto" (package "whiterabbit.user", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { Commands } from "./user";
 import { Command } from "./user";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { User } from "./user";
 import { UserPage } from "./user";
 import { FindPageRequest } from "./shared";
 import { UserResponse } from "./user";
@@ -23,6 +24,14 @@ export interface IUserService<T = ServerCallContext> {
    * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.user.UserPage);
    */
   findPage(request: FindPageRequest, context: T): Promise<UserPage>;
+  /**
+   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.user.User);
+   */
+  findAll(
+    request: StringValue,
+    responses: RpcInputStream<User>,
+    context: T
+  ): Promise<void>;
   /**
    * @generated from protobuf rpc: handle(whiterabbit.user.Command) returns (whiterabbit.user.UserResponse);
    */

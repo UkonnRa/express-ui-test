@@ -47,7 +47,8 @@ export default abstract class AbstractSuite<
     let authIdValue = authId;
     if (authIdValue == null) {
       if (userValue != null) {
-        authIdValue = userValue.authIds[0];
+        const [provider, value] = Object.entries(userValue.authIds)[0];
+        authIdValue = { provider, value };
       } else {
         throw new Error(
           "Invalid test case: Field[user] and Field[authId] should not both null in AuthUserInput"

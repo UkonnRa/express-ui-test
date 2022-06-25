@@ -3,9 +3,10 @@
 // @generated from protobuf file "account.proto" (package "whiterabbit.account", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { Commands } from "./account";
 import { Command } from "./account";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { Account } from "./account";
 import { AccountPage } from "./account";
 import { FindPageRequest } from "./shared";
 import { AccountResponse } from "./account";
@@ -23,6 +24,14 @@ export interface IAccountService<T = ServerCallContext> {
    * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.account.AccountPage);
    */
   findPage(request: FindPageRequest, context: T): Promise<AccountPage>;
+  /**
+   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.account.Account);
+   */
+  findAll(
+    request: StringValue,
+    responses: RpcInputStream<Account>,
+    context: T
+  ): Promise<void>;
   /**
    * @generated from protobuf rpc: handle(whiterabbit.account.Command) returns (whiterabbit.account.AccountResponse);
    */

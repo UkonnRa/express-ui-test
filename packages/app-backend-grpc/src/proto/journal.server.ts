@@ -3,9 +3,10 @@
 // @generated from protobuf file "journal.proto" (package "whiterabbit.journal", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { Commands } from "./journal";
 import { Command } from "./journal";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { Journal } from "./journal";
 import { JournalPage } from "./journal";
 import { FindPageRequest } from "./shared";
 import { JournalResponse } from "./journal";
@@ -23,6 +24,14 @@ export interface IJournalService<T = ServerCallContext> {
    * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.journal.JournalPage);
    */
   findPage(request: FindPageRequest, context: T): Promise<JournalPage>;
+  /**
+   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.journal.Journal);
+   */
+  findAll(
+    request: StringValue,
+    responses: RpcInputStream<Journal>,
+    context: T
+  ): Promise<void>;
   /**
    * @generated from protobuf rpc: handle(whiterabbit.journal.Command) returns (whiterabbit.journal.JournalResponse);
    */

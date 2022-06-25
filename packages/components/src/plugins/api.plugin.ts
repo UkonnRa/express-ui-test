@@ -1,52 +1,42 @@
 import { App } from "vue";
-import type { UserApi } from "@white-rabbit/frontend-api";
+import type { GroupApi, UserApi } from "@white-rabbit/frontend-api";
 import { container } from "tsyringe";
-import { ApolloClient } from "apollo-client";
-import { ApolloLink } from "apollo-link";
-import { onError } from "apollo-link-error";
-import { HttpLink } from "apollo-link-http";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { UserGraphqlApi } from "@white-rabbit/frontend-api-graphql";
+import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { GrpcGroupApi, GrpcUserApi } from "@white-rabbit/frontend-api-grpc";
 
-type Api = { user: UserApi };
+type Api = { user: UserApi; group: GroupApi };
 
 const SYMBOL_API = Symbol("API");
 
 export { type Api, SYMBOL_API };
 
 export default function (app: App): void {
-  if (import.meta.env.VITE_API_TYPE === "graphql") {
-    const client = new ApolloClient({
-      link: ApolloLink.from([
-        onError(({ graphQLErrors, networkError }) => {
-          if (graphQLErrors)
-            graphQLErrors.forEach(({ message, locations, path }) =>
-              console.log(
-                `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-              )
-            );
-          if (networkError) console.log(`[Network error]: ${networkError}`);
-        }),
-        new HttpLink({
-          uri: import.meta.env.VITE_API_URL,
-          credentials: "same-origin",
-        }),
-      ]),
-      cache: new InMemoryCache(),
+  if (import.meta.env.VITE_API_TYPE === "grpc") {
+    const transport = new GrpcWebFetchTransport({
+      baseUrl: import.meta.env.VITE_API_URL,
     });
-    container.registerInstance(ApolloClient, client);
+    container.registerInstance(GrpcWebFetchTransport, transport);
     app.provide<Api>(SYMBOL_API, {
-      user: container.resolve(UserGraphqlApi),
+      user: container.resolve(GrpcUserApi),
+      group: container.resolve(GrpcGroupApi),
     });
   } else if (import.meta.env.VITE_API_TYPE === "mock") {
-    app.provide<Api>(SYMBOL_API, {
-      user: {
-        findOne: async () => null,
-        findPage: async () => ({
-          pageInfo: { hasPreviousPage: false, hasNextPage: false },
-          items: [],
-        }),
+    const mockApi = {
+      findOne: async () => null,
+      findPage: async () => ({
+        pageInfo: { hasPreviousPage: false, hasNextPage: false },
+        items: [],
+      }),
+      handle(): Promise<null> {
+        return Promise.resolve(null);
       },
+      handleAll(): Promise<Array<null>> {
+        return Promise.resolve([]);
+      },
+    };
+    app.provide<Api>(SYMBOL_API, {
+      user: mockApi,
+      group: mockApi,
     });
   } else {
     throw new Error(

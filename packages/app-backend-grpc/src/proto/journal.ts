@@ -99,18 +99,18 @@ export interface JournalItem {
  */
 export interface JournalResponse {
   /**
-   * @generated from protobuf field: whiterabbit.journal.Journal journal = 1;
+   * @generated from protobuf field: whiterabbit.journal.Journal item = 1;
    */
-  journal?: Journal;
+  item?: Journal;
 }
 /**
  * @generated from protobuf message whiterabbit.journal.CreateCommand
  */
 export interface CreateCommand {
   /**
-   * @generated from protobuf field: optional string id = 1;
+   * @generated from protobuf field: optional string targetId = 1;
    */
-  id?: string;
+  targetId?: string;
   /**
    * @generated from protobuf field: string name = 2;
    */
@@ -145,9 +145,9 @@ export interface CreateCommand {
  */
 export interface UpdateCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
   /**
    * @generated from protobuf field: optional string name = 2;
    */
@@ -191,9 +191,9 @@ export interface NullableAccessItemArray {
  */
 export interface DeleteCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
 }
 /**
  * @generated from protobuf message whiterabbit.journal.Command
@@ -348,7 +348,7 @@ export const JournalItem = new JournalItem$Type();
 class JournalResponse$Type extends MessageType<JournalResponse> {
   constructor() {
     super("whiterabbit.journal.JournalResponse", [
-      { no: 1, name: "journal", kind: "message", T: () => Journal },
+      { no: 1, name: "item", kind: "message", T: () => Journal },
     ]);
   }
 }
@@ -362,7 +362,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
     super("whiterabbit.journal.CreateCommand", [
       {
         no: 1,
-        name: "id",
+        name: "targetId",
         kind: "scalar",
         opt: true,
         T: 9 /*ScalarType.STRING*/,
@@ -408,7 +408,7 @@ export const CreateCommand = new CreateCommand$Type();
 class UpdateCommand$Type extends MessageType<UpdateCommand> {
   constructor() {
     super("whiterabbit.journal.UpdateCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
         no: 2,
         name: "name",
@@ -479,7 +479,7 @@ export const NullableAccessItemArray = new NullableAccessItemArray$Type();
 class DeleteCommand$Type extends MessageType<DeleteCommand> {
   constructor() {
     super("whiterabbit.journal.DeleteCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
 }
@@ -545,6 +545,13 @@ export const JournalService = new ServiceType(
   [
     { name: "findOne", options: {}, I: StringValue, O: JournalResponse },
     { name: "findPage", options: {}, I: FindPageRequest, O: JournalPage },
+    {
+      name: "findAll",
+      serverStreaming: true,
+      options: {},
+      I: StringValue,
+      O: Journal,
+    },
     { name: "handle", options: {}, I: Command, O: JournalResponse },
     {
       name: "handleAll",

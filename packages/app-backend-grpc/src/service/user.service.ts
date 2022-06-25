@@ -1,18 +1,19 @@
 import { inject, singleton } from "tsyringe";
 import {
-  Page,
   RoleValue,
   UserCommand,
   UserEntity,
   UserService as CoreUserService,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
-import { BaseClient } from "openid-client";
-import { Command, Role, User, UserPage, UserResponse } from "../proto/user";
+import { type BaseClient } from "openid-client";
+import { Command, Role, User } from "../proto/user";
 import { IUserService } from "../proto/user.server";
+import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
+import { KEY_OIDC_CLIENT } from "./types";
 
-function getRole(role: Role): RoleValue {
+function roleFromProto(role: Role): RoleValue {
   switch (role) {
     case Role.OWNER:
       return RoleValue.OWNER;
@@ -23,22 +24,33 @@ function getRole(role: Role): RoleValue {
   }
 }
 
+function roleToProto(role: RoleValue): Role {
+  switch (role) {
+    case RoleValue.OWNER:
+      return Role.OWNER;
+    case RoleValue.ADMIN:
+      return Role.ADMIN;
+    case RoleValue.USER:
+      return Role.USER;
+  }
+}
+
 @singleton()
 export default class UserService
   extends AbstractService<
     UserEntity,
     UserCommand,
     CoreUserService,
-    Command,
-    UserResponse,
-    UserPage
+    User,
+    Command
   >
   implements IUserService
 {
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(BaseClient) oidcClient: BaseClient,
-    @inject(CoreUserService) userService: CoreUserService
+    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
+    @inject(CoreUserService)
+    userService: CoreUserService
   ) {
     super(orm, oidcClient, userService, userService);
   }
@@ -48,47 +60,42 @@ export default class UserService
       case "create":
         return {
           type: "CreateUserCommand",
-          targetId: command.create.id,
+          targetId: command.create.targetId,
           name: command.create.name,
           role:
             command.create.role != null
-              ? getRole(command.create.role)
+              ? roleFromProto(command.create.role)
               : undefined,
-          authIds: command.create.authIds,
+          authIds: command.create.authIds?.values,
         };
       case "update":
         return {
           type: "UpdateUserCommand",
-          targetId: command.update.id,
+          targetId: command.update.targetId,
           name: command.update.name,
           role:
             command.update.role != null
-              ? getRole(command.update.role)
+              ? roleFromProto(command.update.role)
               : undefined,
           authIds: command.update.authIds?.values,
         };
       case "delete":
         return {
           type: "DeleteUserCommand",
-          targetId: command.delete.id,
+          targetId: command.delete.targetId,
         };
       default:
         throw new Error(`No such command`);
     }
   }
 
-  override getPageResponse(page: Page<UserEntity>): UserPage {
-    return UserPage.fromJsonString(JSON.stringify(page));
-  }
-
-  override getResponse(
-    entity: EntityDTO<UserEntity> | UserEntity | null
-  ): UserResponse {
+  override getModel(entity: EntityDTO<UserEntity> | UserEntity): User {
     return {
-      user:
-        entity == null
-          ? undefined
-          : User.fromJsonString(JSON.stringify(entity)),
+      ...entity,
+      createdAt: Timestamp.fromDate(entity.createdAt),
+      updatedAt: Timestamp.fromDate(entity.updatedAt),
+
+      role: roleToProto(entity.role),
     };
   }
 }

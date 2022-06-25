@@ -4,25 +4,19 @@ import {
   JournalService as CoreJournalService,
   JournalEntity,
   JournalCommand,
-  Page,
   AccessItemTypeValue,
   AccessItemInput,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { BaseClient } from "openid-client";
-import {
-  AccessItem,
-  AccessItemType,
-  Command,
-  Journal,
-  JournalPage,
-  JournalResponse,
-} from "../proto/journal";
+import { type BaseClient } from "openid-client";
+import { AccessItem, AccessItemType, Command, Journal } from "../proto/journal";
 import { IJournalService } from "../proto/journal.server";
+import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
+import { KEY_OIDC_CLIENT } from "./types";
 
-function getAccessItemType(type: AccessItemType): AccessItemTypeValue {
+function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
   switch (type) {
     case AccessItemType.GROUP:
       return AccessItemTypeValue.GROUP;
@@ -31,8 +25,27 @@ function getAccessItemType(type: AccessItemType): AccessItemTypeValue {
   }
 }
 
-function getAccessItem(items: AccessItem[]): AccessItemInput[] {
-  return items.map(({ type, id }) => ({ type: getAccessItemType(type), id }));
+function accessItemTypeToProto(type: AccessItemTypeValue): AccessItemType {
+  switch (type) {
+    case AccessItemTypeValue.GROUP:
+      return AccessItemType.GROUP;
+    case AccessItemTypeValue.USER:
+      return AccessItemType.USER;
+  }
+}
+
+function accessItemsFromProto(items: AccessItem[]): AccessItemInput[] {
+  return items.map(({ type, id }) => ({
+    type: accessItemTypeFromProto(type),
+    id,
+  }));
+}
+
+function accessItemsToProto(items: AccessItemInput[]): AccessItem[] {
+  return items.map(({ type, id }) => ({
+    type: accessItemTypeToProto(type),
+    id,
+  }));
 }
 
 @singleton()
@@ -41,19 +54,19 @@ export default class JournalService
     JournalEntity,
     JournalCommand,
     CoreJournalService,
-    Command,
-    JournalResponse,
-    JournalPage
+    Journal,
+    Command
   >
   implements IJournalService
 {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(BaseClient) oidcClient: BaseClient,
+    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
     @inject(CoreUserService)
     userService: CoreUserService,
-    @inject(CoreJournalService) journalService: CoreJournalService
+    @inject(CoreJournalService)
+    journalService: CoreJournalService
   ) {
     super(orm, oidcClient, userService, journalService);
   }
@@ -62,54 +75,43 @@ export default class JournalService
     switch (command.oneofKind) {
       case "create":
         return {
+          ...command.create,
           type: "CreateJournalCommand",
-          targetId: command.create.id,
-          name: command.create.name,
-          description: command.create.description,
-          tags: command.create.tags,
-          unit: command.create.unit,
-          admins: getAccessItem(command.create.admins),
-          members: getAccessItem(command.create.members),
+          admins: accessItemsFromProto(command.create.admins),
+          members: accessItemsFromProto(command.create.members),
         };
       case "update":
         return {
+          ...command.update,
           type: "UpdateJournalCommand",
-          targetId: command.update.id,
-          name: command.update.name,
-          description: command.update.description,
           tags: command.update.tags?.items,
-          unit: command.update.unit,
           admins:
             command.update.admins == null
               ? undefined
-              : getAccessItem(command.update.admins.values),
+              : accessItemsFromProto(command.update.admins.values),
           members:
             command.update.members == null
               ? undefined
-              : getAccessItem(command.update.members.values),
+              : accessItemsFromProto(command.update.members.values),
         };
       case "delete":
         return {
           type: "DeleteJournalCommand",
-          targetId: command.delete.id,
+          targetId: command.delete.targetId,
         };
       default:
         throw new Error(`No such command`);
     }
   }
 
-  getPageResponse(page: Page<JournalEntity>): JournalPage {
-    return JournalPage.fromJsonString(JSON.stringify(page));
-  }
-
-  getResponse(
-    entity: EntityDTO<JournalEntity> | JournalEntity | null
-  ): JournalResponse {
+  override getModel(entity: EntityDTO<JournalEntity> | JournalEntity): Journal {
     return {
-      journal:
-        entity == null
-          ? undefined
-          : Journal.fromJsonString(JSON.stringify(entity)),
+      ...entity,
+      createdAt: Timestamp.fromDate(entity.createdAt),
+      updatedAt: Timestamp.fromDate(entity.updatedAt),
+      tags: entity.tags,
+      admins: accessItemsToProto(entity.admins),
+      members: accessItemsToProto(entity.members),
     };
   }
 }

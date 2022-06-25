@@ -4,29 +4,32 @@ import {
   RecordService as CoreRecordService,
   RecordEntity,
   RecordCommand,
-  Page,
   RecordTypeValue,
 } from "@white-rabbit/business-logic";
-import { EntityDTO, MikroORM } from "@mikro-orm/core";
+import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { BaseClient } from "openid-client";
-import {
-  Command,
-  Record,
-  RecordPage,
-  RecordResponse,
-  Type,
-} from "../proto/record";
+import { type BaseClient } from "openid-client";
+import { Command, Record, Type } from "../proto/record";
 import { IRecordService } from "../proto/record.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
+import { KEY_OIDC_CLIENT } from "./types";
 
-function getType(type: Type): RecordTypeValue {
+function typeFromProto(type: Type): RecordTypeValue {
   switch (type) {
     case Type.CHECK:
       return RecordTypeValue.CHECK;
     case Type.RECORD:
       return RecordTypeValue.RECORD;
+  }
+}
+
+function typeToProto(type: RecordTypeValue): Type {
+  switch (type) {
+    case RecordTypeValue.CHECK:
+      return Type.CHECK;
+    case RecordTypeValue.RECORD:
+      return Type.RECORD;
   }
 }
 
@@ -36,19 +39,19 @@ export default class RecordService
     RecordEntity,
     RecordCommand,
     CoreRecordService,
-    Command,
-    RecordResponse,
-    RecordPage
+    Record,
+    Command
   >
   implements IRecordService
 {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(BaseClient) oidcClient: BaseClient,
+    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
     @inject(CoreUserService)
     userService: CoreUserService,
-    @inject(CoreRecordService) recordService: CoreRecordService
+    @inject(CoreRecordService)
+    recordService: CoreRecordService
   ) {
     super(orm, oidcClient, userService, recordService);
   }
@@ -57,37 +60,27 @@ export default class RecordService
     switch (command.oneofKind) {
       case "create":
         return {
+          ...command.create,
           type: "CreateRecordCommand",
-          targetId: command.create.id,
-          journal: command.create.journal,
-          name: command.create.name,
-          description: command.create.description,
-          recordType: getType(command.create.type),
+          recordType: typeFromProto(command.create.type),
           timestamp:
             command.create.timestamp == null
               ? new Date()
               : Timestamp.toDate(command.create.timestamp),
-          tags: new Set(command.create.tags),
-          items: command.create.items,
         };
       case "update":
         return {
+          ...command.update,
           type: "UpdateRecordCommand",
-          targetId: command.update.id,
-          name: command.update.name,
-          description: command.update.description,
           recordType:
             command.update.type == null
               ? undefined
-              : getType(command.update.type),
+              : typeFromProto(command.update.type),
           timestamp:
             command.update.timestamp == null
               ? undefined
               : Timestamp.toDate(command.update.timestamp),
-          tags:
-            command.update.tags == null
-              ? undefined
-              : new Set(command.update.tags.items),
+          tags: command.update.tags?.items,
           items:
             command.update.items == null
               ? undefined
@@ -96,25 +89,26 @@ export default class RecordService
       case "delete":
         return {
           type: "DeleteRecordCommand",
-          targetId: command.delete.id,
+          targetId: command.delete.targetId,
         };
       default:
         throw new Error(`No such command`);
     }
   }
 
-  getPageResponse(page: Page<RecordEntity>): RecordPage {
-    return RecordPage.fromJsonString(JSON.stringify(page));
-  }
-
-  getResponse(
-    entity: EntityDTO<RecordEntity> | RecordEntity | null
-  ): RecordResponse {
+  override getModel(entity: EntityDTO<RecordEntity> | RecordEntity): Record {
     return {
-      record:
-        entity == null
-          ? undefined
-          : Record.fromJsonString(JSON.stringify(entity)),
+      ...entity,
+      createdAt: Timestamp.fromDate(entity.createdAt),
+      updatedAt: Timestamp.fromDate(entity.updatedAt),
+      journal: entity.journal.id,
+      type: typeToProto(entity.type),
+      timestamp: Timestamp.fromDate(entity.timestamp),
+      tags: entity.tags,
+      items: (entity.items instanceof Collection
+        ? entity.items.getItems()
+        : entity.items
+      ).map((item) => ({ ...item, account: item.account.id })),
     };
   }
 }

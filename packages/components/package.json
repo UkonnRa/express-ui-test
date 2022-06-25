@@ -7,7 +7,9 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
+    "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@white-rabbit/frontend-api": "workspace:^",
+    "@white-rabbit/frontend-api-grpc": "workspace:^",
     "pinia": "^2.0.14",
     "tsyringe": "^4.7.0",
     "uuid": "^8.3.2",
@@ -15,12 +17,5 @@
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.16",
     "vuetify": "^3.0.0-beta.4"
-  },
-  "devDependencies": {
-    "apollo-cache-inmemory": "^1.6.6",
-    "apollo-client": "^2.6.10",
-    "apollo-link": "^1.2.14",
-    "apollo-link-error": "^1.1.13",
-    "apollo-link-http": "^1.5.17"
   }
 }

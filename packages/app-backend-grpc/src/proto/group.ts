@@ -74,18 +74,18 @@ export interface GroupItem {
  */
 export interface GroupResponse {
   /**
-   * @generated from protobuf field: whiterabbit.group.Group group = 1;
+   * @generated from protobuf field: whiterabbit.group.Group item = 1;
    */
-  group?: Group;
+  item?: Group;
 }
 /**
  * @generated from protobuf message whiterabbit.group.CreateCommand
  */
 export interface CreateCommand {
   /**
-   * @generated from protobuf field: optional string id = 1;
+   * @generated from protobuf field: optional string targetId = 1;
    */
-  id?: string;
+  targetId?: string;
   /**
    * @generated from protobuf field: string name = 2;
    */
@@ -108,9 +108,9 @@ export interface CreateCommand {
  */
 export interface UpdateCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
   /**
    * @generated from protobuf field: optional string name = 2;
    */
@@ -133,9 +133,9 @@ export interface UpdateCommand {
  */
 export interface DeleteCommand {
   /**
-   * @generated from protobuf field: string id = 1;
+   * @generated from protobuf field: string targetId = 1;
    */
-  id: string;
+  targetId: string;
 }
 /**
  * @generated from protobuf message whiterabbit.group.Command
@@ -250,7 +250,7 @@ export const GroupItem = new GroupItem$Type();
 class GroupResponse$Type extends MessageType<GroupResponse> {
   constructor() {
     super("whiterabbit.group.GroupResponse", [
-      { no: 1, name: "group", kind: "message", T: () => Group },
+      { no: 1, name: "item", kind: "message", T: () => Group },
     ]);
   }
 }
@@ -264,7 +264,7 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
     super("whiterabbit.group.CreateCommand", [
       {
         no: 1,
-        name: "id",
+        name: "targetId",
         kind: "scalar",
         opt: true,
         T: 9 /*ScalarType.STRING*/,
@@ -301,7 +301,7 @@ export const CreateCommand = new CreateCommand$Type();
 class UpdateCommand$Type extends MessageType<UpdateCommand> {
   constructor() {
     super("whiterabbit.group.UpdateCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
       {
         no: 2,
         name: "name",
@@ -329,7 +329,7 @@ export const UpdateCommand = new UpdateCommand$Type();
 class DeleteCommand$Type extends MessageType<DeleteCommand> {
   constructor() {
     super("whiterabbit.group.DeleteCommand", [
-      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 1, name: "targetId", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
     ]);
   }
 }
@@ -393,6 +393,13 @@ export const Commands = new Commands$Type();
 export const GroupService = new ServiceType("whiterabbit.group.GroupService", [
   { name: "findOne", options: {}, I: StringValue, O: GroupResponse },
   { name: "findPage", options: {}, I: FindPageRequest, O: GroupPage },
+  {
+    name: "findAll",
+    serverStreaming: true,
+    options: {},
+    I: StringValue,
+    O: Group,
+  },
   { name: "handle", options: {}, I: Command, O: GroupResponse },
   {
     name: "handleAll",

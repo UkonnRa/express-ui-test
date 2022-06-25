@@ -4,25 +4,19 @@ import {
   AccountService as CoreAccountService,
   AccountEntity,
   AccountCommand,
-  Page,
   AccountTypeValue,
   AccountStrategyValue,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { BaseClient } from "openid-client";
-import {
-  Command,
-  Account,
-  AccountPage,
-  AccountResponse,
-  Type,
-  Strategy,
-} from "../proto/account";
+import { type BaseClient } from "openid-client";
+import { Command, Account, Type, Strategy } from "../proto/account";
 import { IAccountService } from "../proto/account.server";
+import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
+import { KEY_OIDC_CLIENT } from "./types";
 
-function getType(type: Type): AccountTypeValue {
+function typeFromProto(type: Type): AccountTypeValue {
   switch (type) {
     case Type.ASSET:
       return AccountTypeValue.ASSET;
@@ -37,12 +31,36 @@ function getType(type: Type): AccountTypeValue {
   }
 }
 
-function getStrategy(type: Strategy): AccountStrategyValue {
+function typeToProto(type: AccountTypeValue): Type {
+  switch (type) {
+    case AccountTypeValue.ASSET:
+      return Type.ASSET;
+    case AccountTypeValue.EQUITY:
+      return Type.EQUITY;
+    case AccountTypeValue.EXPENSE:
+      return Type.EXPENSE;
+    case AccountTypeValue.INCOME:
+      return Type.INCOME;
+    case AccountTypeValue.LIABILITY:
+      return Type.LIABILITY;
+  }
+}
+
+function strategyFromProto(type: Strategy): AccountStrategyValue {
   switch (type) {
     case Strategy.FIFO:
       return AccountStrategyValue.FIFO;
     case Strategy.AVERAGE:
       return AccountStrategyValue.AVERAGE;
+  }
+}
+
+function strategyToProto(type: AccountStrategyValue): Strategy {
+  switch (type) {
+    case AccountStrategyValue.FIFO:
+      return Strategy.FIFO;
+    case AccountStrategyValue.AVERAGE:
+      return Strategy.AVERAGE;
   }
 }
 
@@ -52,19 +70,19 @@ export default class AccountService
     AccountEntity,
     AccountCommand,
     CoreAccountService,
-    Command,
-    AccountResponse,
-    AccountPage
+    Account,
+    Command
   >
   implements IAccountService
 {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(BaseClient) oidcClient: BaseClient,
+    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
     @inject(CoreUserService)
     userService: CoreUserService,
-    @inject(CoreAccountService) accountService: CoreAccountService
+    @inject(CoreAccountService)
+    accountService: CoreAccountService
   ) {
     super(orm, oidcClient, userService, accountService);
   }
@@ -73,53 +91,42 @@ export default class AccountService
     switch (command.oneofKind) {
       case "create":
         return {
+          ...command.create,
           type: "CreateAccountCommand",
-          targetId: command.create.id,
-          journal: command.create.journal,
-          name: command.create.name,
-          description: command.create.description,
-          accountType: getType(command.create.type),
-          strategy: getStrategy(command.create.strategy),
-          unit: command.create.unit,
+          accountType: typeFromProto(command.create.type),
+          strategy: strategyFromProto(command.create.strategy),
         };
       case "update":
         return {
+          ...command.update,
           type: "UpdateAccountCommand",
-          targetId: command.update.id,
-          name: command.update.name,
-          description: command.update.description,
           accountType:
             command.update.type == null
               ? undefined
-              : getType(command.update.type),
+              : typeFromProto(command.update.type),
           strategy:
             command.update.strategy == null
               ? undefined
-              : getStrategy(command.update.strategy),
-          unit: command.update.unit,
+              : strategyFromProto(command.update.strategy),
         };
       case "delete":
         return {
           type: "DeleteAccountCommand",
-          targetId: command.delete.id,
+          targetId: command.delete.targetId,
         };
       default:
         throw new Error(`No such command`);
     }
   }
 
-  getPageResponse(page: Page<AccountEntity>): AccountPage {
-    return AccountPage.fromJsonString(JSON.stringify(page));
-  }
-
-  getResponse(
-    entity: EntityDTO<AccountEntity> | AccountEntity | null
-  ): AccountResponse {
+  getModel(entity: EntityDTO<AccountEntity> | AccountEntity): Account {
     return {
-      account:
-        entity == null
-          ? undefined
-          : Account.fromJsonString(JSON.stringify(entity)),
+      ...entity,
+      createdAt: Timestamp.fromDate(entity.createdAt),
+      updatedAt: Timestamp.fromDate(entity.updatedAt),
+      journal: entity.journal.id,
+      type: typeToProto(entity.type),
+      strategy: strategyToProto(entity.strategy),
     };
   }
 }

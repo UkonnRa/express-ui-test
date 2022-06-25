@@ -5,6 +5,7 @@ services:
     restart: always
     ports:
       - "10000:10000"
+      - "10100:10100"
       - "9901:9901"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
@@ -14,6 +15,9 @@ services:
     restart: always
     ports:
       - "3000:80"
+    environment:
+      - VITE_API_TYPE=grpc
+      - VITE_API_URL=http://localhost:10000
 
   app-backend-graphql:
     build: "./packages/app-backend-graphql"
@@ -24,6 +28,11 @@ services:
       - MIKRO_ORM_USER=postgres
       - MIKRO_ORM_PASSWORD=test1234
       - MIKRO_ORM_HOST=host.docker.internal
+      - OPENID_PROVIDER=authing
+      - OPENID_DISCOVERY_URL=https://white-rabbit-dev.authing.cn/oidc/.well-known/openid-configuration
+      - OPENID_APP_ID=62b5c9311ce9ad4d5015593c
+      - OPENID_APP_SECRET=657dca12304f30d1e080e2372dced190
+      - OPENID_CALLBACK_URL=https://console.authing.cn/console/get-started/62b5c9311ce9ad4d5015593c
 
   app-backend-grpc:
     build: "./packages/app-backend-grpc"
@@ -34,3 +43,8 @@ services:
       - MIKRO_ORM_USER=postgres
       - MIKRO_ORM_PASSWORD=test1234
       - MIKRO_ORM_HOST=host.docker.internal
+      - OPENID_PROVIDER=authing
+      - OPENID_DISCOVERY_URL=https://white-rabbit-dev.authing.cn/oidc/.well-known/openid-configuration
+      - OPENID_APP_ID=62b5c9311ce9ad4d5015593c
+      - OPENID_APP_SECRET=657dca12304f30d1e080e2372dced190
+      - OPENID_CALLBACK_URL=https://console.authing.cn/console/get-started/62b5c9311ce9ad4d5015593c

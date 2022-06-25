@@ -16,8 +16,8 @@ import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
 
-export const USER_READ_SCOPE = "white-rabbit_users_read";
-export const USER_WRITE_SCOPE = "white-rabbit_users_write";
+export const USER_READ_SCOPE = "white-rabbit_users:read";
+export const USER_WRITE_SCOPE = "white-rabbit_users:write";
 
 @singleton()
 export default class UserService extends WriteService<UserEntity, UserCommand> {

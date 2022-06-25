@@ -10,6 +10,12 @@ declare module "*.vue" {
 interface ImportMetaEnv {
   readonly VITE_API_TYPE: "local" | "graphql" | "jsonapi" | "grpc" | "mock";
   readonly VITE_API_URL: string;
+  readonly VITE_OPENID_DISCOVERY_URL: string;
+  readonly VITE_OPENID_APP_ID: string;
+  readonly VITE_OPENID_APP_SECRET: string;
+  readonly VITE_OPENID_CALLBACK_URL: string;
+  readonly VITE_OPENID_USERNAME: string;
+  readonly VITE_OPENID_PASSWORD: string;
   // more env variables...
 }
 

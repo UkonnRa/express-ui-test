@@ -3,9 +3,10 @@
 // @generated from protobuf file "group.proto" (package "whiterabbit.group", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { Commands } from "./group";
 import { Command } from "./group";
+import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
+import { Group } from "./group";
 import { GroupPage } from "./group";
 import { FindPageRequest } from "./shared";
 import { GroupResponse } from "./group";
@@ -23,6 +24,14 @@ export interface IGroupService<T = ServerCallContext> {
    * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.group.GroupPage);
    */
   findPage(request: FindPageRequest, context: T): Promise<GroupPage>;
+  /**
+   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.group.Group);
+   */
+  findAll(
+    request: StringValue,
+    responses: RpcInputStream<Group>,
+    context: T
+  ): Promise<void>;
   /**
    * @generated from protobuf rpc: handle(whiterabbit.group.Command) returns (whiterabbit.group.GroupResponse);
    */

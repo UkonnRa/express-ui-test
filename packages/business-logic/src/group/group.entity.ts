@@ -18,8 +18,8 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @Unique()
   name: string;
 
-  @Property({ type: "string", nullable: true })
-  description?: string;
+  @Property({ type: "string" })
+  description: string;
 
   @ManyToMany(() => UserEntity, (user) => user.adminInGroups, {
     owner: true,
@@ -31,7 +31,7 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   })
   members = new Collection<UserEntity>(this);
 
-  constructor(name: string, description: string | undefined) {
+  constructor(name: string, description: string) {
     super();
     this.name = name;
     this.description = description;

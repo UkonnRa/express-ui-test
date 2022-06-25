@@ -41,7 +41,13 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
     input: async (em) => {
       const journal = await em.findOneOrFail(
         JournalEntity,
-        { archived: false },
+        {
+          archived: false,
+          accessItems: {
+            type: AccessItemTypeValue.USER,
+            accessible: AccessItemAccessibleTypeValue.ADMIN,
+          },
+        },
         { populate: ["accessItems"] }
       );
       const adminUserId = journal.admins.filter(
