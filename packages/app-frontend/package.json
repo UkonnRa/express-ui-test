@@ -13,6 +13,7 @@
   "dependencies": {
     "@white-rabbit/components": "workspace:^",
     "@white-rabbit/frontend-api": "workspace:^",
+    "oidc-client": "^1.11.5",
     "oidc-client-ts": "^2.0.5",
     "pinia": "^2.0.14",
     "reflect-metadata": "^0.1.13",
@@ -23,9 +24,9 @@
     "vuetify": "^3.0.0-beta.4"
   },
   "devDependencies": {
-    "vite": "^2.9.12",
+    "vite": "^2.9.13",
     "vitest": "^0.16.0",
-    "vue-tsc": "^0.38.1"
+    "vue-tsc": "^0.38.2"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

@@ -12,7 +12,7 @@
     "orm:seed": "ts-node seed.ts"
   },
   "dependencies": {
-    "@graphql-tools/load-files": "^6.5.4",
+    "@graphql-tools/load-files": "^6.6.0",
     "@mikro-orm/core": "^5.2.1",
     "@mikro-orm/postgresql": "^5.2.1",
     "@white-rabbit/business-logic": "workspace:^",

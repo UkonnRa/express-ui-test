@@ -3,6 +3,6 @@
   "compilerOptions": {
     "composite": true
   },
-  "include": ["src/", ".eslintrc.js", "vite.config.ts"],
+  "include": [".eslintrc.js", "vite.config.ts"],
   "exclude": []
 }

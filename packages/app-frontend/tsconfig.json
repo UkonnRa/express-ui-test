@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "rootDir": "src/",
     "useDefineForClassFields": true,
     "module": "ESNext",
     "isolatedModules": true,
