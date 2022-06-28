@@ -23,11 +23,13 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
 
   @ManyToMany(() => UserEntity, (user) => user.adminInGroups, {
     owner: true,
+    eager: true,
   })
   admins = new Collection<UserEntity>(this);
 
   @ManyToMany(() => UserEntity, (user) => user.memberInGroups, {
     owner: true,
+    eager: true,
   })
   members = new Collection<UserEntity>(this);
 

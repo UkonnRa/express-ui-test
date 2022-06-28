@@ -1,6 +1,5 @@
 import { inject, singleton } from "tsyringe";
 import {
-  UserService as CoreUserService,
   AccountService as CoreAccountService,
   AccountEntity,
   AccountCommand,
@@ -9,12 +8,10 @@ import {
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { type BaseClient } from "openid-client";
 import { Command, Account, Type, Strategy } from "../proto/account";
 import { IAccountService } from "../proto/account.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
-import { KEY_OIDC_CLIENT } from "./types";
 
 function typeFromProto(type: Type): AccountTypeValue {
   switch (type) {
@@ -78,13 +75,10 @@ export default class AccountService
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
-    @inject(CoreUserService)
-    userService: CoreUserService,
     @inject(CoreAccountService)
     accountService: CoreAccountService
   ) {
-    super(orm, oidcClient, userService, accountService);
+    super(orm, accountService);
   }
 
   override getCommand({ command }: Command): AccountCommand {

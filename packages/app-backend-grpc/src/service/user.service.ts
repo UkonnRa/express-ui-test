@@ -6,12 +6,10 @@ import {
   UserService as CoreUserService,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
-import { type BaseClient } from "openid-client";
 import { Command, Role, User } from "../proto/user";
 import { IUserService } from "../proto/user.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
-import { KEY_OIDC_CLIENT } from "./types";
 
 function roleFromProto(role: Role): RoleValue {
   switch (role) {
@@ -46,13 +44,13 @@ export default class UserService
   >
   implements IUserService
 {
+  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
     @inject(CoreUserService)
     userService: CoreUserService
   ) {
-    super(orm, oidcClient, userService, userService);
+    super(orm, userService);
   }
 
   override getCommand({ command }: Command): UserCommand {

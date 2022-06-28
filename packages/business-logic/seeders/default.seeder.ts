@@ -24,7 +24,21 @@ export default class DefaultSeeder extends Seeder {
         name: "Wonderland Admin",
         role: RoleValue.ADMIN,
         authIds: {
-          authing: "62b5cd86f9ea58a8efb2b625",
+          authing: "62b88497083e77d5faca3c29",
+        },
+      }),
+      userFactory.makeOne({
+        name: "Wonderland DisabledUser",
+        role: RoleValue.USER,
+        authIds: {
+          authing: "62b9aa44030fd558ca2a13aa",
+        },
+      }),
+      userFactory.makeOne({
+        name: "Wonderland Owner",
+        role: RoleValue.OWNER,
+        authIds: {
+          authing: "62b7e12becdff87b52da3296",
         },
       }),
       userFactory.create(5, {

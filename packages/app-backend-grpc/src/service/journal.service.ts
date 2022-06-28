@@ -1,6 +1,5 @@
 import { inject, singleton } from "tsyringe";
 import {
-  UserService as CoreUserService,
   JournalService as CoreJournalService,
   JournalEntity,
   JournalCommand,
@@ -9,12 +8,10 @@ import {
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { type BaseClient } from "openid-client";
 import { AccessItem, AccessItemType, Command, Journal } from "../proto/journal";
 import { IJournalService } from "../proto/journal.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
-import { KEY_OIDC_CLIENT } from "./types";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
   switch (type) {
@@ -62,13 +59,10 @@ export default class JournalService
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
-    @inject(CoreUserService)
-    userService: CoreUserService,
     @inject(CoreJournalService)
     journalService: CoreJournalService
   ) {
-    super(orm, oidcClient, userService, journalService);
+    super(orm, journalService);
   }
 
   override getCommand({ command }: Command): JournalCommand {

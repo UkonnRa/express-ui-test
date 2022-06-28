@@ -1,9 +1,10 @@
+import { User } from "oidc-client-ts";
 import { FindOneInput, FindPageInput, Page } from "./shared";
 
 export default interface AbstractApi<M, C> {
-  findOne: (query: FindOneInput) => Promise<M | null>;
-  findPage: (query: FindPageInput) => Promise<Page<M>>;
+  findOne: (user: User, query: FindOneInput) => Promise<M | null>;
+  findPage: (user: User, query: FindPageInput) => Promise<Page<M>>;
 
-  handle: (command: C) => Promise<M | null>;
-  handleAll: (commands: C[]) => Promise<Array<M | null>>;
+  handle: (user: User, command: C) => Promise<M | null>;
+  handleAll: (user: User, commands: C[]) => Promise<Array<M | null>>;
 }

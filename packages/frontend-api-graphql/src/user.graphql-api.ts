@@ -9,6 +9,7 @@ import { inject, singleton } from "tsyringe";
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import { gql } from "graphql-tag";
+import { User } from "oidc-client-ts";
 import { Connection, FindOneVariables, FindPageVariables } from "./types";
 
 @singleton()
@@ -18,7 +19,7 @@ export default class UserGraphqlApi implements UserApi {
     private readonly client: ApolloClient<NormalizedCacheObject>
   ) {}
 
-  async findOne({ query }: FindOneInput): Promise<UserModel | null> {
+  async findOne(_: User, { query }: FindOneInput): Promise<UserModel | null> {
     const { data } = await this.client.query<
       { user: UserModel | null },
       FindOneVariables
@@ -46,11 +47,10 @@ export default class UserGraphqlApi implements UserApi {
     return data.user;
   }
 
-  async findPage({
-    query,
-    pagination,
-    sort,
-  }: FindPageInput): Promise<Page<UserModel>> {
+  async findPage(
+    _: User,
+    { query, pagination, sort }: FindPageInput
+  ): Promise<Page<UserModel>> {
     const { data } = await this.client.query<
       { users: Connection<UserModel> },
       FindPageVariables

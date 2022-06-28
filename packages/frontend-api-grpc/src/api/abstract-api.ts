@@ -4,6 +4,7 @@ import {
   Page,
   PageItem,
 } from "@white-rabbit/frontend-api";
+import { User } from "oidc-client-ts";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import AbstractClient from "./abstract-client";
 import { PageProto } from "./types";
@@ -42,14 +43,14 @@ export default abstract class AbstractApi<
     };
   }
 
-  async findOne({ query }: FindOneInput): Promise<M | null> {
+  async findOne(user: User, { query }: FindOneInput): Promise<M | null> {
     const params = StringValue.create();
     if (query != null) {
       params.value = JSON.stringify(query);
     }
     const call = await this.client.findOne(params, {
       meta: {
-        authentication: localStorage.getItem("access_token") ?? "",
+        authentication: user.access_token,
       },
     });
     return call.response.item == null
@@ -57,33 +58,33 @@ export default abstract class AbstractApi<
       : this.modelFromProto(call.response.item);
   }
 
-  async findPage(input: FindPageInput): Promise<Page<M>> {
+  async findPage(user: User, input: FindPageInput): Promise<Page<M>> {
     const call = await this.client.findPage(
       {
         ...input,
         query: input.query == null ? undefined : JSON.stringify(input.query),
       },
       {
-        meta: { authentication: localStorage.getItem("access_token") ?? "" },
+        meta: { authentication: user.access_token },
       }
     );
     return this.pageFromProto(call.response);
   }
 
-  async handle(command: C): Promise<M | null> {
+  async handle(user: User, command: C): Promise<M | null> {
     const call = await this.client.handle(this.commandToProto(command), {
-      meta: { authentication: localStorage.getItem("access_token") ?? "" },
+      meta: { authentication: user.access_token },
     });
     return call.response.item == null
       ? null
       : this.modelFromProto(call.response.item);
   }
 
-  async handleAll(commands: C[]): Promise<Array<M | null>> {
+  async handleAll(user: User, commands: C[]): Promise<Array<M | null>> {
     const call = this.client.handleAll(
       { commands: commands.map((command) => this.commandToProto(command)) },
       {
-        meta: { authentication: localStorage.getItem("access_token") ?? "" },
+        meta: { authentication: user.access_token },
       }
     );
     const result = [];

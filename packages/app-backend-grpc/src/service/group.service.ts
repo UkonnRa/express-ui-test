@@ -1,18 +1,15 @@
 import { inject, singleton } from "tsyringe";
 import {
-  UserService as CoreUserService,
   GroupService as CoreGroupService,
   GroupEntity,
   GroupCommand,
 } from "@white-rabbit/business-logic";
 import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { type BaseClient } from "openid-client";
 import { IGroupService } from "../proto/group.server";
 import { Command, Group } from "../proto/group";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
-import { KEY_OIDC_CLIENT } from "./types";
 
 @singleton()
 export default class GroupService
@@ -28,13 +25,10 @@ export default class GroupService
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
-    @inject(CoreUserService)
-    userService: CoreUserService,
     @inject(CoreGroupService)
     groupService: CoreGroupService
   ) {
-    super(orm, oidcClient, userService, groupService);
+    super(orm, groupService);
   }
 
   override getCommand({ command }: Command): GroupCommand {

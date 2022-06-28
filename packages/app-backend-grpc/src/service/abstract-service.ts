@@ -1,17 +1,22 @@
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
-import { type BaseClient } from "openid-client";
 import {
   AbstractEntity,
   AuthUser,
   Order as CoreOrder,
   Query,
   UserEntity,
-  UserService as CoreUserService,
   Command as CoreCommand,
   WriteService,
   Page,
 } from "@white-rabbit/business-logic";
 import { RpcInputStream, ServerCallContext } from "@protobuf-ts/runtime-rpc";
+import jwksRsa from "jwks-rsa";
+import jwt, {
+  GetPublicKeyOrSecret,
+  Jwt,
+  JwtHeader,
+  SigningKeyCallback,
+} from "jsonwebtoken";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import { FindPageRequest, Order } from "../proto/shared";
 
@@ -26,10 +31,12 @@ export default abstract class AbstractService<
   P,
   CP
 > {
+  private readonly jwksClient = jwksRsa({
+    jwksUri: process.env.OPENID_JWKS_KEYS_URL ?? "",
+  });
+
   protected constructor(
     private readonly orm: MikroORM,
-    private readonly oidcClient: BaseClient,
-    private readonly userService: CoreUserService,
     private readonly service: S
   ) {}
 
@@ -53,12 +60,41 @@ export default abstract class AbstractService<
     };
   }
 
+  private readonly getJwtKey: GetPublicKeyOrSecret = (
+    header: JwtHeader,
+    callback: SigningKeyCallback
+  ) => {
+    this.jwksClient.getSigningKey(header.kid, function (err, key) {
+      if (err != null || key == null) {
+        callback(err, undefined);
+      } else {
+        callback(null, key.getPublicKey());
+      }
+    });
+  };
+
   private async getAuthUser(context: ServerCallContext): Promise<AuthUser> {
-    const { sub } = await this.oidcClient.userinfo(
-      context.headers.authentication as string
-    );
+    const jwtToken = await new Promise<Jwt | undefined>((resolve, reject) => {
+      jwt.verify(
+        context.headers.authentication as string,
+        this.getJwtKey,
+        { algorithms: ["RS256"], complete: true },
+        (err, decoded) => {
+          if (err != null) {
+            reject(err);
+          } else {
+            resolve(decoded);
+          }
+        }
+      );
+    });
+
+    if (jwtToken == null || typeof jwtToken.payload === "string") {
+      throw new Error("Invalid Token");
+    }
+
     const authId = {
-      [process.env.OPENID_PROVIDER ?? ""]: sub,
+      [process.env.OPENID_PROVIDER ?? ""]: jwtToken.payload.sub,
     };
     return {
       user:
@@ -66,9 +102,9 @@ export default abstract class AbstractService<
         undefined,
       authId: {
         provider: process.env.OPENID_PROVIDER ?? "",
-        value: sub,
+        value: jwtToken.payload.sub ?? "",
       },
-      scopes: [this.userService.readScope, this.userService.writeScope],
+      scopes: jwtToken.payload.scope?.split(" "),
     };
   }
 

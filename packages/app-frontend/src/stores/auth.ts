@@ -24,7 +24,6 @@ const manager = new UserManager({
     "profile",
     "phone",
     "offline_access",
-    "order:read",
     USER_READ_SCOPE,
     USER_WRITE_SCOPE,
     GROUP_READ_SCOPE,

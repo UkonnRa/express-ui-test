@@ -1,6 +1,5 @@
 import { inject, singleton } from "tsyringe";
 import {
-  UserService as CoreUserService,
   RecordService as CoreRecordService,
   RecordEntity,
   RecordCommand,
@@ -8,12 +7,10 @@ import {
 } from "@white-rabbit/business-logic";
 import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
 
-import { type BaseClient } from "openid-client";
 import { Command, Record, Type } from "../proto/record";
 import { IRecordService } from "../proto/record.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import AbstractService from "./abstract-service";
-import { KEY_OIDC_CLIENT } from "./types";
 
 function typeFromProto(type: Type): RecordTypeValue {
   switch (type) {
@@ -47,13 +44,10 @@ export default class RecordService
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
     @inject(MikroORM) orm: MikroORM,
-    @inject(KEY_OIDC_CLIENT) oidcClient: BaseClient,
-    @inject(CoreUserService)
-    userService: CoreUserService,
     @inject(CoreRecordService)
     recordService: CoreRecordService
   ) {
-    super(orm, oidcClient, userService, recordService);
+    super(orm, recordService);
   }
 
   override getCommand({ command }: Command): RecordCommand {

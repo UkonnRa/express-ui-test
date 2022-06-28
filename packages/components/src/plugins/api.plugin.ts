@@ -6,9 +6,9 @@ import { GrpcGroupApi, GrpcUserApi } from "@white-rabbit/frontend-api-grpc";
 
 type Api = { user: UserApi; group: GroupApi };
 
-const SYMBOL_API = Symbol("API");
+const KEY_API = Symbol("API");
 
-export { type Api, SYMBOL_API };
+export { type Api, KEY_API };
 
 export default function (app: App): void {
   if (import.meta.env.VITE_API_TYPE === "grpc") {
@@ -16,7 +16,7 @@ export default function (app: App): void {
       baseUrl: import.meta.env.VITE_API_URL,
     });
     container.registerInstance(GrpcWebFetchTransport, transport);
-    app.provide<Api>(SYMBOL_API, {
+    app.provide<Api>(KEY_API, {
       user: container.resolve(GrpcUserApi),
       group: container.resolve(GrpcGroupApi),
     });
@@ -34,7 +34,7 @@ export default function (app: App): void {
         return Promise.resolve([]);
       },
     };
-    app.provide<Api>(SYMBOL_API, {
+    app.provide<Api>(KEY_API, {
       user: mockApi,
       group: mockApi,
     });
