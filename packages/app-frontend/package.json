@@ -5,12 +5,20 @@
   "scripts": {
     "dev": "vite --port 3100",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --port 3100",
     "test": "vitest run --coverage",
     "lint": "vue-tsc --noEmit && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "^27.3.0",
+    "@ag-grid-community/core": "^27.3.0",
+    "@ag-grid-community/infinite-row-model": "^27.3.0",
+    "@ag-grid-community/vue3": "^27.3.0",
+    "@ag-grid-enterprise/clipboard": "^27.3.0",
+    "@ag-grid-enterprise/core": "^27.3.0",
+    "@ag-grid-enterprise/menu": "^27.3.0",
+    "@ag-grid-enterprise/range-selection": "^27.3.0",
     "@white-rabbit/components": "workspace:^",
     "@white-rabbit/frontend-api": "workspace:^",
     "oidc-client-ts": "^2.0.5",

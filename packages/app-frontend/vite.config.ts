@@ -26,4 +26,16 @@ export default defineConfig(() => ({
       inline: ["vuetify"],
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id): string | null => {
+          if (id.includes("@ag-grid-community/core")) {
+            return "ag-grid-community-core";
+          }
+          return null;
+        },
+      },
+    },
+  },
 }));

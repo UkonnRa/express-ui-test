@@ -12,6 +12,123 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ag-grid-community/client-side-row-model@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-community/client-side-row-model@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+  checksum: 11a3f29a721f3a39d130cc1bcd79e6280ff2c39ea680e8dc59edae30dbc14966337898da856c9b271903d79a0fd049807872a8d8ca4a42007239dedac804433e
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/core@npm:^27.3.0, @ag-grid-community/core@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-community/core@npm:27.3.0"
+  checksum: 915a3eb560c06baffa18ba98462ffb4562c2c898752e87c1f303de75fd77e2356cdceda11bf5b80687ea9fe4c856ea2a9907235dc19b637b109f52340ae2e1fc
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/csv-export@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-community/csv-export@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+  checksum: b5ae75065511a330ab25be89ec0629ce7c1c8c267d66013e8b1f70ff1192d3661e7e7797a5baae91076b466dfeaa4b93aa9a07affa095dae4eb5919334426c4f
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/infinite-row-model@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-community/infinite-row-model@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+  checksum: f94b118f3b6e19ae60b2bf58c3a27203425a26779597678d5f2932724978772e5cb08b2c1fee37dfeeb222a0198851f3b9c3494b14c2ddf60dc8f9f1a59a558c
+  languageName: node
+  linkType: hard
+
+"@ag-grid-community/vue3@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-community/vue3@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    vue: ^3.0.0
+  checksum: d218369bab55fc1e9ec84504fb347ef3ccd8eb0e0ac32fd112c8589521d56a9ae0574ea18b6cf7b14e0a0c292208b29bc7212855b0210183596c3321df5a737b
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/clipboard@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/clipboard@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-community/csv-export": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+  checksum: 6734e52e04b82047dc0fe79393432c72fe2acb0e1dbf2d2f41fbc5c824219f4572043b4189b90a1c83a10922da4a9f31201fcebec31da3cae1751a988295bfcd
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/column-tool-panel@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/column-tool-panel@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+    "@ag-grid-enterprise/row-grouping": ~27.3.0
+    "@ag-grid-enterprise/side-bar": ~27.3.0
+  checksum: 362086d9528cf66e03a6b696aa8a2e2b57de92b7e4e77b0d01ade4a3f7a41c2dd12811a9c255accebfa1440dbd1945c03db1465385c92069415fc20a427d74ad
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/core@npm:^27.3.0, @ag-grid-enterprise/core@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/core@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+  checksum: 05485a63123c07541f4e8c30f4be7a108beef9f46957b965f2e0dcb715fa05acfd9807203cc044836d4e2fb27deb66bf0ccd5f7bd33248a7cf508c88e1eef4da
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/menu@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/menu@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-enterprise/column-tool-panel": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+  checksum: 2ccaec0edd25505fb7e73bbe12f599fd997b565061f141eb314c1d7bf3951ec714ce0c97dc906d56af0523bf1cc0f5511689c3ab4dd6057a5bc1af51b141b55d
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/range-selection@npm:^27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/range-selection@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+  checksum: c99863f85828d07ab2509a47a606aebbff64d7de83066aac498207cfb13887b604196d31ed33201c5c5158ad7fbfdcc12c4670904accdd0776a9b8bca5bd1202
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/row-grouping@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/row-grouping@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+  checksum: d66cb657e54018debaf12b9c6bbb5f6ff02f3d7d810751e0f1622157d4aabd4b09a522ab1b74715c0dff65bfe7bb6d27696fc34335d0102d922ab3b35dccbed4
+  languageName: node
+  linkType: hard
+
+"@ag-grid-enterprise/side-bar@npm:~27.3.0":
+  version: 27.3.0
+  resolution: "@ag-grid-enterprise/side-bar@npm:27.3.0"
+  dependencies:
+    "@ag-grid-community/core": ~27.3.0
+    "@ag-grid-enterprise/core": ~27.3.0
+  checksum: 2456c9fd774e4c841a1ba0b074106ec9f6335a4b6caf7975acd2ba3ae417c755eb6534c3b4fd8fc91b49db46524637600f5832db0ca94b44e12559054da2f950
+  languageName: node
+  linkType: hard
+
 "@algolia/autocomplete-core@npm:1.6.3":
   version: 1.6.3
   resolution: "@algolia/autocomplete-core@npm:1.6.3"
@@ -157,13 +274,6 @@ __metadata:
     "@algolia/logger-common": 4.13.1
     "@algolia/requester-common": 4.13.1
   checksum: c99451f37172ae499bf0aa83d32b1785b63744498c1978c274ddf865ae5a91c05d92570450ebb39ae91a3d4d4593415aaad9c93c4d78229ddc8ba8b42fb0ce3a
-  languageName: node
-  linkType: hard
-
-"@alloc/quick-lru@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "@alloc/quick-lru@npm:5.2.0"
-  checksum: bdc35758b552bcf045733ac047fb7f9a07c4678b944c641adfbd41f798b4b91fffd0fdc0df2578d9b0afc7b4d636aa6e110ead5d6281a2adc1ab90efd7f057f8
   languageName: node
   linkType: hard
 
@@ -3835,13 +3945,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/builder-vite@npm:^0.1.37":
-  version: 0.1.37
-  resolution: "@storybook/builder-vite@npm:0.1.37"
+"@storybook/builder-vite@npm:^0.1.38":
+  version: 0.1.38
+  resolution: "@storybook/builder-vite@npm:0.1.38"
   dependencies:
     "@joshwooding/vite-plugin-react-docgen-typescript": 0.0.4
-    "@mdx-js/mdx": ^1.6.22
-    "@storybook/csf-tools": ^6.4.3
+    "@storybook/mdx1-csf": ^0.0.4
     "@storybook/source-loader": ^6.4.3
     "@vitejs/plugin-react": ^1.0.8
     ast-types: ^0.14.2
@@ -3852,13 +3961,16 @@ __metadata:
     react-docgen: ^6.0.0-alpha.0
     slash: ^3.0.0
     sveltedoc-parser: ^4.2.1
-    vite-plugin-mdx: ^3.5.6
   peerDependencies:
     "@storybook/core-common": ">=6.4.3 || >=6.5.0-alpha.0"
+    "@storybook/mdx2-csf": ^0.0.3
     "@storybook/node-logger": ">=6.4.3 || >=6.5.0-alpha.0"
     "@storybook/source-loader": ">=6.4.3 || >=6.5.0-alpha.0"
     vite: ">=2.6.7"
-  checksum: 8342c58e23430bea0eb3e7cec2f7a93af8ed46b35e141bd89d1c17db11847c7855410ffd503539600b517bde08164fd2bd4baf7e5030e222be6b1ed553c2abf2
+  peerDependenciesMeta:
+    "@storybook/mdx2-csf":
+      optional: true
+  checksum: 76037ceb24599b765ba4c2d80c8864975f45a66389c935858e78f0ab090cc06e970ca1a8d6b9aafef43b42924af98be769ac338945408dfa30a8391962a635e8
   languageName: node
   linkType: hard
 
@@ -4216,7 +4328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/csf-tools@npm:6.5.9, @storybook/csf-tools@npm:^6.4.3":
+"@storybook/csf-tools@npm:6.5.9":
   version: 6.5.9
   resolution: "@storybook/csf-tools@npm:6.5.9"
   dependencies:
@@ -4332,6 +4444,26 @@ __metadata:
     prettier: ">=2.2.1 <=2.3.0"
     ts-dedent: ^2.0.0
   checksum: 34f952f4d00d4fbf680aadea53ca0d9b02b10c94ea492a47a6df916474ea1e36d08eece70ffaba760a4cdf6f634a8684360dc49355cf8a1461050b8a470d2666
+  languageName: node
+  linkType: hard
+
+"@storybook/mdx1-csf@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@storybook/mdx1-csf@npm:0.0.4"
+  dependencies:
+    "@babel/generator": ^7.12.11
+    "@babel/parser": ^7.12.11
+    "@babel/preset-env": ^7.12.11
+    "@babel/types": ^7.12.11
+    "@mdx-js/mdx": ^1.6.22
+    "@mdx-js/react": ^1.6.22
+    "@types/lodash": ^4.14.167
+    js-string-escape: ^1.0.1
+    loader-utils: ^2.0.0
+    lodash: ^4.17.21
+    prettier: ">=2.2.1 <=2.3.0"
+    ts-dedent: ^2.0.0
+  checksum: 834dcf6eb063c559f2768ec3ce669cff651096f7658739c95de1fff190e86fe0253c1e91858f2405b2c6fc218561102837b8d7e951a2f5997ed86f0a72ee5b9e
   languageName: node
   linkType: hard
 
@@ -4889,7 +5021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:^8, @types/jsonwebtoken@npm:^8.5.8":
+"@types/jsonwebtoken@npm:^8.5.8":
   version: 8.5.8
   resolution: "@types/jsonwebtoken@npm:8.5.8"
   dependencies:
@@ -6328,7 +6460,7 @@ __metadata:
     "@protobuf-ts/protoc": ^2.7.0
     "@protobuf-ts/runtime": ^2.7.0
     "@protobuf-ts/runtime-rpc": ^2.7.0
-    "@types/jsonwebtoken": ^8
+    "@types/jsonwebtoken": ^8.5.8
     "@white-rabbit/business-logic": "workspace:^"
     cross-env: ^7.0.3
     dotenv: ^16.0.1
@@ -6346,6 +6478,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@white-rabbit/app-frontend@workspace:packages/app-frontend"
   dependencies:
+    "@ag-grid-community/client-side-row-model": ^27.3.0
+    "@ag-grid-community/core": ^27.3.0
+    "@ag-grid-community/infinite-row-model": ^27.3.0
+    "@ag-grid-community/vue3": ^27.3.0
+    "@ag-grid-enterprise/clipboard": ^27.3.0
+    "@ag-grid-enterprise/core": ^27.3.0
+    "@ag-grid-enterprise/menu": ^27.3.0
+    "@ag-grid-enterprise/range-selection": ^27.3.0
     "@white-rabbit/components": "workspace:^"
     "@white-rabbit/frontend-api": "workspace:^"
     oidc-client-ts: ^2.0.5
@@ -9947,9 +10087,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^10.2.0":
-  version: 10.2.0
-  resolution: "cypress@npm:10.2.0"
+"cypress@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "cypress@npm:10.3.0"
   dependencies:
     "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
@@ -9995,7 +10135,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 1fd687658e036b2fd07031bde5a2f40ab61f664ca802ae650e0e15786d8825b38bb9444dffd8528b90a8e539e18241be6d5eaab7d5ae05d941839e2481e09342
+  checksum: 9cc6d8cd087d7c79f07ad83b8ef9b183f44cf816499bba53e1cee2b6f987d0a6893be209fcd47660cdd0e8456bd132813abe8a6bd15f446d9c96e0129be2de29
   languageName: node
   linkType: hard
 
@@ -11020,24 +11160,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-android-arm64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-android-arm64@npm:0.13.8"
-  conditions: os=android & cpu=arm64
-  languageName: node
-  linkType: hard
-
 "esbuild-android-arm64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-android-arm64@npm:0.14.47"
   conditions: os=android & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"esbuild-darwin-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-darwin-64@npm:0.13.8"
-  conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
@@ -11048,24 +11174,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-darwin-arm64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-darwin-arm64@npm:0.13.8"
-  conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
 "esbuild-darwin-arm64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-darwin-arm64@npm:0.14.47"
   conditions: os=darwin & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"esbuild-freebsd-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-freebsd-64@npm:0.13.8"
-  conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
@@ -11076,24 +11188,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-freebsd-arm64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-freebsd-arm64@npm:0.13.8"
-  conditions: os=freebsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
 "esbuild-freebsd-arm64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-freebsd-arm64@npm:0.14.47"
   conditions: os=freebsd & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"esbuild-linux-32@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-32@npm:0.13.8"
-  conditions: os=linux & cpu=ia32
   languageName: node
   linkType: hard
 
@@ -11104,24 +11202,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-linux-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-64@npm:0.13.8"
-  conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
 "esbuild-linux-64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-linux-64@npm:0.14.47"
   conditions: os=linux & cpu=x64
-  languageName: node
-  linkType: hard
-
-"esbuild-linux-arm64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-arm64@npm:0.13.8"
-  conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
@@ -11132,13 +11216,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-linux-arm@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-arm@npm:0.13.8"
-  conditions: os=linux & cpu=arm
-  languageName: node
-  linkType: hard
-
 "esbuild-linux-arm@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-linux-arm@npm:0.14.47"
@@ -11146,24 +11223,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-linux-mips64le@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-mips64le@npm:0.13.8"
-  conditions: os=linux & cpu=mips64el
-  languageName: node
-  linkType: hard
-
 "esbuild-linux-mips64le@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-linux-mips64le@npm:0.14.47"
   conditions: os=linux & cpu=mips64el
-  languageName: node
-  linkType: hard
-
-"esbuild-linux-ppc64le@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-linux-ppc64le@npm:0.13.8"
-  conditions: os=linux & cpu=ppc64
   languageName: node
   linkType: hard
 
@@ -11188,13 +11251,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-netbsd-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-netbsd-64@npm:0.13.8"
-  conditions: os=netbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
 "esbuild-netbsd-64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-netbsd-64@npm:0.14.47"
@@ -11202,24 +11258,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-openbsd-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-openbsd-64@npm:0.13.8"
-  conditions: os=openbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
 "esbuild-openbsd-64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-openbsd-64@npm:0.14.47"
   conditions: os=openbsd & cpu=x64
-  languageName: node
-  linkType: hard
-
-"esbuild-sunos-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-sunos-64@npm:0.13.8"
-  conditions: os=sunos & cpu=x64
   languageName: node
   linkType: hard
 
@@ -11243,24 +11285,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-windows-32@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-windows-32@npm:0.13.8"
-  conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
 "esbuild-windows-32@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-windows-32@npm:0.14.47"
   conditions: os=win32 & cpu=ia32
-  languageName: node
-  linkType: hard
-
-"esbuild-windows-64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-windows-64@npm:0.13.8"
-  conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
@@ -11271,79 +11299,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-windows-arm64@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild-windows-arm64@npm:0.13.8"
-  conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
 "esbuild-windows-arm64@npm:0.14.47":
   version: 0.14.47
   resolution: "esbuild-windows-arm64@npm:0.14.47"
   conditions: os=win32 & cpu=arm64
-  languageName: node
-  linkType: hard
-
-"esbuild@npm:0.13.8":
-  version: 0.13.8
-  resolution: "esbuild@npm:0.13.8"
-  dependencies:
-    esbuild-android-arm64: 0.13.8
-    esbuild-darwin-64: 0.13.8
-    esbuild-darwin-arm64: 0.13.8
-    esbuild-freebsd-64: 0.13.8
-    esbuild-freebsd-arm64: 0.13.8
-    esbuild-linux-32: 0.13.8
-    esbuild-linux-64: 0.13.8
-    esbuild-linux-arm: 0.13.8
-    esbuild-linux-arm64: 0.13.8
-    esbuild-linux-mips64le: 0.13.8
-    esbuild-linux-ppc64le: 0.13.8
-    esbuild-netbsd-64: 0.13.8
-    esbuild-openbsd-64: 0.13.8
-    esbuild-sunos-64: 0.13.8
-    esbuild-windows-32: 0.13.8
-    esbuild-windows-64: 0.13.8
-    esbuild-windows-arm64: 0.13.8
-  dependenciesMeta:
-    esbuild-android-arm64:
-      optional: true
-    esbuild-darwin-64:
-      optional: true
-    esbuild-darwin-arm64:
-      optional: true
-    esbuild-freebsd-64:
-      optional: true
-    esbuild-freebsd-arm64:
-      optional: true
-    esbuild-linux-32:
-      optional: true
-    esbuild-linux-64:
-      optional: true
-    esbuild-linux-arm:
-      optional: true
-    esbuild-linux-arm64:
-      optional: true
-    esbuild-linux-mips64le:
-      optional: true
-    esbuild-linux-ppc64le:
-      optional: true
-    esbuild-netbsd-64:
-      optional: true
-    esbuild-openbsd-64:
-      optional: true
-    esbuild-sunos-64:
-      optional: true
-    esbuild-windows-32:
-      optional: true
-    esbuild-windows-64:
-      optional: true
-    esbuild-windows-arm64:
-      optional: true
-  bin:
-    esbuild: bin/esbuild
-  checksum: 239b48f26af525236d96385a0854eb86886581d503eee81c18d189cc8d099ff182fc0de9b14c4328fd146ca3ec506efa5d011c95c6af2dd7011cb0b225dfd140
   languageName: node
   linkType: hard
 
@@ -22798,20 +22757,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unified@npm:^9.2.1":
-  version: 9.2.2
-  resolution: "unified@npm:9.2.2"
-  dependencies:
-    bail: ^1.0.0
-    extend: ^3.0.0
-    is-buffer: ^2.0.0
-    is-plain-obj: ^2.0.0
-    trough: ^1.0.0
-    vfile: ^4.0.0
-  checksum: 7c24461be7de4145939739ce50d18227c5fbdf9b3bc5a29dabb1ce26dd3e8bd4a1c385865f6f825f3b49230953ee8b591f23beab3bb3643e3e9dc37aa8a089d5
-  languageName: node
-  linkType: hard
-
 "union-value@npm:^1.0.0":
   version: 1.0.1
   resolution: "union-value@npm:1.0.1"
@@ -23281,21 +23226,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-mdx@npm:^3.5.6":
-  version: 3.5.10
-  resolution: "vite-plugin-mdx@npm:3.5.10"
-  dependencies:
-    "@alloc/quick-lru": ^5.2.0
-    esbuild: 0.13.8
-    resolve: ^1.20.0
-    unified: ^9.2.1
-  peerDependencies:
-    "@mdx-js/mdx": "*"
-    vite: "*"
-  checksum: 8419ab5fe30d8593e45ed2c4870c51907aa3d0bdc62cd8324fd6b0b067469a2736b6ce8dc242542b8e0088955218272840ab5afa2d9bcd2ec968cfadd35beb98
-  languageName: node
-  linkType: hard
-
 "vite-plugin-vuetify@npm:^1.0.0-alpha.12":
   version: 1.0.0-alpha.12
   resolution: "vite-plugin-vuetify@npm:1.0.0-alpha.12"
@@ -23603,7 +23533,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.2.33, vue@npm:^3.2.37":
+"vue@npm:^3.0.0, vue@npm:^3.2.33, vue@npm:^3.2.37":
   version: 3.2.37
   resolution: "vue@npm:3.2.37"
   dependencies:
@@ -23975,7 +23905,7 @@ __metadata:
     "@storybook/addon-docs": ^6.5.9
     "@storybook/addon-essentials": ^6.5.9
     "@storybook/addon-links": ^6.5.9
-    "@storybook/builder-vite": ^0.1.37
+    "@storybook/builder-vite": ^0.1.38
     "@storybook/core-common": ^6.5.9
     "@storybook/vue3": ^6.5.9
     "@types/eslint": ^8.4.3
@@ -23996,7 +23926,7 @@ __metadata:
     commitizen: ^4.2.4
     commitlint: ^17.0.3
     cross-env: ^7.0.3
-    cypress: ^10.2.0
+    cypress: ^10.3.0
     cz-conventional-changelog: ^3.3.0
     esbuild: ^0.14.47
     esbuild-visualizer: ^0.3.1
