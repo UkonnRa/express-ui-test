@@ -9,7 +9,7 @@ export default class RecordFactory extends Factory<RecordEntity> {
       description: faker.lorem.sentence(),
       timestamp: faker.date.between("2020-01-01", "2020-12-31"),
       type: RecordTypeValue.RECORD,
-      tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
+      _tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
     };
   }
 

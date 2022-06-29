@@ -25,6 +25,7 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
   @ManyToOne(() => JournalEntity, {
     onDelete: "cascade",
     onUpdateIntegrity: "cascade",
+    eager: true,
   })
   journal: JournalEntity;
 
@@ -72,6 +73,6 @@ export default class RecordEntity extends AbstractEntity<RecordEntity> {
     this.description = description;
     this.type = type;
     this.timestamp = timestamp;
-    this.tags = [...new Set(tags)];
+    this.tags = tags;
   }
 }

@@ -19,6 +19,7 @@ message Record {
   google.protobuf.Timestamp timestamp = 8;
   repeated string tags = 9;
   repeated Item items = 10;
+  bool isValid = 11;
 }
 
 enum Type {

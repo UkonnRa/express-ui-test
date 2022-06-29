@@ -54,6 +54,10 @@ export interface Record {
    * @generated from protobuf field: repeated whiterabbit.record.Item items = 10;
    */
   items: Item[];
+  /**
+   * @generated from protobuf field: bool isValid = 11;
+   */
+  isValid: boolean;
 }
 /**
  * @generated from protobuf message whiterabbit.record.Item
@@ -290,6 +294,7 @@ class Record$Type extends MessageType<Record> {
         repeat: 1 /*RepeatType.PACKED*/,
         T: () => Item,
       },
+      { no: 11, name: "isValid", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
     ]);
   }
 }

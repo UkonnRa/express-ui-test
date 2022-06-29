@@ -1,4 +1,4 @@
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import { inject, singleton } from "tsyringe";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
@@ -196,8 +196,17 @@ export default class RecordService extends WriteService<
     }
   }
 
-  async isValid(record: RecordEntity, em: EntityManager): Promise<boolean> {
-    const items = await record.items.loadItems();
+  async isValid(
+    record: RecordEntity | EntityDTO<RecordEntity>,
+    em: EntityManager
+  ): Promise<boolean> {
+    let items: Array<EntityDTO<RecordItemValue>>;
+    if (record instanceof RecordEntity) {
+      items = record.items.toJSON();
+    } else {
+      items = record.items;
+    }
+
     if (record.type === RecordTypeValue.RECORD) {
       const balance = items
         .map((item) => {
@@ -230,7 +239,7 @@ export default class RecordService extends WriteService<
       );
       const balance = prevItems
         .flatMap((item) => item.items.getItems())
-        .filter((item) => item.account === currentItem.account)
+        .filter((item) => item.account.id === currentItem.account.id)
         .reduce((a, b) => a + b.amount, 0);
       return Math.abs(balance - currentItem.amount) < Number.EPSILON;
     }

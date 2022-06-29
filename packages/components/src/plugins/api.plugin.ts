@@ -1,10 +1,28 @@
 import { App } from "vue";
-import type { GroupApi, UserApi } from "@white-rabbit/frontend-api";
+import type {
+  AccountApi,
+  GroupApi,
+  JournalApi,
+  RecordApi,
+  UserApi,
+} from "@white-rabbit/frontend-api";
 import { container } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
-import { GrpcGroupApi, GrpcUserApi } from "@white-rabbit/frontend-api-grpc";
+import {
+  GrpcAccountApi,
+  GrpcGroupApi,
+  GrpcJournalApi,
+  GrpcRecordApi,
+  GrpcUserApi,
+} from "@white-rabbit/frontend-api-grpc";
 
-type Api = { user: UserApi; group: GroupApi };
+type Api = {
+  readonly user: UserApi;
+  readonly group: GroupApi;
+  readonly journal: JournalApi;
+  readonly account: AccountApi;
+  readonly record: RecordApi;
+};
 
 const KEY_API = Symbol("API");
 
@@ -19,6 +37,9 @@ export default function (app: App): void {
     app.provide<Api>(KEY_API, {
       user: container.resolve(GrpcUserApi),
       group: container.resolve(GrpcGroupApi),
+      journal: container.resolve(GrpcJournalApi),
+      account: container.resolve(GrpcAccountApi),
+      record: container.resolve(GrpcRecordApi),
     });
   } else if (import.meta.env.VITE_API_TYPE === "mock") {
     const mockApi = {
@@ -37,6 +58,9 @@ export default function (app: App): void {
     app.provide<Api>(KEY_API, {
       user: mockApi,
       group: mockApi,
+      journal: mockApi,
+      account: mockApi,
+      record: mockApi,
     });
   } else {
     throw new Error(

@@ -87,12 +87,13 @@ export default class UserService
     }
   }
 
-  override getModel(entity: EntityDTO<UserEntity> | UserEntity): User {
+  override async getModel(
+    entity: EntityDTO<UserEntity> | UserEntity
+  ): Promise<User> {
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),
       updatedAt: Timestamp.fromDate(entity.updatedAt),
-
       role: roleToProto(entity.role),
     };
   }

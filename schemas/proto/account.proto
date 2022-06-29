@@ -56,7 +56,6 @@ message CreateCommand {
   Type type = 5;
   Strategy strategy = 6;
   string unit = 7;
-  bool archived = 8;
 }
 
 message UpdateCommand {

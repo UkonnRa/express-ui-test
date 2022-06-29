@@ -10,4 +10,5 @@ export default interface RecordModel extends AbstractModel {
   readonly timestamp: Date;
   readonly tags: string[];
   readonly items: RecordItemValue[];
+  readonly isValid: boolean;
 }

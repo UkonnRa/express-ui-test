@@ -7,7 +7,7 @@ export default class JournalFactory extends Factory<JournalEntity> {
     return {
       name: faker.unique(faker.commerce.department),
       description: faker.lorem.sentence(),
-      tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
+      _tags: faker.helpers.uniqueArray(faker.commerce.product, 5),
       unit: faker.finance.currencyCode(),
       archived: Math.random() < 0.2,
     };

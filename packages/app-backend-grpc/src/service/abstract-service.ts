@@ -1,4 +1,4 @@
-import { EntityDTO, MikroORM } from "@mikro-orm/core";
+import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import {
   AbstractEntity,
   AuthUser,
@@ -37,26 +37,34 @@ export default abstract class AbstractService<
 
   protected constructor(
     private readonly orm: MikroORM,
-    private readonly service: S
+    protected readonly service: S
   ) {}
 
   abstract getCommand(command: CP): C;
 
-  abstract getModel(entity: EntityDTO<E> | E): P;
+  abstract getModel(entity: EntityDTO<E> | E, em: EntityManager): Promise<P>;
 
-  private getPageResponse({ pageInfo, items }: Page<E>): Page<P> {
+  private async getPageResponse(
+    { pageInfo, items }: Page<E>,
+    em: EntityManager
+  ): Promise<Page<P>> {
     return {
       pageInfo,
-      items: items.map(({ cursor, data }) => ({
-        cursor,
-        data: this.getModel(data),
-      })),
+      items: await Promise.all(
+        items.map(async ({ cursor, data }) => ({
+          cursor,
+          data: await this.getModel(data, em),
+        }))
+      ),
     };
   }
 
-  private getResponse(entity: EntityDTO<E> | E | null): NullableEntity<P> {
+  private async getResponse(
+    entity: EntityDTO<E> | E | null,
+    em: EntityManager
+  ): Promise<NullableEntity<P>> {
     return {
-      item: entity == null ? undefined : this.getModel(entity),
+      item: entity == null ? undefined : await this.getModel(entity, em),
     };
   }
 
@@ -73,7 +81,10 @@ export default abstract class AbstractService<
     });
   };
 
-  private async getAuthUser(context: ServerCallContext): Promise<AuthUser> {
+  private async getAuthUser(
+    context: ServerCallContext,
+    em: EntityManager
+  ): Promise<AuthUser> {
     const jwtToken = await new Promise<Jwt | undefined>((resolve, reject) => {
       jwt.verify(
         context.headers.authentication as string,
@@ -97,9 +108,7 @@ export default abstract class AbstractService<
       [process.env.OPENID_PROVIDER ?? ""]: jwtToken.payload.sub,
     };
     return {
-      user:
-        (await this.orm.em.fork().findOne(UserEntity, { authIds: authId })) ??
-        undefined,
+      user: (await em.findOne(UserEntity, { authIds: authId })) ?? undefined,
       authId: {
         provider: process.env.OPENID_PROVIDER ?? "",
         value: jwtToken.payload.sub ?? "",
@@ -112,15 +121,19 @@ export default abstract class AbstractService<
     request: StringValue,
     context: ServerCallContext
   ): Promise<NullableEntity<P>> {
-    const authUser = await this.getAuthUser(context);
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
     const query: Query<E> = JSON.parse(request.value);
 
     try {
-      const entity = await this.service.findOne({
-        query,
-        authUser,
-      });
-      return this.getResponse(entity);
+      const entity = await this.service.findOne(
+        {
+          query,
+          authUser,
+        },
+        em
+      );
+      return this.getResponse(entity, em);
     } catch (e) {
       console.error(e);
       throw e;
@@ -131,22 +144,26 @@ export default abstract class AbstractService<
     request: FindPageRequest,
     context: ServerCallContext
   ): Promise<Page<P>> {
+    const em = this.orm.em.fork();
     const query: Query<E> =
       request.query != null ? JSON.parse(request.query) : {};
-    const authUser = await this.getAuthUser(context);
+    const authUser = await this.getAuthUser(context, em);
 
     try {
-      const page = await this.service.findPage({
-        query,
-        authUser,
-        pagination: request.pagination ?? { size: 5 },
-        sort: request.sort.map(({ field, order }) => ({
-          field,
-          order: order === Order.ASC ? CoreOrder.ASC : CoreOrder.DESC,
-        })),
-      });
+      const page = await this.service.findPage(
+        {
+          query,
+          authUser,
+          pagination: request.pagination ?? { size: 5 },
+          sort: request.sort.map(({ field, order }) => ({
+            field,
+            order: order === Order.ASC ? CoreOrder.ASC : CoreOrder.DESC,
+          })),
+        },
+        em
+      );
 
-      return this.getPageResponse(page);
+      return this.getPageResponse(page, em);
     } catch (e) {
       console.error(e);
       throw e;
@@ -159,11 +176,12 @@ export default abstract class AbstractService<
     context: ServerCallContext
   ): Promise<void> {
     const query: Query<E> = JSON.parse(request.value);
-    const authUser = await this.getAuthUser(context);
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
 
-    const entities = await this.service.findAll({ authUser, query });
+    const entities = await this.service.findAll({ authUser, query }, em);
     for (const entity of entities) {
-      await responses.send(this.getModel(entity));
+      await responses.send(await this.getModel(entity, em));
     }
     await responses.complete();
   }
@@ -172,12 +190,16 @@ export default abstract class AbstractService<
     request: CP,
     context: ServerCallContext
   ): Promise<NullableEntity<P>> {
-    const authUser = await this.getAuthUser(context);
-    const entity = await this.service.handle({
-      command: this.getCommand(request),
-      authUser,
-    });
-    return this.getResponse(entity);
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
+    const entity = await this.service.handle(
+      {
+        command: this.getCommand(request),
+        authUser,
+      },
+      em
+    );
+    return this.getResponse(entity, em);
   }
 
   async handleAll(
@@ -185,13 +207,17 @@ export default abstract class AbstractService<
     responses: RpcInputStream<NullableEntity<P>>,
     context: ServerCallContext
   ): Promise<void> {
-    const authUser = await this.getAuthUser(context);
-    const entities = await this.service.handleAll({
-      commands: request.commands.map((command) => this.getCommand(command)),
-      authUser,
-    });
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
+    const entities = await this.service.handleAll(
+      {
+        commands: request.commands.map((command) => this.getCommand(command)),
+        authUser,
+      },
+      em
+    );
     for (const entity of entities) {
-      await responses.send(this.getResponse(entity));
+      await responses.send(await this.getResponse(entity, em));
     }
     await responses.complete();
   }

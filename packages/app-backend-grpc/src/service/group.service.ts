@@ -55,7 +55,9 @@ export default class GroupService
     }
   }
 
-  override getModel(entity: EntityDTO<GroupEntity> | GroupEntity): Group {
+  override async getModel(
+    entity: EntityDTO<GroupEntity> | GroupEntity
+  ): Promise<Group> {
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),

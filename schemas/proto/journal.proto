@@ -50,7 +50,6 @@ message CreateCommand {
   string description = 3;
   repeated string tags = 4;
   string unit = 5;
-  bool archived = 6;
   repeated AccessItem admins = 7;
   repeated AccessItem members = 8;
 }

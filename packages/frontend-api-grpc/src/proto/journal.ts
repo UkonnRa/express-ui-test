@@ -128,10 +128,6 @@ export interface CreateCommand {
    */
   unit: string;
   /**
-   * @generated from protobuf field: bool archived = 6;
-   */
-  archived: boolean;
-  /**
    * @generated from protobuf field: repeated whiterabbit.journal.AccessItem admins = 7;
    */
   admins: AccessItem[];
@@ -382,7 +378,6 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
         T: 9 /*ScalarType.STRING*/,
       },
       { no: 5, name: "unit", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 6, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
       {
         no: 7,
         name: "admins",

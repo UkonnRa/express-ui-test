@@ -121,10 +121,6 @@ export interface CreateCommand {
    * @generated from protobuf field: string unit = 7;
    */
   unit: string;
-  /**
-   * @generated from protobuf field: bool archived = 8;
-   */
-  archived: boolean;
 }
 /**
  * @generated from protobuf message whiterabbit.account.UpdateCommand
@@ -364,7 +360,6 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
         T: () => ["whiterabbit.account.Strategy", Strategy],
       },
       { no: 7, name: "unit", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-      { no: 8, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
     ]);
   }
 }

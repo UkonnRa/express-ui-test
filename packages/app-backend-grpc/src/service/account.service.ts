@@ -113,7 +113,9 @@ export default class AccountService
     }
   }
 
-  getModel(entity: EntityDTO<AccountEntity> | AccountEntity): Account {
+  override async getModel(
+    entity: EntityDTO<AccountEntity> | AccountEntity
+  ): Promise<Account> {
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),

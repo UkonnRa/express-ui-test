@@ -14,6 +14,7 @@ export default class AccountEntity extends AbstractEntity<AccountEntity> {
   @ManyToOne(() => JournalEntity, {
     onDelete: "cascade",
     onUpdateIntegrity: "cascade",
+    eager: true,
   })
   journal: JournalEntity;
 

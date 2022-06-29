@@ -5,7 +5,12 @@ import {
   RecordCommand,
   RecordTypeValue,
 } from "@white-rabbit/business-logic";
-import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
+import {
+  Collection,
+  EntityDTO,
+  EntityManager,
+  MikroORM,
+} from "@mikro-orm/core";
 
 import { Command, Record, Type } from "../proto/record";
 import { IRecordService } from "../proto/record.server";
@@ -90,7 +95,10 @@ export default class RecordService
     }
   }
 
-  override getModel(entity: EntityDTO<RecordEntity> | RecordEntity): Record {
+  override async getModel(
+    entity: EntityDTO<RecordEntity> | RecordEntity,
+    em: EntityManager
+  ): Promise<Record> {
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),
@@ -103,6 +111,7 @@ export default class RecordService
         ? entity.items.getItems()
         : entity.items
       ).map((item) => ({ ...item, account: item.account.id })),
+      isValid: await this.service.isValid(entity, em),
     };
   }
 }

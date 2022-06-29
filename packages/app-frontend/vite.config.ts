@@ -13,9 +13,6 @@ export default defineConfig(() => ({
       "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src"),
     },
   },
-  server: {
-    https: true,
-  },
   test: {
     environment: "jsdom",
     coverage: {

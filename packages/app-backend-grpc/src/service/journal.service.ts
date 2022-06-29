@@ -98,7 +98,9 @@ export default class JournalService
     }
   }
 
-  override getModel(entity: EntityDTO<JournalEntity> | JournalEntity): Journal {
+  override async getModel(
+    entity: EntityDTO<JournalEntity> | JournalEntity
+  ): Promise<Journal> {
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),

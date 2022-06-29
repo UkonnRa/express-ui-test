@@ -1,5 +1,5 @@
 export type { default as AccessItemValue } from "./access-item.value";
-export type { default as AccessItemTypeValue } from "./access-item-type.value";
+export { default as AccessItemTypeValue } from "./access-item-type.value";
 
 export type { default as JournalModel } from "./journal.model";
 export type { default as JournalCommand } from "./journal.command";
