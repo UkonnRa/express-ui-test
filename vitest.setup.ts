@@ -4,8 +4,13 @@
 import "reflect-metadata";
 import { beforeAll, beforeEach } from "vitest";
 import { config } from "@vue/test-utils";
+import { createPinia } from "pinia";
 
-import { apiPlugin } from "@white-rabbit/components";
+import {
+  agGridPlugin,
+  apiPlugin,
+  routerPlugin,
+} from "@white-rabbit/components";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { createVuetify } from "vuetify";
@@ -21,4 +26,7 @@ beforeAll(() => {
 beforeEach(() => {
   config.global.plugins.push(createVuetify({ components, directives }));
   config.global.plugins.push(apiPlugin);
+  config.global.plugins.push(createPinia());
+  config.global.plugins.push(routerPlugin);
+  config.global.plugins.push(agGridPlugin);
 });

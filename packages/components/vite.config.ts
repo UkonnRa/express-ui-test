@@ -18,7 +18,7 @@ export default defineConfig(() => ({
     coverage: {
       reporter: ["lcov", "html"],
     },
-    setupFiles: ["../../vitest.setup.ts"],
+    setupFiles: ["../../vitest.setup.ts", "vitest.setup.ts"],
     deps: {
       inline: ["vuetify"],
     },

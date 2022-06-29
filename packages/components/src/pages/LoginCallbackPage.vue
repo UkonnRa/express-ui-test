@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useAuthStore } from "../stores/auth";
 import { useAsyncState } from "@vueuse/core";
 import { useRouter } from "vue-router";
+import { useAuth } from "../hooks";
 
-const authStore = useAuthStore();
+const { signinCallback } = useAuth();
 const router = useRouter();
 
 useAsyncState(async () => {
   try {
-    return authStore.signInCallback();
+    return signinCallback();
   } finally {
     await router.push({ name: "User" });
   }

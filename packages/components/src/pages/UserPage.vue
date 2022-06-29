@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject, watchEffect } from "vue";
 import { useAsyncState } from "@vueuse/core";
-import { useAuthStore } from "../stores/auth";
 import { Api, KEY_API } from "@white-rabbit/components";
 import { User } from "oidc-client-ts";
 import {
@@ -11,8 +10,9 @@ import {
   RecordModel,
   UserModel,
 } from "@white-rabbit/frontend-api";
+import { useAuth } from "../hooks";
 
-const authStore = useAuthStore();
+const { getUser } = useAuth();
 const api = inject<Api>(KEY_API);
 if (!api) {
   throw new Error("Cannot find api");
@@ -29,7 +29,7 @@ const { isReady, state, error } = useAsyncState<
     ]
   | null
 >(async () => {
-  const authUser = await authStore.currentUser();
+  const authUser = await getUser();
   const user =
     authUser &&
     (await api.user.findOne(authUser, {
@@ -51,14 +51,14 @@ watchEffect(() => error.value != null && console.error(error.value));
 
 <template>
   <div v-if="isReady">
-    <div v-if="state[0]">
+    <div v-if="state?.[0]">
       <div>ID Token: {{ state[0].id_token }}</div>
       <div>Access Token: {{ state[0].access_token }}</div>
       <div>Scope: {{ state[0].scopes }}</div>
     </div>
     <div v-else>AuthUser Not Found</div>
     <div>===</div>
-    <div v-if="state[1]">
+    <div v-if="state?.[1]">
       <div>ID: {{ state[1].id }}</div>
       <div>createdAt: {{ state[1].createdAt }}</div>
       <div>updatedAt: {{ state[1].updatedAt }}</div>
@@ -68,7 +68,7 @@ watchEffect(() => error.value != null && console.error(error.value));
     </div>
     <div v-else>User Not Found</div>
     <div>===</div>
-    <div v-if="state[2]">
+    <div v-if="state?.[2]">
       <div>ID: {{ state[2].id }}</div>
       <div>createdAt: {{ state[2].createdAt }}</div>
       <div>updatedAt: {{ state[2].updatedAt }}</div>
@@ -79,7 +79,7 @@ watchEffect(() => error.value != null && console.error(error.value));
     </div>
     <div v-else>Group Not Found</div>
     <div>===</div>
-    <div v-if="state[3]">
+    <div v-if="state?.[3]">
       <div>ID: {{ state[3].id }}</div>
       <div>createdAt: {{ state[3].createdAt }}</div>
       <div>updatedAt: {{ state[3].updatedAt }}</div>
@@ -93,7 +93,7 @@ watchEffect(() => error.value != null && console.error(error.value));
     </div>
     <div v-else>Journal Not Found</div>
     <div>===</div>
-    <div v-if="state[4]">
+    <div v-if="state?.[4]">
       <div>ID: {{ state[4].id }}</div>
       <div>createdAt: {{ state[4].createdAt }}</div>
       <div>updatedAt: {{ state[4].updatedAt }}</div>
@@ -106,7 +106,7 @@ watchEffect(() => error.value != null && console.error(error.value));
     </div>
     <div v-else>Account Not Found</div>
     <div>===</div>
-    <div v-if="state[5]">
+    <div v-if="state?.[5]">
       <div>ID: {{ state[5].id }}</div>
       <div>createdAt: {{ state[5].createdAt }}</div>
       <div>updatedAt: {{ state[5].updatedAt }}</div>

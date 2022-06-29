@@ -4,6 +4,7 @@ import {
   type VuetifyOptions,
 } from "vuetify";
 import "vuetify/styles/main.sass";
+import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 
 const light: ThemeDefinition = {
   dark: false,
@@ -34,6 +35,13 @@ const dark: ThemeDefinition = {
 };
 
 export const vuetifyOptions: VuetifyOptions = {
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
   theme: {
     defaultTheme: "light",
     themes: {

@@ -1,5 +1,4 @@
-import { defineStore } from "pinia";
-import { User, UserManager } from "oidc-client-ts";
+import { UserManager } from "oidc-client-ts";
 import {
   ACCOUNT_READ_SCOPE,
   ACCOUNT_WRITE_SCOPE,
@@ -12,6 +11,14 @@ import {
   USER_READ_SCOPE,
   USER_WRITE_SCOPE,
 } from "@white-rabbit/frontend-api";
+
+type UseAuthReturn = {
+  readonly signin: UserManager["signinRedirect"];
+  readonly signinCallback: UserManager["signinRedirectCallback"];
+  readonly signout: UserManager["signoutRedirect"];
+  readonly signoutCallback: UserManager["signoutRedirectCallback"];
+  readonly getUser: UserManager["getUser"];
+};
 
 const manager = new UserManager({
   authority: import.meta.env.VITE_OPENID_DISCOVERY_URL ?? "",
@@ -37,25 +44,14 @@ const manager = new UserManager({
   ].join(" "),
 });
 
-export const useAuthStore = defineStore("auth", {
-  state: () => {
-    return {
-      manager,
-    };
-  },
+const useAuth = (): UseAuthReturn => {
+  return {
+    getUser: () => manager.getUser(),
+    signin: () => manager.signinRedirect(),
+    signinCallback: () => manager.signinRedirectCallback(),
+    signout: () => manager.signoutRedirect(),
+    signoutCallback: () => manager.signoutRedirectCallback(),
+  };
+};
 
-  actions: {
-    async signIn() {
-      await this.manager.signinRedirect();
-    },
-    async signInCallback(): Promise<User> {
-      return await this.manager.signinRedirectCallback();
-    },
-    async signOut() {
-      await this.manager.signoutRedirect();
-    },
-    async currentUser(): Promise<User | null> {
-      return await this.manager.getUser();
-    },
-  },
-});
+export default useAuth;

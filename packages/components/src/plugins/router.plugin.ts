@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import { useAuthStore } from "./stores/auth";
+import { useAuth } from "../hooks";
 
 const routes: RouteRecordRaw[] = [
   {
     name: "Callback",
     path: "/callback",
-    component: () => import("./pages/LoginCallback.vue"),
+    component: () => import("../pages/LoginCallbackPage.vue"),
     meta: {
       isProtected: false,
     },
@@ -14,7 +14,12 @@ const routes: RouteRecordRaw[] = [
     name: "User",
     path: "/user",
     alias: "/",
-    component: () => import("./pages/UserPage.vue"),
+    component: () => import("../pages/UserPage.vue"),
+  },
+  {
+    name: "AgGridTest",
+    path: "/ag-grid",
+    component: () => import("../pages/AgGridTestPage.vue"),
   },
 ];
 
@@ -24,14 +29,11 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, _from, next) => {
-  const authStore = useAuthStore();
-  if (
-    to.meta.isProtected === false ||
-    (await authStore.currentUser()) != null
-  ) {
+  const { getUser, signin } = useAuth();
+  if (to.meta.isProtected === false || (await getUser()) != null) {
     next();
   } else {
-    await authStore.signIn();
+    await signin();
   }
 });
 
