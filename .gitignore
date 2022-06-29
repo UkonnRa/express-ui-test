@@ -35,3 +35,4 @@ packages/**/cypress/screenshots
 *.local
 *.sqlite
 .env
+.env.*

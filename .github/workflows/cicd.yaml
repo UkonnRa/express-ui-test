@@ -8,14 +8,6 @@ jobs:
   test:
     name: Continuous Integration
     runs-on: ubuntu-latest
-    env:
-      DEBUG: true
-      OPENID_PROVIDER: ${{ secrets.OPENID_PROVIDER }}
-      OPENID_DISCOVERY_URL: ${{ secrets.OPENID_DISCOVERY_URL }}
-      OPENID_APP_ID: ${{ secrets.OPENID_APP_ID }}
-      OPENID_APP_SECRET: ${{ secrets.OPENID_APP_SECRET }}
-      OPENID_CALLBACK_URL: ${{ secrets.OPENID_CALLBACK_URL }}
-      VITE_API_TYPE: mock
 
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +33,11 @@ jobs:
 
       - name: Test
         run: yarn lint && yarn test
+        env:
+          VITE_API_TYPE: mock
+          VITE_OPENID_DISCOVERY_URL: ${{ secrets.VITE_OPENID_DISCOVERY_URL_TEST }}
+          VITE_OPENID_APP_ID: ${{ secrets.VITE_OPENID_APP_ID_TEST }}
+          VITE_OPENID_CALLBACK_URL: ${{ secrets.VITE_OPENID_CALLBACK_URL_TEST }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -91,6 +88,12 @@ jobs:
 
       - name: Build Project
         run: yarn build
+        env:
+          VITE_API_TYPE: ${{ secrets.VITE_API_TYPE_PRODUCTION }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL_PRODUCTION }}
+          VITE_OPENID_DISCOVERY_URL: ${{ secrets.VITE_OPENID_DISCOVERY_URL_PRODUCTION }}
+          VITE_OPENID_APP_ID: ${{ secrets.VITE_OPENID_APP_ID_PRODUCTION }}
+          VITE_OPENID_CALLBACK_URL: ${{ secrets.OPENID_CALLBACK_URL_PRODUCTION }}
 
       - name: Prepare Tools
         run: sudo apt-get update -y && sudo apt-get upgrade -y && sudo apt-get install jq -y

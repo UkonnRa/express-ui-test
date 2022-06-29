@@ -15,12 +15,6 @@ services:
     restart: always
     ports:
       - "3000:80"
-    environment:
-      - VITE_API_TYPE=grpc
-      - VITE_API_URL=http://localhost:10000
-      - VITE_OPENID_DISCOVERY_URL=https://white-rabbit-dev.authing.cn/oidc
-      - VITE_OPENID_APP_ID=62b5c9311ce9ad4d5015593c
-      - VITE_OPENID_CALLBACK_URL=http://127.0.0.1:3000/callback
 
   app-backend-graphql:
     build: "./packages/app-backend-graphql"
