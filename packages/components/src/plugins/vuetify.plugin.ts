@@ -3,7 +3,7 @@ import {
   type ThemeDefinition,
   type VuetifyOptions,
 } from "vuetify";
-import "vuetify/styles/main.sass";
+import "vuetify/styles";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 
 const light: ThemeDefinition = {

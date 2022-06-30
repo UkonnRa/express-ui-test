@@ -1,0 +1,11 @@
+{
+  "journal": {
+    "title": "账本"
+  },
+  "group": {
+    "title": "群组"
+  },
+  "theme": {
+    "description": "在明亮模式与暗黑模式中切换"
+  }
+}

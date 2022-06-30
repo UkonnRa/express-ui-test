@@ -2503,6 +2503,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@intlify/bundle-utils@npm:next":
+  version: 3.1.0
+  resolution: "@intlify/bundle-utils@npm:3.1.0"
+  dependencies:
+    "@intlify/message-compiler": next
+    "@intlify/shared": next
+    jsonc-eslint-parser: ^1.0.1
+    source-map: 0.6.1
+    yaml-eslint-parser: ^0.3.2
+  peerDependenciesMeta:
+    petite-vue-i18n:
+      optional: true
+    vue-i18n:
+      optional: true
+  checksum: 708f071736e5ae2f55929b9561b5488c4bb087a46e7e75208e181ef3e6fea66c283a2cd47027df7bb2b2d7dbcc9792bdbe9bd94753400b8f18ea86c057f2bdd2
+  languageName: node
+  linkType: hard
+
 "@intlify/core-base@npm:9.1.10":
   version: 9.1.10
   resolution: "@intlify/core-base@npm:9.1.10"
@@ -2537,6 +2555,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@intlify/message-compiler@npm:next":
+  version: 9.2.0-beta.36
+  resolution: "@intlify/message-compiler@npm:9.2.0-beta.36"
+  dependencies:
+    "@intlify/shared": 9.2.0-beta.36
+    source-map: 0.6.1
+  checksum: 521868c9b4466db79b647af8c69e96935c68b2dc31805ffa0c79ecea57fc6f4322108a6dc5a58ced05a9b19bbbd8d074af71efbf928e776a4a38c69b3b0ce7a0
+  languageName: node
+  linkType: hard
+
 "@intlify/message-resolver@npm:9.1.10":
   version: 9.1.10
   resolution: "@intlify/message-resolver@npm:9.1.10"
@@ -2559,6 +2587,36 @@ __metadata:
   version: 9.1.10
   resolution: "@intlify/shared@npm:9.1.10"
   checksum: b4305cb755fdd031834d312712ac2d27d9e6e94318a6dae36aa0740f1e30bbd3c6fd3164eec7ddd62ae1b0f691402c25609cf3ffc6f2e2b7664023f69af74255
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:9.2.0-beta.36, @intlify/shared@npm:next":
+  version: 9.2.0-beta.36
+  resolution: "@intlify/shared@npm:9.2.0-beta.36"
+  checksum: 626b4a0f5af619d099b4d737ee77bacb1e338b9b9e3b3a89fe310a1f99783029f5fb32527c773cf4fa8dbd45695196bd7439e0ba10334cd0628e7f42a7766c48
+  languageName: node
+  linkType: hard
+
+"@intlify/vite-plugin-vue-i18n@npm:*":
+  version: 4.0.0
+  resolution: "@intlify/vite-plugin-vue-i18n@npm:4.0.0"
+  dependencies:
+    "@intlify/bundle-utils": next
+    "@intlify/shared": next
+    "@rollup/pluginutils": ^4.1.0
+    debug: ^4.3.1
+    fast-glob: ^3.2.5
+    source-map: 0.6.1
+  peerDependencies:
+    petite-vue-i18n: "*"
+    vite: ^2.9.0
+    vue-i18n: "*"
+  peerDependenciesMeta:
+    petite-vue-i18n:
+      optional: true
+    vue-i18n:
+      optional: true
+  checksum: 365323ab60d2ea5ea8f945df88f17afb137b15b63069665ab6185ef3b29969e8b15f1e9225859d627a48153137d45a2e89e8fa673508751e39229a7bb10f3559
   languageName: node
   linkType: hard
 
@@ -6351,6 +6409,7 @@ __metadata:
     "@ag-grid-enterprise/core": ^27.3.0
     "@ag-grid-enterprise/menu": ^27.3.0
     "@ag-grid-enterprise/range-selection": ^27.3.0
+    "@intlify/vite-plugin-vue-i18n": "*"
     "@mdi/js": ^6.9.96
     "@protobuf-ts/grpcweb-transport": ^2.7.0
     "@white-rabbit/frontend-api": "workspace:^"

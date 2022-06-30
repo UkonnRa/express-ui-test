@@ -13,7 +13,7 @@
     "build": "yarn lint && yarn workspaces foreach -pit run build",
     "dev": "yarn workspaces foreach -pit run dev",
     "lint:style": "stylelint \"**/*.{vue,scss,css}\"",
-    "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/**/*.md",
+    "lint:markdown": "markdownlint -p .markdownlint.json README.md packages/doc/docs/*.md",
     "lint:prettier": "prettier --no-config --check \"{**/*,*}.{js,ts,jsx,tsx,vue,json}\"",
     "lint:eslint": "eslint .eslintrc.backend.js .eslintrc.js .eslintrc.vue.js commitlint.config.js esbuild.config.ts jest.config.ts vitest.setup.ts",
     "lint": "yarn lint:eslint && yarn lint:markdown && yarn lint:style && yarn lint:prettier && yarn workspaces foreach -pit run lint",

@@ -1,0 +1,11 @@
+{
+  "journal": {
+    "title": "Journals"
+  },
+  "group": {
+    "title": "Groups"
+  },
+  "theme": {
+    "description": "Toggle between Light & Dark themes"
+  }
+}

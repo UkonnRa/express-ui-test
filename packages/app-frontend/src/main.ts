@@ -6,6 +6,7 @@ import {
   apiPlugin,
   routerPlugin,
   vuetifyPlugin,
+  i18nPlugin,
 } from "@white-rabbit/components";
 import { createPinia } from "pinia";
 
@@ -15,4 +16,5 @@ app.use(routerPlugin);
 app.use(agGridPlugin);
 app.use(vuetifyPlugin);
 app.use(apiPlugin);
+app.use(i18nPlugin);
 app.mount("#app");
