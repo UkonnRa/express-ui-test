@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 import "pinia";
 import { AuthService } from "./services";
+import { Router } from "vue-router";
 
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
@@ -23,5 +24,6 @@ interface ImportMeta {
 declare module "pinia" {
   export interface PiniaCustomProperties {
     readonly authService: AuthService;
+    readonly router: Router;
   }
 }

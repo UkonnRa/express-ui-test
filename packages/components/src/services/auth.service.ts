@@ -9,6 +9,6 @@ export type AuthService<T = unknown> = {
 };
 
 export type AuthUser<T = unknown> = {
-  readonly user: UserModel;
+  readonly user?: UserModel;
   readonly token: T;
 };

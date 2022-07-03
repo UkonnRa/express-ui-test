@@ -53,11 +53,8 @@ export const authService: AuthService<User> = {
     const user = await apiService.user.findOne(token, {
       authIds: { [provider]: token.profile.sub },
     });
-    if (user == null) {
-      return null;
-    }
     return {
-      user,
+      user: user || undefined,
       token,
     };
   },

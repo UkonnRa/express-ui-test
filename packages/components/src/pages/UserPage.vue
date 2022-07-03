@@ -1,6 +1,75 @@
+<template>
+  <div v-if="authStore.user">
+    <pre><code>{{JSON.stringify(authStore.user, null, 2)}}</code></pre>
+  </div>
+  <div v-else>AuthUser Not Found</div>
+  <div>===</div>
+  <div v-if="user">
+    <div>ID: {{ user.id }}</div>
+    <div>createdAt: {{ user.createdAt }}</div>
+    <div>updatedAt: {{ user.updatedAt }}</div>
+    <div>name: {{ user.name }}</div>
+    <div>role: {{ user.role }}</div>
+    <div>authIds: {{ user.authIds }}</div>
+  </div>
+  <div v-else>User Not Found</div>
+  <div>===</div>
+  <div v-if="group">
+    <div>ID: {{ group.id }}</div>
+    <div>createdAt: {{ group.createdAt }}</div>
+    <div>updatedAt: {{ group.updatedAt }}</div>
+    <div>name: {{ group.name }}</div>
+    <div>description: {{ group.description }}</div>
+    <div>admins: {{ group.admins }}</div>
+    <div>members: {{ group.members }}</div>
+  </div>
+  <div v-else>Group Not Found</div>
+  <div>===</div>
+  <div v-if="journal">
+    <div>ID: {{ journal.id }}</div>
+    <div>createdAt: {{ journal.createdAt }}</div>
+    <div>updatedAt: {{ journal.updatedAt }}</div>
+    <div>name: {{ journal.name }}</div>
+    <div>description: {{ journal.description }}</div>
+    <div>tags: {{ journal.tags }}</div>
+    <div>unit: {{ journal.unit }}</div>
+    <div>archived: {{ journal.archived }}</div>
+    <div>admins: {{ journal.admins }}</div>
+    <div>members: {{ journal.members }}</div>
+  </div>
+  <div v-else>Journal Not Found</div>
+  <div>===</div>
+  <div v-if="account">
+    <div>ID: {{ account.id }}</div>
+    <div>createdAt: {{ account.createdAt }}</div>
+    <div>updatedAt: {{ account.updatedAt }}</div>
+    <div>name: {{ account.name }}</div>
+    <div>description: {{ account.description }}</div>
+    <div>type: {{ account.type }}</div>
+    <div>strategy: {{ account.strategy }}</div>
+    <div>unit: {{ account.unit }}</div>
+    <div>archived: {{ account.archived }}</div>
+  </div>
+  <div v-else>Account Not Found</div>
+  <div>===</div>
+  <div v-if="record">
+    <div>ID: {{ record.id }}</div>
+    <div>createdAt: {{ record.createdAt }}</div>
+    <div>updatedAt: {{ record.updatedAt }}</div>
+    <div>journal: {{ record.journal }}</div>
+    <div>name: {{ record.name }}</div>
+    <div>description: {{ record.description }}</div>
+    <div>type: {{ record.type }}</div>
+    <div>timestamp: {{ record.timestamp }}</div>
+    <div>tags: {{ record.tags }}</div>
+    <div>items: {{ record.items }}</div>
+    <div>isValid: {{ record.isValid }}</div>
+  </div>
+  <div v-else>Record Not Found</div>
+</template>
+
 <script setup lang="ts">
-import { watchEffect } from "vue";
-import { useAsyncState } from "@vueuse/core";
+import { ref, watchEffect } from "vue";
 import {
   AccountModel,
   GroupModel,
@@ -10,109 +79,55 @@ import {
 } from "@white-rabbit/frontend-api";
 import { useAuthStore } from "../stores";
 import { useInject } from "../hooks";
-import { ApiService, AuthUser, KEY_API_SERVICE } from "../services";
+import { ApiService, KEY_API_SERVICE } from "../services";
 
 const api = useInject<ApiService>(KEY_API_SERVICE);
 const authStore = useAuthStore();
 
-const { isReady, state, error } = useAsyncState<
-  | [
-      AuthUser | null,
-      UserModel | null,
-      GroupModel | null,
-      JournalModel | null,
-      AccountModel | null,
-      RecordModel | null
-    ]
-  | null
->(async () => {
-  const authUser = authStore.user;
-  const user = await api.user.findOne(authUser.token, {
-    authIds: { authing: { $ne: null } },
-  });
-  const group = await api.group.findOne(authUser.token, {});
-  const journal = await api.journal.findOne(authUser.token, {});
-  const account = await api.account.findOne(authUser.token, {});
-  const record = await api.record.findOne(authUser.token, {
-    journal: journal?.id,
-  });
-  return [authUser, user, group, journal, account, record];
-}, null);
+const user = ref<UserModel>();
+watchEffect(async () => {
+  if (authStore.user) {
+    user.value =
+      (await api.user.findOne(authStore.user.token, {
+        authIds: { authing: { $ne: null } },
+      })) || undefined;
+  }
+});
 
-watchEffect(() => error.value != null && console.error(error.value));
+const group = ref<GroupModel>();
+watchEffect(async () => {
+  if (authStore.user) {
+    group.value =
+      (await api.group.findOne(authStore.user.token, {})) || undefined;
+  }
+});
+
+const journal = ref<JournalModel>();
+watchEffect(async () => {
+  if (authStore.user) {
+    journal.value =
+      (await api.journal.findOne(authStore.user.token, {})) || undefined;
+  }
+});
+
+const account = ref<AccountModel>();
+watchEffect(async () => {
+  if (authStore.user && journal.value) {
+    account.value =
+      (await api.account.findOne(authStore.user.token, {
+        journal: journal.value.id,
+      })) || undefined;
+  }
+});
+
+const record = ref<RecordModel>();
+watchEffect(async () => {
+  if (authStore.user && account.value) {
+    record.value =
+      (await api.record.findOne(authStore.user.token, {
+        journal: account.value.journal,
+        items: { account: account.value.id },
+      })) || undefined;
+  }
+});
 </script>
-
-<template>
-  <div v-if="isReady">
-    <div v-if="state?.[0]">
-      <pre>
-        <code>{{JSON.stringify(state[0], null, 2)}}</code>
-      </pre>
-    </div>
-    <div v-else>AuthUser Not Found</div>
-    <div>===</div>
-    <div v-if="state?.[1]">
-      <div>ID: {{ state[1].id }}</div>
-      <div>createdAt: {{ state[1].createdAt }}</div>
-      <div>updatedAt: {{ state[1].updatedAt }}</div>
-      <div>name: {{ state[1].name }}</div>
-      <div>role: {{ state[1].role }}</div>
-      <div>authIds: {{ state[1].authIds }}</div>
-    </div>
-    <div v-else>User Not Found</div>
-    <div>===</div>
-    <div v-if="state?.[2]">
-      <div>ID: {{ state[2].id }}</div>
-      <div>createdAt: {{ state[2].createdAt }}</div>
-      <div>updatedAt: {{ state[2].updatedAt }}</div>
-      <div>name: {{ state[2].name }}</div>
-      <div>description: {{ state[2].description }}</div>
-      <div>admins: {{ state[2].admins }}</div>
-      <div>members: {{ state[2].members }}</div>
-    </div>
-    <div v-else>Group Not Found</div>
-    <div>===</div>
-    <div v-if="state?.[3]">
-      <div>ID: {{ state[3].id }}</div>
-      <div>createdAt: {{ state[3].createdAt }}</div>
-      <div>updatedAt: {{ state[3].updatedAt }}</div>
-      <div>name: {{ state[3].name }}</div>
-      <div>description: {{ state[3].description }}</div>
-      <div>tags: {{ state[3].tags }}</div>
-      <div>unit: {{ state[3].unit }}</div>
-      <div>archived: {{ state[3].archived }}</div>
-      <div>admins: {{ state[3].admins }}</div>
-      <div>members: {{ state[3].members }}</div>
-    </div>
-    <div v-else>Journal Not Found</div>
-    <div>===</div>
-    <div v-if="state?.[4]">
-      <div>ID: {{ state[4].id }}</div>
-      <div>createdAt: {{ state[4].createdAt }}</div>
-      <div>updatedAt: {{ state[4].updatedAt }}</div>
-      <div>name: {{ state[4].name }}</div>
-      <div>description: {{ state[4].description }}</div>
-      <div>type: {{ state[4].type }}</div>
-      <div>strategy: {{ state[4].strategy }}</div>
-      <div>unit: {{ state[4].unit }}</div>
-      <div>archived: {{ state[4].archived }}</div>
-    </div>
-    <div v-else>Account Not Found</div>
-    <div>===</div>
-    <div v-if="state?.[5]">
-      <div>ID: {{ state[5].id }}</div>
-      <div>createdAt: {{ state[5].createdAt }}</div>
-      <div>updatedAt: {{ state[5].updatedAt }}</div>
-      <div>journal: {{ state[5].journal }}</div>
-      <div>name: {{ state[5].name }}</div>
-      <div>description: {{ state[5].description }}</div>
-      <div>type: {{ state[5].type }}</div>
-      <div>timestamp: {{ state[5].timestamp }}</div>
-      <div>tags: {{ state[5].tags }}</div>
-      <div>items: {{ state[5].items }}</div>
-      <div>isValid: {{ state[5].isValid }}</div>
-    </div>
-    <div v-else>Record Not Found</div>
-  </div>
-  <div v-else>Loading...</div>
-</template>

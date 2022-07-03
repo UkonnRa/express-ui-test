@@ -7,6 +7,7 @@ const routes: RouteRecordRaw[] = [
     path: "/callback",
     component: () => import("../pages/LoginCallbackPage.vue"),
     meta: {
+      isRaw: true,
       isProtected: false,
     },
   },
@@ -14,24 +15,12 @@ const routes: RouteRecordRaw[] = [
     name: "User",
     path: "/user",
     alias: "/",
-    component: () => import("../components/AppScaffold.vue"),
-    children: [
-      {
-        path: "",
-        component: () => import("../pages/UserPage.vue"),
-      },
-    ],
+    component: () => import("../pages/UserPage.vue"),
   },
   {
     name: "AgGridTest",
     path: "/ag-grid",
-    component: () => import("../components/AppScaffold.vue"),
-    children: [
-      {
-        path: "",
-        component: () => import("../pages/AgGridTestPage.vue"),
-      },
-    ],
+    component: () => import("../pages/AgGridTestPage.vue"),
   },
 ];
 
@@ -43,9 +32,13 @@ const router = createRouter({
 router.beforeEach(async (to, _from, next) => {
   if (to.meta.isProtected !== false) {
     const authStore = useAuthStore();
-    await authStore.loadUser();
+    const user = await authStore.loadUser();
+    if (user == null) {
+      await authStore.signIn();
+    } else if (user.user == null) {
+      await router.push({ name: "Register" });
+    }
   }
-
   next();
 });
 

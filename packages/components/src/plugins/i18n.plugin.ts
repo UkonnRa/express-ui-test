@@ -10,3 +10,8 @@ export default createI18n({
     "zh-Hans": zhHans,
   },
 });
+
+export const LOCALE_NAMES: Record<string, string> = {
+  en: "English",
+  "zh-Hans": "简体中文",
+};
