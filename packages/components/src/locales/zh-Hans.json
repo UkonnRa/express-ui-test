@@ -7,5 +7,8 @@
   },
   "theme": {
     "description": "在明亮模式与暗黑模式中切换"
+  },
+  "search": {
+    "description": "全局搜索"
   }
 }

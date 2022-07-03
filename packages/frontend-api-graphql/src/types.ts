@@ -1,4 +1,10 @@
-import { PageInfo, Sort } from "@white-rabbit/frontend-api";
+import { PageInfo, Sort, UserModel } from "@white-rabbit/frontend-api";
+import { User } from "oidc-client-ts";
+
+export interface AuthUser {
+  oidcUser: User;
+  user: UserModel;
+}
 
 export interface FindOneVariables {
   readonly query?: string;

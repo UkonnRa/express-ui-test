@@ -1,9 +1,4 @@
-import {
-  FindOneInput,
-  FindPageInput,
-  Page,
-  PageItem,
-} from "@white-rabbit/frontend-api";
+import { FindPageInput, Page, PageItem } from "@white-rabbit/frontend-api";
 import { User } from "oidc-client-ts";
 import { StringValue } from "../proto/google/protobuf/wrappers";
 import AbstractClient from "./abstract-client";
@@ -43,14 +38,14 @@ export default abstract class AbstractApi<
     };
   }
 
-  async findOne(user: User, { query }: FindOneInput): Promise<M | null> {
+  async findOne(token: User, query?: object): Promise<M | null> {
     const params = StringValue.create();
     if (query != null) {
       params.value = JSON.stringify(query);
     }
     const call = await this.client.findOne(params, {
       meta: {
-        authentication: user.access_token,
+        authentication: token.access_token,
       },
     });
     return call.response.item == null
@@ -58,33 +53,33 @@ export default abstract class AbstractApi<
       : this.modelFromProto(call.response.item);
   }
 
-  async findPage(user: User, input: FindPageInput): Promise<Page<M>> {
+  async findPage(token: User, input: FindPageInput): Promise<Page<M>> {
     const call = await this.client.findPage(
       {
         ...input,
         query: input.query == null ? undefined : JSON.stringify(input.query),
       },
       {
-        meta: { authentication: user.access_token },
+        meta: { authentication: token.access_token },
       }
     );
     return this.pageFromProto(call.response);
   }
 
-  async handle(user: User, command: C): Promise<M | null> {
+  async handle(token: User, command: C): Promise<M | null> {
     const call = await this.client.handle(this.commandToProto(command), {
-      meta: { authentication: user.access_token },
+      meta: { authentication: token.access_token },
     });
     return call.response.item == null
       ? null
       : this.modelFromProto(call.response.item);
   }
 
-  async handleAll(user: User, commands: C[]): Promise<Array<M | null>> {
+  async handleAll(token: User, commands: C[]): Promise<Array<M | null>> {
     const call = this.client.handleAll(
       { commands: commands.map((command) => this.commandToProto(command)) },
       {
-        meta: { authentication: user.access_token },
+        meta: { authentication: token.access_token },
       }
     );
     const result = [];

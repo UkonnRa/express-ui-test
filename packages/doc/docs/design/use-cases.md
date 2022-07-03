@@ -190,3 +190,113 @@ endif
 stop
 @enduml
 <!-- markdownlint-restore -->
+
+## Authentication Workflow between Frontend and Backend
+
+Since WhiteRabbit has two modes, remote mode and local mode, there are different authentication workflows for each mode.
+
+### Remote Mode: OAuth2
+
+For remote mode, we choose OAuth2 and a third-party OIDC provider. The whole workflow is based on
+Auth Code Flow with PKCE, which means the workflow is only on frontend.
+And the OIDC client will refresh the access token and id token before their expirations.
+
+<!-- markdownlint-disable -->
+@startuml
+actor Frontend
+participant AuthServer
+participant Backend
+
+Frontend -> AuthServer: Sign In Request
+AuthServer --> Frontend: Success and to Callback Page
+note left
+Containing the standard OIDC Sign In
+and Consent workflow.
+Frontend will get:
+* id_token: For proving the authT flow is finished.
+* access_token: For proving the authZ flow is finished.
+  This should be the Authorization Header between Frontend and Backend.
+* refresh_token: Refresh the two tokens silently before expirations.
+end note
+Frontend -> Backend: Get self by access_token
+Backend --> Frontend: Return User or null
+alt Returned User is null
+  Frontend -> Frontend: Redirect to Register Page
+else
+  Frontend -> Frontend: Redirect to Home Page
+end
+
+Frontend -> Backend: API calls with access_token
+Backend -> AuthServer: Require JWKS public keys
+AuthServer --> Backend: JWKS public keys
+Backend -> Backend: Check the access_token (expiration, issuer, audience, signature, etc)
+Backend --> Frontend: The secured data
+@enduml
+<!-- markdownlint-restore -->
+
+#### access_token and id_token, when to use which?
+
+The only difference between access_token and id_token is that, access_token has the field `scope`, and id_token has
+a bunch of personal information fields. For Backend, the most concerned thing is: which permissions the coming user has.
+That's what the field `scope` does.
+
+So:
+* access_token works for authorization, which contains the permissions authorized by users themselves.
+* id_token works for authentication, which contains some userInfo to make Frontend represent the user easily.
+  * In our design, the userInfo of id_token is useless since we don't store user info in the third party platform until
+    we build own OIDC authorization server.
+
+### Local Mode: Local Password
+
+In local mode, there are no security concerns, so we simply use the explicit password for authentication
+and no authorization flows.
+
+<!-- markdownlint-disable -->
+@startuml
+actor Frontend
+participant Backend
+
+Frontend -> Backend: Sign In Request with password
+note left
+Here, Frontend is the render process
+and Backend is the main/business process
+end note
+Backend -> Backend: Success and to Callback page
+note left
+**About Authentication:**
+Backend will compare the input password
+with the **hashed** local password.
+
+**About Callback:**
+The callback will only return the ID of the user.
+end note
+Frontend -> Backend: Get self by ID
+Backend --> Frontend: Return User or null
+alt Returned User is null
+  Frontend -> Frontend: Impossible, Owner is created\nwhen initing the system
+else
+  Frontend -> Frontend: Redirect to Home Page
+end
+@enduml
+<!-- markdownlint-restore -->
+
+### Class Diagram
+
+<!-- markdownlint-disable -->
+@startuml
+
+interface AuthManager {
+  + user: UserModel;
+  + signIn(): Promise<void>;
+  + signInCallback(): Promise<void>;
+  + signOut(): Promise<void>;
+  + signOutCallback(): Promise<void>;
+}
+
+class OIDCAuthManager implements AuthManager {
+  - oidcManager: OIDCManager;
+}
+
+class LocalAuthManager implements AuthManager {}
+@enduml
+<!-- markdownlint-restore -->

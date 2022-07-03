@@ -1,7 +1,5 @@
 <template>
-  <app-scaffold></app-scaffold>
+  <router-view></router-view>
 </template>
 
-<script setup lang="ts">
-import { AppScaffold } from "@white-rabbit/components";
-</script>
+<script setup lang="ts"></script>

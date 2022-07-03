@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { inject, watchEffect } from "vue";
+import { watchEffect } from "vue";
 import { useAsyncState } from "@vueuse/core";
-import { Api, KEY_API } from "@white-rabbit/components";
-import { User } from "oidc-client-ts";
 import {
   AccountModel,
   GroupModel,
@@ -10,17 +8,16 @@ import {
   RecordModel,
   UserModel,
 } from "@white-rabbit/frontend-api";
-import { useAuth } from "../hooks";
+import { useAuthStore } from "../stores";
+import { useInject } from "../hooks";
+import { ApiService, AuthUser, KEY_API_SERVICE } from "../services";
 
-const { getUser } = useAuth();
-const api = inject<Api>(KEY_API);
-if (!api) {
-  throw new Error("Cannot find api");
-}
+const api = useInject<ApiService>(KEY_API_SERVICE);
+const authStore = useAuthStore();
 
 const { isReady, state, error } = useAsyncState<
   | [
-      User | null,
+      AuthUser | null,
       UserModel | null,
       GroupModel | null,
       JournalModel | null,
@@ -29,20 +26,16 @@ const { isReady, state, error } = useAsyncState<
     ]
   | null
 >(async () => {
-  const authUser = await getUser();
-  const user =
-    authUser &&
-    (await api.user.findOne(authUser, {
-      query: { authIds: { authing: { $ne: null } } },
-    }));
-  const group = authUser && (await api.group.findOne(authUser, { query: {} }));
-  const journal =
-    authUser && (await api.journal.findOne(authUser, { query: {} }));
-  const account =
-    authUser && (await api.account.findOne(authUser, { query: {} }));
-  const record =
-    authUser &&
-    (await api.record.findOne(authUser, { query: { journal: journal?.id } }));
+  const authUser = authStore.user;
+  const user = await api.user.findOne(authUser.token, {
+    authIds: { authing: { $ne: null } },
+  });
+  const group = await api.group.findOne(authUser.token, {});
+  const journal = await api.journal.findOne(authUser.token, {});
+  const account = await api.account.findOne(authUser.token, {});
+  const record = await api.record.findOne(authUser.token, {
+    journal: journal?.id,
+  });
   return [authUser, user, group, journal, account, record];
 }, null);
 
@@ -52,9 +45,9 @@ watchEffect(() => error.value != null && console.error(error.value));
 <template>
   <div v-if="isReady">
     <div v-if="state?.[0]">
-      <div>ID Token: {{ state[0].id_token }}</div>
-      <div>Access Token: {{ state[0].access_token }}</div>
-      <div>Scope: {{ state[0].scopes }}</div>
+      <pre>
+        <code>{{JSON.stringify(state[0], null, 2)}}</code>
+      </pre>
     </div>
     <div v-else>AuthUser Not Found</div>
     <div>===</div>

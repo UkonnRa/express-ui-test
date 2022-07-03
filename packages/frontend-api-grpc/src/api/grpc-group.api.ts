@@ -1,6 +1,7 @@
 import { GroupApi, GroupCommand, GroupModel } from "@white-rabbit/frontend-api";
 import { inject, singleton } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { User as OidcUser } from "oidc-client-ts";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { GroupServiceClient } from "../proto/group.client";
 import { Command, Group } from "../proto/group";
@@ -15,7 +16,7 @@ export default class GrpcGroupApi
     Command,
     GroupServiceClient
   >
-  implements GroupApi
+  implements GroupApi<OidcUser>
 {
   constructor(@inject(GrpcWebFetchTransport) transport: GrpcWebFetchTransport) {
     super(new GroupServiceClient(transport));

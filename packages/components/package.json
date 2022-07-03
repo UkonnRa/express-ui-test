@@ -15,7 +15,7 @@
     "@ag-grid-enterprise/core": "^27.3.0",
     "@ag-grid-enterprise/menu": "^27.3.0",
     "@ag-grid-enterprise/range-selection": "^27.3.0",
-    "@intlify/vite-plugin-vue-i18n": "*",
+    "@intlify/vite-plugin-vue-i18n": "^4.0.0",
     "@mdi/js": "^6.9.96",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@white-rabbit/frontend-api": "workspace:^",
@@ -27,6 +27,6 @@
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.16",
-    "vuetify": "^3.0.0-beta.4"
+    "vuetify": "^3.0.0-beta.5"
   }
 }

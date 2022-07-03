@@ -1,4 +1,6 @@
 /// <reference types="vite/client" />
+import "pinia";
+import { AuthService } from "./services";
 
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
@@ -16,4 +18,10 @@ interface ImportMetaEnv {
 // eslint-disable-next-line no-unused-vars
 interface ImportMeta {
   readonly env: ImportMetaEnv;
+}
+
+declare module "pinia" {
+  export interface PiniaCustomProperties {
+    readonly authService: AuthService;
+  }
 }

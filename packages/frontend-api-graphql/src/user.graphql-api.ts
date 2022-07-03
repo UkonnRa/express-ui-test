@@ -1,6 +1,5 @@
 import {
   UserApi,
-  FindOneInput,
   UserModel,
   FindPageInput,
   Page,
@@ -13,13 +12,13 @@ import { User } from "oidc-client-ts";
 import { Connection, FindOneVariables, FindPageVariables } from "./types";
 
 @singleton()
-export default class UserGraphqlApi implements UserApi {
+export default class UserGraphqlApi implements UserApi<User> {
   constructor(
     @inject(ApolloClient)
     private readonly client: ApolloClient<NormalizedCacheObject>
   ) {}
 
-  async findOne(_: User, { query }: FindOneInput): Promise<UserModel | null> {
+  async findOne(_: User, query?: object): Promise<UserModel | null> {
     const { data } = await this.client.query<
       { user: UserModel | null },
       FindOneVariables

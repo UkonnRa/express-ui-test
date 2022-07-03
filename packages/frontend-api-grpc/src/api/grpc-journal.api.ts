@@ -7,6 +7,7 @@ import {
   JournalCommand,
   JournalModel,
 } from "@white-rabbit/frontend-api";
+import { User as OidcUser } from "oidc-client-ts";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { JournalServiceClient } from "../proto/journal.client";
 import { AccessItem, AccessItemType, Command, Journal } from "../proto/journal";
@@ -53,7 +54,7 @@ export default class GrpcJournalApi
     Command,
     JournalServiceClient
   >
-  implements JournalApi
+  implements JournalApi<OidcUser>
 {
   constructor(@inject(GrpcWebFetchTransport) transport: GrpcWebFetchTransport) {
     super(new JournalServiceClient(transport));

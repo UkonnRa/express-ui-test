@@ -6,6 +6,7 @@ import {
   RecordModel,
   RecordTypeValue,
 } from "@white-rabbit/frontend-api";
+import { User as OidcUser } from "oidc-client-ts";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { Command, Record, Type } from "../proto/record";
 import { RecordServiceClient } from "../proto/record.client";
@@ -38,7 +39,7 @@ export default class GrpcRecordApi
     Command,
     RecordServiceClient
   >
-  implements RecordApi
+  implements RecordApi<OidcUser>
 {
   constructor(@inject(GrpcWebFetchTransport) transport: GrpcWebFetchTransport) {
     super(new RecordServiceClient(transport));

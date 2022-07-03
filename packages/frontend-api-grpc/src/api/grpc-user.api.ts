@@ -6,6 +6,7 @@ import {
 } from "@white-rabbit/frontend-api";
 import { inject, singleton } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { User as OidcUser } from "oidc-client-ts";
 import { UserServiceClient } from "../proto/user.client";
 import { Command, Role, User } from "../proto/user";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
@@ -36,7 +37,7 @@ const roleToProto = (role: RoleValue): Role => {
 @singleton()
 export default class GrpcUserApi
   extends AbstractApi<UserModel, UserCommand, User, Command, UserServiceClient>
-  implements UserApi
+  implements UserApi<OidcUser>
 {
   constructor(@inject(GrpcWebFetchTransport) transport: GrpcWebFetchTransport) {
     super(new UserServiceClient(transport));

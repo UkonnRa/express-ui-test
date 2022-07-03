@@ -7,6 +7,7 @@ import {
   AccountStrategyValue,
   AccountTypeValue,
 } from "@white-rabbit/frontend-api";
+import { User as OidcUser } from "oidc-client-ts";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { Account, Command, Strategy, Type } from "../proto/account";
 import { AccountServiceClient } from "../proto/account.client";
@@ -69,7 +70,7 @@ export default class GrpcAccountApi
     Command,
     AccountServiceClient
   >
-  implements AccountApi
+  implements AccountApi<OidcUser>
 {
   constructor(@inject(GrpcWebFetchTransport) transport: GrpcWebFetchTransport) {
     super(new AccountServiceClient(transport));

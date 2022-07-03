@@ -24,9 +24,7 @@ export default interface AbstractClient<P extends object, CP extends object> {
   ) => ServerStreamingCall<StringValue, P>;
 
   handle: (input: CP, options?: RpcOptions) => UnaryCall<CP, NullableEntity<P>>;
-  /**
-   * @generated from protobuf rpc: handleAll(whiterabbit.user.Commands) returns (stream whiterabbit.user.UserResponse);
-   */
+
   handleAll: (
     input: Commands<CP>,
     options?: RpcOptions

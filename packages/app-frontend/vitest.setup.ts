@@ -1,15 +1,13 @@
-import { vi } from "vitest";
+import { beforeAll } from "vitest";
+import { createPinia } from "pinia";
+import { markRaw } from "vue";
+import { authManager } from "./src/services";
+import { config } from "@vue/test-utils";
 
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: vi.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+beforeAll(() => {
+  const pinia = createPinia();
+  pinia.use(() => {
+    return { authManager: markRaw(authManager) };
+  });
+  config.global.plugins.push(pinia);
 });
