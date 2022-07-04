@@ -3,6 +3,10 @@ import { useAuthStore } from "../stores";
 
 const routes: RouteRecordRaw[] = [
   {
+    path: "",
+    redirect: { name: "Journals" },
+  },
+  {
     name: "Callback",
     path: "/callback",
     component: () => import("../pages/LoginCallbackPage.vue"),
@@ -12,15 +16,16 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    name: "User",
-    path: "/user",
-    alias: "/",
-    component: () => import("../pages/UserPage.vue"),
-  },
-  {
-    name: "AgGridTest",
-    path: "/ag-grid",
-    component: () => import("../pages/AgGridTestPage.vue"),
+    name: "Journals",
+    path: "/journals",
+    component: () => import("../pages/JournalPage.vue"),
+    children: [
+      {
+        name: "Journal",
+        path: ":id",
+        component: import("../pages/JournalPage.vue"),
+      },
+    ],
   },
 ];
 

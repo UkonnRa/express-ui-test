@@ -1,14 +1,30 @@
 {
-  "journal": {
-    "title": "账本"
-  },
-  "group": {
-    "title": "群组"
-  },
+  "journals": "账本",
+  "groups": "群组",
   "theme": {
     "description": "在明亮模式与暗黑模式中切换"
   },
   "search": {
     "description": "全局搜索"
+  },
+  "create": "新建",
+  "filter": "过滤",
+  "filterPanel": "过滤面板",
+  "admin": "管理员",
+  "archived": "已归档",
+  "keyword": "关键字",
+  "unit": {
+    "currency": "货币单位"
+  },
+  "includeArchived": "应当包含已归档",
+  "includeGroupOrUser": "应当包含用户或群组",
+  "description": "描述",
+  "update": "更新",
+  "delete": "删除",
+  "sort": {
+    "title": "排序",
+    "field:name:asc": "名称，顺序排列",
+    "field:name:desc": "名称，倒序排列",
+    "field:startDate": "开始时间"
   }
 }

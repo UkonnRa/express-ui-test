@@ -4,11 +4,11 @@
       <v-app-bar-title>
         <div class="d-flex">
           <AppLogo></AppLogo>
-          <v-btn class="ml-1" @click="router.push({ name: 'User' })">
-            {{ t("journal.title") }}
+          <v-btn class="ml-1" @click="router.push({ name: 'Journals' })">
+            {{ t("journals") }}
           </v-btn>
           <v-btn class="ml-1" @click="router.push({ name: 'AgGridTest' })">
-            {{ t("group.title") }}
+            {{ t("groups") }}
           </v-btn>
           <v-tooltip location="bottom">
             {{ t("search.description") }}
@@ -25,6 +25,7 @@
             <template #activator="{ props }">
               <v-switch
                 v-model="isDark"
+                class="mr-1"
                 :prepend-icon="mdiThemeLightDark"
                 hide-details
                 inset
@@ -34,7 +35,7 @@
               </v-switch>
             </template>
           </v-tooltip>
-          <v-btn :prepend-icon="mdiTranslate" class="ml-1">
+          <v-btn :prepend-icon="mdiTranslate" class="mr-1">
             {{ LOCALE_NAMES[locale] }}
             <v-menu activator="parent">
               <v-list>
@@ -51,7 +52,7 @@
             </v-menu>
           </v-btn>
           <v-btn icon>
-            <v-avatar class="ml-1" color="primary">
+            <v-avatar color="primary">
               <v-icon v-if="!avatarInfo" :icon="mdiAccount"> </v-icon>
               <v-img
                 v-else-if="avatarInfo.picture"
@@ -66,7 +67,7 @@
     </v-app-bar>
 
     <v-main>
-      <v-container fluid>
+      <v-container fluid class="px-8">
         <router-view></router-view>
       </v-container>
     </v-main>

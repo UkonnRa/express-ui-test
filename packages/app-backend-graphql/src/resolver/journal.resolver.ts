@@ -32,7 +32,7 @@ export default class JournalResolver {
         .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
       context.authUser = {
         authId: user.authIds[0],
-        user: user,
+        user,
         scopes: [
           this.userService.readScope,
           this.groupService.readScope,
@@ -66,7 +66,7 @@ export default class JournalResolver {
         .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
       context.authUser = {
         authId: user.authIds[0],
-        user: user,
+        user,
         scopes: [
           this.userService.readScope,
           this.groupService.readScope,

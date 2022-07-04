@@ -10,7 +10,7 @@ watchEffect(async () => {
   try {
     await authStore.signInCallback();
   } finally {
-    await router.push({ name: "User" });
+    await router.push({ path: "/" });
   }
 });
 </script>

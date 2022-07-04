@@ -1,8 +1,22 @@
-import { FindPageInput, Page, PageItem } from "@white-rabbit/frontend-api";
+import {
+  FindPageInput,
+  Order,
+  Page,
+  PageItem,
+  Sort,
+} from "@white-rabbit/frontend-api";
 import { User } from "oidc-client-ts";
 import { StringValue } from "../proto/google/protobuf/wrappers";
+import { Order as OrderProto, Sort as SortProto } from "../proto/shared";
 import AbstractClient from "./abstract-client";
 import { PageProto } from "./types";
+
+function sortToProto({ field, order }: Sort): SortProto {
+  return {
+    field,
+    order: order === Order.ASC ? OrderProto.ASC : OrderProto.DESC,
+  };
+}
 
 export default abstract class AbstractApi<
   M,
@@ -53,11 +67,15 @@ export default abstract class AbstractApi<
       : this.modelFromProto(call.response.item);
   }
 
-  async findPage(token: User, input: FindPageInput): Promise<Page<M>> {
+  async findPage(
+    token: User,
+    { sort, query, pagination }: FindPageInput
+  ): Promise<Page<M>> {
     const call = await this.client.findPage(
       {
-        ...input,
-        query: input.query == null ? undefined : JSON.stringify(input.query),
+        sort: sort.map((item) => sortToProto(item)),
+        query: query == null ? undefined : JSON.stringify(query),
+        pagination,
       },
       {
         meta: { authentication: token.access_token },

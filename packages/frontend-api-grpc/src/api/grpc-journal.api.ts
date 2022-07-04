@@ -10,7 +10,8 @@ import {
 import { User as OidcUser } from "oidc-client-ts";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { JournalServiceClient } from "../proto/journal.client";
-import { AccessItem, AccessItemType, Command, Journal } from "../proto/journal";
+import { Command, Journal } from "../proto/journal";
+import { AccessItem, AccessItemType } from "../proto/access-item";
 import AbstractApi from "./abstract-api";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {

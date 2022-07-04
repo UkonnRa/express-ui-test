@@ -187,6 +187,18 @@ export default class JournalService extends WriteService<
     }
   }
 
+  async isAdmin(entity: JournalEntity, user: UserEntity): Promise<boolean> {
+    if (!entity.accessItems.isInitialized()) {
+      await entity.accessItems.init();
+    }
+
+    const adminContains = await Promise.all(
+      entity.admins.map(async (item) => item.contains(user.id))
+    );
+
+    return adminContains.some((isAdmin) => isAdmin);
+  }
+
   async isReadable(
     entity: JournalEntity,
     authUser: AuthUser
@@ -228,15 +240,7 @@ export default class JournalService extends WriteService<
       throw new AlreadyArchivedError(this.type, entity.id);
     }
 
-    if (!entity.accessItems.isInitialized()) {
-      await entity.accessItems.init();
-    }
-
-    const adminContains = await Promise.all(
-      entity.admins.map(async (item) => item.contains(user.id))
-    );
-
-    if (adminContains.every((isAdmin) => !isAdmin)) {
+    if (!(await this.isAdmin(entity, user))) {
       throw new NoPermissionError(this.type, "WRITE");
     }
   }

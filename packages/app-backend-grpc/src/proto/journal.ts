@@ -9,6 +9,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { NullableStringArray } from "./shared";
 import { PageInfo } from "./shared";
+import { AccessItem } from "./access-item";
 import { Timestamp } from "./google/protobuf/timestamp";
 /**
  * @generated from protobuf message whiterabbit.journal.Journal
@@ -47,26 +48,21 @@ export interface Journal {
    */
   archived: boolean;
   /**
-   * @generated from protobuf field: repeated whiterabbit.journal.AccessItem admins = 9;
+   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem admins = 9;
    */
   admins: AccessItem[];
   /**
-   * @generated from protobuf field: repeated whiterabbit.journal.AccessItem members = 10;
+   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem members = 10;
    */
   members: AccessItem[];
-}
-/**
- * @generated from protobuf message whiterabbit.journal.AccessItem
- */
-export interface AccessItem {
   /**
-   * @generated from protobuf field: whiterabbit.journal.AccessItemType type = 1;
+   * @generated from protobuf field: bool isAdmin = 11;
    */
-  type: AccessItemType;
+  isAdmin: boolean;
   /**
-   * @generated from protobuf field: string id = 2;
+   * @generated from protobuf field: bool isFavorite = 12;
    */
-  id: string;
+  isFavorite: boolean;
 }
 /**
  * @generated from protobuf message whiterabbit.journal.JournalPage
@@ -128,11 +124,11 @@ export interface CreateCommand {
    */
   unit: string;
   /**
-   * @generated from protobuf field: repeated whiterabbit.journal.AccessItem admins = 7;
+   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem admins = 7;
    */
   admins: AccessItem[];
   /**
-   * @generated from protobuf field: repeated whiterabbit.journal.AccessItem members = 8;
+   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem members = 8;
    */
   members: AccessItem[];
 }
@@ -178,7 +174,7 @@ export interface UpdateCommand {
  */
 export interface NullableAccessItemArray {
   /**
-   * @generated from protobuf field: repeated whiterabbit.journal.AccessItem values = 1;
+   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem values = 1;
    */
   values: AccessItem[];
 }
@@ -233,19 +229,6 @@ export interface Commands {
    */
   commands: Command[];
 }
-/**
- * @generated from protobuf enum whiterabbit.journal.AccessItemType
- */
-export enum AccessItemType {
-  /**
-   * @generated from protobuf enum value: USER = 0;
-   */
-  USER = 0,
-  /**
-   * @generated from protobuf enum value: GROUP = 1;
-   */
-  GROUP = 1,
-}
 // @generated message type with reflection information, may provide speed optimized methods
 class Journal$Type extends MessageType<Journal> {
   constructor() {
@@ -283,6 +266,8 @@ class Journal$Type extends MessageType<Journal> {
         repeat: 1 /*RepeatType.PACKED*/,
         T: () => AccessItem,
       },
+      { no: 11, name: "isAdmin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+      { no: 12, name: "isFavorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
     ]);
   }
 }
@@ -290,24 +275,6 @@ class Journal$Type extends MessageType<Journal> {
  * @generated MessageType for protobuf message whiterabbit.journal.Journal
  */
 export const Journal = new Journal$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AccessItem$Type extends MessageType<AccessItem> {
-  constructor() {
-    super("whiterabbit.journal.AccessItem", [
-      {
-        no: 1,
-        name: "type",
-        kind: "enum",
-        T: () => ["whiterabbit.journal.AccessItemType", AccessItemType],
-      },
-      { no: 2, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-    ]);
-  }
-}
-/**
- * @generated MessageType for protobuf message whiterabbit.journal.AccessItem
- */
-export const AccessItem = new AccessItem$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JournalPage$Type extends MessageType<JournalPage> {
   constructor() {

@@ -9,28 +9,32 @@ import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 const light: ThemeDefinition = {
   dark: false,
   colors: {
-    background: "#FFFBFE",
-    surface: "#FFFBFE",
-    primary: "#6750A4",
-    secondary: "#625B71",
-    success: "#006e18",
-    warning: "#9b4601",
-    error: "#B3261E",
-    info: "#4038ff",
+    background: "#fffbff",
+    surface: "#fffbff",
+    outline: "#827568",
+    surfaceVariant: "#f0e0d0",
+
+    primary: "#855400",
+    secondary: "#8b13de",
+    tertiary: "#3e6919",
+    error: "#ba1a1a",
+    info: "#5936f4",
   },
 };
 
 const dark: ThemeDefinition = {
   dark: true,
   colors: {
-    background: "#1C1B1F",
-    surface: "#1C1B1F",
-    primary: "#D0BCFF",
-    secondary: "#CCC2DC",
-    success: "#00e640",
-    warning: "#ffb68a",
-    error: "#F2B8B5",
-    info: "#bfc1ff",
+    background: "#1f1b16",
+    surface: "#1f1b16",
+    outline: "#9c8e80",
+    surfaceVariant: "#504539",
+
+    primary: "#ffb95d",
+    secondary: "#e0b7ff",
+    tertiary: "#a3d578",
+    error: "#ffb4ab",
+    info: "#c7bfff",
   },
 };
 

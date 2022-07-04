@@ -5,12 +5,15 @@ import {
   JournalCommand,
   AccessItemTypeValue,
   AccessItemInput,
+  AuthUser,
+  AccessItemValue,
 } from "@white-rabbit/business-logic";
-import { EntityDTO, MikroORM } from "@mikro-orm/core";
+import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 
-import { AccessItem, AccessItemType, Command, Journal } from "../proto/journal";
+import { Command, Journal } from "../proto/journal";
 import { IJournalService } from "../proto/journal.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
+import { AccessItem, AccessItemType } from "../proto/access-item";
 import AbstractService from "./abstract-service";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
@@ -38,10 +41,11 @@ function accessItemsFromProto(items: AccessItem[]): AccessItemInput[] {
   }));
 }
 
-function accessItemsToProto(items: AccessItemInput[]): AccessItem[] {
-  return items.map(({ type, id }) => ({
-    type: accessItemTypeToProto(type),
-    id,
+function accessItemsToProto(items: AccessItemValue[]): AccessItem[] {
+  return items.map((item) => ({
+    type: accessItemTypeToProto(item.type),
+    id: item.itemId,
+    name: item.itemName,
   }));
 }
 
@@ -99,8 +103,20 @@ export default class JournalService
   }
 
   override async getModel(
-    entity: EntityDTO<JournalEntity> | JournalEntity
+    entity: EntityDTO<JournalEntity> | JournalEntity,
+    em: EntityManager,
+    authUser: AuthUser
   ): Promise<Journal> {
+    let isAdmin = false;
+    if (authUser.user != null) {
+      isAdmin = await this.service.isAdmin(
+        entity instanceof JournalEntity
+          ? entity
+          : await em.findOneOrFail(JournalEntity, { id: entity.id }),
+        authUser.user
+      );
+    }
+
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),
@@ -108,6 +124,9 @@ export default class JournalService
       tags: entity.tags,
       admins: accessItemsToProto(entity.admins),
       members: accessItemsToProto(entity.members),
+      isAdmin,
+      // TODO: Store favorite in db
+      isFavorite: Math.random() > 0.5,
     };
   }
 }

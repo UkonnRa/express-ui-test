@@ -5,6 +5,7 @@ package whiterabbit.journal;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "shared.proto";
+import "access-item.proto";
 
 message Journal {
   string id = 1;
@@ -16,18 +17,10 @@ message Journal {
   repeated string tags = 6;
   string unit = 7;
   bool archived = 8;
-  repeated AccessItem admins = 9;
-  repeated AccessItem members = 10;
-}
-
-message AccessItem {
-  AccessItemType type = 1;
-  string id = 2;
-}
-
-enum AccessItemType {
-  USER = 0;
-  GROUP = 1;
+  repeated whiterabbit.accessItem.AccessItem admins = 9;
+  repeated whiterabbit.accessItem.AccessItem members = 10;
+  bool isAdmin = 11;
+  bool isFavorite = 12;
 }
 
 message JournalPage {
@@ -50,8 +43,8 @@ message CreateCommand {
   string description = 3;
   repeated string tags = 4;
   string unit = 5;
-  repeated AccessItem admins = 7;
-  repeated AccessItem members = 8;
+  repeated whiterabbit.accessItem.AccessItem admins = 7;
+  repeated whiterabbit.accessItem.AccessItem members = 8;
 }
 
 message UpdateCommand {
@@ -66,7 +59,7 @@ message UpdateCommand {
 }
 
 message NullableAccessItemArray {
-  repeated AccessItem values = 1;
+  repeated whiterabbit.accessItem.AccessItem values = 1;
 }
 
 message DeleteCommand {

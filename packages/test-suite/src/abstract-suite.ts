@@ -105,7 +105,7 @@ export default abstract class AbstractSuite<
           before: nextPage.pageInfo.startCursor,
         },
       });
-      expect(nextPagePrevious).toStrictEqual(page);
+      expect(nextPagePrevious.pageInfo).toStrictEqual(page.pageInfo);
     } else if (expectNextPage === false) {
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
@@ -148,7 +148,7 @@ export default abstract class AbstractSuite<
           after: previousPage.pageInfo.endCursor,
         },
       });
-      expect(previousPageNext).toStrictEqual(page);
+      expect(previousPageNext.pageInfo).toStrictEqual(page.pageInfo);
     } else if (expectPreviousPage === false) {
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {

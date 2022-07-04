@@ -9,4 +9,6 @@ export default interface JournalModel extends AbstractModel {
   readonly archived: boolean;
   readonly admins: AccessItemValue[];
   readonly members: AccessItemValue[];
+  readonly isAdmin: boolean;
+  readonly isFavorite: boolean;
 }

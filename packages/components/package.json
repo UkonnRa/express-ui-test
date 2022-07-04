@@ -7,14 +7,14 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^27.3.0",
-    "@ag-grid-community/core": "^27.3.0",
-    "@ag-grid-community/infinite-row-model": "^27.3.0",
-    "@ag-grid-community/vue3": "^27.3.0",
-    "@ag-grid-enterprise/clipboard": "^27.3.0",
-    "@ag-grid-enterprise/core": "^27.3.0",
-    "@ag-grid-enterprise/menu": "^27.3.0",
-    "@ag-grid-enterprise/range-selection": "^27.3.0",
+    "@ag-grid-community/client-side-row-model": "^28.0.0",
+    "@ag-grid-community/core": "^28.0.0",
+    "@ag-grid-community/infinite-row-model": "^28.0.0",
+    "@ag-grid-community/vue3": "^28.0.0",
+    "@ag-grid-enterprise/clipboard": "^28.0.0",
+    "@ag-grid-enterprise/core": "^28.0.0",
+    "@ag-grid-enterprise/menu": "^28.0.0",
+    "@ag-grid-enterprise/range-selection": "^28.0.0",
     "@intlify/vite-plugin-vue-i18n": "^4.0.0",
     "@mdi/js": "^6.9.96",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
@@ -26,7 +26,7 @@
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
-    "vue-router": "^4.0.16",
+    "vue-router": "^4.1.1",
     "vuetify": "^3.0.0-beta.5"
   }
 }

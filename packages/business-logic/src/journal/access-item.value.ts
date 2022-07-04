@@ -33,6 +33,8 @@ export default abstract class AccessItemValue {
 
   abstract get itemId(): string;
 
+  abstract get itemName(): string;
+
   abstract contains(user: string): Promise<boolean>;
 
   static create(
@@ -67,6 +69,10 @@ export class AccessItemUserValue extends AccessItemValue {
     return this.user.id;
   }
 
+  get itemName(): string {
+    return this.user.name;
+  }
+
   // Only non-deleted user can be inited
   async contains(userId: string): Promise<boolean> {
     return this.user.isInitialized() && userId === this.user.id;
@@ -91,6 +97,10 @@ export class AccessItemGroupValue extends AccessItemValue {
 
   get itemId(): string {
     return this.group.id;
+  }
+
+  get itemName(): string {
+    return this.group.name;
   }
 
   // Only non-deleted group can be inited

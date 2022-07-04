@@ -1,14 +1,31 @@
 {
-  "journal": {
-    "title": "Journals"
-  },
-  "group": {
-    "title": "Groups"
-  },
+  "journals": "Journals",
+  "groups": "Groups",
   "theme": {
     "description": "Toggle between Light & Dark themes"
   },
   "search": {
     "description": "Global searching"
+  },
+  "create": "Create",
+  "filter": "Filter",
+  "admin": "Admin",
+  "archived": "Archived",
+  "filters": "Filters",
+  "filterPanel": "Filter Panel",
+  "keyword": "Keyword",
+  "unit": {
+    "currency": "Currency Unit"
+  },
+  "includeArchived": "Should Include Archived",
+  "includeGroupOrUser": "Should Include Group Or User",
+  "description": "Description",
+  "update": "Update",
+  "delete": "Delete",
+  "sort": {
+    "title": "Sort",
+    "field:name:asc": "Name, Ascending",
+    "field:name:desc": "Name, Descending",
+    "field:startDate": "Start Date"
   }
 }

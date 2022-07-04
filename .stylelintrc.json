@@ -3,5 +3,12 @@
     "stylelint-config-standard-scss",
     "stylelint-config-standard-vue/scss",
     "stylelint-config-prettier-scss"
-  ]
+  ],
+  "plugins": ["stylelint-selector-bem-pattern"],
+  "rules": {
+    "selector-class-pattern": null,
+    "plugin/selector-bem-pattern": {
+      "preset": "bem"
+    }
+  }
 }

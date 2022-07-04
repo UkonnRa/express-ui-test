@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package whiterabbit.accessItem;
+
+import "google/protobuf/wrappers.proto";
+import "shared.proto";
+
+message AccessItem {
+  AccessItemType type = 1;
+  string id = 2;
+  string name = 3;
+}
+
+enum AccessItemType {
+  USER = 0;
+  GROUP = 1;
+}
+
+message AccessItemPage {
+  whiterabbit.shared.PageInfo pageInfo = 1;
+  repeated AccessItemItem items = 2;
+}
+
+message AccessItemItem {
+  string cursor = 1;
+  AccessItem data = 2;
+}
+
+message AccessItemResponse {
+  AccessItem item = 1;
+}
+
+service JournalService {
+  rpc findOne(google.protobuf.StringValue) returns (AccessItemResponse);
+  rpc findPage(whiterabbit.shared.FindPageRequest) returns (AccessItemPage);
+  rpc findAll(google.protobuf.StringValue) returns (stream AccessItem);
+}

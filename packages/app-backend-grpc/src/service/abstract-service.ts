@@ -42,18 +42,23 @@ export default abstract class AbstractService<
 
   abstract getCommand(command: CP): C;
 
-  abstract getModel(entity: EntityDTO<E> | E, em: EntityManager): Promise<P>;
+  abstract getModel(
+    entity: EntityDTO<E> | E,
+    em: EntityManager,
+    authUser: AuthUser
+  ): Promise<P>;
 
   private async getPageResponse(
     { pageInfo, items }: Page<E>,
-    em: EntityManager
+    em: EntityManager,
+    authUser: AuthUser
   ): Promise<Page<P>> {
     return {
       pageInfo,
       items: await Promise.all(
         items.map(async ({ cursor, data }) => ({
           cursor,
-          data: await this.getModel(data, em),
+          data: await this.getModel(data, em, authUser),
         }))
       ),
     };
@@ -61,10 +66,12 @@ export default abstract class AbstractService<
 
   private async getResponse(
     entity: EntityDTO<E> | E | null,
-    em: EntityManager
+    em: EntityManager,
+    authUser: AuthUser
   ): Promise<NullableEntity<P>> {
     return {
-      item: entity == null ? undefined : await this.getModel(entity, em),
+      item:
+        entity == null ? undefined : await this.getModel(entity, em, authUser),
     };
   }
 
@@ -133,7 +140,7 @@ export default abstract class AbstractService<
         },
         em
       );
-      return this.getResponse(entity, em);
+      return this.getResponse(entity, em, authUser);
     } catch (e) {
       console.error(e);
       throw e;
@@ -163,7 +170,7 @@ export default abstract class AbstractService<
         em
       );
 
-      return this.getPageResponse(page, em);
+      return this.getPageResponse(page, em, authUser);
     } catch (e) {
       console.error(e);
       throw e;
@@ -181,7 +188,7 @@ export default abstract class AbstractService<
 
     const entities = await this.service.findAll({ authUser, query }, em);
     for (const entity of entities) {
-      await responses.send(await this.getModel(entity, em));
+      await responses.send(await this.getModel(entity, em, authUser));
     }
     await responses.complete();
   }
@@ -199,7 +206,7 @@ export default abstract class AbstractService<
       },
       em
     );
-    return this.getResponse(entity, em);
+    return this.getResponse(entity, em, authUser);
   }
 
   async handleAll(
@@ -217,7 +224,7 @@ export default abstract class AbstractService<
       em
     );
     for (const entity of entities) {
-      await responses.send(await this.getResponse(entity, em));
+      await responses.send(await this.getResponse(entity, em, authUser));
     }
     await responses.complete();
   }
