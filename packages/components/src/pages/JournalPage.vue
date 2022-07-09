@@ -12,6 +12,7 @@
         class="pr-2"
         variant="outlined"
         density="compact"
+        color="primary"
         :label="t('sort.title')"
         :items="sortOptions"
         :hide-details="true"
@@ -28,7 +29,7 @@
       </v-btn>
     </div>
   </div>
-  <div class="main d-flex">
+  <div class="main d-flex justify-space-between">
     <div v-if="journals" class="main__list d-flex flex-wrap align-start">
       <v-card
         v-for="journal in journals.items"
@@ -75,7 +76,12 @@
               {{ journal.data.unit }}
             </v-chip>
             <template v-if="journal.data.tags">
-              <v-chip v-for="tag in journal.data.tags" :key="tag" class="ma-1">
+              <v-chip
+                v-for="tag in journal.data.tags"
+                :key="tag"
+                color="secondary"
+                class="ma-1"
+              >
                 {{ tag }}
               </v-chip>
             </template>
@@ -100,7 +106,7 @@
         <v-card-text>
           <v-form>
             <v-text-field
-              v-model="filter.keyword"
+              v-model="query.$fullText"
               :label="t('keyword')"
               hide-details
               class="mb-4"
@@ -108,21 +114,21 @@
               clearable
             ></v-text-field>
             <v-text-field
-              v-model="filter.unit"
+              v-model="query.unit"
               :label="t('unit.currency')"
               hide-details
               variant="underlined"
               clearable
             ></v-text-field>
             <v-switch
-              v-model="filter.includeArchived"
+              v-model="query.includeArchived"
               :label="t('includeArchived')"
               hide-details
               color="primary"
             ></v-switch>
-            <JournalAccessItems
-              v-model="filter.accessItems"
-            ></JournalAccessItems>
+            <AppUserAutoComplete
+              v-model="query.$containingUser"
+            ></AppUserAutoComplete>
           </v-form>
         </v-card-text>
       </v-card>
@@ -146,9 +152,9 @@ import { computed, reactive, ref, watchEffect } from "vue";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
-import { AccessItemValue, JournalModel } from "@white-rabbit/frontend-api";
-import JournalAccessItems from "../components/JournalAccessItems.vue";
-import { AccessItemTypeValue, Order, Page } from "@white-rabbit/types";
+import { JournalModel } from "@white-rabbit/frontend-api";
+import { JournalQuery, Order, Page } from "@white-rabbit/types";
+import AppUserAutoComplete from "../components/AppUserAutoComplete.vue";
 
 const { t } = useI18n();
 
@@ -176,32 +182,18 @@ const api = useInject<ApiService>(KEY_API_SERVICE);
 const authStore = useAuthStore();
 
 const journals = ref<Page<JournalModel>>();
+const showFilterPanel = ref(false);
+const query = reactive<JournalQuery>({
+  includeArchived: false,
+});
 watchEffect(async () => {
   if (authStore.user) {
     journals.value = await api.journal.findPage(authStore.user.token, {
+      query,
       pagination: { size: 20 },
       sort: [sort.value],
     });
   }
-});
-
-const showFilterPanel = ref(false);
-const filter = reactive({
-  keyword: "",
-  unit: "",
-  includeArchived: false,
-  accessItems: [
-    {
-      type: AccessItemTypeValue.USER,
-      id: "user id",
-      name: "User Name",
-    },
-    {
-      type: AccessItemTypeValue.GROUP,
-      id: "group id",
-      name: "Group Name",
-    },
-  ] as AccessItemValue[],
 });
 </script>
 

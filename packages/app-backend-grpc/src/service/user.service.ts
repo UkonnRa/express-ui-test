@@ -1,11 +1,10 @@
 import { inject, singleton } from "tsyringe";
 import {
-  RoleValue,
-  UserCommand,
   UserEntity,
   UserService as CoreUserService,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
+import { RoleValue, UserCommand, UserQuery } from "@white-rabbit/types";
 import { Command, Role, User } from "../proto/user";
 import { IUserService } from "../proto/user.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
@@ -38,6 +37,7 @@ export default class UserService
   extends AbstractService<
     UserEntity,
     UserCommand,
+    UserQuery,
     CoreUserService,
     User,
     Command

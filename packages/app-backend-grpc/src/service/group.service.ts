@@ -2,10 +2,10 @@ import { inject, singleton } from "tsyringe";
 import {
   GroupService as CoreGroupService,
   GroupEntity,
-  GroupCommand,
 } from "@white-rabbit/business-logic";
 import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
 
+import { GroupCommand, GroupQuery } from "@white-rabbit/types";
 import { IGroupService } from "../proto/group.server";
 import { Command, Group } from "../proto/group";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
@@ -16,6 +16,7 @@ export default class GroupService
   extends AbstractService<
     GroupEntity,
     GroupCommand,
+    GroupQuery,
     CoreGroupService,
     Group,
     Command

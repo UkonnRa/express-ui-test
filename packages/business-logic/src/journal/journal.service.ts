@@ -15,6 +15,7 @@ import {
   RoleValue,
   UpdateJournalCommand,
 } from "@white-rabbit/types";
+import _ from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { GroupEntity, GroupService } from "../group";
@@ -22,6 +23,7 @@ import { AlreadyArchivedError, NoPermissionError } from "../error";
 import { accessItemsContain, filterAsync, fullTextSearch } from "../utils";
 import JournalEntity, { JOURNAL_TYPE } from "./journal.entity";
 import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
+import { AccessItemValue } from "./index";
 
 @singleton()
 export default class JournalService extends WriteService<
@@ -244,6 +246,7 @@ export default class JournalService extends WriteService<
     }
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async handleAdditionalQuery(
     authUser: AuthUser,
     entities: JournalEntity[],
@@ -251,16 +254,16 @@ export default class JournalService extends WriteService<
   ): Promise<JournalEntity[]> {
     if (query.type === "ContainingUserQuery") {
       return filterAsync(entities, async (entity) => {
-        let adminsContain = false;
-        let membersContain = false;
-        if (query.fields.includes(AccessItemAccessibleTypeValue.ADMIN)) {
-          adminsContain = await accessItemsContain(entity.admins, query.user);
-        } else if (
-          query.fields.includes(AccessItemAccessibleTypeValue.MEMBER)
-        ) {
-          membersContain = await accessItemsContain(entity.members, query.user);
+        for (const field of query.fields) {
+          const value = entity[field as keyof JournalEntity];
+          if (
+            value instanceof Array &&
+            (await accessItemsContain(value as AccessItemValue[], query.user))
+          ) {
+            return true;
+          }
         }
-        return adminsContain || membersContain;
+        return false;
       });
     } else if (query.type === "FullTextQuery") {
       return filterAsync(entities, async (entity) =>
@@ -283,47 +286,59 @@ export default class JournalService extends WriteService<
     }
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR) {
+      if (key === FULL_TEXT_OPERATOR && !_.isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description", "tags"],
         });
-      } else if (key === CONTAINING_USER_OPERATOR) {
+      } else if (key === CONTAINING_USER_OPERATOR && !_.isEmpty(value)) {
         additionalQuery.push({
           type: "ContainingUserQuery",
           user: value,
           fields: ["admins", "members"],
         });
-      } else if (key === "id") {
+      } else if (key === "id" && !_.isEmpty(value)) {
         objectQuery.id = value;
       } else if (key === "name") {
-        if (typeof value === "string") {
+        if (typeof value === "string" && !_.isEmpty(value)) {
           objectQuery.name = value;
-        } else if (FULL_TEXT_OPERATOR in value) {
+        } else if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
           additionalQuery.push({
             type: "FullTextQuery",
             value: value[FULL_TEXT_OPERATOR],
             fields: ["name"],
           });
         }
-      } else if (key === "description") {
+      } else if (
+        key === "description" &&
+        !_.isEmpty(value[FULL_TEXT_OPERATOR])
+      ) {
         additionalQuery.push({
           type: "FullTextQuery",
           value: value[FULL_TEXT_OPERATOR],
           fields: ["description"],
         });
       } else if (key === "tags") {
-        if (FULL_TEXT_OPERATOR in value) {
+        if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
           additionalQuery.push({
             type: "FullTextQuery",
             value: value[FULL_TEXT_OPERATOR],
             fields: ["tags"],
           });
-        } else if (typeof value === "string" || value instanceof Array) {
+        } else if (
+          (typeof value === "string" || value instanceof Array) &&
+          !_.isEmpty(value)
+        ) {
           objectQuery.tags = value;
         }
-      } else if (key === "unit") {
+      } else if (key === "unit" && !_.isEmpty(value)) {
         objectQuery.unit = value;
       } else if (key === "admins") {
         objectQuery.accessItems = {

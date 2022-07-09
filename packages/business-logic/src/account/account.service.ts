@@ -11,6 +11,7 @@ import {
   FULL_TEXT_OPERATOR,
   UpdateAccountCommand,
 } from "@white-rabbit/types";
+import _ from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
 import { AlreadyArchivedError, NotFoundError } from "../error";
@@ -184,7 +185,8 @@ export default class AccountService extends WriteService<
     }
   }
 
-  doGetQueries(
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  override doGetQueries(
     query: AccountQuery
   ): [AdditionalQuery[], ObjectQuery<AccountEntity>] {
     const additionalQuery: AdditionalQuery[] = [];
@@ -195,27 +197,30 @@ export default class AccountService extends WriteService<
     }
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR) {
+      if (key === FULL_TEXT_OPERATOR && !_.isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description"],
         });
-      } else if (key === "id") {
+      } else if (key === "id" && !_.isEmpty(value)) {
         objectQuery.id = value;
-      } else if (key === "journal") {
+      } else if (key === "journal" && !_.isEmpty(value)) {
         objectQuery.journal = value;
       } else if (key === "name") {
-        if (typeof value === "string") {
+        if (typeof value === "string" && !_.isEmpty(value)) {
           objectQuery.name = value;
-        } else if (FULL_TEXT_OPERATOR in value) {
+        } else if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
           additionalQuery.push({
             type: "FullTextQuery",
             value: value[FULL_TEXT_OPERATOR],
             fields: ["name"],
           });
         }
-      } else if (key === "description") {
+      } else if (key === "description" && !_.isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
@@ -225,7 +230,7 @@ export default class AccountService extends WriteService<
         objectQuery.type = value;
       } else if (key === "strategy") {
         objectQuery.strategy = value;
-      } else if (key === "unit") {
+      } else if (key === "unit" && !_.isEmpty(value)) {
         objectQuery.unit = value;
       }
     }

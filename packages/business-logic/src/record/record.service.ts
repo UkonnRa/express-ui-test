@@ -19,6 +19,7 @@ import {
   RECORD_READ_SCOPE,
   RECORD_WRITE_SCOPE,
 } from "@white-rabbit/types";
+import _ from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
 import { AccountEntity, AccountService } from "../account";
@@ -286,6 +287,7 @@ export default class RecordService extends WriteService<
     }
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   override doGetQueries(
     query: RecordQuery
   ): [AdditionalQuery[], ObjectQuery<RecordEntity>] {
@@ -293,27 +295,30 @@ export default class RecordService extends WriteService<
     const objectQuery: ObjectQuery<RecordEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR) {
+      if (key === FULL_TEXT_OPERATOR && _.isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description", "tags"],
         });
-      } else if (key === "id") {
+      } else if (key === "id" && _.isEmpty(value)) {
         objectQuery.id = value;
-      } else if (key === "journal") {
+      } else if (key === "journal" && _.isEmpty(value)) {
         objectQuery.journal = value;
       } else if (key === "name") {
-        if (typeof value === "string") {
+        if (typeof value === "string" && _.isEmpty(value)) {
           objectQuery.name = value;
-        } else if (FULL_TEXT_OPERATOR in value) {
+        } else if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
           additionalQuery.push({
             type: "FullTextQuery",
             value: value[FULL_TEXT_OPERATOR],
             fields: ["name"],
           });
         }
-      } else if (key === "description") {
+      } else if (key === "description" && _.isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
@@ -321,10 +326,24 @@ export default class RecordService extends WriteService<
         });
       } else if (key === "type") {
         objectQuery.type = value;
-      } else if (key === "timestamp") {
+      } else if (key === "timestamp" && _.isEmpty(value)) {
         objectQuery.timestamp = value;
       } else if (key === "tags") {
-        objectQuery.tags = value;
+        if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["tags"],
+          });
+        } else if (
+          (typeof value === "string" || value instanceof Array) &&
+          _.isEmpty(value)
+        ) {
+          objectQuery.tags = value;
+        }
       }
     }
 

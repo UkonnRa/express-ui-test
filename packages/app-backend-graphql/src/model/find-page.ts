@@ -1,4 +1,4 @@
-import { Sort } from "@white-rabbit/business-logic";
+import { Sort } from "@white-rabbit/types";
 
 export default interface FindPage {
   readonly query?: string;

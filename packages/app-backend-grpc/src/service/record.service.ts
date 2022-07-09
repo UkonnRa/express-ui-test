@@ -2,8 +2,6 @@ import { inject, singleton } from "tsyringe";
 import {
   RecordService as CoreRecordService,
   RecordEntity,
-  RecordCommand,
-  RecordTypeValue,
 } from "@white-rabbit/business-logic";
 import {
   Collection,
@@ -12,6 +10,11 @@ import {
   MikroORM,
 } from "@mikro-orm/core";
 
+import {
+  RecordCommand,
+  RecordQuery,
+  RecordTypeValue,
+} from "@white-rabbit/types";
 import { Command, Record, Type } from "../proto/record";
 import { IRecordService } from "../proto/record.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
@@ -40,6 +43,7 @@ export default class RecordService
   extends AbstractService<
     RecordEntity,
     RecordCommand,
+    RecordQuery,
     CoreRecordService,
     Record,
     Command

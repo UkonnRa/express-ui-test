@@ -2,12 +2,15 @@ import { inject, singleton } from "tsyringe";
 import {
   AccountService as CoreAccountService,
   AccountEntity,
-  AccountCommand,
-  AccountTypeValue,
-  AccountStrategyValue,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
 
+import {
+  AccountCommand,
+  AccountQuery,
+  AccountStrategyValue,
+  AccountTypeValue,
+} from "@white-rabbit/types";
 import { Command, Account, Type, Strategy } from "../proto/account";
 import { IAccountService } from "../proto/account.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
@@ -66,6 +69,7 @@ export default class AccountService
   extends AbstractService<
     AccountEntity,
     AccountCommand,
+    AccountQuery,
     CoreAccountService,
     Account,
     Command

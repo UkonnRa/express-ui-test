@@ -11,7 +11,9 @@ import {
   AdditionalQuery,
   USER_READ_SCOPE,
   USER_WRITE_SCOPE,
+  FULL_TEXT_OPERATOR,
 } from "@white-rabbit/types";
+import _ from "lodash";
 import { AuthUser, checkCreate, WriteService } from "../shared";
 import CommandInput from "../shared/command.input";
 import { NoPermissionError } from "../error";
@@ -166,9 +168,11 @@ export default class UserService extends WriteService<
     query: AdditionalQuery
   ): Promise<UserEntity[]> {
     if (query.type === "FullTextQuery") {
-      return filterAsync(entities, async (entity) =>
+      const value = await filterAsync(entities, async (entity) =>
         fullTextSearch(entity, query)
       );
+      console.log("value: ", value);
+      return value;
     } else {
       return super.handleAdditionalQuery(authUser, entities, query);
     }
@@ -179,17 +183,24 @@ export default class UserService extends WriteService<
     const objectQuery: ObjectQuery<UserEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === "id") {
+      if (key === "id" && !_.isEmpty(value)) {
         objectQuery.id = value;
       } else if (key === "name") {
-        additionalQuery.push({
-          type: "FullTextQuery",
-          value,
-          fields: ["name"],
-        });
+        if (typeof value === "string" && !_.isEmpty(value)) {
+          objectQuery.name = value;
+        } else if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["name"],
+          });
+        }
       } else if (key === "role") {
         objectQuery.role = value;
-      } else if (key === "authId") {
+      } else if (key === "authId" && !_.isEmpty(value)) {
         objectQuery.authIds = value;
       }
     }

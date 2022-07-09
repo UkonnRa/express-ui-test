@@ -1,4 +1,5 @@
-import { AbstractEntity, PageInfo } from "@white-rabbit/business-logic";
+import { AbstractEntity } from "@white-rabbit/business-logic";
+import { PageInfo } from "@white-rabbit/types";
 import Edge from "./edge";
 
 export default interface Connection<E extends AbstractEntity<E>> {

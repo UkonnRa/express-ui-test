@@ -4,11 +4,11 @@ import {
   GroupEntity,
   GroupService,
   JournalService,
-  RoleValue,
   UserEntity,
   UserService,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, MikroORM } from "@mikro-orm/core";
+import { RoleValue } from "@white-rabbit/types";
 
 @singleton()
 export default class AccessItemResolver {
@@ -39,8 +39,12 @@ export default class AccessItemResolver {
       const user = (await this.orm.em
         .fork()
         .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      const authIdProvider = Object.keys(user.authIds)[0];
       context.authUser = {
-        authId: user.authIds[0],
+        authId: {
+          provider: authIdProvider,
+          value: user.authIds[authIdProvider],
+        },
         user,
         scopes: [
           this.userService.readScope,
@@ -72,8 +76,12 @@ export default class AccessItemResolver {
       const user = (await this.orm.em
         .fork()
         .findOne(UserEntity, { role: RoleValue.ADMIN })) as UserEntity;
+      const authIdProvider = Object.keys(user.authIds)[0];
       context.authUser = {
-        authId: user.authIds[0],
+        authId: {
+          provider: authIdProvider,
+          value: user.authIds[authIdProvider],
+        },
         user,
         scopes: [
           this.userService.readScope,

@@ -1,5 +1,10 @@
 import { inject, singleton } from "tsyringe";
-import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
+import {
+  Collection,
+  EntityManager,
+  MikroORM,
+  ObjectQuery,
+} from "@mikro-orm/core";
 import {
   AdditionalQuery,
   CONTAINING_USER_OPERATOR,
@@ -13,11 +18,11 @@ import {
   RoleValue,
   UpdateGroupCommand,
 } from "@white-rabbit/types";
+import _ from "lodash";
 import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { filterAsync, fullTextSearch } from "../utils";
 import { NoPermissionError } from "../error";
-import AccessItemAccessibleTypeValue from "../journal/access-item-accessible-type.value";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 
 @singleton()
@@ -192,27 +197,26 @@ export default class GroupService extends WriteService<
     }
   }
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   async handleAdditionalQuery(
     authUser: AuthUser,
     entities: GroupEntity[],
     query: AdditionalQuery
   ): Promise<GroupEntity[]> {
     if (query.type === "ContainingUserQuery") {
-      return filterAsync(entities, async (entity) => {
-        let adminsContain = false;
-        let membersContain = false;
-        if (query.fields.includes(AccessItemAccessibleTypeValue.ADMIN)) {
-          adminsContain = entity.admins
-            .getItems()
-            .some((value) => value.id === query.user);
-        } else if (
-          query.fields.includes(AccessItemAccessibleTypeValue.MEMBER)
-        ) {
-          membersContain = entity.members
-            .getItems()
-            .some((value) => value.id === query.user);
+      return entities.filter((entity) => {
+        for (const field of query.fields) {
+          if (field in GroupEntity) {
+            const value = entity[field as keyof GroupEntity];
+            if (
+              value instanceof Collection &&
+              value.getItems().some((item) => item.id === query.user)
+            ) {
+              return true;
+            }
+          }
         }
-        return adminsContain || membersContain;
+        return false;
       });
     } else if (query.type === "FullTextQuery") {
       return filterAsync(entities, async (entity) =>
@@ -223,56 +227,51 @@ export default class GroupService extends WriteService<
     }
   }
 
-  doGetQueries(
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  override doGetQueries(
     query: GroupQuery
   ): [AdditionalQuery[], ObjectQuery<GroupEntity>] {
     const additionalQuery: AdditionalQuery[] = [];
     const objectQuery: ObjectQuery<GroupEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      switch (key) {
-        case FULL_TEXT_OPERATOR:
+      if (key === FULL_TEXT_OPERATOR && !_.isEmpty(value)) {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["name", "description"],
+        });
+      } else if (key === CONTAINING_USER_OPERATOR && !_.isEmpty(value)) {
+        additionalQuery.push({
+          type: "ContainingUserQuery",
+          user: value,
+          fields: ["admins", "members"],
+        });
+      } else if (key === "id" && !_.isEmpty(value)) {
+        objectQuery.id = value;
+      } else if (key === "name" && !_.isEmpty(value)) {
+        if (typeof value === "string" && !_.isEmpty(value)) {
+          objectQuery.name = value;
+        } else if (
+          FULL_TEXT_OPERATOR in value &&
+          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+        ) {
           additionalQuery.push({
             type: "FullTextQuery",
-            value,
-            fields: ["name", "description"],
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["name"],
           });
-          break;
-        case CONTAINING_USER_OPERATOR:
-          additionalQuery.push({
-            type: "ContainingUserQuery",
-            user: value,
-            fields: ["admins", "members"],
-          });
-          break;
-        case "id":
-          objectQuery.id = value;
-          break;
-        case "name": {
-          if (typeof value === "string") {
-            objectQuery.name = value;
-          } else if (FULL_TEXT_OPERATOR in value) {
-            additionalQuery.push({
-              type: "FullTextQuery",
-              value: value[FULL_TEXT_OPERATOR],
-              fields: ["name"],
-            });
-          }
-          break;
         }
-        case "description":
-          additionalQuery.push({
-            type: "FullTextQuery",
-            value,
-            fields: ["description"],
-          });
-          break;
-        case "admins":
-          objectQuery.admins = value;
-          break;
-        case "members":
-          objectQuery.members = value;
-          break;
+      } else if (key === "description" && !_.isEmpty(value)) {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["description"],
+        });
+      } else if (key === "admins" && !_.isEmpty(value)) {
+        objectQuery.admins = value;
+      } else if (key === "members" && !_.isEmpty(value)) {
+        objectQuery.members = value;
       }
     }
 

@@ -2,13 +2,14 @@ import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import {
   AbstractEntity,
   AuthUser,
-  Order as CoreOrder,
-  Query,
   UserEntity,
-  Command as CoreCommand,
   WriteService,
-  Page,
 } from "@white-rabbit/business-logic";
+import {
+  Page,
+  Command as CoreCommand,
+  Order as CoreOrder,
+} from "@white-rabbit/types";
 import { RpcInputStream, ServerCallContext } from "@protobuf-ts/runtime-rpc";
 import jwksRsa from "jwks-rsa";
 import jwt, {
@@ -27,7 +28,8 @@ interface NullableEntity<P> {
 export default abstract class AbstractService<
   E extends AbstractEntity<E>,
   C extends CoreCommand,
-  S extends WriteService<E, C>,
+  Q,
+  S extends WriteService<E, C, Q>,
   P,
   CP
 > {
@@ -130,7 +132,7 @@ export default abstract class AbstractService<
   ): Promise<NullableEntity<P>> {
     const em = this.orm.em.fork();
     const authUser = await this.getAuthUser(context, em);
-    const query: Query<E> = JSON.parse(request.value);
+    const query: Q = JSON.parse(request.value);
 
     try {
       const entity = await this.service.findOne(
@@ -152,8 +154,7 @@ export default abstract class AbstractService<
     context: ServerCallContext
   ): Promise<Page<P>> {
     const em = this.orm.em.fork();
-    const query: Query<E> =
-      request.query != null ? JSON.parse(request.query) : {};
+    const query: Q = request.query != null ? JSON.parse(request.query) : {};
     const authUser = await this.getAuthUser(context, em);
 
     try {
@@ -182,7 +183,7 @@ export default abstract class AbstractService<
     responses: RpcInputStream<P>,
     context: ServerCallContext
   ): Promise<void> {
-    const query: Query<E> = JSON.parse(request.value);
+    const query: Q = JSON.parse(request.value);
     const em = this.orm.em.fork();
     const authUser = await this.getAuthUser(context, em);
 

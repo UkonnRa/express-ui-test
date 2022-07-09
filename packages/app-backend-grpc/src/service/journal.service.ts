@@ -2,18 +2,28 @@ import { inject, singleton } from "tsyringe";
 import {
   JournalService as CoreJournalService,
   JournalEntity,
-  JournalCommand,
-  AccessItemTypeValue,
-  AccessItemInput,
   AuthUser,
   AccessItemValue,
 } from "@white-rabbit/business-logic";
 import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 
-import { Command, Journal } from "../proto/journal";
+import {
+  AccessItemInput,
+  AccessItemTypeValue,
+  JournalCommand,
+  JournalQuery,
+} from "@white-rabbit/types";
+import {
+  Command,
+  Journal,
+  AccessItemInput as AccessItemInputProto,
+} from "../proto/journal";
 import { IJournalService } from "../proto/journal.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
-import { AccessItem, AccessItemType } from "../proto/access-item";
+import {
+  AccessItem as AccessItemProto,
+  AccessItemType,
+} from "../proto/access-item";
 import AbstractService from "./abstract-service";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
@@ -34,14 +44,16 @@ function accessItemTypeToProto(type: AccessItemTypeValue): AccessItemType {
   }
 }
 
-function accessItemsFromProto(items: AccessItem[]): AccessItemInput[] {
+function accessItemsFromProto(
+  items: AccessItemInputProto[]
+): AccessItemInput[] {
   return items.map(({ type, id }) => ({
     type: accessItemTypeFromProto(type),
     id,
   }));
 }
 
-function accessItemsToProto(items: AccessItemValue[]): AccessItem[] {
+function accessItemsToProto(items: AccessItemValue[]): AccessItemProto[] {
   return items.map((item) => ({
     type: accessItemTypeToProto(item.type),
     id: item.itemId,
@@ -54,6 +66,7 @@ export default class JournalService
   extends AbstractService<
     JournalEntity,
     JournalCommand,
+    JournalQuery,
     CoreJournalService,
     Journal,
     Command
