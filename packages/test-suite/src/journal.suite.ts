@@ -2,8 +2,10 @@ import {
   AccessItemAccessibleTypeValue,
   AccessItemTypeValue,
   AccessItemValue,
+  FindOneInput,
   JournalCommand,
   JournalEntity,
+  JournalQuery,
   JournalService,
   Order,
   RoleValue,
@@ -13,8 +15,9 @@ import { MikroORM } from "@mikro-orm/core";
 import each from "jest-each";
 import { Task } from "./task";
 import AbstractSuite from "./abstract-suite";
+import { Input } from "./task/abstract-task";
 
-const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
+const TASKS: Array<Task<JournalEntity, JournalCommand, JournalQuery>> = [
   {
     type: "FindPageTask",
     name: "Find journal page",
@@ -38,7 +41,9 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
   {
     type: "FindOneTask",
     name: "Find a journal based on an admin",
-    input: async (em) => {
+    input: async (
+      em
+    ): Promise<Input<FindOneInput<JournalEntity, JournalQuery>>> => {
       const journal = await em.findOneOrFail(
         JournalEntity,
         {
@@ -56,24 +61,21 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
       return {
         authUser: { user: { role: RoleValue.OWNER } },
         query: {
-          accessItems: {
-            accessible: AccessItemAccessibleTypeValue.ADMIN,
+          admins: {
             type: AccessItemTypeValue.USER,
-            user: adminUserId,
+            id: adminUserId,
           },
         },
       };
     },
     checker: async ({ item, input }) => {
-      const queryAccessItem = input.query?.accessItems as Record<
-        string,
-        unknown
-      >;
+      const queryAdmin = input.query?.admins;
       expect(await item?.accessItems?.loadItems()).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            ...queryAccessItem,
-            user: expect.objectContaining({ id: queryAccessItem.user }),
+            type: queryAdmin?.type,
+            accessible: AccessItemAccessibleTypeValue.ADMIN,
+            user: expect.objectContaining({ id: queryAdmin?.id }),
           }),
         ])
       );
@@ -115,6 +117,7 @@ const TASKS: Array<Task<JournalEntity, JournalCommand>> = [
 export default class JournalSuite extends AbstractSuite<
   JournalEntity,
   JournalCommand,
+  JournalQuery,
   JournalService
 > {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

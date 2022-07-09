@@ -1,5 +1,6 @@
 import { decode, encodeURL } from "js-base64";
-import Cursor from "./shared/cursor";
+import { Cursor, FullTextQuery } from "./shared";
+import { AccessItemValue } from "./journal";
 
 export async function mapAsync<T, U>(
   array: T[],
@@ -23,3 +24,28 @@ export function decodeCursor(cursor: string): Cursor {
 export function encodeCursor(cursor: Cursor): string {
   return encodeURL(JSON.stringify(cursor));
 }
+
+export const accessItemsContain = async (
+  accessItems: AccessItemValue[],
+  userId: string
+): Promise<boolean> => {
+  for (const item of accessItems) {
+    if (await item.contains(userId)) {
+      return true;
+    }
+  }
+  return false;
+};
+
+export const fullTextSearch = <E>(entity: E, query: FullTextQuery): boolean =>
+  query.fields.some((field): boolean => {
+    const value = entity[field as keyof E];
+    if (typeof value === "string") {
+      return value.includes(query.value);
+    } else if (value instanceof Array) {
+      return value.some(
+        (item) => typeof item === "string" && item.includes(query.value)
+      );
+    }
+    return false;
+  });

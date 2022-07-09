@@ -1,13 +1,22 @@
 import { inject, singleton } from "tsyringe";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
-import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
+import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
+import {
+  AdditionalQuery,
+  AuthUser,
+  checkCreate,
+  CommandInput,
+  FULL_TEXT_OPERATOR,
+  WriteService,
+} from "../shared";
 import { JournalService } from "../journal";
 import { AlreadyArchivedError, NotFoundError } from "../error";
+import { filterAsync, fullTextSearch } from "../utils";
 import AccountCommand from "./account.command";
 import AccountEntity, { ACCOUNT_TYPE } from "./account.entity";
 import CreateAccountCommand from "./create-account.command";
 import UpdateAccountCommand from "./update-account.command";
 import DeleteAccountCommand from "./delete-account.command";
+import AccountQuery from "./account.query";
 
 export const ACCOUNT_READ_SCOPE = "white-rabbit_accounts:read";
 export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts:write";
@@ -15,7 +24,8 @@ export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts:write";
 @singleton()
 export default class AccountService extends WriteService<
   AccountEntity,
-  AccountCommand
+  AccountCommand,
+  AccountQuery
 > {
   constructor(
     @inject(MikroORM) orm: MikroORM,
@@ -162,5 +172,68 @@ export default class AccountService extends WriteService<
       (await super.isReadable(entity, authUser)) &&
       this.journalService.isReadable(entity.journal, authUser)
     );
+  }
+
+  async handleAdditionalQuery(
+    authUser: AuthUser,
+    entities: AccountEntity[],
+    query: AdditionalQuery
+  ): Promise<AccountEntity[]> {
+    if (query.type === "FullTextQuery") {
+      return filterAsync(entities, async (entity) =>
+        fullTextSearch(entity, query)
+      );
+    } else {
+      return super.handleAdditionalQuery(authUser, entities, query);
+    }
+  }
+
+  doGetQueries(
+    query: AccountQuery
+  ): [AdditionalQuery[], ObjectQuery<AccountEntity>] {
+    const additionalQuery: AdditionalQuery[] = [];
+    const objectQuery: ObjectQuery<AccountEntity> = {};
+
+    if (query.includeArchived !== true) {
+      objectQuery.archived = false;
+    }
+
+    for (const [key, value] of Object.entries(query)) {
+      if (key === FULL_TEXT_OPERATOR) {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["name", "description"],
+        });
+      } else if (key === "id") {
+        objectQuery.id = value;
+      } else if (key === "journal") {
+        objectQuery.journal = value;
+      } else if (key === "name") {
+        if (typeof value === "string") {
+          objectQuery.name = value;
+        } else if (FULL_TEXT_OPERATOR in value) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["name"],
+          });
+        }
+      } else if (key === "description") {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["description"],
+        });
+      } else if (key === "type") {
+        objectQuery.type = value;
+      } else if (key === "strategy") {
+        objectQuery.strategy = value;
+      } else if (key === "unit") {
+        objectQuery.unit = value;
+      }
+    }
+
+    return [additionalQuery, objectQuery];
   }
 }

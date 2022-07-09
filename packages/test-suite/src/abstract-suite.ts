@@ -10,7 +10,7 @@ import {
   WriteService,
   ALL_SCOPES,
 } from "@white-rabbit/business-logic";
-import { MikroORM } from "@mikro-orm/core";
+import { MikroORM, ObjectQuery } from "@mikro-orm/core";
 import { Task, FindPageTask } from "./task";
 import AbstractTask, { AuthUserInput } from "./task/abstract-task";
 import AbstractExceptionTask from "./task/abstract-exception-task";
@@ -18,9 +18,10 @@ import AbstractExceptionTask from "./task/abstract-exception-task";
 export default abstract class AbstractSuite<
   E extends AbstractEntity<E>,
   C extends Command,
-  S extends WriteService<E, C>
+  Q,
+  S extends WriteService<E, C, Q>
 > {
-  readonly tasks: Array<Task<E, C>>;
+  readonly tasks: Array<Task<E, C, Q>>;
 
   protected constructor(
     private readonly orm: MikroORM,
@@ -32,16 +33,20 @@ export default abstract class AbstractSuite<
     authId,
     scopes,
   }: AuthUserInput): Promise<AuthUser> {
-    if (user == null && authId == null) {
-      throw new Error(
-        "Invalid test case: Field[user] and Field[authId] should not both null in AuthUserInput"
-      );
+    // findOne cannot with empty where
+    let userQuery: ObjectQuery<UserEntity> | undefined;
+    if (user != null) {
+      if (Object.keys(user).length === 0) {
+        userQuery = { id: { $ne: null } };
+      } else {
+        userQuery = user;
+      }
     }
 
     let userValue: UserEntity | undefined;
-    if (user != null) {
+    if (userQuery != null && Object.keys(userQuery).length > 0) {
       const em = this.orm.em.fork();
-      userValue = await em.findOneOrFail(UserEntity, user, {});
+      userValue = await em.findOneOrFail(UserEntity, userQuery, {});
     }
 
     let authIdValue = authId;
@@ -64,8 +69,8 @@ export default abstract class AbstractSuite<
   }
 
   private async runFindPageTask(
-    { checker, expectNextPage, expectPreviousPage }: FindPageTask<E>,
-    input: FindPageInput<E>
+    { checker, expectNextPage, expectPreviousPage }: FindPageTask<E, Q>,
+    input: FindPageInput<E, Q>
   ): Promise<void> {
     const em = this.orm.em.fork();
     const page = await this.service.findPage(input);
@@ -198,7 +203,7 @@ export default abstract class AbstractSuite<
     );
   }
 
-  async runTask(task: Task<E, C>): Promise<void> {
+  async runTask(task: Task<E, C, Q>): Promise<void> {
     const em = this.orm.em.fork();
     let inputResult: typeof task.input;
 
@@ -215,25 +220,25 @@ export default abstract class AbstractSuite<
 
     switch (task.type) {
       case "FindPageTask":
-        await this.runFindPageTask(task, inputValue as FindPageInput<E>);
+        await this.runFindPageTask(task, inputValue as FindPageInput<E, Q>);
         break;
       case "FindPageExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindPageInput<E>,
-          async () => this.service.findPage(inputValue as FindPageInput<E>)
+          inputValue as FindPageInput<E, Q>,
+          async () => this.service.findPage(inputValue as FindPageInput<E, Q>)
         );
         break;
       case "FindOneTask":
-        await this.doRunTask(task, inputValue as FindOneInput<E>, async () =>
-          this.service.findOne(inputValue as FindOneInput<E>)
+        await this.doRunTask(task, inputValue as FindOneInput<E, Q>, async () =>
+          this.service.findOne(inputValue as FindOneInput<E, Q>)
         );
         break;
       case "FindOneExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindOneInput<E>,
-          async () => this.service.findOne(inputValue as FindOneInput<E>)
+          inputValue as FindOneInput<E, Q>,
+          async () => this.service.findOne(inputValue as FindOneInput<E, Q>)
         );
         break;
       case "HandleCommandTask":

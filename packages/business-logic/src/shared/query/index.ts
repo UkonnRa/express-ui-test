@@ -1,11 +1,18 @@
-import { ObjectQuery } from "@mikro-orm/core";
-import AdditionalQuery from "./additional-query";
+import ReadableQuery from "./readable.query";
+import FullTextQuery, { FULL_TEXT_OPERATOR } from "./full-text.query";
+import ContainingUserQuery, {
+  CONTAINING_USER_OPERATOR,
+} from "./containing-user.query";
 
-export { AdditionalQuery };
-export { default as ContainingUserQuery } from "./containing-user.query";
-export { default as FullTextQuery } from "./full-text.query";
-export { default as IsReadableQuery } from "./is-readable.query";
-
-export type Query<E> = ObjectQuery<E> & {
-  $additional?: AdditionalQuery[];
+export {
+  ReadableQuery,
+  FullTextQuery,
+  FULL_TEXT_OPERATOR,
+  ContainingUserQuery,
+  CONTAINING_USER_OPERATOR,
 };
+
+export type AdditionalQuery =
+  | FullTextQuery
+  | ContainingUserQuery
+  | ReadableQuery;

@@ -1,9 +1,22 @@
-import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
+import {
+  EntityDTO,
+  EntityManager,
+  MikroORM,
+  ObjectQuery,
+} from "@mikro-orm/core";
 import { inject, singleton } from "tsyringe";
-import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
+import {
+  AdditionalQuery,
+  AuthUser,
+  checkCreate,
+  CommandInput,
+  FULL_TEXT_OPERATOR,
+  WriteService,
+} from "../shared";
 import { JournalService } from "../journal";
 import { AccountEntity, AccountService, AccountTypeValue } from "../account";
 import { NotFoundError } from "../error";
+import { filterAsync, fullTextSearch } from "../utils";
 import RecordCommand from "./record.command";
 import RecordEntity, { RECORD_TYPE } from "./record.entity";
 import RecordTypeValue from "./record-type.value";
@@ -12,6 +25,7 @@ import RecordItemValue from "./record-item.value";
 import CreateRecordItemValue from "./create-record-item.value";
 import UpdateRecordCommand from "./update-record.command";
 import DeleteRecordCommand from "./delete-record.command";
+import RecordQuery from "./record.query";
 
 export const RECORD_READ_SCOPE = "white-rabbit_records:read";
 export const RECORD_WRITE_SCOPE = "white-rabbit_records:write";
@@ -19,7 +33,8 @@ export const RECORD_WRITE_SCOPE = "white-rabbit_records:write";
 @singleton()
 export default class RecordService extends WriteService<
   RecordEntity,
-  RecordCommand
+  RecordCommand,
+  RecordQuery
 > {
   constructor(
     @inject(MikroORM) orm: MikroORM,
@@ -258,5 +273,64 @@ export default class RecordService extends WriteService<
       (await super.isReadable(entity, authUser)) &&
       this.journalService.isReadable(entity.journal, authUser)
     );
+  }
+
+  override async handleAdditionalQuery(
+    authUser: AuthUser,
+    entities: RecordEntity[],
+    query: AdditionalQuery
+  ): Promise<RecordEntity[]> {
+    if (query.type === "FullTextQuery") {
+      return filterAsync(entities, async (entity) =>
+        fullTextSearch(entity, query)
+      );
+    } else {
+      return super.handleAdditionalQuery(authUser, entities, query);
+    }
+  }
+
+  override doGetQueries(
+    query: RecordQuery
+  ): [AdditionalQuery[], ObjectQuery<RecordEntity>] {
+    const additionalQuery: AdditionalQuery[] = [];
+    const objectQuery: ObjectQuery<RecordEntity> = {};
+
+    for (const [key, value] of Object.entries(query)) {
+      if (key === FULL_TEXT_OPERATOR) {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["name", "description", "tags"],
+        });
+      } else if (key === "id") {
+        objectQuery.id = value;
+      } else if (key === "journal") {
+        objectQuery.journal = value;
+      } else if (key === "name") {
+        if (typeof value === "string") {
+          objectQuery.name = value;
+        } else if (FULL_TEXT_OPERATOR in value) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["name"],
+          });
+        }
+      } else if (key === "description") {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["description"],
+        });
+      } else if (key === "type") {
+        objectQuery.type = value;
+      } else if (key === "timestamp") {
+        objectQuery.timestamp = value;
+      } else if (key === "tags") {
+        objectQuery.tags = value;
+      }
+    }
+
+    return [additionalQuery, objectQuery];
   }
 }

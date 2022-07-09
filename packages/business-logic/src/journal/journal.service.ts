@@ -1,26 +1,28 @@
 import { inject, singleton } from "tsyringe";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
   AdditionalQuery,
   AuthUser,
   checkCreate,
   CommandInput,
+  CONTAINING_USER_OPERATOR,
+  FULL_TEXT_OPERATOR,
   RoleValue,
   WriteService,
 } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { GroupEntity, GroupService } from "../group";
 import { AlreadyArchivedError, NoPermissionError } from "../error";
-import { filterAsync } from "../utils";
+import { accessItemsContain, filterAsync, fullTextSearch } from "../utils";
 import JournalEntity, { JOURNAL_TYPE } from "./journal.entity";
 import JournalCommand from "./journal.command";
 import AccessItemInput from "./access-item.input";
 import CreateJournalCommand from "./create-journal.command";
 import UpdateJournalCommand from "./update-journal.command";
 import DeleteJournalCommand from "./delete-journal.command";
-import AccessItemValue from "./access-item.value";
 import AccessItemTypeValue from "./access-item-type.value";
 import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
+import JournalQuery from "./journal.query";
 
 export const JOURNAL_READ_SCOPE = "white-rabbit_journals:read";
 export const JOURNAL_WRITE_SCOPE = "white-rabbit_journals:write";
@@ -28,7 +30,8 @@ export const JOURNAL_WRITE_SCOPE = "white-rabbit_journals:write";
 @singleton()
 export default class JournalService extends WriteService<
   JournalEntity,
-  JournalCommand
+  JournalCommand,
+  JournalQuery
 > {
   constructor(
     @inject(MikroORM) readonly orm: MikroORM,
@@ -250,32 +253,99 @@ export default class JournalService extends WriteService<
     entities: JournalEntity[],
     query: AdditionalQuery
   ): Promise<JournalEntity[]> {
-    const someContains = async (
-      accessItems: AccessItemValue[],
-      userId: string
-    ): Promise<boolean> => {
-      for (const item of accessItems) {
-        if (await item.contains(userId)) {
-          return true;
-        }
-      }
-      return false;
-    };
     if (query.type === "ContainingUserQuery") {
-      return filterAsync(entities, async (value) => {
-        if (query.field === AccessItemAccessibleTypeValue.ADMIN) {
-          return someContains(value.admins, query.user);
-        } else if (query.field === AccessItemAccessibleTypeValue.MEMBER) {
-          return someContains(value.members, query.user);
-        } else {
-          return (
-            (await someContains(value.admins, query.user)) ||
-            someContains(value.members, query.user)
-          );
+      return filterAsync(entities, async (entity) => {
+        let adminsContain = false;
+        let membersContain = false;
+        if (query.fields.includes(AccessItemAccessibleTypeValue.ADMIN)) {
+          adminsContain = await accessItemsContain(entity.admins, query.user);
+        } else if (
+          query.fields.includes(AccessItemAccessibleTypeValue.MEMBER)
+        ) {
+          membersContain = await accessItemsContain(entity.members, query.user);
         }
+        return adminsContain || membersContain;
       });
+    } else if (query.type === "FullTextQuery") {
+      return filterAsync(entities, async (entity) =>
+        fullTextSearch(entity, query)
+      );
     } else {
       return super.handleAdditionalQuery(authUser, entities, query);
     }
+  }
+
+  // eslint-disable-next-line sonarjs/cognitive-complexity
+  override doGetQueries(
+    query: JournalQuery
+  ): [AdditionalQuery[], ObjectQuery<JournalEntity>] {
+    const additionalQuery: AdditionalQuery[] = [];
+    const objectQuery: ObjectQuery<JournalEntity> = {};
+
+    if (query.includeArchived !== true) {
+      objectQuery.archived = false;
+    }
+
+    for (const [key, value] of Object.entries(query)) {
+      if (key === FULL_TEXT_OPERATOR) {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["name", "description", "tags"],
+        });
+      } else if (key === CONTAINING_USER_OPERATOR) {
+        additionalQuery.push({
+          type: "ContainingUserQuery",
+          user: value,
+          fields: ["admins", "members"],
+        });
+      } else if (key === "id") {
+        objectQuery.id = value;
+      } else if (key === "name") {
+        if (typeof value === "string") {
+          objectQuery.name = value;
+        } else if (FULL_TEXT_OPERATOR in value) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["name"],
+          });
+        }
+      } else if (key === "description") {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value: value[FULL_TEXT_OPERATOR],
+          fields: ["description"],
+        });
+      } else if (key === "tags") {
+        if (FULL_TEXT_OPERATOR in value) {
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value: value[FULL_TEXT_OPERATOR],
+            fields: ["tags"],
+          });
+        } else if (typeof value === "string" || value instanceof Array) {
+          objectQuery.tags = value;
+        }
+      } else if (key === "unit") {
+        objectQuery.unit = value;
+      } else if (key === "admins") {
+        objectQuery.accessItems = {
+          accessible: AccessItemAccessibleTypeValue.ADMIN,
+          type: value.type,
+          [value.type === AccessItemTypeValue.USER ? "user" : "group"]:
+            value.id,
+        };
+      } else if (key === "members") {
+        objectQuery.accessItems = {
+          accessible: AccessItemAccessibleTypeValue.MEMBER,
+          type: value.type,
+          [value.type === AccessItemTypeValue.USER ? "user" : "group"]:
+            value.id,
+        };
+      }
+    }
+
+    return [additionalQuery, objectQuery];
   }
 }

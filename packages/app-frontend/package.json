@@ -11,14 +11,14 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^28.0.0",
-    "@ag-grid-community/core": "^28.0.0",
-    "@ag-grid-community/infinite-row-model": "^28.0.0",
+    "@ag-grid-community/client-side-row-model": "^28.0.2",
+    "@ag-grid-community/core": "^28.0.2",
+    "@ag-grid-community/infinite-row-model": "^28.0.2",
     "@ag-grid-community/vue3": "^28.0.0",
-    "@ag-grid-enterprise/clipboard": "^28.0.0",
-    "@ag-grid-enterprise/core": "^28.0.0",
-    "@ag-grid-enterprise/menu": "^28.0.0",
-    "@ag-grid-enterprise/range-selection": "^28.0.0",
+    "@ag-grid-enterprise/clipboard": "^28.0.2",
+    "@ag-grid-enterprise/core": "^28.0.2",
+    "@ag-grid-enterprise/menu": "^28.0.2",
+    "@ag-grid-enterprise/range-selection": "^28.0.2",
     "@white-rabbit/components": "workspace:^",
     "@white-rabbit/frontend-api": "workspace:^",
     "oidc-client-ts": "^2.0.5",
@@ -31,9 +31,9 @@
     "vuetify": "^3.0.0-beta.5"
   },
   "devDependencies": {
-    "vite": "^2.9.13",
-    "vitest": "^0.17.0",
-    "vue-tsc": "^0.38.2"
+    "vite": "^2.9.14",
+    "vitest": "^0.17.1",
+    "vue-tsc": "^0.38.3"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

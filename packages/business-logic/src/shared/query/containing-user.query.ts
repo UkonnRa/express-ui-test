@@ -1,5 +1,7 @@
 export default interface ContainingUserQuery {
   type: "ContainingUserQuery";
-  field?: string;
+  fields: string[];
   user: string;
 }
+
+export const CONTAINING_USER_OPERATOR = "$containingUser";

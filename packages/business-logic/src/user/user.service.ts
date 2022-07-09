@@ -1,4 +1,4 @@
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import { inject, singleton } from "tsyringe";
 import {
   AuthUser,
@@ -6,21 +6,28 @@ import {
   WriteService,
   RoleValue,
   compareRole,
+  AdditionalQuery,
 } from "../shared";
 import CommandInput from "../shared/command.input";
 import { NoPermissionError } from "../error";
 import InvalidCommandError from "../error/invalid-command.error";
+import { filterAsync, fullTextSearch } from "../utils";
 import UserEntity, { USER_TYPE } from "./user.entity";
 import UserCommand from "./user.command";
 import CreateUserCommand from "./create-user.command";
 import UpdateUserCommand from "./update-user.command";
 import DeleteUserCommand from "./delete-user.command";
+import UserQuery from "./user.query";
 
 export const USER_READ_SCOPE = "white-rabbit_users:read";
 export const USER_WRITE_SCOPE = "white-rabbit_users:write";
 
 @singleton()
-export default class UserService extends WriteService<UserEntity, UserCommand> {
+export default class UserService extends WriteService<
+  UserEntity,
+  UserCommand,
+  UserQuery
+> {
   constructor(@inject(MikroORM) readonly orm: MikroORM) {
     super(orm, USER_TYPE, UserEntity, USER_READ_SCOPE, USER_WRITE_SCOPE, [
       "CreateUserCommand",
@@ -154,5 +161,42 @@ export default class UserService extends WriteService<UserEntity, UserCommand> {
     ) {
       throw new NoPermissionError(this.type, "WRITE");
     }
+  }
+
+  async handleAdditionalQuery(
+    authUser: AuthUser,
+    entities: UserEntity[],
+    query: AdditionalQuery
+  ): Promise<UserEntity[]> {
+    if (query.type === "FullTextQuery") {
+      return filterAsync(entities, async (entity) =>
+        fullTextSearch(entity, query)
+      );
+    } else {
+      return super.handleAdditionalQuery(authUser, entities, query);
+    }
+  }
+
+  doGetQueries(query: UserQuery): [AdditionalQuery[], ObjectQuery<UserEntity>] {
+    const additionalQuery: AdditionalQuery[] = [];
+    const objectQuery: ObjectQuery<UserEntity> = {};
+
+    for (const [key, value] of Object.entries(query)) {
+      if (key === "id") {
+        objectQuery.id = value;
+      } else if (key === "name") {
+        additionalQuery.push({
+          type: "FullTextQuery",
+          value,
+          fields: ["name"],
+        });
+      } else if (key === "role") {
+        objectQuery.role = value;
+      } else if (key === "authId") {
+        objectQuery.authIds = value;
+      }
+    }
+
+    return [additionalQuery, objectQuery];
   }
 }

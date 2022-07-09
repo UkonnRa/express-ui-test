@@ -3,6 +3,7 @@ import {
   AccessItemUserValue,
   DeleteUserCommand,
   encodeCursor,
+  FindPageInput,
   NoPermissionError,
   NotFoundError,
   Order,
@@ -12,6 +13,7 @@ import {
   USER_WRITE_SCOPE,
   UserCommand,
   UserEntity,
+  UserQuery,
   UserService,
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
@@ -21,13 +23,14 @@ import { v4 } from "uuid";
 import { faker } from "@faker-js/faker";
 import { HandleCommandExceptionTask, HandleCommandTask, Task } from "./task";
 import AbstractSuite from "./abstract-suite";
+import { Input } from "./task/abstract-task";
 
-const TASKS: Array<Task<UserEntity, UserCommand>> = [
+const TASKS: Array<Task<UserEntity, UserCommand, UserQuery>> = [
   {
     type: "FindPageTask",
     name: "User[ANY] can find all active users",
     input: {
-      authUser: { user: { role: { $ne: null } } },
+      authUser: { user: {} },
       query: { role: RoleValue.ADMIN },
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
@@ -49,7 +52,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindPageTask",
     name: "User[ANY] can find backward",
 
-    async input(em) {
+    async input(em): Promise<Input<FindPageInput<UserEntity, UserQuery>>> {
       const users = await em.find(
         UserEntity,
         { role: RoleValue.USER },
@@ -81,7 +84,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindPageTask",
     name: "User[ANY] starts at the beginning if Cursor[after] and Cursor[before] are not found",
     input: {
-      authUser: { user: { role: { $ne: null } } },
+      authUser: { user: {} },
       query: { role: RoleValue.USER },
       pagination: {
         size: 3,
@@ -103,10 +106,35 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     expectPreviousPage: false,
   },
   {
+    type: "FindPageTask",
+    name: "User[ANY] do full text search",
+    input: async (em): Promise<Input<FindPageInput<UserEntity, UserQuery>>> => {
+      const user = await em.findOneOrFail(UserEntity, { role: { $ne: null } });
+      return {
+        authUser: { user: {} },
+        query: { name: user.name.split(" ")[0] },
+        pagination: {
+          size: 3,
+        },
+        sort: [{ field: "id", order: Order.DESC }],
+      };
+    },
+    checker: async ({ input, item }) => {
+      let prev: string | null = null;
+      for (const { data } of item) {
+        if (prev != null) {
+          expect(data.name).toContain(input.query?.name);
+          expect(data.id.localeCompare(prev)).toBeLessThan(0);
+        }
+        prev = data.id;
+      }
+    },
+  },
+  {
     type: "FindPageExceptionTask",
     name: "User cannot find anything if no read scope",
     input: {
-      authUser: { user: { role: RoleValue.ADMIN }, scopes: [] },
+      authUser: { user: {}, scopes: [] },
       query: {},
       pagination: { size: 3 },
       sort: [{ field: "name", order: Order.ASC }],
@@ -122,7 +150,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneTask",
     name: "User[ANY] can find any active user",
     input: {
-      authUser: { user: { role: { $ne: null } } },
+      authUser: { user: {} },
       query: { role: RoleValue.ADMIN },
     },
     checker: async ({ item }) => {
@@ -133,7 +161,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneTask",
     name: "Not found",
     input: {
-      authUser: { user: { role: RoleValue.OWNER } },
+      authUser: { user: {} },
       query: { id: v4() },
     },
     checker: async ({ item }) => {
@@ -144,7 +172,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneExceptionTask",
     name: "User cannot find anything if no read scope",
     input: {
-      authUser: { user: { role: RoleValue.ADMIN }, scopes: [] },
+      authUser: { user: {}, scopes: [] },
       query: { role: RoleValue.USER },
     },
     expected: {
@@ -157,7 +185,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
     type: "FindOneExceptionTask",
     name: "User cannot find anything without the related scopes",
     input: {
-      authUser: { user: { role: { $ne: null } }, scopes: [USER_WRITE_SCOPE] },
+      authUser: { user: {}, scopes: [USER_WRITE_SCOPE] },
       query: { role: RoleValue.USER },
     },
     expected: {
@@ -620,6 +648,7 @@ const TASKS: Array<Task<UserEntity, UserCommand>> = [
 export default class UserSuite extends AbstractSuite<
   UserEntity,
   UserCommand,
+  UserQuery,
   UserService
 > {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

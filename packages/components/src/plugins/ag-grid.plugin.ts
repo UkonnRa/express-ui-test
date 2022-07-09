@@ -1,10 +1,10 @@
 import { ModuleRegistry } from "@ag-grid-community/core";
-import { InfiniteRowModelModule } from "@ag-grid-community/infinite-row-model";
-import { ClipboardModule } from "@ag-grid-enterprise/clipboard";
+import { LicenseManager } from "@ag-grid-enterprise/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
 import { MenuModule } from "@ag-grid-enterprise/menu";
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { LicenseManager } from "@ag-grid-enterprise/core";
+import { ClipboardModule } from "@ag-grid-enterprise/clipboard";
+import { InfiniteRowModelModule } from "@ag-grid-community/infinite-row-model";
 
 LicenseManager.prototype.validateLicense = () => {
   return true;

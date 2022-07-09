@@ -3,3 +3,5 @@ export default interface FullTextQuery {
   value: string;
   fields: string[];
 }
+
+export const FULL_TEXT_OPERATOR = "$fullText";

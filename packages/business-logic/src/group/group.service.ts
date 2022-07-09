@@ -1,20 +1,25 @@
 import { inject, singleton } from "tsyringe";
-import { EntityManager, MikroORM } from "@mikro-orm/core";
+import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
   AuthUser,
   CommandInput,
   checkCreate,
   WriteService,
   RoleValue,
+  AdditionalQuery,
+  FULL_TEXT_OPERATOR,
+  CONTAINING_USER_OPERATOR,
 } from "../shared";
 import { UserEntity, UserService } from "../user";
-import { filterAsync } from "../utils";
+import { filterAsync, fullTextSearch } from "../utils";
 import { NoPermissionError } from "../error";
+import AccessItemAccessibleTypeValue from "../journal/access-item-accessible-type.value";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
 import GroupCommand from "./group.command";
 import CreateGroupCommand from "./create-group.command";
 import UpdateGroupCommand from "./update-group.command";
 import DeleteGroupCommand from "./delete-group.command";
+import GroupQuery from "./group.query";
 
 export const GROUP_READ_SCOPE = "white-rabbit_groups:read";
 export const GROUP_WRITE_SCOPE = "white-rabbit_groups:write";
@@ -22,7 +27,8 @@ export const GROUP_WRITE_SCOPE = "white-rabbit_groups:write";
 @singleton()
 export default class GroupService extends WriteService<
   GroupEntity,
-  GroupCommand
+  GroupCommand,
+  GroupQuery
 > {
   constructor(
     @inject(MikroORM) readonly orm: MikroORM,
@@ -188,5 +194,92 @@ export default class GroupService extends WriteService<
     if (authUser.user == null || entity.admins.contains(authUser.user)) {
       throw new NoPermissionError(this.type, "WRITE");
     }
+  }
+
+  async handleAdditionalQuery(
+    authUser: AuthUser,
+    entities: GroupEntity[],
+    query: AdditionalQuery
+  ): Promise<GroupEntity[]> {
+    if (query.type === "ContainingUserQuery") {
+      return filterAsync(entities, async (entity) => {
+        let adminsContain = false;
+        let membersContain = false;
+        if (query.fields.includes(AccessItemAccessibleTypeValue.ADMIN)) {
+          adminsContain = entity.admins
+            .getItems()
+            .some((value) => value.id === query.user);
+        } else if (
+          query.fields.includes(AccessItemAccessibleTypeValue.MEMBER)
+        ) {
+          membersContain = entity.members
+            .getItems()
+            .some((value) => value.id === query.user);
+        }
+        return adminsContain || membersContain;
+      });
+    } else if (query.type === "FullTextQuery") {
+      return filterAsync(entities, async (entity) =>
+        fullTextSearch(entity, query)
+      );
+    } else {
+      return super.handleAdditionalQuery(authUser, entities, query);
+    }
+  }
+
+  doGetQueries(
+    query: GroupQuery
+  ): [AdditionalQuery[], ObjectQuery<GroupEntity>] {
+    const additionalQuery: AdditionalQuery[] = [];
+    const objectQuery: ObjectQuery<GroupEntity> = {};
+
+    for (const [key, value] of Object.entries(query)) {
+      switch (key) {
+        case FULL_TEXT_OPERATOR:
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value,
+            fields: ["name", "description"],
+          });
+          break;
+        case CONTAINING_USER_OPERATOR:
+          additionalQuery.push({
+            type: "ContainingUserQuery",
+            user: value,
+            fields: ["admins", "members"],
+          });
+          break;
+        case "id":
+          objectQuery.id = value;
+          break;
+        case "name": {
+          if (typeof value === "string") {
+            objectQuery.name = value;
+          } else if (FULL_TEXT_OPERATOR in value) {
+            additionalQuery.push({
+              type: "FullTextQuery",
+              value: value[FULL_TEXT_OPERATOR],
+              fields: ["name"],
+            });
+          }
+          break;
+        }
+        case "description":
+          additionalQuery.push({
+            type: "FullTextQuery",
+            value,
+            fields: ["description"],
+          });
+          break;
+        case "admins":
+          objectQuery.admins = value;
+          break;
+        case "members":
+          objectQuery.members = value;
+          break;
+      }
+    }
+
+    return [additionalQuery, objectQuery];
   }
 }

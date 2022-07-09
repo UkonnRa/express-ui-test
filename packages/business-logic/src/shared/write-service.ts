@@ -45,8 +45,9 @@ export async function checkCreate<E extends AbstractEntity<E>>(
 
 export default abstract class WriteService<
   E extends AbstractEntity<E>,
-  C extends Command
-> extends ReadService<E> {
+  C extends Command,
+  Q
+> extends ReadService<E, Q> {
   protected constructor(
     override readonly orm: MikroORM,
     override readonly type: string,

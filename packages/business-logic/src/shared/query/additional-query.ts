@@ -1,7 +1,7 @@
 import FullTextQuery from "./full-text.query";
 import ContainingUserQuery from "./containing-user.query";
-import IsReadableQuery from "./is-readable.query";
+import ReadableQuery from "./readable.query";
 
-type AdditionalQuery = FullTextQuery | ContainingUserQuery | IsReadableQuery;
+type AdditionalQuery = FullTextQuery | ContainingUserQuery | ReadableQuery;
 
 export default AdditionalQuery;

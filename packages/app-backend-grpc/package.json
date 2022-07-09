@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
-    "@mikro-orm/core": "^5.2.2",
-    "@mikro-orm/postgresql": "^5.2.2",
+    "@mikro-orm/core": "^5.2.3",
+    "@mikro-orm/postgresql": "^5.2.3",
     "@protobuf-ts/grpc-backend": "^2.7.0",
     "@protobuf-ts/runtime": "^2.7.0",
     "@protobuf-ts/runtime-rpc": "^2.7.0",
@@ -28,9 +28,9 @@
     "tsyringe": "^4.7.0"
   },
   "devDependencies": {
-    "@mikro-orm/cli": "^5.2.2",
-    "@mikro-orm/reflection": "^5.2.2",
-    "@mikro-orm/seeder": "^5.2.2",
+    "@mikro-orm/cli": "^5.2.3",
+    "@mikro-orm/reflection": "^5.2.3",
+    "@mikro-orm/seeder": "^5.2.3",
     "@protobuf-ts/plugin": "^2.7.0",
     "@protobuf-ts/protoc": "^2.7.0",
     "@types/jsonwebtoken": "^8.5.8",

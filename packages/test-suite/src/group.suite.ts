@@ -4,6 +4,7 @@ import {
   AccessItemTypeValue,
   GroupCommand,
   GroupEntity,
+  GroupQuery,
   GroupService,
   Order,
   RoleValue,
@@ -14,7 +15,7 @@ import each from "jest-each";
 import { Task } from "./task";
 import AbstractSuite from "./abstract-suite";
 
-const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
+const TASKS: Array<Task<GroupEntity, GroupCommand, GroupQuery>> = [
   {
     type: "FindPageTask",
     name: "Find group page",
@@ -90,6 +91,7 @@ const TASKS: Array<Task<GroupEntity, GroupCommand>> = [
 export default class GroupSuite extends AbstractSuite<
   GroupEntity,
   GroupCommand,
+  GroupQuery,
   GroupService
 > {
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor

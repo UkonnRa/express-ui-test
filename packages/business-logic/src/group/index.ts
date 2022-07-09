@@ -10,6 +10,7 @@ export {
   GROUP_READ_SCOPE,
 } from "./group.service";
 
+export { default as GroupQuery } from "./group.query";
 export { default as GroupCommand } from "./group.command";
 export { default as CreateGroupCommand } from "./create-group.command";
 export { default as UpdateGroupCommand } from "./update-group.command";

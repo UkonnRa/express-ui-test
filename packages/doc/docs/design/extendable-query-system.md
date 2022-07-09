@@ -77,3 +77,133 @@ For each Comparison Operators, we need to let the entity check whether it's a va
 ```typescript
 function isValid(user: User, operator: Operator, field: string, value: any): boolean
 ```
+
+## Detail Design
+
+### Common Query
+
+#### Containing User Query
+
+For entities with user list or access items, we can search whether a user is in the entity.
+
+```json
+{
+  // Global Search: searching on all possible fields containing users
+  "$containingUser": "user-id",
+  // Field Search: searching on one specific field
+  "admins": {
+    "$containingUser": "user-id"
+  }
+}
+```
+
+#### Full Text Query
+
+For entities with text-related fields, we can search keywords by an external full-text engine like ElasticSearch.
+
+```json
+{
+  // Global Search: searching on all possible fields containing users
+  "$fullText": "keyword",
+  // Field Search: searching on one specific field
+  "description": {
+    "$fullText": "keyword"
+  }
+}
+```
+
+#### Readable Query
+
+Only entities readable by the operator can be searched.
+
+```json
+{
+  "$readable": "user-id"
+}
+```
+
+### User Query
+
+<!-- markdownlint-disable -->
+@startuml
+interface UserQuery {
+  + id: string | string[]
+  + name: string | { $fullText: string } // default is full matching, not full text
+  + role: UserRoleValue
+  + authIds: Record<string, string>
+}
+@enduml
+<!-- markdownlint-restore -->
+
+### Group Query
+
+<!-- markdownlint-disable -->
+@startuml
+note left of GroupQuery::admins
+The array is finding by all, all users should in the admins
+end note
+interface GroupQuery {
+  + $fullText: string
+  + $containingUser: string
+  + id: string | string[]
+  + name: string | { $fullText: string } // default is full matching, not full text
+  + description: string // default is full text
+  + admins: string | string[]
+  + members: string | string[]
+}
+@enduml
+<!-- markdownlint-restore -->
+
+### Journal Query
+
+<!-- markdownlint-disable -->
+@startuml
+interface JournalQuery {
+  + $fullText: string
+  + $containingUser: string
+  + id: string | string[]
+  + name: string | { $fullText: string } // default is full matching, not full text
+  + description: string
+  + tags: string | string[] | { $fullText: string }
+  + unit: string
+  + includeArchived: boolean
+  + admins: { type: AccessItemTypeValue, id: string }
+  + members: { type: AccessItemTypeValue, id: string }
+}
+@enduml
+<!-- markdownlint-restore -->
+
+### Account Query
+
+<!-- markdownlint-disable -->
+@startuml
+interface AccountQuery {
+  + $fullText: string
+  + id: string | string[]
+  + journal: string
+  + name: string | { $fullText: string } // default is full matching, not full text
+  + description: string
+  + type: AccountTypeValue
+  + strategy: AccountStrategyValue
+  + unit: string
+  + includeArchived: boolean
+}
+@enduml
+<!-- markdownlint-restore -->
+
+### Record Query
+
+<!-- markdownlint-disable -->
+@startuml
+interface RecordQuery {
+  + $fullText: string
+  + id: string | string[]
+  + journal: string
+  + name: string | { $fullText: string } // default is full matching, not full text
+  + description: string
+  + type: RecordTypeValue
+  + timestamp: { from?: Date, to?: Date }
+  + tags: string | string[]
+}
+@enduml
+<!-- markdownlint-restore -->
