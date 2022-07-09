@@ -1,7 +1,7 @@
-import { AbstractEntity, FindOneInput } from "@white-rabbit/business-logic";
+import { AbstractEntity, FindInput } from "@white-rabbit/business-logic";
 import AbstractExceptionTask from "./abstract-exception-task";
 
 export default interface FindOneExceptionTask<E extends AbstractEntity<E>, Q>
-  extends AbstractExceptionTask<E, FindOneInput<E, Q>, E | null> {
+  extends AbstractExceptionTask<E, FindInput<E, Q>, E | null> {
   readonly type: "FindOneExceptionTask";
 }

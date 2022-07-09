@@ -1,5 +1,5 @@
-import AbstractTask from "./abstract-task";
 import { AbstractEntity } from "@white-rabbit/business-logic";
+import AbstractTask from "./abstract-task";
 
 type ExpectedType<I> =
   | Record<string, unknown>

@@ -1,13 +1,13 @@
 import { inject, singleton } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { AccountApi, AccountModel } from "@white-rabbit/frontend-api";
+import { User as OidcUser } from "oidc-client-ts";
 import {
-  AccountApi,
   AccountCommand,
-  AccountModel,
+  AccountQuery,
   AccountStrategyValue,
   AccountTypeValue,
-} from "@white-rabbit/frontend-api";
-import { User as OidcUser } from "oidc-client-ts";
+} from "@white-rabbit/types";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { Account, Command, Strategy, Type } from "../proto/account";
 import { AccountServiceClient } from "../proto/account.client";
@@ -66,6 +66,7 @@ export default class GrpcAccountApi
   extends AbstractApi<
     AccountModel,
     AccountCommand,
+    AccountQuery,
     Account,
     Command,
     AccountServiceClient

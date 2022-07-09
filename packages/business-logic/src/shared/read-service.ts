@@ -5,32 +5,40 @@ import {
   MikroORM,
   ObjectQuery,
   QueryOrderMap,
+  QueryOrderNumeric,
 } from "@mikro-orm/core";
+import {
+  AdditionalQuery,
+  Cursor,
+  Order,
+  Page,
+  PageItem,
+  Pagination,
+  RoleValue,
+  Sort,
+} from "@white-rabbit/types";
 import { decodeCursor, encodeCursor, filterAsync } from "../utils";
 import { NoPermissionError, InvalidQueryError } from "../error";
-import Cursor from "./cursor";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
-import Sort from "./sort";
-import Order from "./order";
 import FindPageInput from "./find-page.input";
-import Page from "./page";
-import PageItem from "./page-item";
-import FindOneInput from "./find-one.input";
-import Pagination from "./pagination";
-import { AdditionalQuery } from "./query";
-import RoleValue from "./role.value";
-import FindAllInput from "./find-all.input";
+import FindInput from "./find.input";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 
 function createNormalizedSort(
   sort: Sort[],
   reverse: boolean = false
-): [Array<[string, Order]>, Order] {
-  const getOrder = (order: Order): Order => {
-    if (!reverse) return order;
-    else return order === Order.ASC ? Order.DESC : Order.ASC;
+): [Array<[string, QueryOrderNumeric]>, QueryOrderNumeric] {
+  const getOrder = (order: Order): QueryOrderNumeric => {
+    if (!reverse)
+      return order === Order.ASC
+        ? QueryOrderNumeric.ASC
+        : QueryOrderNumeric.DESC;
+    else
+      return order === Order.ASC
+        ? QueryOrderNumeric.DESC
+        : QueryOrderNumeric.ASC;
   };
   return [
     sort.map(({ field, order }) => [field, getOrder(order)]),
@@ -90,7 +98,11 @@ async function createCursorRelatedQueryAndSort<E extends AbstractEntity<E>>(
             .map(([field]) => [field, after[1][field]])
             .filter(([_, q]) => q != null)
         ),
-        { id: { [idOrder === Order.ASC ? "$gt" : "$lt"]: after[1].id } },
+        {
+          id: {
+            [idOrder === QueryOrderNumeric.ASC ? "$gt" : "$lt"]: after[1].id,
+          },
+        },
       ],
     });
   }
@@ -100,16 +112,18 @@ async function createCursorRelatedQueryAndSort<E extends AbstractEntity<E>>(
       ? null
       : (additionalQuery as ObjectQuery<E>);
 
+  const orderMap = Object.fromEntries(
+    normedSort.some(([k]) => k === "id")
+      ? normedSort
+      : [...normedSort, ["id", idOrder]]
+  ) as QueryOrderMap<E>;
+
   return [
     {
       ...(query ?? {}),
       ...(additionalFilterQuery ?? {}),
     } as ObjectQuery<E>,
-    Object.fromEntries(
-      normedSort.some(([k]) => k === "id")
-        ? normedSort
-        : [...normedSort, ["id", idOrder]]
-    ) as QueryOrderMap<E>,
+    orderMap,
     reversed,
   ];
 }
@@ -240,7 +254,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   }
 
   readonly findAll = async (
-    { authUser, query }: FindAllInput<E, Q>,
+    { authUser, query }: FindInput<E, Q>,
     em?: EntityManager
   ): Promise<E[]> => {
     this.checkPermission(authUser);
@@ -324,7 +338,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   };
 
   readonly findOne = async (
-    { authUser, query }: FindOneInput<E, Q>,
+    { authUser, query }: FindInput<E, Q>,
     em?: EntityManager
   ): Promise<E | null> => {
     this.checkPermission(authUser);

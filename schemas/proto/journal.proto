@@ -23,6 +23,12 @@ message Journal {
   bool isFavorite = 12;
 }
 
+
+message AccessItemInput {
+  whiterabbit.accessItem.AccessItemType type = 1;
+  string id = 2;
+}
+
 message JournalPage {
   whiterabbit.shared.PageInfo pageInfo = 1;
   repeated JournalItem items = 2;
@@ -43,8 +49,8 @@ message CreateCommand {
   string description = 3;
   repeated string tags = 4;
   string unit = 5;
-  repeated whiterabbit.accessItem.AccessItem admins = 7;
-  repeated whiterabbit.accessItem.AccessItem members = 8;
+  repeated AccessItemInput admins = 7;
+  repeated AccessItemInput members = 8;
 }
 
 message UpdateCommand {
@@ -59,7 +65,7 @@ message UpdateCommand {
 }
 
 message NullableAccessItemArray {
-  repeated whiterabbit.accessItem.AccessItem values = 1;
+  repeated AccessItemInput values = 1;
 }
 
 message DeleteCommand {

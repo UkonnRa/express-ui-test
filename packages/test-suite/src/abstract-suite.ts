@@ -1,16 +1,15 @@
 import {
   AbstractEntity,
   AuthUser,
-  Command,
   CommandInput,
   CommandsInput,
   FindPageInput,
-  FindOneInput,
   UserEntity,
   WriteService,
-  ALL_SCOPES,
+  FindInput,
 } from "@white-rabbit/business-logic";
 import { MikroORM, ObjectQuery } from "@mikro-orm/core";
+import { ALL_SCOPES, Command } from "@white-rabbit/types";
 import { Task, FindPageTask } from "./task";
 import AbstractTask, { AuthUserInput } from "./task/abstract-task";
 import AbstractExceptionTask from "./task/abstract-exception-task";
@@ -230,15 +229,15 @@ export default abstract class AbstractSuite<
         );
         break;
       case "FindOneTask":
-        await this.doRunTask(task, inputValue as FindOneInput<E, Q>, async () =>
-          this.service.findOne(inputValue as FindOneInput<E, Q>)
+        await this.doRunTask(task, inputValue as FindInput<E, Q>, async () =>
+          this.service.findOne(inputValue as FindInput<E, Q>)
         );
         break;
       case "FindOneExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindOneInput<E, Q>,
-          async () => this.service.findOne(inputValue as FindOneInput<E, Q>)
+          inputValue as FindInput<E, Q>,
+          async () => this.service.findOne(inputValue as FindInput<E, Q>)
         );
         break;
       case "HandleCommandTask":

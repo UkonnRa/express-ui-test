@@ -1,14 +1,10 @@
-import {
-  UserApi,
-  UserModel,
-  FindPageInput,
-  Page,
-} from "@white-rabbit/frontend-api";
+import { UserApi, UserModel } from "@white-rabbit/frontend-api";
 import { inject, singleton } from "tsyringe";
 import { ApolloClient } from "apollo-client";
 import { NormalizedCacheObject } from "apollo-cache-inmemory";
 import { gql } from "graphql-tag";
 import { User } from "oidc-client-ts";
+import { FindPageInput, Page, UserQuery } from "@white-rabbit/types";
 import { Connection, FindOneVariables, FindPageVariables } from "./types";
 
 @singleton()
@@ -48,7 +44,7 @@ export default class UserGraphqlApi implements UserApi<User> {
 
   async findPage(
     _: User,
-    { query, pagination, sort }: FindPageInput
+    { query, pagination, sort }: FindPageInput<UserQuery>
   ): Promise<Page<UserModel>> {
     const { data } = await this.client.query<
       { users: Connection<UserModel> },
@@ -102,7 +98,7 @@ export default class UserGraphqlApi implements UserApi<User> {
           pagination.before != null && pagination.after == null
             ? pagination.size
             : undefined,
-        sort: sort,
+        sort,
       },
     });
     return {

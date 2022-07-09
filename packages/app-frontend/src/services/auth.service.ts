@@ -10,7 +10,7 @@ import {
   RECORD_WRITE_SCOPE,
   USER_READ_SCOPE,
   USER_WRITE_SCOPE,
-} from "@white-rabbit/frontend-api";
+} from "@white-rabbit/types";
 import { User, UserManager } from "oidc-client-ts";
 import { apiService } from "./api.service";
 

@@ -1,26 +1,23 @@
 import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import { inject, singleton } from "tsyringe";
 import {
-  AuthUser,
-  checkCreate,
-  WriteService,
+  CreateUserCommand,
   RoleValue,
+  UpdateUserCommand,
   compareRole,
+  UserCommand,
+  UserQuery,
+  DeleteUserCommand,
   AdditionalQuery,
-} from "../shared";
+  USER_READ_SCOPE,
+  USER_WRITE_SCOPE,
+} from "@white-rabbit/types";
+import { AuthUser, checkCreate, WriteService } from "../shared";
 import CommandInput from "../shared/command.input";
 import { NoPermissionError } from "../error";
 import InvalidCommandError from "../error/invalid-command.error";
 import { filterAsync, fullTextSearch } from "../utils";
 import UserEntity, { USER_TYPE } from "./user.entity";
-import UserCommand from "./user.command";
-import CreateUserCommand from "./create-user.command";
-import UpdateUserCommand from "./update-user.command";
-import DeleteUserCommand from "./delete-user.command";
-import UserQuery from "./user.query";
-
-export const USER_READ_SCOPE = "white-rabbit_users:read";
-export const USER_WRITE_SCOPE = "white-rabbit_users:write";
 
 @singleton()
 export default class UserService extends WriteService<

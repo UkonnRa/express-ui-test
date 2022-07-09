@@ -1,10 +1,7 @@
-import {
-  AbstractEntity,
-  Command,
-  CommandsInput,
-} from "@white-rabbit/business-logic";
-import AbstractTask from "./abstract-task";
+import { AbstractEntity, CommandsInput } from "@white-rabbit/business-logic";
 import { EntityDTO } from "@mikro-orm/core";
+import { Command } from "@white-rabbit/types";
+import AbstractTask from "./abstract-task";
 
 export default interface HandleCommandsTask<
   E extends AbstractEntity<E>,

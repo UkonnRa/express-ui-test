@@ -1,8 +1,5 @@
-import {
-  AbstractEntity,
-  FindPageInput,
-  PageItem,
-} from "@white-rabbit/business-logic";
+import { AbstractEntity, FindPageInput } from "@white-rabbit/business-logic";
+import { PageItem } from "@white-rabbit/types";
 import AbstractExceptionTask from "./abstract-exception-task";
 
 export default interface FindPageExceptionTask<E extends AbstractEntity<E>, Q>

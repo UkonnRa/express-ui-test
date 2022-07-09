@@ -1,17 +1,25 @@
 import { inject, singleton } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
+import { JournalApi, JournalModel } from "@white-rabbit/frontend-api";
+import { User as OidcUser } from "oidc-client-ts";
 import {
   AccessItemTypeValue,
-  AccessItemValue,
-  JournalApi,
+  JournalQuery,
   JournalCommand,
-  JournalModel,
-} from "@white-rabbit/frontend-api";
-import { User as OidcUser } from "oidc-client-ts";
+  AccessItemInput,
+  AccessItemValue,
+} from "@white-rabbit/types";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { JournalServiceClient } from "../proto/journal.client";
-import { Command, Journal } from "../proto/journal";
-import { AccessItem, AccessItemType } from "../proto/access-item";
+import {
+  AccessItemInput as AccessItemInputProto,
+  Command,
+  Journal,
+} from "../proto/journal";
+import {
+  AccessItemType,
+  AccessItem as AccessItemProto,
+} from "../proto/access-item";
 import AbstractApi from "./abstract-api";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
@@ -32,14 +40,14 @@ function accessItemTypeToProto(type: AccessItemTypeValue): AccessItemType {
   }
 }
 
-function accessItemsFromProto(items: AccessItem[]): AccessItemValue[] {
+function accessItemsFromProto(items: AccessItemProto[]): AccessItemValue[] {
   return items.map((item) => ({
     ...item,
     type: accessItemTypeFromProto(item.type),
   }));
 }
 
-function accessItemsToProto(items: AccessItemValue[]): AccessItem[] {
+function accessItemsToProto(items: AccessItemInput[]): AccessItemInputProto[] {
   return items.map((item) => ({
     ...item,
     type: accessItemTypeToProto(item.type),
@@ -51,6 +59,7 @@ export default class GrpcJournalApi
   extends AbstractApi<
     JournalModel,
     JournalCommand,
+    JournalQuery,
     Journal,
     Command,
     JournalServiceClient

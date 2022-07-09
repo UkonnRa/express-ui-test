@@ -1,5 +1,5 @@
 import { decode, encodeURL } from "js-base64";
-import { Cursor, FullTextQuery } from "./shared";
+import { Cursor, FullTextQuery } from "@white-rabbit/types";
 import { AccessItemValue } from "./journal";
 
 export async function mapAsync<T, U>(

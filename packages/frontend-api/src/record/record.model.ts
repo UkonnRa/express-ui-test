@@ -1,6 +1,5 @@
+import { RecordItemValue, RecordTypeValue } from "@white-rabbit/types";
 import { AbstractModel } from "../shared";
-import RecordTypeValue from "./record-type.value";
-import RecordItemValue from "./record-item.value";
 
 export default interface RecordModel extends AbstractModel {
   readonly journal: string;

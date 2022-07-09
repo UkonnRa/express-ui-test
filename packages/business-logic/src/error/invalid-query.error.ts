@@ -1,4 +1,4 @@
-import AdditionalQuery from "../shared/query/additional-query";
+import { AdditionalQuery } from "@white-rabbit/types";
 import AbstractError from "./abstract-error";
 
 export default class InvalidQueryError extends AbstractError {

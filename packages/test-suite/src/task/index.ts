@@ -1,4 +1,5 @@
-import { AbstractEntity, Command } from "@white-rabbit/business-logic";
+import { AbstractEntity } from "@white-rabbit/business-logic";
+import { Command } from "@white-rabbit/types";
 import FindPageTask from "./find-page.task";
 import FindPageExceptionTask from "./find-page.exception.task";
 import FindOneTask from "./find-one.task";

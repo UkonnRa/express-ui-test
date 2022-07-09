@@ -1,6 +1,7 @@
 import { Factory, Faker } from "@mikro-orm/seeder";
 import { Constructor, EntityData } from "@mikro-orm/core";
-import { RecordEntity, RecordTypeValue } from "../src/record";
+import { RecordTypeValue } from "@white-rabbit/types";
+import { RecordEntity } from "../src/record";
 
 export default class RecordFactory extends Factory<RecordEntity> {
   protected definition(faker: Faker): EntityData<RecordEntity> {

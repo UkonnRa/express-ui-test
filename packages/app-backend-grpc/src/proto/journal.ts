@@ -9,6 +9,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { NullableStringArray } from "./shared";
 import { PageInfo } from "./shared";
+import { AccessItemType } from "./access-item";
 import { AccessItem } from "./access-item";
 import { Timestamp } from "./google/protobuf/timestamp";
 /**
@@ -63,6 +64,19 @@ export interface Journal {
    * @generated from protobuf field: bool isFavorite = 12;
    */
   isFavorite: boolean;
+}
+/**
+ * @generated from protobuf message whiterabbit.journal.AccessItemInput
+ */
+export interface AccessItemInput {
+  /**
+   * @generated from protobuf field: whiterabbit.accessItem.AccessItemType type = 1;
+   */
+  type: AccessItemType;
+  /**
+   * @generated from protobuf field: string id = 2;
+   */
+  id: string;
 }
 /**
  * @generated from protobuf message whiterabbit.journal.JournalPage
@@ -124,13 +138,13 @@ export interface CreateCommand {
    */
   unit: string;
   /**
-   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem admins = 7;
+   * @generated from protobuf field: repeated whiterabbit.journal.AccessItemInput admins = 7;
    */
-  admins: AccessItem[];
+  admins: AccessItemInput[];
   /**
-   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem members = 8;
+   * @generated from protobuf field: repeated whiterabbit.journal.AccessItemInput members = 8;
    */
-  members: AccessItem[];
+  members: AccessItemInput[];
 }
 /**
  * @generated from protobuf message whiterabbit.journal.UpdateCommand
@@ -174,9 +188,9 @@ export interface UpdateCommand {
  */
 export interface NullableAccessItemArray {
   /**
-   * @generated from protobuf field: repeated whiterabbit.accessItem.AccessItem values = 1;
+   * @generated from protobuf field: repeated whiterabbit.journal.AccessItemInput values = 1;
    */
-  values: AccessItem[];
+  values: AccessItemInput[];
 }
 /**
  * @generated from protobuf message whiterabbit.journal.DeleteCommand
@@ -276,6 +290,24 @@ class Journal$Type extends MessageType<Journal> {
  */
 export const Journal = new Journal$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class AccessItemInput$Type extends MessageType<AccessItemInput> {
+  constructor() {
+    super("whiterabbit.journal.AccessItemInput", [
+      {
+        no: 1,
+        name: "type",
+        kind: "enum",
+        T: () => ["whiterabbit.accessItem.AccessItemType", AccessItemType],
+      },
+      { no: 2, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+    ]);
+  }
+}
+/**
+ * @generated MessageType for protobuf message whiterabbit.journal.AccessItemInput
+ */
+export const AccessItemInput = new AccessItemInput$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class JournalPage$Type extends MessageType<JournalPage> {
   constructor() {
     super("whiterabbit.journal.JournalPage", [
@@ -350,14 +382,14 @@ class CreateCommand$Type extends MessageType<CreateCommand> {
         name: "admins",
         kind: "message",
         repeat: 1 /*RepeatType.PACKED*/,
-        T: () => AccessItem,
+        T: () => AccessItemInput,
       },
       {
         no: 8,
         name: "members",
         kind: "message",
         repeat: 1 /*RepeatType.PACKED*/,
-        T: () => AccessItem,
+        T: () => AccessItemInput,
       },
     ]);
   }
@@ -428,7 +460,7 @@ class NullableAccessItemArray$Type extends MessageType<NullableAccessItemArray> 
         name: "values",
         kind: "message",
         repeat: 1 /*RepeatType.PACKED*/,
-        T: () => AccessItem,
+        T: () => AccessItemInput,
       },
     ]);
   }

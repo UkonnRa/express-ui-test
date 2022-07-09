@@ -146,14 +146,9 @@ import { computed, reactive, ref, watchEffect } from "vue";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
-import {
-  AccessItemTypeValue,
-  AccessItemValue,
-  JournalModel,
-  Order,
-  Page,
-} from "@white-rabbit/frontend-api";
+import { AccessItemValue, JournalModel } from "@white-rabbit/frontend-api";
 import JournalAccessItems from "../components/JournalAccessItems.vue";
+import { AccessItemTypeValue, Order, Page } from "@white-rabbit/types";
 
 const { t } = useI18n();
 

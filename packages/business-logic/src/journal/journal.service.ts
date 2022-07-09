@@ -1,31 +1,27 @@
 import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
+  AccessItemInput,
+  AccessItemTypeValue,
   AdditionalQuery,
-  AuthUser,
-  checkCreate,
-  CommandInput,
   CONTAINING_USER_OPERATOR,
+  CreateJournalCommand,
+  DeleteJournalCommand,
   FULL_TEXT_OPERATOR,
+  JOURNAL_READ_SCOPE,
+  JOURNAL_WRITE_SCOPE,
+  JournalCommand,
+  JournalQuery,
   RoleValue,
-  WriteService,
-} from "../shared";
+  UpdateJournalCommand,
+} from "@white-rabbit/types";
+import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { GroupEntity, GroupService } from "../group";
 import { AlreadyArchivedError, NoPermissionError } from "../error";
 import { accessItemsContain, filterAsync, fullTextSearch } from "../utils";
 import JournalEntity, { JOURNAL_TYPE } from "./journal.entity";
-import JournalCommand from "./journal.command";
-import AccessItemInput from "./access-item.input";
-import CreateJournalCommand from "./create-journal.command";
-import UpdateJournalCommand from "./update-journal.command";
-import DeleteJournalCommand from "./delete-journal.command";
-import AccessItemTypeValue from "./access-item-type.value";
 import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
-import JournalQuery from "./journal.query";
-
-export const JOURNAL_READ_SCOPE = "white-rabbit_journals:read";
-export const JOURNAL_WRITE_SCOPE = "white-rabbit_journals:write";
 
 @singleton()
 export default class JournalService extends WriteService<

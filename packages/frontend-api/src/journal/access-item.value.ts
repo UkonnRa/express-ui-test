@@ -1,4 +1,4 @@
-import AccessItemTypeValue from "./access-item-type.value";
+import { AccessItemTypeValue } from "@white-rabbit/types";
 
 export default interface AccessItemValue {
   readonly type: AccessItemTypeValue;

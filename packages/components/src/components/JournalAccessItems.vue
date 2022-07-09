@@ -21,15 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import {
-  AccessItemValue,
-  AccessItemTypeValue,
-} from "@white-rabbit/frontend-api";
+import { AccessItemValue } from "@white-rabbit/frontend-api";
 import { mdiAccountGroup, mdiAccount } from "@mdi/js";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
+import { AccessItemTypeValue } from "@white-rabbit/types";
 
 const { t } = useI18n();
 const api = useInject<ApiService>(KEY_API_SERVICE);

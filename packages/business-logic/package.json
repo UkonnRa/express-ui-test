@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mikro-orm/core": "^5.2.3",
+    "@white-rabbit/types": "workspace:^",
     "dotenv": "^16.0.1",
     "js-base64": "^3.7.2",
     "reflect-metadata": "^0.1.13",

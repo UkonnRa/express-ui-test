@@ -1,23 +1,25 @@
 import {
-  AccessItemTypeValue,
   AccessItemUserValue,
-  DeleteUserCommand,
   encodeCursor,
-  FindPageInput,
   NoPermissionError,
   NotFoundError,
+  USER_TYPE,
+  UserEntity,
+  UserService,
+  FindPageInput,
+} from "@white-rabbit/business-logic";
+import {
+  UserQuery,
+  UserCommand,
   Order,
   RoleValue,
   UpdateUserCommand,
-  USER_TYPE,
+  DeleteUserCommand,
+  AccessItemTypeValue,
   USER_WRITE_SCOPE,
-  UserCommand,
-  UserEntity,
-  UserQuery,
-  UserService,
-} from "@white-rabbit/business-logic";
+} from "@white-rabbit/types";
 import { container, singleton } from "tsyringe";
-import { MikroORM } from "@mikro-orm/core";
+import { MikroORM, QueryOrderNumeric } from "@mikro-orm/core";
 import each from "jest-each";
 import { v4 } from "uuid";
 import { faker } from "@faker-js/faker";
@@ -56,7 +58,7 @@ const TASKS: Array<Task<UserEntity, UserCommand, UserQuery>> = [
       const users = await em.find(
         UserEntity,
         { role: RoleValue.USER },
-        { orderBy: { name: Order.DESC }, limit: 5 }
+        { orderBy: { name: QueryOrderNumeric.DESC }, limit: 5 }
       );
       const data = users[users.length - 1];
 

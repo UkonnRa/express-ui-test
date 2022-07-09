@@ -1,8 +1,7 @@
 import { Entity, Enum, ManyToOne, Property, Unique } from "@mikro-orm/core";
+import { AccountStrategyValue, AccountTypeValue } from "@white-rabbit/types";
 import { AbstractEntity } from "../shared";
 import { JournalEntity } from "../journal";
-import AccountTypeValue from "./account-type.value";
-import AccountStrategyValue from "./account-strategy.value";
 
 export const ACCOUNT_TYPE = "account";
 

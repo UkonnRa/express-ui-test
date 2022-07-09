@@ -6,12 +6,12 @@ import {
   ObjectQuery,
 } from "@mikro-orm/core";
 import { EntityName } from "@mikro-orm/core/typings";
+import { Command } from "@white-rabbit/types";
 import { AlreadyExistError, NoPermissionError, NotFoundError } from "../error";
 import RequiredFieldError from "../error/required-field.error";
 import ReadService from "./read-service";
 import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
-import Command from "./command";
 import CommandInput from "./command.input";
 import CommandsInput from "./commands.input";
 

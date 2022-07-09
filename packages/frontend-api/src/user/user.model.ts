@@ -1,5 +1,5 @@
+import { RoleValue } from "@white-rabbit/types";
 import { AbstractModel } from "../shared";
-import RoleValue from "./role.value";
 
 export default interface UserModel extends AbstractModel {
   readonly name: string;

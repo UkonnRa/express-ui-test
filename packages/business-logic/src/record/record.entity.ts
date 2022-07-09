@@ -9,9 +9,9 @@ import {
   types,
   Unique,
 } from "@mikro-orm/core";
+import { RecordTypeValue } from "@white-rabbit/types";
 import { AbstractEntity } from "../shared";
 import { JournalEntity } from "../journal";
-import RecordTypeValue from "./record-type.value";
 // eslint-disable-next-line import/no-cycle
 import RecordItemValue from "./record-item.value";
 

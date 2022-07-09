@@ -1,28 +1,24 @@
 import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
-  AuthUser,
-  CommandInput,
-  checkCreate,
-  WriteService,
-  RoleValue,
   AdditionalQuery,
-  FULL_TEXT_OPERATOR,
   CONTAINING_USER_OPERATOR,
-} from "../shared";
+  CreateGroupCommand,
+  DeleteGroupCommand,
+  FULL_TEXT_OPERATOR,
+  GROUP_READ_SCOPE,
+  GROUP_WRITE_SCOPE,
+  GroupCommand,
+  GroupQuery,
+  RoleValue,
+  UpdateGroupCommand,
+} from "@white-rabbit/types";
+import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { filterAsync, fullTextSearch } from "../utils";
 import { NoPermissionError } from "../error";
 import AccessItemAccessibleTypeValue from "../journal/access-item-accessible-type.value";
 import GroupEntity, { GROUP_TYPE } from "./group.entity";
-import GroupCommand from "./group.command";
-import CreateGroupCommand from "./create-group.command";
-import UpdateGroupCommand from "./update-group.command";
-import DeleteGroupCommand from "./delete-group.command";
-import GroupQuery from "./group.query";
-
-export const GROUP_READ_SCOPE = "white-rabbit_groups:read";
-export const GROUP_WRITE_SCOPE = "white-rabbit_groups:write";
 
 @singleton()
 export default class GroupService extends WriteService<

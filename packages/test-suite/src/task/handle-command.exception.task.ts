@@ -1,8 +1,5 @@
-import {
-  AbstractEntity,
-  Command,
-  CommandInput,
-} from "@white-rabbit/business-logic";
+import { AbstractEntity, CommandInput } from "@white-rabbit/business-logic";
+import { Command } from "@white-rabbit/types";
 import AbstractExceptionTask from "./abstract-exception-task";
 
 export default interface HandleCommandExceptionTask<

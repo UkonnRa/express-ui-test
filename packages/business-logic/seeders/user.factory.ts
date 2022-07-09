@@ -1,7 +1,8 @@
 import { Factory, Faker } from "@mikro-orm/seeder";
 import { Constructor, EntityData } from "@mikro-orm/core";
 import { v4 } from "uuid";
-import { RoleValue, UserEntity } from "../src";
+import { RoleValue } from "@white-rabbit/types";
+import { UserEntity } from "../src";
 
 export default class UserFactory extends Factory<UserEntity> {
   private static randomRole(): RoleValue {

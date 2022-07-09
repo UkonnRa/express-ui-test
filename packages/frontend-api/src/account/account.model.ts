@@ -1,6 +1,5 @@
+import { AccountStrategyValue, AccountTypeValue } from "@white-rabbit/types";
 import { AbstractModel } from "../shared";
-import AccountTypeValue from "./account-type.value";
-import AccountStrategyValue from "./account-strategy.value";
 
 export default interface AccountModel extends AbstractModel {
   readonly journal: string;

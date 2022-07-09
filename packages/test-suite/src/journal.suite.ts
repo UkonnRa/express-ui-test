@@ -1,18 +1,20 @@
 import {
   AccessItemAccessibleTypeValue,
-  AccessItemTypeValue,
   AccessItemValue,
-  FindOneInput,
-  JournalCommand,
   JournalEntity,
-  JournalQuery,
   JournalService,
-  Order,
-  RoleValue,
+  FindInput,
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
 import each from "jest-each";
+import {
+  AccessItemTypeValue,
+  JournalCommand,
+  JournalQuery,
+  Order,
+  RoleValue,
+} from "@white-rabbit/types";
 import { Task } from "./task";
 import AbstractSuite from "./abstract-suite";
 import { Input } from "./task/abstract-task";
@@ -43,7 +45,7 @@ const TASKS: Array<Task<JournalEntity, JournalCommand, JournalQuery>> = [
     name: "Find a journal based on an admin",
     input: async (
       em
-    ): Promise<Input<FindOneInput<JournalEntity, JournalQuery>>> => {
+    ): Promise<Input<FindInput<JournalEntity, JournalQuery>>> => {
       const journal = await em.findOneOrFail(
         JournalEntity,
         {

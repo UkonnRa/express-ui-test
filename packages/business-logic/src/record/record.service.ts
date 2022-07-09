@@ -6,29 +6,26 @@ import {
 } from "@mikro-orm/core";
 import { inject, singleton } from "tsyringe";
 import {
+  AccountTypeValue,
   AdditionalQuery,
-  AuthUser,
-  checkCreate,
-  CommandInput,
+  CreateRecordCommand,
+  DeleteRecordCommand,
   FULL_TEXT_OPERATOR,
-  WriteService,
-} from "../shared";
+  RecordCommand,
+  RecordQuery,
+  RecordTypeValue,
+  UpdateRecordCommand,
+  RecordItemValue as OriginalRecordItemValue,
+  RECORD_READ_SCOPE,
+  RECORD_WRITE_SCOPE,
+} from "@white-rabbit/types";
+import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
-import { AccountEntity, AccountService, AccountTypeValue } from "../account";
+import { AccountEntity, AccountService } from "../account";
 import { NotFoundError } from "../error";
 import { filterAsync, fullTextSearch } from "../utils";
-import RecordCommand from "./record.command";
 import RecordEntity, { RECORD_TYPE } from "./record.entity";
-import RecordTypeValue from "./record-type.value";
-import CreateRecordCommand from "./create-record.command";
 import RecordItemValue from "./record-item.value";
-import CreateRecordItemValue from "./create-record-item.value";
-import UpdateRecordCommand from "./update-record.command";
-import DeleteRecordCommand from "./delete-record.command";
-import RecordQuery from "./record.query";
-
-export const RECORD_READ_SCOPE = "white-rabbit_records:read";
-export const RECORD_WRITE_SCOPE = "white-rabbit_records:write";
 
 @singleton()
 export default class RecordService extends WriteService<
@@ -54,7 +51,7 @@ export default class RecordService extends WriteService<
   private async createRecordItems(
     authUser: AuthUser,
     record: RecordEntity,
-    items: CreateRecordItemValue[],
+    items: OriginalRecordItemValue[],
     em: EntityManager
   ): Promise<RecordItemValue[]> {
     const accounts: Record<string, AccountEntity> = Object.fromEntries(

@@ -6,7 +6,8 @@ import {
   Property,
   Unique,
 } from "@mikro-orm/core";
-import { AbstractEntity, RoleValue } from "../shared";
+import { RoleValue } from "@white-rabbit/types";
+import { AbstractEntity } from "../shared";
 import { type GroupEntity } from "../group";
 
 export const USER_TYPE = "user";

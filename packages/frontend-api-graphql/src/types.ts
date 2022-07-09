@@ -1,5 +1,6 @@
-import { PageInfo, Sort, UserModel } from "@white-rabbit/frontend-api";
+import { UserModel } from "@white-rabbit/frontend-api";
 import { User } from "oidc-client-ts";
+import { PageInfo, Sort } from "@white-rabbit/types";
 
 export interface AuthUser {
   oidcUser: User;

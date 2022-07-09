@@ -1,12 +1,12 @@
 import { inject, singleton } from "tsyringe";
 import { GrpcWebFetchTransport } from "@protobuf-ts/grpcweb-transport";
-import {
-  RecordApi,
-  RecordCommand,
-  RecordModel,
-  RecordTypeValue,
-} from "@white-rabbit/frontend-api";
+import { RecordApi, RecordModel } from "@white-rabbit/frontend-api";
 import { User as OidcUser } from "oidc-client-ts";
+import {
+  RecordCommand,
+  RecordQuery,
+  RecordTypeValue,
+} from "@white-rabbit/types";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
 import { Command, Record, Type } from "../proto/record";
 import { RecordServiceClient } from "../proto/record.client";
@@ -35,6 +35,7 @@ export default class GrpcRecordApi
   extends AbstractApi<
     RecordModel,
     RecordCommand,
+    RecordQuery,
     Record,
     Command,
     RecordServiceClient

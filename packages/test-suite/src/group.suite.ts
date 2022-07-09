@@ -1,17 +1,19 @@
 import {
   AccessItemAccessibleTypeValue,
   AccessItemGroupValue,
-  AccessItemTypeValue,
-  GroupCommand,
   GroupEntity,
-  GroupQuery,
   GroupService,
-  Order,
-  RoleValue,
 } from "@white-rabbit/business-logic";
 import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
 import each from "jest-each";
+import {
+  AccessItemTypeValue,
+  GroupCommand,
+  GroupQuery,
+  Order,
+  RoleValue,
+} from "@white-rabbit/types";
 import { Task } from "./task";
 import AbstractSuite from "./abstract-suite";
 

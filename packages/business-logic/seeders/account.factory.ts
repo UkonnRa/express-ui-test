@@ -1,10 +1,7 @@
 import { Factory, Faker } from "@mikro-orm/seeder";
 import { Constructor, EntityData } from "@mikro-orm/core";
-import {
-  AccountEntity,
-  AccountStrategyValue,
-  AccountTypeValue,
-} from "../src/account";
+import { AccountStrategyValue, AccountTypeValue } from "@white-rabbit/types";
+import { AccountEntity } from "../src/account";
 
 const randomType = (): AccountTypeValue => {
   const random = Math.random();

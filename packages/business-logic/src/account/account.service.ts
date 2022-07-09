@@ -1,25 +1,21 @@
 import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
+  ACCOUNT_READ_SCOPE,
+  ACCOUNT_WRITE_SCOPE,
+  AccountCommand,
+  AccountQuery,
   AdditionalQuery,
-  AuthUser,
-  checkCreate,
-  CommandInput,
+  CreateAccountCommand,
+  DeleteAccountCommand,
   FULL_TEXT_OPERATOR,
-  WriteService,
-} from "../shared";
+  UpdateAccountCommand,
+} from "@white-rabbit/types";
+import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
 import { AlreadyArchivedError, NotFoundError } from "../error";
 import { filterAsync, fullTextSearch } from "../utils";
-import AccountCommand from "./account.command";
 import AccountEntity, { ACCOUNT_TYPE } from "./account.entity";
-import CreateAccountCommand from "./create-account.command";
-import UpdateAccountCommand from "./update-account.command";
-import DeleteAccountCommand from "./delete-account.command";
-import AccountQuery from "./account.query";
-
-export const ACCOUNT_READ_SCOPE = "white-rabbit_accounts:read";
-export const ACCOUNT_WRITE_SCOPE = "white-rabbit_accounts:write";
 
 @singleton()
 export default class AccountService extends WriteService<
