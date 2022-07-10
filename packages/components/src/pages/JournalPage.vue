@@ -38,21 +38,12 @@
       >
         <v-card-item>
           <v-card-title>
-            <div class="d-flex">
-              <v-btn
-                class="mr-1"
-                size="small"
-                variant="plain"
-                color="primary"
-                :icon="journal.data.isFavorite ? mdiStar : mdiStarOutline"
-              ></v-btn>
-              <router-link
-                :to="{ name: 'Journal', params: { id: journal.data.id } }"
-                class="journal-card__link"
-              >
-                {{ journal.data.name }}
-              </router-link>
-            </div>
+            <router-link
+              :to="{ name: 'Journal', params: { id: journal.data.id } }"
+              class="journal-card__link ma-1"
+            >
+              {{ journal.data.name }}
+            </router-link>
           </v-card-title>
 
           <div>
@@ -89,9 +80,23 @@
         </v-card-item>
 
         <v-card-text>
-          <div>
+          <div class="mb-2">
             <h3>{{ t("description") }}</h3>
             <p>{{ journal.data.description }}</p>
+          </div>
+          <div class="mb-2">
+            <h3>{{ t("admins") }}</h3>
+            <AppAccessItemList
+              v-model="journal.data.admins"
+              readonly
+            ></AppAccessItemList>
+          </div>
+          <div>
+            <h3>{{ t("members") }}</h3>
+            <AppAccessItemList
+              v-model="journal.data.members"
+              readonly
+            ></AppAccessItemList>
           </div>
         </v-card-text>
         <v-card-actions v-if="!journal.data.archived">
@@ -144,8 +149,6 @@ import {
   mdiPlus,
   mdiShield,
   mdiSort,
-  mdiStar,
-  mdiStarOutline,
 } from "@mdi/js";
 import { useI18n } from "vue-i18n";
 import { computed, reactive, ref, watchEffect } from "vue";
@@ -155,6 +158,7 @@ import { useAuthStore } from "../stores";
 import { JournalModel } from "@white-rabbit/frontend-api";
 import { JournalQuery, Order, Page } from "@white-rabbit/types";
 import AppUserAutoComplete from "../components/AppUserAutoComplete.vue";
+import AppAccessItemList from "../components/AppAccessItemList.vue";
 
 const { t } = useI18n();
 
@@ -201,7 +205,7 @@ watchEffect(async () => {
 .main {
   &__list {
     .v-card {
-      max-width: 350px;
+      max-width: 500px;
     }
   }
 

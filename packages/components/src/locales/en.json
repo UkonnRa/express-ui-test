@@ -22,6 +22,8 @@
   "description": "Description",
   "update": "Update",
   "delete": "Delete",
+  "admins": "Admins",
+  "members": "Members",
   "sort": {
     "title": "Sort",
     "field:name:asc": "Name, Ascending",

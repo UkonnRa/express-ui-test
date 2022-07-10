@@ -9,6 +9,7 @@
     variant="underlined"
     clearable
     chips
+    return-object
     @update:search="search"
   >
   </v-autocomplete>
@@ -22,7 +23,6 @@ import { ApiService, KEY_API_SERVICE } from "../services";
 import { UserModel } from "@white-rabbit/frontend-api";
 import { useAuthStore } from "../stores";
 import { Order } from "@white-rabbit/types";
-import _ from "lodash";
 
 const { t } = useI18n();
 const api = useInject<ApiService>(KEY_API_SERVICE);
@@ -35,13 +35,22 @@ const emit = defineEmits<{
   (e: "update:modelValue", modelValue?: string): void;
 }>();
 
-const user = computed({
-  get: () => propValues.modelValue,
-  set: (value) =>
-    emit("update:modelValue", _.isEmpty(value) ? undefined : value),
+const user = computed<UserModel | undefined>({
+  get: () => {
+    return propValues.modelValue
+      ? users.value[propValues.modelValue]
+      : undefined;
+  },
+  set: (value?: UserModel) => {
+    const id = value?.id;
+    emit("update:modelValue", id);
+  },
 });
 
-const items = ref<UserModel[]>([]);
+const users = ref<Record<string, UserModel>>({});
+const items = computed(() =>
+  Object.values(users.value).sort((a, b) => a.name.localeCompare(b.name))
+);
 
 const search = async (input: string): Promise<void> => {
   if (authStore.user) {
@@ -54,7 +63,11 @@ const search = async (input: string): Promise<void> => {
       pagination: { size: 20 },
       sort: [{ field: "name", order: Order.ASC }],
     });
-    items.value = page.items.map(({ data }) => data);
+
+    users.value = {
+      ...users.value,
+      ...Object.fromEntries(page.items.map(({ data }) => [data.id, data])),
+    };
   }
 };
 </script>
