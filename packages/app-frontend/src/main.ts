@@ -10,6 +10,7 @@ import {
 } from "@white-rabbit/components";
 import { apiService, authService } from "./services";
 import { createPinia } from "pinia";
+import "./index.css";
 
 const app = createApp(App);
 app.provide(KEY_API_SERVICE, apiService);

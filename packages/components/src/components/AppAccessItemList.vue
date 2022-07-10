@@ -1,7 +1,7 @@
 <template>
   <v-slide-group v-if="propValues.readonly" show-arrows>
     <v-slide-group-item v-for="item in modelValue" :key="item.id">
-      <v-chip :prepend-icon="getIcon(item)" class="ma-1">
+      <v-chip :prepend-icon="getIcon(item)" class="mx-1">
         {{ item.name }}
       </v-chip>
     </v-slide-group-item>

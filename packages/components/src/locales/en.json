@@ -24,6 +24,7 @@
   "delete": "Delete",
   "admins": "Admins",
   "members": "Members",
+  "loadMore": "Load More",
   "sort": {
     "title": "Sort",
     "field:name:asc": "Name, Ascending",

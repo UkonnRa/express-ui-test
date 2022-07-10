@@ -1,15 +1,14 @@
 <template>
-  <div class="d-flex mb-4 justify-space-between">
-    <div class="d-flex">
-      <h1 class="pr-2">{{ t("journals") }}</h1>
+  <div class="flex justify-between pb-2">
+    <div class="flex gap-1">
+      <h1>{{ t("journals") }}</h1>
       <v-btn :prepend-icon="mdiPlus" color="primary" rounded="pill">
         {{ t("create") }}
       </v-btn>
     </div>
-    <div class="d-flex">
+    <div class="flex gap-1">
       <v-select
         v-model="sortType"
-        class="pr-2"
         variant="outlined"
         density="compact"
         color="primary"
@@ -29,92 +28,105 @@
       </v-btn>
     </div>
   </div>
-  <div class="main d-flex justify-space-between">
-    <div v-if="journals" class="main__list d-flex flex-wrap align-start">
-      <v-card
-        v-for="journal in journals.items"
-        :key="journal.cursor"
-        class="ma-2"
+  <div class="flex gap-4 justify-between">
+    <div class="flex flex-col gap-2">
+      <div
+        v-if="journals"
+        class="grid gap-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
       >
-        <v-card-item>
-          <v-card-title>
-            <router-link
-              :to="{ name: 'Journal', params: { id: journal.data.id } }"
-              class="journal-card__link ma-1"
-            >
-              {{ journal.data.name }}
-            </router-link>
-          </v-card-title>
-
-          <div>
-            <v-chip
-              v-if="journal.data.archived"
-              :prepend-icon="mdiArchive"
-              color="error"
-            >
-              {{ t("archived") }}
-            </v-chip>
-
-            <v-chip
-              v-if="journal.data.isAdmin"
-              :prepend-icon="mdiShield"
-              color="primary"
-              class="ml-1"
-            >
-              {{ t("admin") }}
-            </v-chip>
-            <v-chip :prepend-icon="mdiBank" color="primary" class="ml-1">
-              {{ journal.data.unit }}
-            </v-chip>
-            <template v-if="journal.data.tags">
-              <v-chip
-                v-for="tag in journal.data.tags"
-                :key="tag"
-                color="secondary"
-                class="ma-1"
+        <v-card
+          v-for="journal in journals"
+          :key="journal.cursor"
+          class="max-w-md self-start"
+        >
+          <v-card-item>
+            <v-card-title class="mb-2">
+              <router-link
+                class="text-primary no-underline hover:underline"
+                :to="{ name: 'Journal', params: { id: journal.data.id } }"
               >
-                {{ tag }}
-              </v-chip>
-            </template>
-          </div>
-        </v-card-item>
+                {{ journal.data.name }}
+              </router-link>
+            </v-card-title>
 
-        <v-card-text>
-          <div class="mb-2">
-            <h3>{{ t("description") }}</h3>
-            <p>{{ journal.data.description }}</p>
-          </div>
-          <div class="mb-2">
-            <h3>{{ t("admins") }}</h3>
-            <AppAccessItemList
-              v-model="journal.data.admins"
-              readonly
-            ></AppAccessItemList>
-          </div>
-          <div>
-            <h3>{{ t("members") }}</h3>
-            <AppAccessItemList
-              v-model="journal.data.members"
-              readonly
-            ></AppAccessItemList>
-          </div>
-        </v-card-text>
-        <v-card-actions v-if="!journal.data.archived">
-          <v-btn variant="text" color="primary">{{ t("update") }}</v-btn>
-          <v-btn variant="text" color="error">{{ t("delete") }}</v-btn>
-        </v-card-actions>
-      </v-card>
+            <div class="inline-flex flex-wrap gap-1">
+              <v-chip
+                v-if="journal.data.archived"
+                :prepend-icon="mdiArchive"
+                color="error"
+              >
+                {{ t("archived") }}
+              </v-chip>
+
+              <v-chip
+                v-if="journal.data.isAdmin"
+                :prepend-icon="mdiShield"
+                color="primary"
+              >
+                {{ t("admin") }}
+              </v-chip>
+              <v-chip :prepend-icon="mdiBank" color="primary">
+                {{ journal.data.unit }}
+              </v-chip>
+              <template v-if="journal.data.tags">
+                <v-chip
+                  v-for="tag in journal.data.tags"
+                  :key="tag"
+                  color="secondary"
+                >
+                  {{ tag }}
+                </v-chip>
+              </template>
+            </div>
+          </v-card-item>
+
+          <v-card-text class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1">
+              <h3>{{ t("description") }}</h3>
+              <p>{{ journal.data.description }}</p>
+            </div>
+            <div class="flex flex-col gap-1">
+              <h3>{{ t("admins") }}</h3>
+              <AppAccessItemList
+                v-model="journal.data.admins"
+                readonly
+              ></AppAccessItemList>
+            </div>
+            <div class="flex flex-col gap-1">
+              <h3>{{ t("members") }}</h3>
+              <AppAccessItemList
+                v-model="journal.data.members"
+                readonly
+              ></AppAccessItemList>
+            </div>
+          </v-card-text>
+          <v-card-actions v-if="!journal.data.archived">
+            <v-btn variant="text" color="primary">{{ t("update") }}</v-btn>
+            <v-btn variant="text" color="error">{{ t("delete") }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
+      <div class="flex justify-center">
+        <v-btn
+          :disabled="!pageInfo?.hasNextPage"
+          :loading="isLoadingMore"
+          variant="text"
+          @click="loadMore"
+        >
+          {{ t("loadMore") }}
+        </v-btn>
+      </div>
     </div>
-    <div v-if="showFilterPanel" class="main__filter">
-      <v-card variant="outlined">
+
+    <div>
+      <v-card v-if="showFilterPanel" variant="outlined" class="min-w-max">
         <v-card-title>{{ t("filterPanel") }}</v-card-title>
         <v-card-text>
-          <v-form>
+          <v-form class="flex flex-col gap-1">
             <v-text-field
               v-model="query.$fullText"
               :label="t('keyword')"
               hide-details
-              class="mb-4"
               variant="underlined"
               clearable
             ></v-text-field>
@@ -156,9 +168,8 @@ import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
 import { JournalModel } from "@white-rabbit/frontend-api";
-import { JournalQuery, Order, Page } from "@white-rabbit/types";
-import AppUserAutoComplete from "../components/AppUserAutoComplete.vue";
-import AppAccessItemList from "../components/AppAccessItemList.vue";
+import { JournalQuery, Order, PageInfo, PageItem } from "@white-rabbit/types";
+import { AppUserAutoComplete, AppAccessItemList } from "../components";
 
 const { t } = useI18n();
 
@@ -185,36 +196,43 @@ const sort = computed(() => {
 const api = useInject<ApiService>(KEY_API_SERVICE);
 const authStore = useAuthStore();
 
-const journals = ref<Page<JournalModel>>();
+const journals = ref<Array<PageItem<JournalModel>>>();
+const pageInfo = ref<PageInfo>();
+const isLoadingMore = ref(false);
+const loadMore = async () => {
+  if (pageInfo.value && authStore.user && pageInfo.value.hasNextPage) {
+    isLoadingMore.value = true;
+
+    const page = await api.journal.findPage(authStore.user.token, {
+      query,
+      pagination: { size: 10, after: pageInfo.value.endCursor },
+      sort: [sort.value],
+    });
+    journals.value?.push(...page.items);
+    pageInfo.value = page.pageInfo;
+
+    isLoadingMore.value = false;
+  }
+};
+
 const showFilterPanel = ref(false);
 const query = reactive<JournalQuery>({
   includeArchived: false,
 });
 watchEffect(async () => {
   if (authStore.user) {
-    journals.value = await api.journal.findPage(authStore.user.token, {
+    const page = await api.journal.findPage(authStore.user.token, {
       query,
-      pagination: { size: 20 },
+      pagination: { size: 10 },
       sort: [sort.value],
     });
+    journals.value = page.items;
+    pageInfo.value = page.pageInfo;
   }
 });
 </script>
 
 <style lang="scss">
-.main {
-  &__list {
-    .v-card {
-      max-width: 500px;
-    }
-  }
-
-  &__filter {
-    min-width: 400px;
-    max-width: 30%;
-  }
-}
-
 .journal-card__link {
   color: rgb(var(--v-theme-primary));
   font-weight: bolder;

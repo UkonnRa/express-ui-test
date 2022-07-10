@@ -23,6 +23,7 @@
   "delete": "删除",
   "admins": "管理员",
   "members": "成员",
+  "loadMore": "继续加载",
   "sort": {
     "title": "排序",
     "field:name:asc": "名称，顺序排列",

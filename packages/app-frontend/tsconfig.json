@@ -15,8 +15,7 @@
     }
   },
   "vueCompilerOptions": {
-    "experimentalDisableTemplateSupport": true,
-    "jsx": "preserve"
+    "experimentalDisableTemplateSupport": true
   },
   "include": ["src/"],
   "exclude": ["src/**/*.spec.ts"],

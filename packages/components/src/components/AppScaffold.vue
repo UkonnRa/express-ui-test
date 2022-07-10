@@ -2,44 +2,29 @@
   <v-app>
     <v-app-bar app>
       <v-app-bar-title>
-        <div class="d-flex">
+        <div class="flex gap-1">
           <AppLogo></AppLogo>
-          <v-btn
-            class="ml-1"
-            color="primary"
-            @click="router.push({ name: 'Journals' })"
-          >
+          <v-btn color="primary" @click="router.push({ name: 'Journals' })">
             {{ t("journals") }}
           </v-btn>
-          <v-btn
-            class="ml-1"
-            color="primary"
-            @click="router.push({ name: 'AgGridTest' })"
-          >
+          <v-btn color="primary" @click="router.push({ name: 'AgGridTest' })">
             {{ t("groups") }}
           </v-btn>
           <v-tooltip location="bottom">
             {{ t("search.description") }}
             <template #activator="{ props }">
-              <v-btn
-                :icon="mdiMagnify"
-                color="primary"
-                class="ml-1"
-                v-bind="props"
-              >
-              </v-btn>
+              <v-btn :icon="mdiMagnify" color="primary" v-bind="props"> </v-btn>
             </template>
           </v-tooltip>
         </div>
       </v-app-bar-title>
       <template #append>
-        <div class="d-flex align-center">
+        <div class="flex items-center gap-1">
           <v-tooltip location="bottom">
             {{ t("theme.description") }}
             <template #activator="{ props }">
               <v-switch
                 v-model="isDark"
-                class="mr-1"
                 color="primary"
                 :prepend-icon="mdiThemeLightDark"
                 hide-details
@@ -50,7 +35,7 @@
               </v-switch>
             </template>
           </v-tooltip>
-          <v-btn :prepend-icon="mdiTranslate" color="primary" class="mr-1">
+          <v-btn :prepend-icon="mdiTranslate" color="primary">
             {{ LOCALE_NAMES[locale] }}
             <v-menu activator="parent">
               <v-list>
@@ -82,12 +67,16 @@
     </v-app-bar>
 
     <v-main>
-      <v-container fluid class="px-8">
+      <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
 
-    <v-footer app> </v-footer>
+    <v-footer elevation="4" app>
+      <div class="w-full text-center">
+        {{ new Date().getFullYear() }} — <strong>Ukonn Ra</strong>
+      </div>
+    </v-footer>
   </v-app>
 </template>
 

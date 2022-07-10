@@ -7,7 +7,9 @@
     "commitlint.config.js",
     "esbuild.config.ts",
     "jest.config.ts",
-    "vitest.setup.ts"
+    "vitest.setup.ts",
+    "postcss.base.js",
+    "tailwind.base.js"
   ],
   "exclude": [],
   "compilerOptions": {
