@@ -59,27 +59,35 @@ export default abstract class WriteService<
     super(orm, type, entityName, readScope);
   }
 
-  abstract handle(
+  abstract doHandle(
+    command: CommandInput<C>,
+    em: EntityManager
+  ): Promise<E | null>;
+
+  readonly handle = async (
     command: CommandInput<C>,
     em?: EntityManager
-  ): Promise<E | null>;
+  ): Promise<E | null> =>
+    (em ?? this.orm.em.fork()).transactional(async (em) =>
+      this.doHandle(command, em)
+    );
 
   readonly handleAll = async (
     { authUser, commands }: CommandsInput<C>,
     em?: EntityManager
   ): Promise<Array<EntityDTO<E> | null>> =>
-    (em ?? this.orm.em.fork()).transactional(async (emInst) => {
+    (em ?? this.orm.em.fork()).transactional(async (em) => {
       const idMap: Record<string, string> = {};
       const results = [];
       for (const command of commands) {
         if (this.createCommands.includes(command.type)) {
-          const result = await this.handle({ authUser, command }, emInst);
+          const result = await this.doHandle({ authUser, command }, em);
           results.push(result?.toObject() ?? null);
           if (result != null && command.targetId != null) {
             idMap[command.targetId] = (result as any).id;
           }
         } else if (command.targetId != null) {
-          const result = await this.handle(
+          const result = await this.doHandle(
             {
               authUser,
               command: {
@@ -87,7 +95,7 @@ export default abstract class WriteService<
                 targetId: idMap[command.targetId] ?? command.targetId,
               },
             },
-            emInst
+            em
           );
           results.push(result?.toObject() ?? null);
         } else {

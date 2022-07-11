@@ -133,18 +133,17 @@ export default class UserService extends WriteService<
     await em.removeAndFlush(entity);
   }
 
-  override async handle(
+  override async doHandle(
     { command, authUser }: CommandInput<UserCommand>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<UserEntity | null> {
-    const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateUserCommand":
-        return this.createUser(authUser, command, emInst);
+        return this.createUser(authUser, command, em);
       case "UpdateUserCommand":
-        return this.updateUser(authUser, command, emInst);
+        return this.updateUser(authUser, command, em);
       case "DeleteUserCommand":
-        return this.deleteUser(authUser, command, emInst).then(() => null);
+        return this.deleteUser(authUser, command, em).then(() => null);
     }
   }
 
@@ -206,5 +205,12 @@ export default class UserService extends WriteService<
     }
 
     return [additionalQuery, objectQuery];
+  }
+
+  override async isReadable(
+    _: UserEntity,
+    { user }: AuthUser
+  ): Promise<boolean> {
+    return (user?.role ?? RoleValue.USER) !== RoleValue.USER;
   }
 }

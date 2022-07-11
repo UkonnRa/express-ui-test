@@ -14,7 +14,6 @@ import {
   Page,
   PageItem,
   Pagination,
-  RoleValue,
   Sort,
 } from "@white-rabbit/types";
 import { decodeCursor, encodeCursor, filterAsync } from "../utils";
@@ -145,12 +144,8 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
    * Especially DO NOT contain:
    * * whether the authUser has scope
    * * whether the entity is already deleted
-   *
-   * @param user
    */
-  async isReadable(_: E, { user }: AuthUser): Promise<boolean> {
-    return (user?.role ?? RoleValue.USER) !== RoleValue.USER;
-  }
+  abstract isReadable(entity: E, authUser: AuthUser): Promise<boolean>;
 
   async handleAdditionalQuery(
     authUser: AuthUser,

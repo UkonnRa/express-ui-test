@@ -146,27 +146,26 @@ export default class GroupService extends WriteService<
     await em.removeAndFlush(entity);
   }
 
-  override async handle(
+  override async doHandle(
     { command, authUser }: CommandInput<GroupCommand>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<GroupEntity | null> {
-    const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateGroupCommand":
-        return this.createGroup(authUser, command, emInst);
+        return this.createGroup(authUser, command, em);
       case "UpdateGroupCommand":
-        return this.updateGroup(authUser, command, emInst);
+        return this.updateGroup(authUser, command, em);
       case "DeleteGroupCommand":
-        return this.deleteGroup(authUser, command, emInst).then(() => null);
+        return this.deleteGroup(authUser, command, em).then(() => null);
     }
   }
 
-  async isReadable(entity: GroupEntity, authUser: AuthUser): Promise<boolean> {
-    if (!(await super.isReadable(entity, authUser))) {
-      return false;
+  async isReadable(entity: GroupEntity, { user }: AuthUser): Promise<boolean> {
+    if ((user?.role ?? RoleValue.USER) !== RoleValue.USER) {
+      return true;
     }
 
-    if ((authUser?.user?.role ?? RoleValue.USER) !== RoleValue.USER) {
+    if ((user?.role ?? RoleValue.USER) !== RoleValue.USER) {
       return true;
     }
 
@@ -179,9 +178,8 @@ export default class GroupService extends WriteService<
     }
 
     return (
-      authUser?.user != null &&
-      (entity.admins.contains(authUser.user) ||
-        entity.members.contains(authUser.user))
+      user != null &&
+      (entity.admins.contains(user) || entity.members.contains(user))
     );
   }
 

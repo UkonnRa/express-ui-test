@@ -25,10 +25,18 @@
   "admins": "Admins",
   "members": "Members",
   "loadMore": "Load More",
+  "name": "Name",
+  "tags": "Tags",
+  "submit": "Submit",
+  "createJournal": "Create Journal",
+  "updateJournal": "Update Journal",
   "sort": {
     "title": "Sort",
     "field:name:asc": "Name, Ascending",
     "field:name:desc": "Name, Descending",
     "field:startDate": "Start Date"
+  },
+  "error": {
+    "requiredField": "Field is required"
   }
 }

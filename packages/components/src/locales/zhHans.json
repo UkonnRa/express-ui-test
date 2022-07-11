@@ -24,10 +24,18 @@
   "admins": "管理员",
   "members": "成员",
   "loadMore": "继续加载",
+  "name": "名称",
+  "tags": "标签",
+  "submit": "提交",
+  "createJournal": "新建账本",
+  "updateJournal": "更新账本",
   "sort": {
     "title": "排序",
     "field:name:asc": "名称，顺序排列",
     "field:name:desc": "名称，倒序排列",
     "field:startDate": "开始时间"
+  },
+  "error": {
+    "requiredField": "此栏为必填项"
   }
 }

@@ -115,7 +115,7 @@ const avatarInfo = computed<{ picture?: string; name: string } | null>(() => {
 
 watchEffect(() => {
   let fontFamily = "Roboto";
-  if (locale.value === "zh-Hans") {
+  if (locale.value === "zhHans") {
     fontFamily = "Noto Sans SC";
   }
 

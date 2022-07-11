@@ -173,18 +173,17 @@ export default class JournalService extends WriteService<
     await em.removeAndFlush(entity);
   }
 
-  async handle(
+  async doHandle(
     { authUser, command }: CommandInput<JournalCommand>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<JournalEntity | null> {
-    const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateJournalCommand":
-        return this.createJournal(authUser, command, emInst);
+        return this.createJournal(authUser, command, em);
       case "UpdateJournalCommand":
-        return this.updateJourney(authUser, command, emInst);
+        return this.updateJourney(authUser, command, em);
       case "DeleteJournalCommand":
-        return this.deleteJournal(authUser, command, emInst).then(() => null);
+        return this.deleteJournal(authUser, command, em).then(() => null);
     }
   }
 
@@ -200,12 +199,12 @@ export default class JournalService extends WriteService<
     return adminContains.some((isAdmin) => isAdmin);
   }
 
-  async isReadable(
+  override async isReadable(
     entity: JournalEntity,
-    authUser: AuthUser
+    { user }: AuthUser
   ): Promise<boolean> {
-    if (!(await super.isReadable(entity, authUser))) {
-      return false;
+    if ((user?.role ?? RoleValue.USER) !== RoleValue.USER) {
+      return true;
     }
 
     if (!entity.accessItems.isInitialized()) {
@@ -215,7 +214,7 @@ export default class JournalService extends WriteService<
     const accessItemsContains = await Promise.all(
       entity.accessItems
         .getItems()
-        .map(async (item) => item.contains(authUser.user?.id ?? ""))
+        .map(async (item) => item.contains(user?.id ?? ""))
     );
 
     return !accessItemsContains.every((contains) => !contains);

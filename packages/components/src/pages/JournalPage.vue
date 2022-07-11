@@ -2,7 +2,12 @@
   <div class="flex justify-between pb-2">
     <div class="flex gap-1">
       <h1>{{ t("journals") }}</h1>
-      <v-btn :prepend-icon="mdiPlus" color="primary" rounded="pill">
+      <v-btn
+        :prepend-icon="mdiPlus"
+        color="primary"
+        rounded="pill"
+        @click="onCreateClicked"
+      >
         {{ t("create") }}
       </v-btn>
     </div>
@@ -29,29 +34,29 @@
     </div>
   </div>
   <div class="flex gap-4 justify-between">
-    <div class="flex flex-col gap-2">
+    <div class="flex-1 flex flex-col gap-2">
       <div
         v-if="journals"
         class="grid gap-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
       >
         <v-card
           v-for="journal in journals"
-          :key="journal.cursor"
+          :key="journal.id"
           class="max-w-md self-start"
         >
           <v-card-item>
             <v-card-title class="mb-2">
               <router-link
                 class="text-primary no-underline hover:underline"
-                :to="{ name: 'Journal', params: { id: journal.data.id } }"
+                :to="{ name: 'Journal', params: { id: journal.id } }"
               >
-                {{ journal.data.name }}
+                {{ journal.name }}
               </router-link>
             </v-card-title>
 
             <div class="inline-flex flex-wrap gap-1">
               <v-chip
-                v-if="journal.data.archived"
+                v-if="journal.archived"
                 :prepend-icon="mdiArchive"
                 color="error"
               >
@@ -59,18 +64,18 @@
               </v-chip>
 
               <v-chip
-                v-if="journal.data.isAdmin"
+                v-if="journal.isAdmin"
                 :prepend-icon="mdiShield"
                 color="primary"
               >
                 {{ t("admin") }}
               </v-chip>
               <v-chip :prepend-icon="mdiBank" color="primary">
-                {{ journal.data.unit }}
+                {{ journal.unit }}
               </v-chip>
-              <template v-if="journal.data.tags">
+              <template v-if="journal.tags">
                 <v-chip
-                  v-for="tag in journal.data.tags"
+                  v-for="tag in journal.tags"
                   :key="tag"
                   color="secondary"
                 >
@@ -83,25 +88,31 @@
           <v-card-text class="flex flex-col gap-2">
             <div class="flex flex-col gap-1">
               <h3>{{ t("description") }}</h3>
-              <p>{{ journal.data.description }}</p>
+              <p>{{ journal.description }}</p>
             </div>
             <div class="flex flex-col gap-1">
               <h3>{{ t("admins") }}</h3>
               <AppAccessItemList
-                v-model="journal.data.admins"
+                v-model="journal.admins"
                 readonly
               ></AppAccessItemList>
             </div>
             <div class="flex flex-col gap-1">
               <h3>{{ t("members") }}</h3>
               <AppAccessItemList
-                v-model="journal.data.members"
+                v-model="journal.members"
                 readonly
               ></AppAccessItemList>
             </div>
           </v-card-text>
-          <v-card-actions v-if="!journal.data.archived">
-            <v-btn variant="text" color="primary">{{ t("update") }}</v-btn>
+          <v-card-actions v-if="!journal.archived">
+            <v-btn
+              variant="text"
+              color="primary"
+              @click="onUpdateClicked(journal)"
+            >
+              {{ t("update") }}
+            </v-btn>
             <v-btn variant="text" color="error">{{ t("delete") }}</v-btn>
           </v-card-actions>
         </v-card>
@@ -151,6 +162,12 @@
       </v-card>
     </div>
   </div>
+
+  <JournalEditModal
+    v-model="selectedJournal"
+    :show="showEditModal"
+    @close="onEditModalClosed"
+  ></JournalEditModal>
 </template>
 
 <script setup lang="ts">
@@ -168,8 +185,12 @@ import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
 import { JournalModel } from "@white-rabbit/frontend-api";
-import { JournalQuery, Order, PageInfo, PageItem } from "@white-rabbit/types";
-import { AppUserAutoComplete, AppAccessItemList } from "../components";
+import { JournalQuery, Order, PageInfo } from "@white-rabbit/types";
+import {
+  AppUserAutoComplete,
+  AppAccessItemList,
+  JournalEditModal,
+} from "../components";
 
 const { t } = useI18n();
 
@@ -196,7 +217,7 @@ const sort = computed(() => {
 const api = useInject<ApiService>(KEY_API_SERVICE);
 const authStore = useAuthStore();
 
-const journals = ref<Array<PageItem<JournalModel>>>();
+const journals = ref<Array<JournalModel>>();
 const pageInfo = ref<PageInfo>();
 const isLoadingMore = ref(false);
 const loadMore = async () => {
@@ -208,28 +229,44 @@ const loadMore = async () => {
       pagination: { size: 10, after: pageInfo.value.endCursor },
       sort: [sort.value],
     });
-    journals.value?.push(...page.items);
+    journals.value?.push(...page.items.map((item) => item.data));
     pageInfo.value = page.pageInfo;
 
     isLoadingMore.value = false;
   }
 };
 
+const selectedJournal = ref<JournalModel>();
+const showEditModal = ref<boolean>(false);
+const onCreateClicked = () => {
+  selectedJournal.value = undefined;
+  showEditModal.value = true;
+};
+const onUpdateClicked = (journal: JournalModel) => {
+  selectedJournal.value = journal;
+  showEditModal.value = true;
+};
+const onEditModalClosed = async () => {
+  showEditModal.value = false;
+  await search();
+};
+
 const showFilterPanel = ref(false);
 const query = reactive<JournalQuery>({
   includeArchived: false,
 });
-watchEffect(async () => {
+const search = async () => {
   if (authStore.user) {
     const page = await api.journal.findPage(authStore.user.token, {
       query,
       pagination: { size: 10 },
       sort: [sort.value],
     });
-    journals.value = page.items;
+    journals.value = page.items.map((item) => item.data);
     pageInfo.value = page.pageInfo;
   }
-});
+};
+watchEffect(() => search());
 </script>
 
 <style lang="scss">

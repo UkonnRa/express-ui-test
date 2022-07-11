@@ -5,6 +5,12 @@ import {
 } from "vuetify";
 import "vuetify/styles";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
+// Waiting for https://github.com/vuetifyjs/vuetify/issues/14875
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
+import { useI18n } from "vue-i18n";
+import i18n from "./i18n.plugin";
 
 const light: ThemeDefinition = {
   dark: false,
@@ -39,6 +45,7 @@ const dark: ThemeDefinition = {
 };
 
 export const vuetifyOptions: VuetifyOptions = {
+  locale: createVueI18nAdapter({ i18n, useI18n }),
   icons: {
     defaultSet: "mdi",
     aliases,

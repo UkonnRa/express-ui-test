@@ -194,18 +194,17 @@ export default class RecordService extends WriteService<
     await em.removeAndFlush(entity);
   }
 
-  async handle(
+  async doHandle(
     { command, authUser }: CommandInput<RecordCommand>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<RecordEntity | null> {
-    const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateRecordCommand":
-        return this.createRecord(authUser, command, emInst);
+        return this.createRecord(authUser, command, em);
       case "UpdateRecordCommand":
-        return this.updateRecord(authUser, command, emInst);
+        return this.updateRecord(authUser, command, em);
       case "DeleteRecordCommand":
-        return this.deleteRecord(authUser, command, emInst).then(() => null);
+        return this.deleteRecord(authUser, command, em).then(() => null);
     }
   }
 
@@ -267,10 +266,7 @@ export default class RecordService extends WriteService<
   }
 
   async isReadable(entity: RecordEntity, authUser: AuthUser): Promise<boolean> {
-    return (
-      (await super.isReadable(entity, authUser)) &&
-      this.journalService.isReadable(entity.journal, authUser)
-    );
+    return this.journalService.isReadable(entity.journal, authUser);
   }
 
   override async handleAdditionalQuery(

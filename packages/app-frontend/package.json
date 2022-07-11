@@ -27,13 +27,13 @@
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-i18n": "9.1.10",
-    "vue-router": "^4.1.1",
+    "vue-router": "^4.1.2",
     "vuetify": "^3.0.0-beta.5"
   },
   "devDependencies": {
     "vite": "^2.9.14",
     "vitest": "^0.18.0",
-    "vue-tsc": "^0.38.3"
+    "vue-tsc": "^0.38.5"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

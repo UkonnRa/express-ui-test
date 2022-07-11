@@ -135,18 +135,17 @@ export default class AccountService extends WriteService<
     await em.removeAndFlush(entity);
   }
 
-  async handle(
+  async doHandle(
     { authUser, command }: CommandInput<AccountCommand>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<AccountEntity | null> {
-    const emInst = em ?? this.orm.em.fork();
     switch (command.type) {
       case "CreateAccountCommand":
-        return this.createAccount(authUser, command, emInst);
+        return this.createAccount(authUser, command, em);
       case "UpdateAccountCommand":
-        return this.updateAccount(authUser, command, emInst);
+        return this.updateAccount(authUser, command, em);
       case "DeleteAccountCommand":
-        return this.deleteAccount(authUser, command, emInst).then(() => null);
+        return this.deleteAccount(authUser, command, em).then(() => null);
     }
   }
 
@@ -165,10 +164,7 @@ export default class AccountService extends WriteService<
     entity: AccountEntity,
     authUser: AuthUser
   ): Promise<boolean> {
-    return (
-      (await super.isReadable(entity, authUser)) &&
-      this.journalService.isReadable(entity.journal, authUser)
-    );
+    return this.journalService.isReadable(entity.journal, authUser);
   }
 
   async handleAdditionalQuery(
