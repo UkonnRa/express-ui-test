@@ -70,7 +70,7 @@
 import { JournalModel } from "@white-rabbit/frontend-api";
 import { computed, reactive, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { SubmitEventPromise } from "vuetify";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
@@ -113,7 +113,7 @@ watchEffect(() => {
   command.members = props.modelValue?.members;
 });
 
-const requiredRule = (v?: unknown) => !_.isEmpty(v) || t("error.requiredField");
+const requiredRule = (v?: unknown) => !isEmpty(v) || t("error.requiredField");
 
 const baseRules = computed(() => [
   ...(commandType.value === "CreateJournalCommand" ? [requiredRule] : []),
@@ -162,7 +162,7 @@ const items = ref<string[]>([]);
 const searchTags = (input: string) => {
   const value: string[] = [];
   const trimmed = input.trim();
-  if (!_.isEmpty(trimmed)) {
+  if (!isEmpty(trimmed)) {
     value.push(trimmed);
   }
 

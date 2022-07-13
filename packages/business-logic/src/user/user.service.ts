@@ -13,7 +13,7 @@ import {
   USER_WRITE_SCOPE,
   FULL_TEXT_OPERATOR,
 } from "@white-rabbit/types";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { AuthUser, checkCreate, WriteService } from "../shared";
 import CommandInput from "../shared/command.input";
 import { NoPermissionError } from "../error";
@@ -182,14 +182,14 @@ export default class UserService extends WriteService<
     const objectQuery: ObjectQuery<UserEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === "id" && !_.isEmpty(value)) {
+      if (key === "id" && !isEmpty(value)) {
         objectQuery.id = value;
       } else if (key === "name") {
-        if (typeof value === "string" && !_.isEmpty(value)) {
+        if (typeof value === "string" && !isEmpty(value)) {
           objectQuery.name = value;
         } else if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -199,7 +199,7 @@ export default class UserService extends WriteService<
         }
       } else if (key === "role") {
         objectQuery.role = value;
-      } else if (key === "authId" && !_.isEmpty(value)) {
+      } else if (key === "authId" && !isEmpty(value)) {
         objectQuery.authIds = value;
       }
     }

@@ -15,7 +15,7 @@ import {
   UpdateJournalCommand,
   AccessItemAccessibleTypeValue,
 } from "@white-rabbit/types";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { UserEntity } from "../user";
 import { AlreadyArchivedError, NoPermissionError } from "../error";
@@ -269,26 +269,26 @@ export default class JournalService extends WriteService<
     }
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR && !_.isEmpty(value)) {
+      if (key === FULL_TEXT_OPERATOR && !isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description", "tags"],
         });
-      } else if (key === CONTAINING_USER_OPERATOR && !_.isEmpty(value)) {
+      } else if (key === CONTAINING_USER_OPERATOR && !isEmpty(value)) {
         additionalQuery.push({
           type: "ContainingUserQuery",
           user: value,
           fields: ["admins", "members"],
         });
-      } else if (key === "id" && !_.isEmpty(value)) {
+      } else if (key === "id" && !isEmpty(value)) {
         objectQuery.id = value;
       } else if (key === "name") {
-        if (typeof value === "string" && !_.isEmpty(value)) {
+        if (typeof value === "string" && !isEmpty(value)) {
           objectQuery.name = value;
         } else if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -296,10 +296,7 @@ export default class JournalService extends WriteService<
             fields: ["name"],
           });
         }
-      } else if (
-        key === "description" &&
-        !_.isEmpty(value[FULL_TEXT_OPERATOR])
-      ) {
+      } else if (key === "description" && !isEmpty(value[FULL_TEXT_OPERATOR])) {
         additionalQuery.push({
           type: "FullTextQuery",
           value: value[FULL_TEXT_OPERATOR],
@@ -308,7 +305,7 @@ export default class JournalService extends WriteService<
       } else if (key === "tags") {
         if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -317,11 +314,11 @@ export default class JournalService extends WriteService<
           });
         } else if (
           (typeof value === "string" || value instanceof Array) &&
-          !_.isEmpty(value)
+          !isEmpty(value)
         ) {
           objectQuery.tags = value;
         }
-      } else if (key === "unit" && !_.isEmpty(value)) {
+      } else if (key === "unit" && !isEmpty(value)) {
         objectQuery.unit = value;
       } else if (key === "admins") {
         objectQuery.accessItems = {

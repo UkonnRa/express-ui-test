@@ -18,7 +18,7 @@ import {
   RoleValue,
   UpdateGroupCommand,
 } from "@white-rabbit/types";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { filterAsync, fullTextSearch } from "../utils";
@@ -233,26 +233,26 @@ export default class GroupService extends WriteService<
     const objectQuery: ObjectQuery<GroupEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR && !_.isEmpty(value)) {
+      if (key === FULL_TEXT_OPERATOR && !isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description"],
         });
-      } else if (key === CONTAINING_USER_OPERATOR && !_.isEmpty(value)) {
+      } else if (key === CONTAINING_USER_OPERATOR && !isEmpty(value)) {
         additionalQuery.push({
           type: "ContainingUserQuery",
           user: value,
           fields: ["admins", "members"],
         });
-      } else if (key === "id" && !_.isEmpty(value)) {
+      } else if (key === "id" && !isEmpty(value)) {
         objectQuery.id = value;
-      } else if (key === "name" && !_.isEmpty(value)) {
-        if (typeof value === "string" && !_.isEmpty(value)) {
+      } else if (key === "name" && !isEmpty(value)) {
+        if (typeof value === "string" && !isEmpty(value)) {
           objectQuery.name = value;
         } else if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -260,15 +260,15 @@ export default class GroupService extends WriteService<
             fields: ["name"],
           });
         }
-      } else if (key === "description" && !_.isEmpty(value)) {
+      } else if (key === "description" && !isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["description"],
         });
-      } else if (key === "admins" && !_.isEmpty(value)) {
+      } else if (key === "admins" && !isEmpty(value)) {
         objectQuery.admins = value;
-      } else if (key === "members" && !_.isEmpty(value)) {
+      } else if (key === "members" && !isEmpty(value)) {
         objectQuery.members = value;
       }
     }

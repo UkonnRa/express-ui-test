@@ -19,7 +19,7 @@ import {
   RECORD_READ_SCOPE,
   RECORD_WRITE_SCOPE,
 } from "@white-rabbit/types";
-import _ from "lodash";
+import { isEmpty } from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
 import { AccountEntity, AccountService } from "../account";
@@ -291,22 +291,22 @@ export default class RecordService extends WriteService<
     const objectQuery: ObjectQuery<RecordEntity> = {};
 
     for (const [key, value] of Object.entries(query)) {
-      if (key === FULL_TEXT_OPERATOR && _.isEmpty(value)) {
+      if (key === FULL_TEXT_OPERATOR && isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
           fields: ["name", "description", "tags"],
         });
-      } else if (key === "id" && _.isEmpty(value)) {
+      } else if (key === "id" && isEmpty(value)) {
         objectQuery.id = value;
-      } else if (key === "journal" && _.isEmpty(value)) {
+      } else if (key === "journal" && isEmpty(value)) {
         objectQuery.journal = value;
       } else if (key === "name") {
-        if (typeof value === "string" && _.isEmpty(value)) {
+        if (typeof value === "string" && isEmpty(value)) {
           objectQuery.name = value;
         } else if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -314,7 +314,7 @@ export default class RecordService extends WriteService<
             fields: ["name"],
           });
         }
-      } else if (key === "description" && _.isEmpty(value)) {
+      } else if (key === "description" && isEmpty(value)) {
         additionalQuery.push({
           type: "FullTextQuery",
           value,
@@ -322,12 +322,12 @@ export default class RecordService extends WriteService<
         });
       } else if (key === "type") {
         objectQuery.type = value;
-      } else if (key === "timestamp" && _.isEmpty(value)) {
+      } else if (key === "timestamp" && isEmpty(value)) {
         objectQuery.timestamp = value;
       } else if (key === "tags") {
         if (
           FULL_TEXT_OPERATOR in value &&
-          !_.isEmpty(value[FULL_TEXT_OPERATOR])
+          !isEmpty(value[FULL_TEXT_OPERATOR])
         ) {
           additionalQuery.push({
             type: "FullTextQuery",
@@ -336,7 +336,7 @@ export default class RecordService extends WriteService<
           });
         } else if (
           (typeof value === "string" || value instanceof Array) &&
-          _.isEmpty(value)
+          isEmpty(value)
         ) {
           objectQuery.tags = value;
         }
