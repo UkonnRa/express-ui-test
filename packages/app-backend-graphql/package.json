@@ -16,7 +16,7 @@
     "@mikro-orm/core": "^5.2.3",
     "@mikro-orm/postgresql": "^5.2.3",
     "@white-rabbit/business-logic": "workspace:^",
-    "apollo-server": "^3.9.0",
+    "apollo-server": "^3.10.0",
     "dotenv": "^16.0.1",
     "graphql": "^16.5.0",
     "reflect-metadata": "^0.1.13",

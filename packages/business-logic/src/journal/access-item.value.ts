@@ -1,11 +1,13 @@
-import { Entity, Enum, ManyToOne, PrimaryKey, Unique } from "@mikro-orm/core";
-import { v4 } from "uuid";
-import { AccessItemTypeValue } from "@white-rabbit/types";
+import { Entity, Enum, ManyToOne, Unique } from "@mikro-orm/core";
+import {
+  AccessItemTypeValue,
+  AccessItemAccessibleTypeValue,
+} from "@white-rabbit/types";
 import { UserEntity } from "../user";
 import { GroupEntity } from "../group";
+import { AbstractEntity } from "../shared";
 // eslint-disable-next-line import/no-cycle
 import JournalEntity from "./journal.entity";
-import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
 @Entity({
   discriminatorColumn: "type",
@@ -13,12 +15,7 @@ import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
   collection: "access_item",
 })
 @Unique({ properties: ["type", "accessible", "journal", "user", "group"] })
-export default abstract class AccessItemValue {
-  // In PG, all fields in composite primary keys should be non-null, which does not match our case
-  // Waiting for https://github.com/mikro-orm/mikro-orm/issues/1575
-  @PrimaryKey({ type: "string" })
-  id: string = v4();
-
+export default abstract class AccessItemValue extends AbstractEntity<AccessItemValue> {
   @Enum({ type: "string", items: () => AccessItemTypeValue })
   type: AccessItemTypeValue;
 

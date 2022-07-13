@@ -1,8 +1,12 @@
 import { Seeder } from "@mikro-orm/seeder";
 import { EntityManager } from "@mikro-orm/core";
 import { faker } from "@faker-js/faker";
-import { RecordTypeValue, RoleValue } from "@white-rabbit/types";
-import { AccessItemAccessibleTypeValue, RecordItemValue } from "../src";
+import {
+  AccessItemAccessibleTypeValue,
+  RecordTypeValue,
+  RoleValue,
+} from "@white-rabbit/types";
+import { RecordItemValue } from "../src";
 import UserFactory from "./user.factory";
 import GroupFactory from "./group.factory";
 import JournalFactory from "./journal.factory";

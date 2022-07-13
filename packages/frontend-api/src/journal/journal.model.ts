@@ -1,5 +1,5 @@
+import { AccessItemValue } from "@white-rabbit/types";
 import { AbstractModel } from "../shared";
-import AccessItemValue from "./access-item.value";
 
 export default interface JournalModel extends AbstractModel {
   readonly name: string;

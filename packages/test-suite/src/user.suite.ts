@@ -54,7 +54,7 @@ const TASKS: Array<Task<UserEntity, UserCommand, UserQuery>> = [
     type: "FindPageTask",
     name: "User[ANY] can find backward",
 
-    async input(em): Promise<Input<FindPageInput<UserEntity, UserQuery>>> {
+    async input(em): Promise<Input<FindPageInput<UserQuery>>> {
       const users = await em.find(
         UserEntity,
         { role: RoleValue.USER },
@@ -110,7 +110,7 @@ const TASKS: Array<Task<UserEntity, UserCommand, UserQuery>> = [
   {
     type: "FindPageTask",
     name: "User[ANY] do full text search",
-    input: async (em): Promise<Input<FindPageInput<UserEntity, UserQuery>>> => {
+    input: async (em): Promise<Input<FindPageInput<UserQuery>>> => {
       const user = await em.findOneOrFail(UserEntity, { role: { $ne: null } });
       return {
         authUser: { user: {} },

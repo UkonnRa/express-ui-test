@@ -8,7 +8,7 @@ import { RoleValue, UserCommand, UserQuery } from "@white-rabbit/types";
 import { Command, Role, User } from "../proto/user";
 import { IUserService } from "../proto/user.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
-import AbstractService from "./abstract-service";
+import WriteService from "./write-service";
 
 function roleFromProto(role: Role): RoleValue {
   switch (role) {
@@ -34,7 +34,7 @@ function roleToProto(role: RoleValue): Role {
 
 @singleton()
 export default class UserService
-  extends AbstractService<
+  extends WriteService<
     UserEntity,
     UserCommand,
     UserQuery,

@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { AccessItemValue, JournalModel } from "@white-rabbit/frontend-api";
+import { JournalModel } from "@white-rabbit/frontend-api";
 import { computed, reactive, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
@@ -75,7 +75,7 @@ import { SubmitEventPromise } from "vuetify";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
-import { JournalCommand } from "@white-rabbit/types";
+import { AccessItemValue, JournalCommand } from "@white-rabbit/types";
 
 const { t } = useI18n();
 const api = useInject<ApiService>(KEY_API_SERVICE);

@@ -1,5 +1,4 @@
 import {
-  AccessItemAccessibleTypeValue,
   AccessItemValue,
   JournalEntity,
   JournalService,
@@ -9,6 +8,7 @@ import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
 import each from "jest-each";
 import {
+  AccessItemAccessibleTypeValue,
   AccessItemTypeValue,
   JournalCommand,
   JournalQuery,
@@ -43,9 +43,7 @@ const TASKS: Array<Task<JournalEntity, JournalCommand, JournalQuery>> = [
   {
     type: "FindOneTask",
     name: "Find a journal based on an admin",
-    input: async (
-      em
-    ): Promise<Input<FindInput<JournalEntity, JournalQuery>>> => {
+    input: async (em): Promise<Input<FindInput<JournalQuery>>> => {
       const journal = await em.findOneOrFail(
         JournalEntity,
         {

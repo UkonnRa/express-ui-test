@@ -5,23 +5,12 @@
 // @ts-nocheck
 import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { AccessItem } from "./access-item";
-import { AccessItemPage } from "./access-item";
-import { FindPageRequest } from "./shared";
-import { AccessItemResponse } from "./access-item";
 import { StringValue } from "./google/protobuf/wrappers";
 import { ServerCallContext } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service whiterabbit.accessItem.JournalService
+ * @generated from protobuf service whiterabbit.accessItem.AccessItemService
  */
-export interface IJournalService<T = ServerCallContext> {
-  /**
-   * @generated from protobuf rpc: findOne(google.protobuf.StringValue) returns (whiterabbit.accessItem.AccessItemResponse);
-   */
-  findOne(request: StringValue, context: T): Promise<AccessItemResponse>;
-  /**
-   * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.accessItem.AccessItemPage);
-   */
-  findPage(request: FindPageRequest, context: T): Promise<AccessItemPage>;
+export interface IAccessItemService<T = ServerCallContext> {
   /**
    * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
    */

@@ -7,12 +7,12 @@ import {
   types,
   Unique,
 } from "@mikro-orm/core";
+import { AccessItemAccessibleTypeValue } from "@white-rabbit/types";
 import { AbstractEntity } from "../shared";
 import { UserEntity } from "../user";
 import { GroupEntity } from "../group";
 // eslint-disable-next-line import/no-cycle
 import AccessItemValue from "./access-item.value";
-import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
 
 export const JOURNAL_TYPE = "journal";
 

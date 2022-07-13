@@ -11,7 +11,7 @@
   "dependencies": {
     "@white-rabbit/frontend-api": "workspace:^",
     "@white-rabbit/frontend-api-local": "workspace:^",
-    "pinia": "^2.0.14",
+    "pinia": "^2.0.16",
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
     "vue-i18n": "9.1.10",

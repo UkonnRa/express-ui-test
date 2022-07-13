@@ -37,7 +37,7 @@
     <div class="flex-1 flex flex-col gap-2">
       <div
         v-if="journals"
-        class="grid gap-2 grid-cols-1 lg:grid-cols-2 xl:grid-cols-4"
+        class="grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
       >
         <v-card
           v-for="journal in journals"
@@ -157,6 +157,7 @@
             <AppUserAutoComplete
               v-model="query.$containingUser"
             ></AppUserAutoComplete>
+            <AppAccessItemAutoComplete></AppAccessItemAutoComplete>
           </v-form>
         </v-card-text>
       </v-card>
@@ -191,6 +192,7 @@ import {
   AppAccessItemList,
   JournalEditModal,
 } from "../components";
+import AppAccessItemAutoComplete from "../components/AppAccessItemAutoComplete.vue";
 
 const { t } = useI18n();
 
@@ -268,15 +270,3 @@ const search = async () => {
 };
 watchEffect(() => search());
 </script>
-
-<style lang="scss">
-.journal-card__link {
-  color: rgb(var(--v-theme-primary));
-  font-weight: bolder;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-</style>

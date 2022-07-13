@@ -187,11 +187,11 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
     return result;
   }
 
-  private checkPermission(authUser: AuthUser): void {
+  readonly checkPermission = (authUser: AuthUser): void => {
     if (!authUser.scopes.includes(this.readScope)) {
       throw new NoPermissionError(this.type, "READ");
     }
-  }
+  };
 
   private async getCursorAndEntity(
     cursor: string | undefined,
@@ -249,7 +249,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   }
 
   readonly findAll = async (
-    { authUser, query }: FindInput<E, Q>,
+    { authUser, query }: FindInput<Q>,
     em?: EntityManager
   ): Promise<E[]> => {
     this.checkPermission(authUser);
@@ -269,7 +269,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   };
 
   readonly findPage = async (
-    { authUser, pagination, sort, query }: FindPageInput<E, Q>,
+    { authUser, pagination, sort, query }: FindPageInput<Q>,
     em?: EntityManager
   ): Promise<Page<E>> => {
     this.checkPermission(authUser);
@@ -333,7 +333,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   };
 
   readonly findOne = async (
-    { authUser, query }: FindInput<E, Q>,
+    { authUser, query }: FindInput<Q>,
     em?: EntityManager
   ): Promise<E | null> => {
     this.checkPermission(authUser);

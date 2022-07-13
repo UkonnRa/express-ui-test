@@ -5,34 +5,16 @@
 // @ts-nocheck
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { JournalService } from "./access-item";
-import type { AccessItem } from "./access-item";
-import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
-import type { AccessItemPage } from "./access-item";
-import type { FindPageRequest } from "./shared";
+import { AccessItemService } from "./access-item";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { AccessItemResponse } from "./access-item";
+import type { AccessItem } from "./access-item";
 import type { StringValue } from "./google/protobuf/wrappers";
-import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
+import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service whiterabbit.accessItem.JournalService
+ * @generated from protobuf service whiterabbit.accessItem.AccessItemService
  */
-export interface IJournalServiceClient {
-  /**
-   * @generated from protobuf rpc: findOne(google.protobuf.StringValue) returns (whiterabbit.accessItem.AccessItemResponse);
-   */
-  findOne(
-    input: StringValue,
-    options?: RpcOptions
-  ): UnaryCall<StringValue, AccessItemResponse>;
-  /**
-   * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.accessItem.AccessItemPage);
-   */
-  findPage(
-    input: FindPageRequest,
-    options?: RpcOptions
-  ): UnaryCall<FindPageRequest, AccessItemPage>;
+export interface IAccessItemServiceClient {
   /**
    * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
    */
@@ -42,49 +24,15 @@ export interface IJournalServiceClient {
   ): ServerStreamingCall<StringValue, AccessItem>;
 }
 /**
- * @generated from protobuf service whiterabbit.accessItem.JournalService
+ * @generated from protobuf service whiterabbit.accessItem.AccessItemService
  */
-export class JournalServiceClient
-  implements IJournalServiceClient, ServiceInfo
+export class AccessItemServiceClient
+  implements IAccessItemServiceClient, ServiceInfo
 {
-  typeName = JournalService.typeName;
-  methods = JournalService.methods;
-  options = JournalService.options;
+  typeName = AccessItemService.typeName;
+  methods = AccessItemService.methods;
+  options = AccessItemService.options;
   constructor(private readonly _transport: RpcTransport) {}
-  /**
-   * @generated from protobuf rpc: findOne(google.protobuf.StringValue) returns (whiterabbit.accessItem.AccessItemResponse);
-   */
-  findOne(
-    input: StringValue,
-    options?: RpcOptions
-  ): UnaryCall<StringValue, AccessItemResponse> {
-    const method = this.methods[0],
-      opt = this._transport.mergeOptions(options);
-    return stackIntercept<StringValue, AccessItemResponse>(
-      "unary",
-      this._transport,
-      method,
-      opt,
-      input
-    );
-  }
-  /**
-   * @generated from protobuf rpc: findPage(whiterabbit.shared.FindPageRequest) returns (whiterabbit.accessItem.AccessItemPage);
-   */
-  findPage(
-    input: FindPageRequest,
-    options?: RpcOptions
-  ): UnaryCall<FindPageRequest, AccessItemPage> {
-    const method = this.methods[1],
-      opt = this._transport.mergeOptions(options);
-    return stackIntercept<FindPageRequest, AccessItemPage>(
-      "unary",
-      this._transport,
-      method,
-      opt,
-      input
-    );
-  }
   /**
    * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
    */
@@ -92,7 +40,7 @@ export class JournalServiceClient
     input: StringValue,
     options?: RpcOptions
   ): ServerStreamingCall<StringValue, AccessItem> {
-    const method = this.methods[2],
+    const method = this.methods[0],
       opt = this._transport.mergeOptions(options);
     return stackIntercept<StringValue, AccessItem>(
       "serverStreaming",

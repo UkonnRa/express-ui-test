@@ -4,7 +4,9 @@ import {
   JournalApi,
   RecordApi,
   UserApi,
+  AccessItemApi,
 } from "@white-rabbit/frontend-api";
+import { AccessItemValue } from "@white-rabbit/types";
 
 export type ApiService<T = unknown> = {
   readonly user: UserApi<T>;
@@ -12,6 +14,7 @@ export type ApiService<T = unknown> = {
   readonly journal: JournalApi<T>;
   readonly account: AccountApi<T>;
   readonly record: RecordApi<T>;
+  readonly accessItem: AccessItemApi<T>;
 };
 
 export const KEY_API_SERVICE = Symbol("KEY_API_SERVICE");
@@ -44,6 +47,11 @@ export function createApi<T>(
         journal: mockApi,
         account: mockApi,
         record: mockApi,
+        accessItem: {
+          findAll(): Promise<AccessItemValue[]> {
+            return Promise.resolve([]);
+          },
+        },
       };
     default:
       throw new Error(

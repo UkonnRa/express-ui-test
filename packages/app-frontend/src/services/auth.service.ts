@@ -51,7 +51,9 @@ export const authService: AuthService<User> = {
     }
     const provider = import.meta.env.VITE_OPENID_PROVIDER ?? "";
     const user = await apiService.user.findOne(token, {
-      authIds: { [provider]: token.profile.sub },
+      query: {
+        authId: { [provider]: token.profile.sub },
+      },
     });
     return {
       user: user || undefined,

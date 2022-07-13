@@ -30,8 +30,6 @@ message AccessItemResponse {
   AccessItem item = 1;
 }
 
-service JournalService {
-  rpc findOne(google.protobuf.StringValue) returns (AccessItemResponse);
-  rpc findPage(whiterabbit.shared.FindPageRequest) returns (AccessItemPage);
+service AccessItemService {
   rpc findAll(google.protobuf.StringValue) returns (stream AccessItem);
 }

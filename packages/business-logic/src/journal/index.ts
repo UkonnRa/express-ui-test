@@ -13,4 +13,4 @@ export {
   AccessItemGroupValue,
 } from "./access-item.value";
 
-export { default as AccessItemAccessibleTypeValue } from "./access-item-accessible-type.value";
+export { default as AccessItemService } from "./access-item.service";

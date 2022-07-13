@@ -69,7 +69,7 @@ export default abstract class AbstractSuite<
 
   private async runFindPageTask(
     { checker, expectNextPage, expectPreviousPage }: FindPageTask<E, Q>,
-    input: FindPageInput<E, Q>
+    input: FindPageInput<Q>
   ): Promise<void> {
     const em = this.orm.em.fork();
     const page = await this.service.findPage(input);
@@ -219,25 +219,25 @@ export default abstract class AbstractSuite<
 
     switch (task.type) {
       case "FindPageTask":
-        await this.runFindPageTask(task, inputValue as FindPageInput<E, Q>);
+        await this.runFindPageTask(task, inputValue as FindPageInput<Q>);
         break;
       case "FindPageExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindPageInput<E, Q>,
-          async () => this.service.findPage(inputValue as FindPageInput<E, Q>)
+          inputValue as FindPageInput<Q>,
+          async () => this.service.findPage(inputValue as FindPageInput<Q>)
         );
         break;
       case "FindOneTask":
-        await this.doRunTask(task, inputValue as FindInput<E, Q>, async () =>
-          this.service.findOne(inputValue as FindInput<E, Q>)
+        await this.doRunTask(task, inputValue as FindInput<Q>, async () =>
+          this.service.findOne(inputValue as FindInput<Q>)
         );
         break;
       case "FindOneExceptionTask":
         await this.runExceptionTask(
           task,
-          inputValue as FindInput<E, Q>,
-          async () => this.service.findOne(inputValue as FindInput<E, Q>)
+          inputValue as FindInput<Q>,
+          async () => this.service.findOne(inputValue as FindInput<Q>)
         );
         break;
       case "HandleCommandTask":

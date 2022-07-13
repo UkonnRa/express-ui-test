@@ -1,7 +1,6 @@
 import { inject, singleton } from "tsyringe";
 import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import {
-  AccessItemInput,
   AccessItemTypeValue,
   AdditionalQuery,
   CONTAINING_USER_OPERATOR,
@@ -14,15 +13,15 @@ import {
   JournalQuery,
   RoleValue,
   UpdateJournalCommand,
+  AccessItemAccessibleTypeValue,
 } from "@white-rabbit/types";
 import _ from "lodash";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
-import { UserEntity, UserService } from "../user";
-import { GroupEntity, GroupService } from "../group";
+import { UserEntity } from "../user";
 import { AlreadyArchivedError, NoPermissionError } from "../error";
 import { accessItemsContain, filterAsync, fullTextSearch } from "../utils";
 import JournalEntity, { JOURNAL_TYPE } from "./journal.entity";
-import AccessItemAccessibleTypeValue from "./access-item-accessible-type.value";
+import AccessItemService from "./access-item.service";
 import { AccessItemValue } from "./index";
 
 @singleton()
@@ -33,8 +32,8 @@ export default class JournalService extends WriteService<
 > {
   constructor(
     @inject(MikroORM) readonly orm: MikroORM,
-    @inject(UserService) private readonly userService: UserService,
-    @inject(GroupService) private readonly groupService: GroupService
+    @inject(AccessItemService)
+    private readonly accessItemService: AccessItemService
   ) {
     super(
       orm,
@@ -44,37 +43,6 @@ export default class JournalService extends WriteService<
       JOURNAL_WRITE_SCOPE,
       ["CreateJournalCommand"]
     );
-  }
-
-  async loadUserGroup(
-    authUser: AuthUser,
-    accessItems: AccessItemInput[],
-    em: EntityManager
-  ): Promise<Array<UserEntity | GroupEntity>> {
-    const users = await em.find(UserEntity, {
-      id: accessItems
-        .filter(({ type }) => type === AccessItemTypeValue.USER)
-        .map(({ id }) => id),
-    });
-    const groups = await em.find(
-      GroupEntity,
-      {
-        id: accessItems
-          .filter(({ type }) => type === AccessItemTypeValue.GROUP)
-          .map(({ id }) => id),
-      },
-      {
-        populate: ["admins", "members"],
-      }
-    );
-    return [
-      ...(await filterAsync(users, async (item) =>
-        this.userService.isReadable(item, authUser)
-      )),
-      ...(await filterAsync(groups, async (item) =>
-        this.groupService.isReadable(item, authUser)
-      )),
-    ];
   }
 
   private async createJournal(
@@ -93,8 +61,16 @@ export default class JournalService extends WriteService<
       em
     );
 
-    const admins = await this.loadUserGroup(authUser, command.admins, em);
-    const members = await this.loadUserGroup(authUser, command.members, em);
+    const admins = await this.accessItemService.loadAll(
+      authUser,
+      command.admins,
+      em
+    );
+    const members = await this.accessItemService.loadAll(
+      authUser,
+      command.members,
+      em
+    );
     const entity = new JournalEntity(
       command.name,
       command.description,
@@ -146,12 +122,20 @@ export default class JournalService extends WriteService<
     }
 
     if (command.admins != null) {
-      const admins = await this.loadUserGroup(authUser, command.admins, em);
+      const admins = await this.accessItemService.loadAll(
+        authUser,
+        command.admins,
+        em
+      );
       entity.setAccessItems(admins, AccessItemAccessibleTypeValue.ADMIN);
     }
 
     if (command.members != null) {
-      const members = await this.loadUserGroup(authUser, command.members, em);
+      const members = await this.accessItemService.loadAll(
+        authUser,
+        command.members,
+        em
+      );
       entity.setAccessItems(members, AccessItemAccessibleTypeValue.MEMBER);
     }
 

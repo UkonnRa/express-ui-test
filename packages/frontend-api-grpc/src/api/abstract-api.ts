@@ -1,5 +1,6 @@
 import {
   Command,
+  FindInput,
   FindPageInput,
   Order,
   Page,
@@ -54,7 +55,7 @@ export default abstract class AbstractApi<
     };
   }
 
-  async findOne(token: User, query?: object): Promise<M | null> {
+  async findOne(token: User, { query }: FindInput<Q>): Promise<M | null> {
     const params = StringValue.create();
     if (query != null) {
       params.value = JSON.stringify(query);

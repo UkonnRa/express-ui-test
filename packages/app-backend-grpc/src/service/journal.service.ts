@@ -24,7 +24,7 @@ import {
   AccessItem as AccessItemProto,
   AccessItemType,
 } from "../proto/access-item";
-import AbstractService from "./abstract-service";
+import WriteService from "./write-service";
 
 function accessItemTypeFromProto(type: AccessItemType): AccessItemTypeValue {
   switch (type) {
@@ -63,7 +63,7 @@ function accessItemsToProto(items: AccessItemValue[]): AccessItemProto[] {
 
 @singleton()
 export default class JournalService
-  extends AbstractService<
+  extends WriteService<
     JournalEntity,
     JournalCommand,
     JournalQuery,

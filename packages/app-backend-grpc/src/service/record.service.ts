@@ -18,7 +18,7 @@ import {
 import { Command, Record, Type } from "../proto/record";
 import { IRecordService } from "../proto/record.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
-import AbstractService from "./abstract-service";
+import WriteService from "./write-service";
 
 function typeFromProto(type: Type): RecordTypeValue {
   switch (type) {
@@ -40,7 +40,7 @@ function typeToProto(type: RecordTypeValue): Type {
 
 @singleton()
 export default class RecordService
-  extends AbstractService<
+  extends WriteService<
     RecordEntity,
     RecordCommand,
     RecordQuery,

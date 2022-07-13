@@ -6,6 +6,7 @@ import {
   GrpcJournalApi,
   GrpcRecordApi,
   GrpcUserApi,
+  GrpcAccessItemApi,
 } from "@white-rabbit/frontend-api-grpc";
 import { ApiService, createApi } from "@white-rabbit/components";
 import { User } from "oidc-client-ts";
@@ -21,5 +22,6 @@ export const apiService: ApiService<User> = createApi("grpc", () => {
     journal: container.resolve(GrpcJournalApi),
     account: container.resolve(GrpcAccountApi),
     record: container.resolve(GrpcRecordApi),
+    accessItem: container.resolve(GrpcAccessItemApi),
   };
 });

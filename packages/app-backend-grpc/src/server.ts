@@ -2,6 +2,7 @@ import { inject, singleton } from "tsyringe";
 import { ServerCredentials, Server as GrpcServer } from "@grpc/grpc-js";
 import { adaptService } from "@protobuf-ts/grpc-backend";
 import {
+  AccessItemService,
   AccountService,
   GroupService,
   JournalService,
@@ -13,6 +14,7 @@ import { GroupService as GroupServiceDef } from "./proto/group";
 import { JournalService as JournalServiceDef } from "./proto/journal";
 import { AccountService as AccountServiceDef } from "./proto/account";
 import { RecordService as RecordServiceDef } from "./proto/record";
+import { AccessItemService as AccessItemServiceDef } from "./proto/access-item";
 
 @singleton()
 export default class Server {
@@ -23,7 +25,8 @@ export default class Server {
     @inject(GroupService) groupService: GroupService,
     @inject(JournalService) journalService: JournalService,
     @inject(AccountService) accountService: AccountService,
-    @inject(RecordService) recordService: RecordService
+    @inject(RecordService) recordService: RecordService,
+    @inject(AccessItemService) accessItemService: AccessItemService
   ) {
     this.server = new GrpcServer();
     this.server.addService(...adaptService(UserServiceDef, userService));
@@ -31,6 +34,9 @@ export default class Server {
     this.server.addService(...adaptService(JournalServiceDef, journalService));
     this.server.addService(...adaptService(AccountServiceDef, accountService));
     this.server.addService(...adaptService(RecordServiceDef, recordService));
+    this.server.addService(
+      ...adaptService(AccessItemServiceDef, accessItemService)
+    );
   }
 
   async start(): Promise<void> {

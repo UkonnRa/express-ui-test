@@ -14,7 +14,7 @@ import {
 import { Command, Account, Type, Strategy } from "../proto/account";
 import { IAccountService } from "../proto/account.server";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
-import AbstractService from "./abstract-service";
+import WriteService from "./write-service";
 
 function typeFromProto(type: Type): AccountTypeValue {
   switch (type) {
@@ -66,7 +66,7 @@ function strategyToProto(type: AccountStrategyValue): Strategy {
 
 @singleton()
 export default class AccountService
-  extends AbstractService<
+  extends WriteService<
     AccountEntity,
     AccountCommand,
     AccountQuery,

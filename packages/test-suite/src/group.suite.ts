@@ -1,5 +1,4 @@
 import {
-  AccessItemAccessibleTypeValue,
   AccessItemGroupValue,
   GroupEntity,
   GroupService,
@@ -8,6 +7,7 @@ import { container, singleton } from "tsyringe";
 import { MikroORM } from "@mikro-orm/core";
 import each from "jest-each";
 import {
+  AccessItemAccessibleTypeValue,
   AccessItemTypeValue,
   GroupCommand,
   GroupQuery,

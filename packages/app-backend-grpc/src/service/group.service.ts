@@ -9,11 +9,11 @@ import { GroupCommand, GroupQuery } from "@white-rabbit/types";
 import { IGroupService } from "../proto/group.server";
 import { Command, Group } from "../proto/group";
 import { Timestamp } from "../proto/google/protobuf/timestamp";
-import AbstractService from "./abstract-service";
+import WriteService from "./write-service";
 
 @singleton()
 export default class GroupService
-  extends AbstractService<
+  extends WriteService<
     GroupEntity,
     GroupCommand,
     GroupQuery,

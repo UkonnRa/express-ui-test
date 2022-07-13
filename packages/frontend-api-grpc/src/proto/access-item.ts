@@ -3,7 +3,6 @@
 // @generated from protobuf file "access-item.proto" (package "whiterabbit.accessItem", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { FindPageRequest } from "./shared";
 import { StringValue } from "./google/protobuf/wrappers";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -137,13 +136,11 @@ class AccessItemResponse$Type extends MessageType<AccessItemResponse> {
  */
 export const AccessItemResponse = new AccessItemResponse$Type();
 /**
- * @generated ServiceType for protobuf service whiterabbit.accessItem.JournalService
+ * @generated ServiceType for protobuf service whiterabbit.accessItem.AccessItemService
  */
-export const JournalService = new ServiceType(
-  "whiterabbit.accessItem.JournalService",
+export const AccessItemService = new ServiceType(
+  "whiterabbit.accessItem.AccessItemService",
   [
-    { name: "findOne", options: {}, I: StringValue, O: AccessItemResponse },
-    { name: "findPage", options: {}, I: FindPageRequest, O: AccessItemPage },
     {
       name: "findAll",
       serverStreaming: true,
