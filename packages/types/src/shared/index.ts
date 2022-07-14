@@ -7,6 +7,7 @@ export type { default as Command } from "./command";
 export type { default as CommandInput } from "./command.input";
 export type { default as CommandsInput } from "./commands.input";
 export type { default as FindInput } from "./find.input";
+export type { default as FindAllInput } from "./find-all.input";
 export type { default as FindPageInput } from "./find-page.input";
 
 export type { default as Cursor } from "./cursor";

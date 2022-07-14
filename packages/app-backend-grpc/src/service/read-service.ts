@@ -1,4 +1,4 @@
-import { Order as CoreOrder, Page } from "@white-rabbit/types";
+import { Page } from "@white-rabbit/types";
 import { EntityDTO, EntityManager, MikroORM } from "@mikro-orm/core";
 import {
   AbstractEntity,
@@ -7,8 +7,9 @@ import {
 } from "@white-rabbit/business-logic";
 import { RpcInputStream, ServerCallContext } from "@protobuf-ts/runtime-rpc";
 import { StringValue } from "../proto/google/protobuf/wrappers";
-import { FindPageRequest, Order } from "../proto/shared";
+import { FindPageRequest } from "../proto/shared";
 import AbstractService, { NullableEntity } from "./abstract-service";
+import { sortFromProto } from "./utils";
 
 export default abstract class ReadService<
   E extends AbstractEntity<E>,
@@ -74,23 +75,19 @@ export default abstract class ReadService<
   }
 
   async findPage(
-    request: FindPageRequest,
+    { query, sort, pagination }: FindPageRequest,
     context: ServerCallContext
   ): Promise<Page<P>> {
     const em = this.orm.em.fork();
-    const query: Q = request.query != null ? JSON.parse(request.query) : {};
     const authUser = await this.getAuthUser(context, em);
 
     try {
       const page = await this.service.findPage(
         {
-          query,
+          query: query != null ? JSON.parse(query) : {},
           authUser,
-          pagination: request.pagination ?? { size: 5 },
-          sort: request.sort.map(({ field, order }) => ({
-            field,
-            order: order === Order.ASC ? CoreOrder.ASC : CoreOrder.DESC,
-          })),
+          pagination: pagination ?? { size: 5 },
+          sort: sortFromProto(sort),
         },
         em
       );

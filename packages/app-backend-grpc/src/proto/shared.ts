@@ -60,6 +60,23 @@ export interface Pagination {
   offset?: number;
 }
 /**
+ * @generated from protobuf message whiterabbit.shared.FindAllRequest
+ */
+export interface FindAllRequest {
+  /**
+   * @generated from protobuf field: optional string query = 1;
+   */
+  query?: string;
+  /**
+   * @generated from protobuf field: optional uint32 size = 2;
+   */
+  size?: number;
+  /**
+   * @generated from protobuf field: whiterabbit.shared.NullableSortArray sort = 3;
+   */
+  sort?: NullableSortArray;
+}
+/**
  * @generated from protobuf message whiterabbit.shared.FindPageRequest
  */
 export interface FindPageRequest {
@@ -84,6 +101,15 @@ export interface NullableStringArray {
    * @generated from protobuf field: repeated string items = 1;
    */
   items: string[];
+}
+/**
+ * @generated from protobuf message whiterabbit.shared.NullableSortArray
+ */
+export interface NullableSortArray {
+  /**
+   * @generated from protobuf field: repeated whiterabbit.shared.Sort sort = 3;
+   */
+  sort: Sort[];
 }
 /**
  * @generated from protobuf enum whiterabbit.shared.Order
@@ -182,6 +208,32 @@ class Pagination$Type extends MessageType<Pagination> {
  */
 export const Pagination = new Pagination$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class FindAllRequest$Type extends MessageType<FindAllRequest> {
+  constructor() {
+    super("whiterabbit.shared.FindAllRequest", [
+      {
+        no: 1,
+        name: "query",
+        kind: "scalar",
+        opt: true,
+        T: 9 /*ScalarType.STRING*/,
+      },
+      {
+        no: 2,
+        name: "size",
+        kind: "scalar",
+        opt: true,
+        T: 13 /*ScalarType.UINT32*/,
+      },
+      { no: 3, name: "sort", kind: "message", T: () => NullableSortArray },
+    ]);
+  }
+}
+/**
+ * @generated MessageType for protobuf message whiterabbit.shared.FindAllRequest
+ */
+export const FindAllRequest = new FindAllRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class FindPageRequest$Type extends MessageType<FindPageRequest> {
   constructor() {
     super("whiterabbit.shared.FindPageRequest", [
@@ -225,3 +277,21 @@ class NullableStringArray$Type extends MessageType<NullableStringArray> {
  * @generated MessageType for protobuf message whiterabbit.shared.NullableStringArray
  */
 export const NullableStringArray = new NullableStringArray$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class NullableSortArray$Type extends MessageType<NullableSortArray> {
+  constructor() {
+    super("whiterabbit.shared.NullableSortArray", [
+      {
+        no: 3,
+        name: "sort",
+        kind: "message",
+        repeat: 1 /*RepeatType.PACKED*/,
+        T: () => Sort,
+      },
+    ]);
+  }
+}
+/**
+ * @generated MessageType for protobuf message whiterabbit.shared.NullableSortArray
+ */
+export const NullableSortArray = new NullableSortArray$Type();

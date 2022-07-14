@@ -5,17 +5,17 @@
 // @ts-nocheck
 import { RpcInputStream } from "@protobuf-ts/runtime-rpc";
 import { AccessItem } from "./access-item";
-import { StringValue } from "./google/protobuf/wrappers";
+import { FindAllRequest } from "./shared";
 import { ServerCallContext } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service whiterabbit.accessItem.AccessItemService
  */
 export interface IAccessItemService<T = ServerCallContext> {
   /**
-   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
+   * @generated from protobuf rpc: findAll(whiterabbit.shared.FindAllRequest) returns (stream whiterabbit.accessItem.AccessItem);
    */
   findAll(
-    request: StringValue,
+    request: FindAllRequest,
     responses: RpcInputStream<AccessItem>,
     context: T
   ): Promise<void>;

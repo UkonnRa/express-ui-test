@@ -105,7 +105,7 @@
               ></AppAccessItemList>
             </div>
           </v-card-text>
-          <v-card-actions v-if="!journal.archived">
+          <v-card-actions v-if="journal.isWriteable">
             <v-btn
               variant="text"
               color="primary"
@@ -154,10 +154,17 @@
               hide-details
               color="primary"
             ></v-switch>
-            <AppUserAutoComplete
-              v-model="query.$containingUser"
-            ></AppUserAutoComplete>
-            <AppAccessItemAutoComplete></AppAccessItemAutoComplete>
+            <AppAccessItemAutoComplete
+              v-model="queryContainingUser"
+              :label="t('includeUser')"
+              :type="AccessItemTypeValue.USER"
+              hide-details
+            ></AppAccessItemAutoComplete>
+            <AppAccessItemAutoComplete
+              v-model="queryAdmins"
+              :label="t('admin')"
+              hide-details
+            ></AppAccessItemAutoComplete>
           </v-form>
         </v-card-text>
       </v-card>
@@ -186,13 +193,19 @@ import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
 import { JournalModel } from "@white-rabbit/frontend-api";
-import { JournalQuery, Order, PageInfo } from "@white-rabbit/types";
 import {
-  AppUserAutoComplete,
+  AccessItemTypeValue,
+  AccessItemValue,
+  CONTAINING_USER_OPERATOR,
+  JournalQuery,
+  Order,
+  PageInfo,
+} from "@white-rabbit/types";
+import {
   AppAccessItemList,
   JournalEditModal,
+  AppAccessItemAutoComplete,
 } from "../components";
-import AppAccessItemAutoComplete from "../components/AppAccessItemAutoComplete.vue";
 
 const { t } = useI18n();
 
@@ -248,19 +261,27 @@ const onUpdateClicked = (journal: JournalModel) => {
   selectedJournal.value = journal;
   showEditModal.value = true;
 };
-const onEditModalClosed = async () => {
+const onEditModalClosed = async (anyUpdated: boolean) => {
   showEditModal.value = false;
-  await search();
+  if (anyUpdated) {
+    await search();
+  }
 };
 
 const showFilterPanel = ref(false);
+const queryAdmins = ref<AccessItemValue>();
+const queryContainingUser = ref<AccessItemValue>();
 const query = reactive<JournalQuery>({
   includeArchived: false,
 });
 const search = async () => {
   if (authStore.user) {
     const page = await api.journal.findPage(authStore.user.token, {
-      query,
+      query: {
+        ...query,
+        admins: queryAdmins.value || undefined,
+        [CONTAINING_USER_OPERATOR]: queryContainingUser.value?.id,
+      },
       pagination: { size: 10 },
       sort: [sort.value],
     });

@@ -9,6 +9,7 @@ export default interface UpdateJournalCommand extends Command {
   readonly description?: string;
   readonly tags?: string[];
   readonly unit?: string;
+  readonly archived?: boolean;
   readonly admins?: AccessItemInput[];
   readonly members?: AccessItemInput[];
 }

@@ -118,7 +118,6 @@ export default abstract class WriteService<
       this.entityName,
       { id } as ObjectQuery<E>,
       {
-        filters: { excludeDeleted: false },
         failHandler: () => new NotFoundError(this.type, id),
       }
     );

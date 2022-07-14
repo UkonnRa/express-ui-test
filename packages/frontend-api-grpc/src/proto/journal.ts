@@ -61,9 +61,9 @@ export interface Journal {
    */
   isAdmin: boolean;
   /**
-   * @generated from protobuf field: bool isFavorite = 12;
+   * @generated from protobuf field: bool isWriteable = 12;
    */
-  isFavorite: boolean;
+  isWriteable: boolean;
 }
 /**
  * @generated from protobuf message whiterabbit.journal.AccessItemInput
@@ -281,7 +281,7 @@ class Journal$Type extends MessageType<Journal> {
         T: () => AccessItem,
       },
       { no: 11, name: "isAdmin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-      { no: 12, name: "isFavorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+      { no: 12, name: "isWriteable", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
     ]);
   }
 }

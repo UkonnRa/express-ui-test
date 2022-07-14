@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="show" @click:outside="emit('close')">
+  <v-dialog :model-value="show" @click:outside="emit('close', false)">
     <v-card>
       <v-card-item>
         <v-card-title>
@@ -56,6 +56,18 @@
             :rules="baseRules"
           >
           </v-text-field>
+          <AppAccessItemAutoComplete
+            v-model="command.admins"
+            :label="t('admins')"
+            multiple
+            :rules="baseRules"
+          ></AppAccessItemAutoComplete>
+          <AppAccessItemAutoComplete
+            v-model="command.members"
+            :label="t('members')"
+            multiple
+            :rules="baseRules"
+          ></AppAccessItemAutoComplete>
 
           <v-btn variant="text" color="primary" type="submit">
             {{ t("submit") }}
@@ -76,6 +88,7 @@ import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
 import { AccessItemValue, JournalCommand } from "@white-rabbit/types";
+import AppAccessItemAutoComplete from "./AppAccessItemAutoComplete.vue";
 
 const { t } = useI18n();
 const api = useInject<ApiService>(KEY_API_SERVICE);
@@ -86,7 +99,7 @@ const props = defineProps<{
   readonly show: boolean;
 }>();
 const emit = defineEmits<{
-  (e: "close"): void;
+  (e: "close", anyUpdated: boolean): void;
 }>();
 
 const show = computed<boolean>(() => props.show);
@@ -136,8 +149,7 @@ const update = async (e: SubmitEventPromise) => {
     command.admins === props.modelValue.admins &&
     command.members === props.modelValue.members
   ) {
-    console.log("Ignore");
-    emit("close");
+    emit("close", false);
     return;
   }
 
@@ -145,16 +157,8 @@ const update = async (e: SubmitEventPromise) => {
     ...command,
     type: commandType.value,
     targetId: props.modelValue?.id,
-    admins:
-      commandType.value === "CreateJournalCommand" && !command.admins
-        ? []
-        : command.admins,
-    members:
-      commandType.value === "CreateJournalCommand" && !command.members
-        ? []
-        : command.members,
   } as JournalCommand);
-  emit("close");
+  emit("close", true);
 };
 
 const items = ref<string[]>([]);

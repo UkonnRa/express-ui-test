@@ -1,4 +1,9 @@
-import { PageInfo } from "../proto/shared";
+import { Order, Sort } from "@white-rabbit/types";
+import {
+  Order as OrderProto,
+  PageInfo,
+  Sort as SortProto,
+} from "../proto/shared";
 
 export interface PageItemProto<P> {
   readonly cursor: string;
@@ -16,4 +21,11 @@ export interface NullableEntity<P> {
 
 export interface Commands<CP> {
   readonly commands: CP[];
+}
+
+export function sortToProto(sort: Sort[]): SortProto[] {
+  return sort.map(({ field, order }) => ({
+    field,
+    order: order === Order.ASC ? OrderProto.ASC : OrderProto.DESC,
+  }));
 }

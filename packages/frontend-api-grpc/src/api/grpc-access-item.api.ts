@@ -6,14 +6,14 @@ import {
   AccessItemQuery,
   AccessItemTypeValue,
   AccessItemValue,
-  FindInput,
+  FindAllInput,
 } from "@white-rabbit/types";
 import { AccessItemType } from "../proto/access-item";
 import {
   AccessItemServiceClient,
   IAccessItemServiceClient,
 } from "../proto/access-item.client";
-import { StringValue } from "../proto/google/protobuf/wrappers";
+import { sortToProto } from "./types";
 
 const typeFromProto = (type: AccessItemType): AccessItemTypeValue => {
   switch (type) {
@@ -34,17 +34,20 @@ export default class GrpcAccessItemApi implements AccessItemApi<User> {
 
   async findAll(
     token: User,
-    { query }: FindInput<AccessItemQuery>
+    { query, size, sort }: FindAllInput<AccessItemQuery>
   ): Promise<AccessItemValue[]> {
-    const input = StringValue.create();
-    if (query != null) {
-      input.value = JSON.stringify(query);
-    }
-    const call = this.client.findAll(input, {
-      meta: {
-        authentication: token.access_token,
+    const call = this.client.findAll(
+      {
+        query: query != null ? JSON.stringify(query) : undefined,
+        size,
+        sort: sort != null ? { sort: sortToProto(sort) } : undefined,
       },
-    });
+      {
+        meta: {
+          authentication: token.access_token,
+        },
+      }
+    );
     const result: AccessItemValue[] = [];
     for await (const entity of call.responses) {
       result.push({

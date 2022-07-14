@@ -20,9 +20,8 @@ message Journal {
   repeated whiterabbit.accessItem.AccessItem admins = 9;
   repeated whiterabbit.accessItem.AccessItem members = 10;
   bool isAdmin = 11;
-  bool isFavorite = 12;
+  bool isWriteable = 12;
 }
-
 
 message AccessItemInput {
   whiterabbit.accessItem.AccessItemType type = 1;

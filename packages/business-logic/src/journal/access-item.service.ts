@@ -8,10 +8,10 @@ import {
   CONTAINING_USER_OPERATOR,
   FULL_TEXT_OPERATOR,
 } from "@white-rabbit/types";
+import { isEmpty } from "lodash";
 import { UserEntity, UserService } from "../user";
 import { GroupEntity, GroupService } from "../group";
-import FindInput from "../shared/find.input";
-import { AuthUser } from "../shared";
+import { AuthUser, FindAllInput } from "../shared";
 
 @singleton()
 export default class AccessItemService {
@@ -26,35 +26,38 @@ export default class AccessItemService {
     accessItems: AccessItemInput[],
     em: EntityManager
   ): Promise<Array<UserEntity | GroupEntity>> {
-    const users = await this.userService.findAll(
-      {
-        authUser,
-        query: {
-          id: accessItems
-            .filter(({ type }) => type === AccessItemTypeValue.USER)
-            .map(({ id }) => id),
-        },
-      },
-      em
-    );
+    const getEntities = async (
+      itemType: AccessItemTypeValue
+    ): Promise<Array<UserEntity | GroupEntity>> => {
+      const ids = accessItems
+        .filter(({ type }) => type === itemType)
+        .map(({ id }) => id);
+      const service =
+        itemType === AccessItemTypeValue.USER
+          ? this.userService
+          : this.groupService;
+      return isEmpty(ids)
+        ? []
+        : service.findAll(
+            {
+              authUser,
+              query: {
+                id: ids,
+              },
+            },
+            em
+          );
+    };
 
-    const groups = await this.groupService.findAll(
-      {
-        authUser,
-        query: {
-          id: accessItems
-            .filter(({ type }) => type === AccessItemTypeValue.GROUP)
-            .map(({ id }) => id),
-        },
-      },
-      em
-    );
-
-    return [...users, ...groups];
+    const result = await Promise.all([
+      getEntities(AccessItemTypeValue.USER),
+      getEntities(AccessItemTypeValue.GROUP),
+    ]);
+    return result.flatMap((items) => items);
   }
 
   async findAll(
-    { authUser, query }: FindInput<AccessItemQuery>,
+    { authUser, query, size, sort }: FindAllInput<AccessItemQuery>,
     em?: EntityManager
   ): Promise<AccessItemValue[]> {
     this.userService.checkPermission(authUser);
@@ -81,6 +84,8 @@ export default class AccessItemService {
                   : undefined,
               id: query[CONTAINING_USER_OPERATOR],
             },
+            size,
+            sort,
           },
           emInst
         ))
@@ -97,6 +102,8 @@ export default class AccessItemService {
               [FULL_TEXT_OPERATOR]: query[FULL_TEXT_OPERATOR],
               [CONTAINING_USER_OPERATOR]: query[CONTAINING_USER_OPERATOR],
             },
+            size,
+            sort,
           },
           emInst
         ))
@@ -114,6 +121,8 @@ export default class AccessItemService {
         type: AccessItemTypeValue.GROUP,
         name: item.name,
       })),
-    ];
+    ]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(0, size);
   }
 }

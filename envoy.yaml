@@ -35,9 +35,25 @@ static_resources:
                         max_age: "1728000"
                         expose_headers: grpc-status,grpc-message
                 http_filters:
+                  - name: envoy.filters.http.compressor
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.compressor.v3.Compressor
+                      content_type:
+                        - application/grpc-web-text+proto
+                        - application/json
+                      compressor_library:
+                        name: compressor_gzip
+                        typed_config:
+                          "@type": type.googleapis.com/envoy.extensions.compression.gzip.compressor.v3.Gzip
                   - name: envoy.filters.http.grpc_web
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
                   - name: envoy.filters.http.cors
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
     - name: docker_grpc_listener
       address:
         socket_address: { address: 0.0.0.0, port_value: 10000 }
@@ -68,9 +84,25 @@ static_resources:
                         max_age: "1728000"
                         expose_headers: grpc-status,grpc-message
                 http_filters:
+                  - name: envoy.filters.http.compressor
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.compressor.v3.Compressor
+                      content_type:
+                        - application/grpc-web-text+proto
+                        - application/json
+                      compressor_library:
+                        name: compressor_gzip
+                        typed_config:
+                          "@type": type.googleapis.com/envoy.extensions.compression.gzip.compressor.v3.Gzip
                   - name: envoy.filters.http.grpc_web
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb
                   - name: envoy.filters.http.cors
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
   clusters:
     - name: dev_grpc_service
       connect_timeout: 0.25s

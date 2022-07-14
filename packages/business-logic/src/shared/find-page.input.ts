@@ -1,6 +1,6 @@
 import { FindPageInput as OriginalFindPageInput } from "@white-rabbit/types";
-import AuthUser from "./auth-user";
+import FindInput from "./find.input";
 
-export default interface FindPageInput<Q> extends OriginalFindPageInput<Q> {
-  readonly authUser: AuthUser;
-}
+export default interface FindPageInput<Q>
+  extends FindInput<Q>,
+    OriginalFindPageInput<Q> {}

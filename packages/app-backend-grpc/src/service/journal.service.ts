@@ -120,14 +120,19 @@ export default class JournalService
     em: EntityManager,
     authUser: AuthUser
   ): Promise<Journal> {
+    const hydrated = await em.findOneOrFail(JournalEntity, { id: entity.id });
+
     let isAdmin = false;
     if (authUser.user != null) {
-      isAdmin = await this.service.isAdmin(
-        entity instanceof JournalEntity
-          ? entity
-          : await em.findOneOrFail(JournalEntity, { id: entity.id }),
-        authUser.user
-      );
+      isAdmin = await this.service.isAdmin(hydrated, authUser.user);
+    }
+
+    let isWriteable = false;
+    try {
+      await this.service.checkWriteable(hydrated, authUser);
+      isWriteable = true;
+    } catch (e) {
+      console.log("error: ", e);
     }
 
     return {
@@ -138,8 +143,7 @@ export default class JournalService
       admins: accessItemsToProto(entity.admins),
       members: accessItemsToProto(entity.members),
       isAdmin,
-      // TODO: Store favorite in db
-      isFavorite: Math.random() > 0.5,
+      isWriteable,
     };
   }
 }

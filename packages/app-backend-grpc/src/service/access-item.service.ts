@@ -2,15 +2,12 @@ import { inject, injectable } from "tsyringe";
 import { RpcInputStream, ServerCallContext } from "@protobuf-ts/runtime-rpc";
 import { MikroORM } from "@mikro-orm/core";
 import { AccessItemService as CoreAccessItemService } from "@white-rabbit/business-logic";
-import {
-  AccessItemQuery,
-  AccessItemTypeValue,
-  AccessItemValue,
-} from "@white-rabbit/types";
+import { AccessItemTypeValue, AccessItemValue } from "@white-rabbit/types";
 import { AccessItem, AccessItemType } from "../proto/access-item";
-import { StringValue } from "../proto/google/protobuf/wrappers";
 import { IAccessItemService } from "../proto/access-item.server";
+import { FindAllRequest } from "../proto/shared";
 import AbstractService from "./abstract-service";
+import { sortFromProto } from "./utils";
 
 function typeToProto(type: AccessItemTypeValue): AccessItemType {
   switch (type) {
@@ -43,16 +40,20 @@ export default class AccessItemService
   }
 
   async findAll(
-    request: StringValue,
+    { query, sort, size }: FindAllRequest,
     responses: RpcInputStream<AccessItem>,
     context: ServerCallContext
   ): Promise<void> {
-    const query: AccessItemQuery = JSON.parse(request.value);
     const em = this.orm.em.fork();
     const authUser = await this.getAuthUser(context, em);
 
     const entities: AccessItemValue[] = await this.service.findAll(
-      { authUser, query },
+      {
+        authUser,
+        query: query != null ? JSON.parse(query) : undefined,
+        size,
+        sort: sort != null ? sortFromProto(sort.sort) : undefined,
+      },
       em
     );
     for (const entity of entities) {

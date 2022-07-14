@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package whiterabbit.accessItem;
 
-import "google/protobuf/wrappers.proto";
 import "shared.proto";
 
 message AccessItem {
@@ -31,5 +30,5 @@ message AccessItemResponse {
 }
 
 service AccessItemService {
-  rpc findAll(google.protobuf.StringValue) returns (stream AccessItem);
+  rpc findAll(whiterabbit.shared.FindAllRequest) returns (stream AccessItem);
 }

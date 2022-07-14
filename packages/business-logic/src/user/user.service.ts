@@ -208,9 +208,9 @@ export default class UserService extends WriteService<
   }
 
   override async isReadable(
-    _: UserEntity,
-    { user }: AuthUser
+    _entity: UserEntity,
+    _authUser: AuthUser
   ): Promise<boolean> {
-    return (user?.role ?? RoleValue.USER) !== RoleValue.USER;
+    return true;
   }
 }

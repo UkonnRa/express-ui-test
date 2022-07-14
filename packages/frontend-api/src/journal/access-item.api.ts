@@ -1,12 +1,12 @@
 import {
   AccessItemQuery,
   AccessItemValue,
-  FindInput,
+  FindAllInput,
 } from "@white-rabbit/types";
 
 export default interface AccessItemApi<T = unknown> {
   findAll: (
     token: T,
-    query: FindInput<AccessItemQuery>
+    query: FindAllInput<AccessItemQuery>
   ) => Promise<AccessItemValue[]>;
 }

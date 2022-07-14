@@ -8,7 +8,7 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { AccessItemService } from "./access-item";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { AccessItem } from "./access-item";
-import type { StringValue } from "./google/protobuf/wrappers";
+import type { FindAllRequest } from "./shared";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -16,12 +16,12 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IAccessItemServiceClient {
   /**
-   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
+   * @generated from protobuf rpc: findAll(whiterabbit.shared.FindAllRequest) returns (stream whiterabbit.accessItem.AccessItem);
    */
   findAll(
-    input: StringValue,
+    input: FindAllRequest,
     options?: RpcOptions
-  ): ServerStreamingCall<StringValue, AccessItem>;
+  ): ServerStreamingCall<FindAllRequest, AccessItem>;
 }
 /**
  * @generated from protobuf service whiterabbit.accessItem.AccessItemService
@@ -34,15 +34,15 @@ export class AccessItemServiceClient
   options = AccessItemService.options;
   constructor(private readonly _transport: RpcTransport) {}
   /**
-   * @generated from protobuf rpc: findAll(google.protobuf.StringValue) returns (stream whiterabbit.accessItem.AccessItem);
+   * @generated from protobuf rpc: findAll(whiterabbit.shared.FindAllRequest) returns (stream whiterabbit.accessItem.AccessItem);
    */
   findAll(
-    input: StringValue,
+    input: FindAllRequest,
     options?: RpcOptions
-  ): ServerStreamingCall<StringValue, AccessItem> {
+  ): ServerStreamingCall<FindAllRequest, AccessItem> {
     const method = this.methods[0],
       opt = this._transport.mergeOptions(options);
-    return stackIntercept<StringValue, AccessItem>(
+    return stackIntercept<FindAllRequest, AccessItem>(
       "serverStreaming",
       this._transport,
       method,

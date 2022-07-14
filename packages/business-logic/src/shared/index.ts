@@ -9,5 +9,6 @@ export { default as CommandsInput } from "./commands.input";
 // eslint-disable-next-line import/no-cycle
 export { default as ReadService } from "./read-service";
 
+export { default as FindAllInput } from "./find-all.input";
 export { default as FindPageInput } from "./find-page.input";
 export { default as FindInput } from "./find.input";

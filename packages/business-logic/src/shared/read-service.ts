@@ -5,7 +5,7 @@ import {
   MikroORM,
   ObjectQuery,
   QueryOrderMap,
-  QueryOrderNumeric,
+  QueryOrder,
 } from "@mikro-orm/core";
 import {
   AdditionalQuery,
@@ -22,22 +22,17 @@ import AbstractEntity from "./abstract-entity";
 import AuthUser from "./auth-user";
 import FindPageInput from "./find-page.input";
 import FindInput from "./find.input";
+import FindAllInput from "./find-all.input";
 
 type CursorAndObject = [Cursor, Record<string, unknown>];
 
 function createNormalizedSort(
   sort: Sort[],
   reverse: boolean = false
-): [Array<[string, QueryOrderNumeric]>, QueryOrderNumeric] {
-  const getOrder = (order: Order): QueryOrderNumeric => {
-    if (!reverse)
-      return order === Order.ASC
-        ? QueryOrderNumeric.ASC
-        : QueryOrderNumeric.DESC;
-    else
-      return order === Order.ASC
-        ? QueryOrderNumeric.DESC
-        : QueryOrderNumeric.ASC;
+): [Array<[string, QueryOrder]>, QueryOrder] {
+  const getOrder = (order: Order): QueryOrder => {
+    if (!reverse) return order === Order.ASC ? QueryOrder.ASC : QueryOrder.DESC;
+    else return order === Order.ASC ? QueryOrder.DESC : QueryOrder.ASC;
   };
   return [
     sort.map(({ field, order }) => [field, getOrder(order)]),
@@ -99,7 +94,7 @@ async function createCursorRelatedQueryAndSort<E extends AbstractEntity<E>>(
         ),
         {
           id: {
-            [idOrder === QueryOrderNumeric.ASC ? "$gt" : "$lt"]: after[1].id,
+            [idOrder === QueryOrder.ASC ? "$gt" : "$lt"]: after[1].id,
           },
         },
       ],
@@ -203,8 +198,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
     const cursorObj = decodeCursor(cursor);
     const entity = await em.findOne(
       this.entityName,
-      cursorObj.id as FilterQuery<E>,
-      { filters: { excludeDeleted: false } }
+      cursorObj.id as FilterQuery<E>
     );
     if (entity == null) {
       return null;
@@ -249,7 +243,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
   }
 
   readonly findAll = async (
-    { authUser, query }: FindInput<Q>,
+    { authUser, query, size, sort }: FindAllInput<Q>,
     em?: EntityManager
   ): Promise<E[]> => {
     this.checkPermission(authUser);
@@ -261,8 +255,12 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
     return this.doFindAll(
       authUser,
       mikroQuery,
-      undefined,
-      undefined,
+      sort != null
+        ? (Object.fromEntries(
+            createNormalizedSort(sort)[0]
+          ) as QueryOrderMap<E>)
+        : undefined,
+      size != null ? { size } : undefined,
       additionalQueries,
       emInst
     );

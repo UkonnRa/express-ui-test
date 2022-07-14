@@ -3,7 +3,7 @@
 // @generated from protobuf file "access-item.proto" (package "whiterabbit.accessItem", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { StringValue } from "./google/protobuf/wrappers";
+import { FindAllRequest } from "./shared";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PageInfo } from "./shared";
@@ -145,7 +145,7 @@ export const AccessItemService = new ServiceType(
       name: "findAll",
       serverStreaming: true,
       options: {},
-      I: StringValue,
+      I: FindAllRequest,
       O: AccessItem,
     },
   ]
