@@ -45,7 +45,7 @@ import {
   AccessItemValue,
   Order,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 
 type SelectItem = {
   readonly value: string;

@@ -10,6 +10,7 @@
   "create": "Create",
   "filter": "Filter",
   "admin": "Admin",
+  "member": "Member",
   "archived": "Archived",
   "filters": "Filters",
   "filterPanel": "Filter Panel",
@@ -22,6 +23,11 @@
   "description": "Description",
   "update": "Update",
   "delete": "Delete",
+  "deleteHint": {
+    "content": "You are deleting {type}[{name}], which is {hintPermanent} and {hintCascadeDelete}. Please input the name exactly if you wish to continue.",
+    "hint:permanent": "a permanent operation",
+    "hint:cascadeDelete": "all the related resources will be deleted"
+  },
   "admins": "Admins",
   "members": "Members",
   "loadMore": "Load More",
@@ -30,6 +36,7 @@
   "submit": "Submit",
   "createJournal": "Create Journal",
   "updateJournal": "Update Journal",
+  "deleteJournal": "Delete Journal",
   "sort": {
     "title": "Sort",
     "field:name:asc": "Name, Ascending",
@@ -38,5 +45,8 @@
   },
   "error": {
     "requiredField": "Field is required"
-  }
+  },
+  "createGroup": "Create Group",
+  "updateGroup": "Update Group",
+  "deleteGroup": "Delete Group"
 }

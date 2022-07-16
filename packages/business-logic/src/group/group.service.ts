@@ -18,7 +18,7 @@ import {
   RoleValue,
   UpdateGroupCommand,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { AuthUser, CommandInput, checkCreate, WriteService } from "../shared";
 import { UserEntity, UserService } from "../user";
 import { filterAsync, fullTextSearch } from "../utils";
@@ -143,7 +143,7 @@ export default class GroupService extends WriteService<
       em
     );
 
-    await em.removeAndFlush(entity);
+    em.remove(entity);
   }
 
   override async doHandle(
@@ -186,11 +186,17 @@ export default class GroupService extends WriteService<
   async checkWriteable(entity: GroupEntity, authUser: AuthUser): Promise<void> {
     await super.checkWriteable(entity, authUser);
 
-    if (!entity.admins.isInitialized()) {
-      await entity.admins.init();
+    const user = authUser.user;
+
+    if (user == null) {
+      throw new NoPermissionError(this.type, "WRITE");
     }
 
-    if (authUser.user == null || entity.admins.contains(authUser.user)) {
+    if (user.role !== RoleValue.USER) {
+      return;
+    }
+
+    if (!entity.admins.contains(user)) {
       throw new NoPermissionError(this.type, "WRITE");
     }
   }

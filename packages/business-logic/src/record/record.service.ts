@@ -19,7 +19,7 @@ import {
   RECORD_READ_SCOPE,
   RECORD_WRITE_SCOPE,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { JournalService } from "../journal";
 import { AccountEntity, AccountService } from "../account";
@@ -95,10 +95,13 @@ export default class RecordService extends WriteService<
       em
     );
 
-    const journal = await this.journalService.findOne({
-      authUser,
-      query: { id: command.journal },
-    });
+    const journal = await this.journalService.findOne(
+      {
+        authUser,
+        query: { id: command.journal },
+      },
+      em
+    );
     if (journal == null) {
       throw new NotFoundError(this.journalService.type, command.journal);
     }

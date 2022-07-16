@@ -11,6 +11,19 @@ import { NullableStringArray } from "./shared";
 import { PageInfo } from "./shared";
 import { Timestamp } from "./google/protobuf/timestamp";
 /**
+ * @generated from protobuf message whiterabbit.group.UserItem
+ */
+export interface UserItem {
+  /**
+   * @generated from protobuf field: string id = 1;
+   */
+  id: string;
+  /**
+   * @generated from protobuf field: string name = 2;
+   */
+  name: string;
+}
+/**
  * @generated from protobuf message whiterabbit.group.Group
  */
 export interface Group {
@@ -35,13 +48,17 @@ export interface Group {
    */
   description: string;
   /**
-   * @generated from protobuf field: repeated string admins = 6;
+   * @generated from protobuf field: repeated whiterabbit.group.UserItem admins = 6;
    */
-  admins: string[];
+  admins: UserItem[];
   /**
-   * @generated from protobuf field: repeated string members = 7;
+   * @generated from protobuf field: repeated whiterabbit.group.UserItem members = 7;
    */
-  members: string[];
+  members: UserItem[];
+  /**
+   * @generated from protobuf field: bool isWriteable = 8;
+   */
+  isWriteable: boolean;
 }
 /**
  * @generated from protobuf message whiterabbit.group.GroupPage
@@ -180,6 +197,19 @@ export interface Commands {
   commands: Command[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class UserItem$Type extends MessageType<UserItem> {
+  constructor() {
+    super("whiterabbit.group.UserItem", [
+      { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+      { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+    ]);
+  }
+}
+/**
+ * @generated MessageType for protobuf message whiterabbit.group.UserItem
+ */
+export const UserItem = new UserItem$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Group$Type extends MessageType<Group> {
   constructor() {
     super("whiterabbit.group.Group", [
@@ -196,17 +226,18 @@ class Group$Type extends MessageType<Group> {
       {
         no: 6,
         name: "admins",
-        kind: "scalar",
-        repeat: 2 /*RepeatType.UNPACKED*/,
-        T: 9 /*ScalarType.STRING*/,
+        kind: "message",
+        repeat: 1 /*RepeatType.PACKED*/,
+        T: () => UserItem,
       },
       {
         no: 7,
         name: "members",
-        kind: "scalar",
-        repeat: 2 /*RepeatType.UNPACKED*/,
-        T: 9 /*ScalarType.STRING*/,
+        kind: "message",
+        repeat: 1 /*RepeatType.PACKED*/,
+        T: () => UserItem,
       },
+      { no: 8, name: "isWriteable", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
     ]);
   }
 }

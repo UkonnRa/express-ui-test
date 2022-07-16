@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "vite": "^2.9.14",
-    "vitest": "^0.18.0",
-    "vue-tsc": "^0.38.5"
+    "vitest": "^0.18.1",
+    "vue-tsc": "^0.38.9"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

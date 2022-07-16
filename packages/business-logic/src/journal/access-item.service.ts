@@ -8,7 +8,7 @@ import {
   CONTAINING_USER_OPERATOR,
   FULL_TEXT_OPERATOR,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { UserEntity, UserService } from "../user";
 import { GroupEntity, GroupService } from "../group";
 import { AuthUser, FindAllInput } from "../shared";

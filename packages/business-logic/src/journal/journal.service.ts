@@ -15,7 +15,7 @@ import {
   UpdateJournalCommand,
   AccessItemAccessibleTypeValue,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { AuthUser, checkCreate, CommandInput, WriteService } from "../shared";
 import { UserEntity } from "../user";
 import { AlreadyArchivedError, NoPermissionError } from "../error";
@@ -154,7 +154,7 @@ export default class JournalService extends WriteService<
       em
     );
 
-    await em.removeAndFlush(entity);
+    em.remove(entity);
   }
 
   async doHandle(

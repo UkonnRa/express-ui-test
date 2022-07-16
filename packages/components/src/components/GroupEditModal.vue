@@ -5,9 +5,9 @@
         <v-card-title>
           {{
             t(
-              commandType === "CreateJournalCommand"
-                ? "createJournal"
-                : "updateJournal"
+              commandType === "CreateGroupCommand"
+                ? "createGroup"
+                : "updateGroup"
             )
           }}
         </v-card-title>
@@ -35,40 +35,20 @@
             :rules="baseRules"
           >
           </v-textarea>
-          <v-autocomplete
-            v-model="command.tags"
-            :items="items"
-            :label="t('tags')"
-            :rules="baseRules"
-            chips
-            closable-chips
-            clearable
-            multiple
-            @update:search="searchTags"
-          >
-          </v-autocomplete>
-          <v-text-field
-            v-model="command.unit"
-            :label="t('unit.currency')"
-            variant="underlined"
-            clearable
-            :placeholder="modelValue?.unit"
-            :rules="baseRules"
-          >
-          </v-text-field>
           <AppAccessItemAutoComplete
             v-model="command.admins"
             :label="t('admins')"
             multiple
             :rules="baseRules"
+            :type="AccessItemTypeValue.USER"
           ></AppAccessItemAutoComplete>
           <AppAccessItemAutoComplete
             v-model="command.members"
             :label="t('members')"
             multiple
             :rules="baseRules"
+            :type="AccessItemTypeValue.USER"
           ></AppAccessItemAutoComplete>
-
           <v-btn variant="text" color="primary" type="submit">
             {{ t("submit") }}
           </v-btn>
@@ -79,15 +59,20 @@
 </template>
 
 <script setup lang="ts">
-import { JournalModel } from "@white-rabbit/frontend-api";
-import { computed, reactive, ref, watchEffect } from "vue";
+import { GroupModel } from "@white-rabbit/frontend-api";
+import { computed, reactive, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 import isEmpty from "lodash/isEmpty";
+import isEqual from "lodash/isEqual";
 import { SubmitEventPromise } from "vuetify";
 import { useInject } from "../hooks";
 import { ApiService, KEY_API_SERVICE } from "../services";
 import { useAuthStore } from "../stores";
-import { AccessItemValue, JournalCommand } from "@white-rabbit/types";
+import {
+  GroupCommand,
+  AccessItemTypeValue,
+  AccessItemValue,
+} from "@white-rabbit/types";
 import AppAccessItemAutoComplete from "./AppAccessItemAutoComplete.vue";
 
 const { t } = useI18n();
@@ -95,7 +80,7 @@ const api = useInject<ApiService>(KEY_API_SERVICE);
 const authStore = useAuthStore();
 
 const props = defineProps<{
-  readonly modelValue?: JournalModel;
+  readonly modelValue?: GroupModel;
   readonly show: boolean;
 }>();
 const emit = defineEmits<{
@@ -105,7 +90,7 @@ const emit = defineEmits<{
 const show = computed<boolean>(() => props.show);
 
 const commandType = computed(() =>
-  props.modelValue ? "UpdateJournalCommand" : "CreateJournalCommand"
+  props.modelValue ? "UpdateGroupCommand" : "CreateGroupCommand"
 );
 
 const command = reactive<{
@@ -120,17 +105,24 @@ const command = reactive<{
 watchEffect(() => {
   command.name = props.modelValue?.name;
   command.description = props.modelValue?.description;
-  command.tags = props.modelValue?.tags;
-  command.unit = props.modelValue?.unit;
-  command.admins = props.modelValue?.admins;
-  command.members = props.modelValue?.members;
+  command.admins = props.modelValue?.admins?.map((item) => ({
+    ...item,
+    type: AccessItemTypeValue.USER,
+  }));
+  command.members = props.modelValue?.members?.map((item) => ({
+    ...item,
+    type: AccessItemTypeValue.USER,
+  }));
 });
 
 const requiredRule = (v?: unknown) => !isEmpty(v) || t("error.requiredField");
 
 const baseRules = computed(() => [
-  ...(commandType.value === "CreateJournalCommand" ? [requiredRule] : []),
+  ...(commandType.value === "CreateGroupCommand" ? [requiredRule] : []),
 ]);
+
+const createIdSet = (items?: { id: string }[]) =>
+  new Set(items?.map(({ id }) => id) ?? []);
 
 const update = async (e: SubmitEventPromise) => {
   const errors = await e;
@@ -144,35 +136,23 @@ const update = async (e: SubmitEventPromise) => {
     props.modelValue &&
     command.name === props.modelValue.name &&
     command.description === props.modelValue.description &&
-    command.tags === props.modelValue.tags &&
-    command.unit === props.modelValue.unit &&
-    command.admins === props.modelValue.admins &&
-    command.members === props.modelValue.members
+    isEqual(
+      createIdSet(command.admins),
+      createIdSet(props.modelValue.admins)
+    ) &&
+    isEqual(createIdSet(command.members), createIdSet(props.modelValue.members))
   ) {
     emit("close", false);
     return;
   }
 
-  await api.journal.handle(authStore.user.token, {
+  await api.group.handle(authStore.user.token, {
     ...command,
     type: commandType.value,
     targetId: props.modelValue?.id,
-  } as JournalCommand);
+    admins: command.admins?.map(({ id }) => id),
+    members: command.members?.map(({ id }) => id),
+  } as GroupCommand);
   emit("close", true);
-};
-
-const items = ref<string[]>([]);
-
-const searchTags = (input: string) => {
-  const value: string[] = [];
-  const trimmed = input.trim();
-  if (!isEmpty(trimmed)) {
-    value.push(trimmed);
-  }
-
-  if (props.modelValue?.tags) {
-    value.push(...props.modelValue.tags);
-  }
-  items.value = value;
 };
 </script>

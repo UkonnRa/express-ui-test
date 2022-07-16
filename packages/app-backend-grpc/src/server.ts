@@ -1,6 +1,7 @@
 import { inject, singleton } from "tsyringe";
-import { ServerCredentials, Server as GrpcServer } from "@grpc/grpc-js";
+import { Server as GrpcServer, ServerCredentials } from "@grpc/grpc-js";
 import { adaptService } from "@protobuf-ts/grpc-backend";
+import { CompressionAlgorithms } from "@grpc/grpc-js/build/src/compression-algorithms";
 import {
   AccessItemService,
   AccountService,
@@ -28,7 +29,11 @@ export default class Server {
     @inject(RecordService) recordService: RecordService,
     @inject(AccessItemService) accessItemService: AccessItemService
   ) {
-    this.server = new GrpcServer();
+    // https://github.com/grpc/grpc-web/blob/master/doc/browser-features.md#compression
+    this.server = new GrpcServer({
+      "grpc.default_compression_algorithm": CompressionAlgorithms.gzip,
+      "grpc.default_compression_level": 3,
+    });
     this.server.addService(...adaptService(UserServiceDef, userService));
     this.server.addService(...adaptService(GroupServiceDef, groupService));
     this.server.addService(...adaptService(JournalServiceDef, journalService));

@@ -16,7 +16,7 @@
     "@ag-grid-enterprise/menu": "^28.0.2",
     "@ag-grid-enterprise/range-selection": "^28.0.2",
     "@intlify/vite-plugin-vue-i18n": "^5.0.0",
-    "@mdi/js": "^6.9.96",
+    "@mdi/js": "^7.0.96",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@white-rabbit/frontend-api": "workspace:^",
     "@white-rabbit/frontend-api-grpc": "workspace:^",
