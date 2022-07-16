@@ -29,17 +29,18 @@ export default abstract class WriteService<
     request: CP,
     context: ServerCallContext
   ): Promise<NullableEntity<P>> {
-    return this.orm.em.fork().transactional(async (em) => {
-      const authUser = await this.getAuthUser(context, em);
-      const entity = await this.service.handle(
-        {
-          command: this.getCommand(request),
-          authUser,
-        },
-        em
-      );
-      return this.getResponse(entity, em, authUser);
-    });
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
+    const entity = await this.service.handle(
+      {
+        command: this.getCommand(request),
+        authUser,
+      },
+      em
+    );
+    const result = await this.getResponse(entity, em, authUser);
+    await em.flush();
+    return result;
   }
 
   async handleAll(
@@ -47,19 +48,19 @@ export default abstract class WriteService<
     responses: RpcInputStream<NullableEntity<P>>,
     context: ServerCallContext
   ): Promise<void> {
-    return this.orm.em.fork().transactional(async (em) => {
-      const authUser = await this.getAuthUser(context, em);
-      const entities = await this.service.handleAll(
-        {
-          commands: request.commands.map((command) => this.getCommand(command)),
-          authUser,
-        },
-        em
-      );
-      for (const entity of entities) {
-        await responses.send(await this.getResponse(entity, em, authUser));
-      }
-      await responses.complete();
-    });
+    const em = this.orm.em.fork();
+    const authUser = await this.getAuthUser(context, em);
+    const entities = await this.service.handleAll(
+      {
+        commands: request.commands.map((command) => this.getCommand(command)),
+        authUser,
+      },
+      em
+    );
+    for (const entity of entities) {
+      await responses.send(await this.getResponse(entity, em, authUser));
+    }
+    await responses.complete();
+    await em.flush();
   }
 }

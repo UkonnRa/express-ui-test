@@ -12,6 +12,7 @@ import { ApiService, createApi } from "@white-rabbit/components";
 import { User } from "oidc-client-ts";
 
 export const apiService: ApiService<User> = createApi("grpc", () => {
+  // https://github.com/grpc/grpc-web/blob/master/doc/browser-features.md#compression
   const transport = new GrpcWebFetchTransport({
     baseUrl: import.meta.env.VITE_API_URL,
   });

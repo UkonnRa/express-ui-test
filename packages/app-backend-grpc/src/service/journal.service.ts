@@ -131,9 +131,7 @@ export default class JournalService
     try {
       await this.service.checkWriteable(hydrated, authUser);
       isWriteable = true;
-    } catch (e) {
-      console.log("error: ", e);
-    }
+    } catch (e) {}
 
     return {
       ...entity,

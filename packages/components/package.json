@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/components",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "main": "src/index.ts",
   "scripts": {
     "lint": "vue-tsc --noEmit && eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
@@ -15,8 +15,8 @@
     "@ag-grid-enterprise/core": "^28.0.2",
     "@ag-grid-enterprise/menu": "^28.0.2",
     "@ag-grid-enterprise/range-selection": "^28.0.2",
-    "@intlify/vite-plugin-vue-i18n": "^5.0.0",
-    "@mdi/js": "^6.9.96",
+    "@intlify/vite-plugin-vue-i18n": "^5.0.1",
+    "@mdi/js": "^7.0.96",
     "@protobuf-ts/grpcweb-transport": "^2.7.0",
     "@white-rabbit/frontend-api": "workspace:^",
     "@white-rabbit/frontend-api-grpc": "workspace:^",

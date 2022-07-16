@@ -244,11 +244,9 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
 
   readonly findAll = async (
     { authUser, query, size, sort }: FindAllInput<Q>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<E[]> => {
     this.checkPermission(authUser);
-
-    const emInst = em ?? this.orm.em.fork();
 
     const [additionalQueries, mikroQuery] = this.getQueries(query);
 
@@ -262,19 +260,18 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
         : undefined,
       size != null ? { size } : undefined,
       additionalQueries,
-      emInst
+      em
     );
   };
 
   readonly findPage = async (
     { authUser, pagination, sort, query }: FindPageInput<Q>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<Page<E>> => {
     this.checkPermission(authUser);
 
-    const emInst = em ?? this.orm.em.fork();
-    const after = await this.getCursorAndEntity(pagination.after, emInst);
-    const before = await this.getCursorAndEntity(pagination.before, emInst);
+    const after = await this.getCursorAndEntity(pagination.after, em);
+    const before = await this.getCursorAndEntity(pagination.before, em);
 
     const [additionalQueries, mikroQuery] = this.getQueries(query);
 
@@ -287,7 +284,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
       finalSort,
       pagination,
       additionalQueries,
-      emInst
+      em
     );
     let hasPreviousPage = false;
     let hasNextPage = false;
@@ -332,11 +329,9 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
 
   readonly findOne = async (
     { authUser, query }: FindInput<Q>,
-    em?: EntityManager
+    em: EntityManager
   ): Promise<E | null> => {
     this.checkPermission(authUser);
-
-    const emInst = em ?? this.orm.em.fork();
 
     const [additionalQueries, mikroQuery] = this.getQueries(query);
 
@@ -346,7 +341,7 @@ export default abstract class ReadService<E extends AbstractEntity<E>, Q> {
       [{ id: Order.ASC }],
       undefined,
       additionalQueries,
-      emInst
+      em
     );
     if (entities[0] != null) {
       return entities[0];

@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/app-frontend",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "main": "src/main.ts",
   "scripts": {
     "dev": "vite --port 3100",
@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "vite": "^2.9.14",
-    "vitest": "^0.18.0",
-    "vue-tsc": "^0.38.5"
+    "vitest": "^0.18.1",
+    "vue-tsc": "^0.39.0"
   },
   "peerDependencies": {
     "@white-rabbit/frontend-api-graphql": "workspace:^",

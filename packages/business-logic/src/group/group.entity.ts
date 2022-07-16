@@ -3,6 +3,7 @@ import {
   Entity,
   ManyToMany,
   Property,
+  types,
   Unique,
 } from "@mikro-orm/core";
 import { AbstractEntity } from "../shared";
@@ -18,7 +19,7 @@ export default class GroupEntity extends AbstractEntity<GroupEntity> {
   @Unique()
   name: string;
 
-  @Property({ type: "string" })
+  @Property({ type: types.text })
   description: string;
 
   @ManyToMany(() => UserEntity, (user) => user.adminInGroups, {

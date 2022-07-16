@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/app-backend-desktop",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "scripts": {
     "clean": "rimraf dist release app/.yarn app/dist app/node_modules",
     "dev:electron": "electron .",
@@ -10,8 +10,8 @@
   },
   "devDependencies": {
     "@mikro-orm/better-sqlite": "^5.2.3",
-    "electron": "19.0.8",
-    "electron-builder": "^23.3.1",
+    "electron": "19.0.9",
+    "electron-builder": "^23.3.2",
     "tree-kill": "^1.2.2"
   }
 }

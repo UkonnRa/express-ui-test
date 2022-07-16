@@ -2,8 +2,14 @@ import { inject, singleton } from "tsyringe";
 import {
   GroupService as CoreGroupService,
   GroupEntity,
+  AuthUser,
 } from "@white-rabbit/business-logic";
-import { Collection, EntityDTO, MikroORM } from "@mikro-orm/core";
+import {
+  Collection,
+  EntityDTO,
+  EntityManager,
+  MikroORM,
+} from "@mikro-orm/core";
 
 import { GroupCommand, GroupQuery } from "@white-rabbit/types";
 import { IGroupService } from "../proto/group.server";
@@ -57,8 +63,18 @@ export default class GroupService
   }
 
   override async getModel(
-    entity: EntityDTO<GroupEntity> | GroupEntity
+    entity: EntityDTO<GroupEntity> | GroupEntity,
+    em: EntityManager,
+    authUser: AuthUser
   ): Promise<Group> {
+    const hydrated = await em.findOneOrFail(GroupEntity, { id: entity.id });
+
+    let isWriteable = false;
+    try {
+      await this.service.checkWriteable(hydrated, authUser);
+      isWriteable = true;
+    } catch (e) {}
+
     return {
       ...entity,
       createdAt: Timestamp.fromDate(entity.createdAt),
@@ -66,11 +82,12 @@ export default class GroupService
       admins: (entity.admins instanceof Collection
         ? entity.admins.getItems()
         : entity.admins
-      ).map((e) => e.id),
+      ).map((e) => ({ id: e.id, name: e.name })),
       members: (entity.members instanceof Collection
         ? entity.members.getItems()
         : entity.members
-      ).map((e) => e.id),
+      ).map((e) => ({ id: e.id, name: e.name })),
+      isWriteable,
     };
   }
 }

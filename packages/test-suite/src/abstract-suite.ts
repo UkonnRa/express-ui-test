@@ -8,7 +8,7 @@ import {
   WriteService,
   FindInput,
 } from "@white-rabbit/business-logic";
-import { MikroORM, ObjectQuery } from "@mikro-orm/core";
+import { EntityManager, MikroORM, ObjectQuery } from "@mikro-orm/core";
 import { ALL_SCOPES, Command } from "@white-rabbit/types";
 import { Task, FindPageTask } from "./task";
 import AbstractTask, { AuthUserInput } from "./task/abstract-task";
@@ -69,10 +69,10 @@ export default abstract class AbstractSuite<
 
   private async runFindPageTask(
     { checker, expectNextPage, expectPreviousPage }: FindPageTask<E, Q>,
-    input: FindPageInput<Q>
+    input: FindPageInput<Q>,
+    em: EntityManager
   ): Promise<void> {
-    const em = this.orm.em.fork();
-    const page = await this.service.findPage(input);
+    const page = await this.service.findPage(input, em);
     await checker?.(
       {
         input,
@@ -84,14 +84,17 @@ export default abstract class AbstractSuite<
     if (expectNextPage === true) {
       expect(page.pageInfo.hasNextPage).toBeTruthy();
       expect(page.items.length).toBe(input.pagination.size);
-      const nextPage = await this.service.findPage({
-        ...input,
-        pagination: {
-          ...input.pagination,
-          before: undefined,
-          after: page.pageInfo.endCursor,
+      const nextPage = await this.service.findPage(
+        {
+          ...input,
+          pagination: {
+            ...input.pagination,
+            before: undefined,
+            after: page.pageInfo.endCursor,
+          },
         },
-      });
+        em
+      );
       await checker?.(
         {
           input,
@@ -101,40 +104,49 @@ export default abstract class AbstractSuite<
       );
       expect(nextPage.pageInfo.hasPreviousPage).toBeTruthy();
 
-      const nextPagePrevious = await this.service.findPage({
-        ...input,
-        pagination: {
-          ...input.pagination,
-          after: undefined,
-          before: nextPage.pageInfo.startCursor,
+      const nextPagePrevious = await this.service.findPage(
+        {
+          ...input,
+          pagination: {
+            ...input.pagination,
+            after: undefined,
+            before: nextPage.pageInfo.startCursor,
+          },
         },
-      });
+        em
+      );
       expect(nextPagePrevious.pageInfo).toStrictEqual(page.pageInfo);
     } else if (expectNextPage === false) {
       expect(page.pageInfo.hasNextPage).toBe(false);
       if (page.pageInfo.endCursor != null) {
-        const nextPage = await this.service.findPage({
-          ...input,
-          pagination: {
-            ...input.pagination,
-            before: undefined,
-            after: page.pageInfo.endCursor,
+        const nextPage = await this.service.findPage(
+          {
+            ...input,
+            pagination: {
+              ...input.pagination,
+              before: undefined,
+              after: page.pageInfo.endCursor,
+            },
           },
-        });
+          em
+        );
         expect(nextPage.items.length).toBe(0);
       }
     }
 
     if (expectPreviousPage === true) {
       expect(page.pageInfo.hasPreviousPage).toBe(true);
-      const previousPage = await this.service.findPage({
-        ...input,
-        pagination: {
-          ...input.pagination,
-          after: undefined,
-          before: page.pageInfo.startCursor,
+      const previousPage = await this.service.findPage(
+        {
+          ...input,
+          pagination: {
+            ...input.pagination,
+            after: undefined,
+            before: page.pageInfo.startCursor,
+          },
         },
-      });
+        em
+      );
       await checker?.(
         {
           input,
@@ -144,26 +156,32 @@ export default abstract class AbstractSuite<
       );
       expect(previousPage.pageInfo.hasNextPage).toBeTruthy();
 
-      const previousPageNext = await this.service.findPage({
-        ...input,
-        pagination: {
-          ...input.pagination,
-          before: undefined,
-          after: previousPage.pageInfo.endCursor,
+      const previousPageNext = await this.service.findPage(
+        {
+          ...input,
+          pagination: {
+            ...input.pagination,
+            before: undefined,
+            after: previousPage.pageInfo.endCursor,
+          },
         },
-      });
+        em
+      );
       expect(previousPageNext.pageInfo).toStrictEqual(page.pageInfo);
     } else if (expectPreviousPage === false) {
       expect(page.pageInfo.hasPreviousPage).toBe(false);
       if (page.pageInfo.startCursor != null) {
-        const previousPage = await this.service.findPage({
-          ...input,
-          pagination: {
-            ...input.pagination,
-            after: undefined,
-            before: page.pageInfo.startCursor,
+        const previousPage = await this.service.findPage(
+          {
+            ...input,
+            pagination: {
+              ...input.pagination,
+              after: undefined,
+              before: page.pageInfo.startCursor,
+            },
           },
-        });
+          em
+        );
         expect(previousPage.items.length).toBe(0);
       }
     }
@@ -191,15 +209,12 @@ export default abstract class AbstractSuite<
   private async doRunTask<I, R>(
     { checker }: AbstractTask<E, any, R>,
     input: I,
+    em: EntityManager,
     func: () => Promise<R>
   ): Promise<void> {
-    await checker?.(
-      {
-        input,
-        item: await func(),
-      },
-      this.orm.em.fork()
-    );
+    const item = await func();
+    await em.flush();
+    await checker?.({ input, item }, em);
   }
 
   async runTask(task: Task<E, C, Q>): Promise<void> {
@@ -219,49 +234,55 @@ export default abstract class AbstractSuite<
 
     switch (task.type) {
       case "FindPageTask":
-        await this.runFindPageTask(task, inputValue as FindPageInput<Q>);
+        await this.runFindPageTask(task, inputValue as FindPageInput<Q>, em);
         break;
       case "FindPageExceptionTask":
         await this.runExceptionTask(
           task,
           inputValue as FindPageInput<Q>,
-          async () => this.service.findPage(inputValue as FindPageInput<Q>)
+          async () => this.service.findPage(inputValue as FindPageInput<Q>, em)
         );
         break;
       case "FindOneTask":
-        await this.doRunTask(task, inputValue as FindInput<Q>, async () =>
-          this.service.findOne(inputValue as FindInput<Q>)
+        await this.doRunTask(task, inputValue as FindInput<Q>, em, async () =>
+          this.service.findOne(inputValue as FindInput<Q>, em)
         );
         break;
       case "FindOneExceptionTask":
         await this.runExceptionTask(
           task,
           inputValue as FindInput<Q>,
-          async () => this.service.findOne(inputValue as FindInput<Q>)
+          async () => this.service.findOne(inputValue as FindInput<Q>, em)
         );
         break;
       case "HandleCommandTask":
-        await this.doRunTask(task, inputValue as CommandInput<C>, async () =>
-          this.service.handle(inputValue as CommandInput<C>)
+        await this.doRunTask(
+          task,
+          inputValue as CommandInput<C>,
+          em,
+          async () => this.service.handle(inputValue as CommandInput<C>, em)
         );
         break;
       case "HandleCommandExceptionTask":
         await this.runExceptionTask(
           task,
           inputValue as CommandInput<C>,
-          async () => this.service.handle(inputValue as CommandInput<C>)
+          async () => this.service.handle(inputValue as CommandInput<C>, em)
         );
         break;
       case "HandleCommandsTask":
-        await this.doRunTask(task, inputValue as CommandsInput<C>, async () =>
-          this.service.handleAll(inputValue as CommandsInput<C>)
+        await this.doRunTask(
+          task,
+          inputValue as CommandsInput<C>,
+          em,
+          async () => this.service.handleAll(inputValue as CommandsInput<C>, em)
         );
         break;
       case "HandleCommandsExceptionTask":
         await this.runExceptionTask(
           task,
           inputValue as CommandsInput<C>,
-          async () => this.service.handleAll(inputValue as CommandsInput<C>)
+          async () => this.service.handleAll(inputValue as CommandsInput<C>, em)
         );
         break;
     }

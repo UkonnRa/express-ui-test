@@ -11,6 +11,7 @@
   "filter": "过滤",
   "filterPanel": "过滤面板",
   "admin": "管理员",
+  "member": "成员",
   "archived": "已归档",
   "keyword": "关键字",
   "unit": {
@@ -21,6 +22,11 @@
   "description": "描述",
   "update": "更新",
   "delete": "删除",
+  "deleteHint": {
+    "content": "你正在删除{type}[{name}]。这是{hintPermanent}并且{hintCascadeDelete}。如果希望继续操作，请完整输入该项目的名称。",
+    "hint:permanent": "一个永久的操作",
+    "hint:cascadeDelete": "所有关联的资源将被同时删除"
+  },
   "admins": "管理员",
   "members": "成员",
   "loadMore": "继续加载",
@@ -29,6 +35,7 @@
   "submit": "提交",
   "createJournal": "新建账本",
   "updateJournal": "更新账本",
+  "deleteJournal": "删除账本",
   "sort": {
     "title": "排序",
     "field:name:asc": "名称，顺序排列",
@@ -37,5 +44,8 @@
   },
   "error": {
     "requiredField": "此栏为必填项"
-  }
+  },
+  "createGroup": "新建群组",
+  "updateGroup": "更新群组",
+  "deleteGroup": "删除群组"
 }

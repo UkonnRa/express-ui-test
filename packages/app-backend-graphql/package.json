@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/app-backend-graphql",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "main": "src/index.ts",
   "scripts": {
     "dev": "ts-node src/index.ts",

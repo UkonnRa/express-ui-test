@@ -6,6 +6,11 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "shared.proto";
 
+message UserItem {
+  string id = 1;
+  string name = 2;
+}
+
 message Group {
   string id = 1;
   google.protobuf.Timestamp createdAt = 2;
@@ -14,8 +19,10 @@ message Group {
   string name = 4;
   string description = 5;
 
-  repeated string admins = 6;
-  repeated string members = 7;
+  repeated UserItem admins = 6;
+  repeated UserItem members = 7;
+
+  bool isWriteable = 8;
 }
 
 message GroupPage {

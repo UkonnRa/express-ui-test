@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/app-backend-grpc",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "main": "src/index.ts",
   "scripts": {
     "dev": "ts-node src/index.ts",
@@ -14,7 +14,7 @@
     "orm:seed": "ts-node seed.ts"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.6.7",
+    "@grpc/grpc-js": "^1.6.8",
     "@mikro-orm/core": "^5.2.3",
     "@mikro-orm/postgresql": "^5.2.3",
     "@protobuf-ts/grpc-backend": "^2.7.0",

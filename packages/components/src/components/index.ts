@@ -2,6 +2,10 @@ export { default as AppAccessItemAutoComplete } from "./AppAccessItemAutoComplet
 export { default as AppAccessItemList } from "./AppAccessItemList.vue";
 export { default as AppLogo } from "./AppLogo.vue";
 export { default as AppScaffold } from "./AppScaffold.vue";
+export { default as GroupDeleteModal } from "./GroupDeleteModal.vue";
+export { default as GroupDetailModal } from "./GroupDetailModal.vue";
+export { default as GroupEditModal } from "./GroupEditModal.vue";
 export { default as HelloCounter } from "./HelloCounter.vue";
+export { default as JournalDeleteModal } from "./JournalDeleteModal.vue";
 export { default as JournalEditModal } from "./JournalEditModal.vue";
 export { default as PriceCell } from "./PriceCell.vue";

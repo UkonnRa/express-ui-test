@@ -6,7 +6,7 @@ export default class GroupFactory extends Factory<GroupEntity> {
   protected definition(faker: Faker): EntityData<GroupEntity> {
     return {
       name: faker.unique(faker.company.companyName),
-      description: faker.lorem.sentence(),
+      description: faker.lorem.paragraph(),
     };
   }
 

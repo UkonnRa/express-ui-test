@@ -1,5 +1,5 @@
 {
   "name": "@white-rabbit/frontend-api-local",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "main": "src/index.ts"
 }

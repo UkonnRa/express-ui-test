@@ -13,7 +13,7 @@ import {
   USER_WRITE_SCOPE,
   FULL_TEXT_OPERATOR,
 } from "@white-rabbit/types";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { AuthUser, checkCreate, WriteService } from "../shared";
 import CommandInput from "../shared/command.input";
 import { NoPermissionError } from "../error";

@@ -7,7 +7,7 @@
           <v-btn color="primary" @click="router.push({ name: 'Journals' })">
             {{ t("journals") }}
           </v-btn>
-          <v-btn color="primary" @click="router.push({ name: 'AgGridTest' })">
+          <v-btn color="primary" @click="router.push({ name: 'Groups' })">
             {{ t("groups") }}
           </v-btn>
           <v-tooltip location="bottom">

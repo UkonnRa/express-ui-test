@@ -27,6 +27,11 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    name: "Groups",
+    path: "/groups",
+    component: () => import("../pages/GroupPage.vue"),
+  },
 ];
 
 const router = createRouter({

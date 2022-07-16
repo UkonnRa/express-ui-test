@@ -24,7 +24,7 @@ export default class JournalEntity extends AbstractEntity<JournalEntity> {
   @Unique()
   name: string;
 
-  @Property({ type: "string" })
+  @Property({ type: types.text })
   description: string;
 
   @Property({ name: "tags", type: types.array })
