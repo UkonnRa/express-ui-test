@@ -6278,7 +6278,7 @@ __metadata:
     pinia: ^2.0.16
     reflect-metadata: ^0.1.13
     uuid: ^8.3.2
-    vite: ^2.9.14
+    vite: ^3.0.0
     vitest: ^0.18.1
     vue: ^3.2.37
     vue-i18n: 9.1.10
@@ -23206,7 +23206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.9.12 || ^3.0.0-0":
+"vite@npm:^2.9.12 || ^3.0.0-0, vite@npm:^3.0.0":
   version: 3.0.2
   resolution: "vite@npm:3.0.2"
   dependencies:
@@ -23238,7 +23238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.9.14, vite@npm:^2.9.7":
+"vite@npm:^2.9.7":
   version: 2.9.14
   resolution: "vite@npm:2.9.14"
   dependencies:
@@ -23931,7 +23931,7 @@ __metadata:
     ts-jest: ^28.0.7
     ts-node: ^10.9.1
     typescript: ^4.7.4
-    vite: ^2.9.14
+    vite: ^3.0.0
     vite-plugin-compression: ^0.5.1
     vite-plugin-vuetify: ^1.0.0-alpha.12
     vitest: ^0.18.1
