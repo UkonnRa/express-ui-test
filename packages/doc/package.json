@@ -9,7 +9,7 @@
   "devDependencies": {
     "@types/markdown-it": "^12.2.3",
     "@types/markdown-it-plantuml": "^1.4.1",
-    "@vueuse/core": "^8.9.4",
+    "@vueuse/core": "^9.0.0",
     "vitepress": "1.0.0-alpha.4"
   },
   "dependencies": {

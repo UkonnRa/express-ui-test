@@ -28,7 +28,7 @@ export default defineConfig(() => ({
     },
     setupFiles: ["../../vitest.setup.ts"],
     deps: {
-      inline: ["vuetify"],
+      inline: ["vuetify", "element-plus"],
     },
   },
 }));

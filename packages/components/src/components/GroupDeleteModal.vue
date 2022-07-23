@@ -1,49 +1,35 @@
 <template>
-  <v-dialog :model-value="props.show" @click:outside="close(false)">
-    <v-card>
-      <v-card-item>
-        <v-card-title>
-          {{ t("deleteGroup") }}
-        </v-card-title>
-        <v-card-subtitle v-if="props.modelValue?.id">
-          {{ props.modelValue.id }}
-        </v-card-subtitle>
-      </v-card-item>
+  <el-dialog v-model="show" custom-class="w-11/12 md:w-2/3 lg:w-1/2">
+    <template #header>
+      {{ t("deleteGroup") }}
+    </template>
 
-      <v-card-text>
-        <i18n-t keypath="deleteHint.content" tag="p">
-          <template #type>
-            <span class="font-bold">{{ t("groups") }}</span>
-          </template>
-          <template #name>
-            <span class="font-bold">{{ props.modelValue.name }}</span>
-          </template>
-          <template #hintPermanent>
-            <span class="font-bold text-error">
-              {{ t("deleteHint.hint:permanent") }}
-            </span>
-          </template>
-          <template #hintCascadeDelete>
-            <span class="font-bold text-error">
-              {{ t("deleteHint.hint:cascadeDelete") }}
-            </span>
-          </template>
-        </i18n-t>
-        <v-text-field
-          v-model="name"
-          class="mt-4"
-          :label="t('name')"
-          hide-details
-          variant="underlined"
-        ></v-text-field>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn :disabled="disabled" :color="color" @click="deleteItem">
-          {{ t("delete") }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <template #footer>
+      <el-button type="danger" :disabled="disabled" @click="deleteItem">
+        {{ t("delete") }}
+      </el-button>
+    </template>
+
+    <i18n-t keypath="deleteHint.content" tag="p">
+      <template #type>
+        <span class="font-bold">{{ t("groups") }}</span>
+      </template>
+      <template #name>
+        <span class="font-bold">{{ props.modelValue.name }}</span>
+      </template>
+      <template #hintPermanent>
+        <span class="font-bold text-error">
+          {{ t("deleteHint.hint:permanent") }}
+        </span>
+      </template>
+      <template #hintCascadeDelete>
+        <span class="font-bold text-error">
+          {{ t("deleteHint.hint:cascadeDelete") }}
+        </span>
+      </template>
+    </i18n-t>
+    <el-input v-model="name" class="mt-4" :label="t('name')" />
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -65,15 +51,20 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "close", anyUpdated: boolean): void;
 }>();
+const show = computed({
+  get: () => props.show,
+  set: (value: boolean) => {
+    if (!value) {
+      name.value = "";
+      emit("close", entityUpdated.value);
+      entityUpdated.value = false;
+    }
+  },
+});
 
 const name = ref("");
 const disabled = computed(() => name.value !== props.modelValue.name);
-const color = computed(() => (disabled.value ? undefined : "error"));
-
-const close = (anyUpdated: boolean) => {
-  name.value = "";
-  emit("close", anyUpdated);
-};
+const entityUpdated = ref(false);
 
 const deleteItem = async () => {
   if (!authStore.user) {
@@ -83,6 +74,7 @@ const deleteItem = async () => {
     type: "DeleteGroupCommand",
     targetId: props.modelValue.id,
   });
-  close(true);
+  entityUpdated.value = true;
+  show.value = false;
 };
 </script>
