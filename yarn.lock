@@ -6719,7 +6719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.1":
+"acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0":
   version: 8.8.0
   resolution: "acorn@npm:8.8.0"
   bin:
@@ -23138,9 +23138,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-vue-components@npm:^0.21.2":
-  version: 0.21.2
-  resolution: "unplugin-vue-components@npm:0.21.2"
+"unplugin-vue-components@npm:^0.22.0":
+  version: 0.22.0
+  resolution: "unplugin-vue-components@npm:0.22.0"
   dependencies:
     "@antfu/utils": ^0.5.2
     "@rollup/pluginutils": ^4.2.1
@@ -23151,14 +23151,14 @@ __metadata:
     magic-string: ^0.26.2
     minimatch: ^5.1.0
     resolve: ^1.22.1
-    unplugin: ^0.7.2
+    unplugin: ^0.8.1
   peerDependencies:
     "@babel/parser": ^7.15.8
     vue: 2 || 3
   peerDependenciesMeta:
     "@babel/parser":
       optional: true
-  checksum: 0a7807752223fdf88757971fc0290329c3cf81ca4896bc313e5b7d9830c7b287eceb96386954aad94dd4970cde90a08149f5730a574eacf6afa0ba5b7f30ba83
+  checksum: 58aeddf0e655c2572fdb2707bcc2a41ad63b01e6b35f20115785ad8ba530bab20782a8856a6ffd9a3fec93e7e41ea9a2d2c940743d79f83dad6d72cd480eabd0
   languageName: node
   linkType: hard
 
@@ -23185,6 +23185,32 @@ __metadata:
     webpack:
       optional: true
   checksum: 5449e8cff143b3c8a47f91a9274e2c9d42bdaa7ab5c95a0ea10db87d8bbde9cd85fca9c63d3c319c5b8730e8a490ce49706620151b69b9566172283c980f44bd
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "unplugin@npm:0.8.1"
+  dependencies:
+    acorn: ^8.8.0
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.4.4
+  peerDependencies:
+    esbuild: ">=0.13"
+    rollup: ^2.50.0
+    vite: ^2.3.0 || ^3.0.0-0
+    webpack: 4 || 5
+  peerDependenciesMeta:
+    esbuild:
+      optional: true
+    rollup:
+      optional: true
+    vite:
+      optional: true
+    webpack:
+      optional: true
+  checksum: 95bbed0425c42add3718f203d2cd2d8e97ae33bc0403b88cd800a12fb3f4cc5f681d108f4e64cd6cdf00b6715e538c913fd408b86c22a226b7e179c8d560e314
   languageName: node
   linkType: hard
 
@@ -24270,7 +24296,7 @@ __metadata:
     ts-node: ^10.9.1
     typescript: ^4.7.4
     unplugin-auto-import: ^0.10.1
-    unplugin-vue-components: ^0.21.2
+    unplugin-vue-components: ^0.22.0
     vite: ^3.0.3
     vite-plugin-compression: ^0.5.1
     vite-plugin-vuetify: ^1.0.0-alpha.14
