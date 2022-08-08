@@ -6719,7 +6719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.1":
+"acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0":
   version: 8.8.0
   resolution: "acorn@npm:8.8.0"
   bin:
@@ -17302,13 +17302,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.5.3, mlly@npm:^0.5.5":
+"mlly@npm:^0.5.3":
   version: 0.5.5
   resolution: "mlly@npm:0.5.5"
   dependencies:
     pathe: ^0.3.2
     pkg-types: ^0.3.3
   checksum: f7141ac6a1934c5930acef94eff25f06a42798bb58e5b20c029a14b92e345726533bc413e4ebf316022f28fb68d198cc9c1de5860d90343bac508f76e6d74194
+  languageName: node
+  linkType: hard
+
+"mlly@npm:^0.5.7":
+  version: 0.5.7
+  resolution: "mlly@npm:0.5.7"
+  dependencies:
+    acorn: ^8.8.0
+    pathe: ^0.3.3
+    pkg-types: ^0.3.3
+  checksum: 776098c5606f8b16eacae223203154cad6a96e6068e289ab709a35c194d9dd5a36f5a1f414cb4f5953fc1b355864c0d87306288c0bbd4c95e1b055f9c4b9f67e
   languageName: node
   linkType: hard
 
@@ -18426,6 +18437,13 @@ __metadata:
   version: 0.3.2
   resolution: "pathe@npm:0.3.2"
   checksum: a3fdfe2875b074d5dd20f32d89d0d2ded2341423cdccfaec820bc994ea9d76badba2de6fd522fcf580dc5e5b3adb238d3b71855001d428c5554fb61223001eed
+  languageName: node
+  linkType: hard
+
+"pathe@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "pathe@npm:0.3.3"
+  checksum: 4d30221a4354b929bcb41a0f572ec47999d4540c9bf951d7e5725bfea8d3761dce40cc42291d078b0d9a838f166d7e22407ffaa9c01c637ab251cd9371f7d38d
   languageName: node
   linkType: hard
 
@@ -20645,10 +20663,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scule@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "scule@npm:0.2.1"
-  checksum: d9731b4c3560ce6983d23cc594395b718bc3c08ea3da930a9cd2bd3feb137ad3295521bcbc50baa82dc05d8521a7a41d6b78d2723e5195c053d93359f5808706
+"scule@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "scule@npm:0.3.2"
+  checksum: cac6c0e66e474fcac8b0a581cd206055a4984b9da04f4cfef8883689c045a2ac0b70bda6851fe714e5f22998fab365fa0f4ad218bdddd41c15a55c0b43f3be47
   languageName: node
   linkType: hard
 
@@ -22956,21 +22974,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimport@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "unimport@npm:0.6.3"
+"unimport@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "unimport@npm:0.6.5"
   dependencies:
     "@rollup/pluginutils": ^4.2.1
     escape-string-regexp: ^5.0.0
     fast-glob: ^3.2.11
     local-pkg: ^0.4.2
     magic-string: ^0.26.2
-    mlly: ^0.5.5
-    pathe: ^0.3.2
-    scule: ^0.2.1
+    mlly: ^0.5.7
+    pathe: ^0.3.3
+    scule: ^0.3.2
     strip-literal: ^0.4.0
-    unplugin: ^0.7.2
-  checksum: 3fb3058f0112afccc8241b534375377ce0b75b2dfa6f68fe9b3d0cdad10dd878faa2f20f8b34443cb03903c297938fedb9184565382e77ffc3434de267471bf2
+    unplugin: ^0.8.1
+  checksum: 9f50e3b3ad70c360691958d3001115f284d8f993c07ae1fbec0b321af24fb654636ed25a9f4860364cf855946e2b73e415a57ffcdf6531594755127d74df67e8
   languageName: node
   linkType: hard
 
@@ -23119,22 +23137,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin-auto-import@npm:^0.10.1":
-  version: 0.10.1
-  resolution: "unplugin-auto-import@npm:0.10.1"
+"unplugin-auto-import@npm:^0.11.0":
+  version: 0.11.1
+  resolution: "unplugin-auto-import@npm:0.11.1"
   dependencies:
     "@antfu/utils": ^0.5.2
     "@rollup/pluginutils": ^4.2.1
     local-pkg: ^0.4.2
     magic-string: ^0.26.2
-    unimport: ^0.6.3
-    unplugin: ^0.7.2
+    unimport: ^0.6.5
+    unplugin: ^0.9.0
   peerDependencies:
     "@vueuse/core": "*"
   peerDependenciesMeta:
     "@vueuse/core":
       optional: true
-  checksum: 88ad96d9f2eb15d643d9e8ae72118fef01335d84282081f5694f1f683735f5aea50c6a371adfb517160d4d6038ba3a12dd16300d3b0e388f4fd2bbedce200736
+  checksum: 35c09b325bfd5b53e0dbafcc1b1488ee14309838e0f0ae4d8ac28e10afd47d759512dbad7bd972cb031f4b368a1d184911fcefa20a29b6fc45040cdfcca490cf
   languageName: node
   linkType: hard
 
@@ -23185,6 +23203,58 @@ __metadata:
     webpack:
       optional: true
   checksum: 5449e8cff143b3c8a47f91a9274e2c9d42bdaa7ab5c95a0ea10db87d8bbde9cd85fca9c63d3c319c5b8730e8a490ce49706620151b69b9566172283c980f44bd
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "unplugin@npm:0.8.1"
+  dependencies:
+    acorn: ^8.8.0
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.4.4
+  peerDependencies:
+    esbuild: ">=0.13"
+    rollup: ^2.50.0
+    vite: ^2.3.0 || ^3.0.0-0
+    webpack: 4 || 5
+  peerDependenciesMeta:
+    esbuild:
+      optional: true
+    rollup:
+      optional: true
+    vite:
+      optional: true
+    webpack:
+      optional: true
+  checksum: 95bbed0425c42add3718f203d2cd2d8e97ae33bc0403b88cd800a12fb3f4cc5f681d108f4e64cd6cdf00b6715e538c913fd408b86c22a226b7e179c8d560e314
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "unplugin@npm:0.9.0"
+  dependencies:
+    acorn: ^8.8.0
+    chokidar: ^3.5.3
+    webpack-sources: ^3.2.3
+    webpack-virtual-modules: ^0.4.4
+  peerDependencies:
+    esbuild: ">=0.13"
+    rollup: ^2.50.0
+    vite: ^2.3.0 || ^3.0.0-0
+    webpack: 4 || 5
+  peerDependenciesMeta:
+    esbuild:
+      optional: true
+    rollup:
+      optional: true
+    vite:
+      optional: true
+    webpack:
+      optional: true
+  checksum: 94fd5fa597e1607831134dd34d18ddcb20d24f473a88ca34dc89b4cd0d4c17ca5eb5987b0152dab52c9ae146fc9a768556a2b89dd8725947c97c95cd6640ca86
   languageName: node
   linkType: hard
 
@@ -24269,7 +24339,7 @@ __metadata:
     ts-jest: ^28.0.7
     ts-node: ^10.9.1
     typescript: ^4.7.4
-    unplugin-auto-import: ^0.10.1
+    unplugin-auto-import: ^0.11.0
     unplugin-vue-components: ^0.21.2
     vite: ^3.0.3
     vite-plugin-compression: ^0.5.1
