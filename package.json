@@ -60,7 +60,7 @@
     "cross-env": "^7.0.3",
     "cypress": "^10.3.1",
     "cz-conventional-changelog": "^3.3.0",
-    "esbuild": "^0.14.50",
+    "esbuild": "^0.15.0",
     "esbuild-visualizer": "^0.3.1",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
