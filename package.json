@@ -104,7 +104,7 @@
     "vite-plugin-vuetify": "^1.0.0-alpha.14",
     "vitest": "^0.19.1",
     "vue-eslint-parser": "^9.0.3",
-    "vue-tsc": "^0.39.0"
+    "vue-tsc": "^0.40.0"
   },
   "config": {
     "commitizen": {
