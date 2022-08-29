@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/business-logic",
-  "packageManager": "yarn@3.2.2",
+  "packageManager": "yarn@3.2.3",
   "main": "src/index.ts",
   "scripts": {
     "lint": "eslint . --ext .vue,.js,.ts --ignore-path ../../.eslintignore",
