@@ -1,6 +1,6 @@
 {
   "name": "@white-rabbit/test-suite",
-  "packageManager": "yarn@3.2.2",
+  "packageManager": "yarn@3.2.3",
   "main": "src/index.ts",
   "devDependencies": {
     "@types/uuid": "^8.3.4"
