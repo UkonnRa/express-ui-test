@@ -6333,7 +6333,7 @@ __metadata:
   resolution: "@white-rabbit/app-backend-desktop@workspace:packages/app-desktop"
   dependencies:
     "@mikro-orm/better-sqlite": ^5.2.4
-    electron: 19.0.9
+    electron: 19.1.0
     electron-builder: ^23.3.3
     tree-kill: ^1.2.2
   languageName: unknown
@@ -10878,16 +10878,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:19.0.9":
-  version: 19.0.9
-  resolution: "electron@npm:19.0.9"
+"electron@npm:19.1.0":
+  version: 19.1.0
+  resolution: "electron@npm:19.1.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 662e63216c2802340cd1d2f28664818ec30fade0e1cb9da3a1afb2b13b2c6d920d1506b2c62442ea0118ba8965edee3f1e7c365b8cd1d4060f9a250db1161d47
+  checksum: 30f5dc70f1b93fad3e1f80ecb5ae74d0a7467bfaecdcb35b9fee04696619cbb32ce897494d948134ad4eafdd588a85101b34791640a80d584f1c6c44b9d32f5c
   languageName: node
   linkType: hard
 
